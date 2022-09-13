@@ -20,7 +20,7 @@ class ThirdView: BasePageView {
     let signupButton: UIButton = {
         let view = UIButton()
         view.setTitle("시작하기", for: .normal)
-        view.titleLabel?.font = .mainFont30
+        view.titleLabel?.font = .mainFont(size: 30)
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.black.cgColor
         view.layer.cornerRadius = 10

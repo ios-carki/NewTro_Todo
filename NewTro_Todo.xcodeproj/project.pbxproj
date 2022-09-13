@@ -29,6 +29,12 @@
 		C32FF09728CAAB6F00949E05 /* Galmuri11-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C32FF09628CAAB6F00949E05 /* Galmuri11-Bold.ttf */; };
 		C32FF09928CAB71300949E05 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF09828CAB71300949E05 /* MainView.swift */; };
 		C32FF09B28CAB71D00949E05 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF09A28CAB71D00949E05 /* MainViewController.swift */; };
+		C32FF0A028CF13A600949E05 /* CalendarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF09F28CF13A600949E05 /* CalendarViewController.swift */; };
+		C32FF0A328CF13BA00949E05 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A228CF13BA00949E05 /* CalendarView.swift */; };
+		C32FF0A528CF149600949E05 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A428CF149600949E05 /* SettingView.swift */; };
+		C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A628CF149F00949E05 /* SettingViewController.swift */; };
+		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
+		C3D6454228D05E4700850505 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = C3D6454128D05E4700850505 /* FSCalendar */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +61,10 @@
 		C32FF09628CAAB6F00949E05 /* Galmuri11-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Galmuri11-Bold.ttf"; sourceTree = "<group>"; };
 		C32FF09828CAB71300949E05 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		C32FF09A28CAB71D00949E05 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		C32FF09F28CF13A600949E05 /* CalendarViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewController.swift; sourceTree = "<group>"; };
+		C32FF0A228CF13BA00949E05 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		C32FF0A428CF149600949E05 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
+		C32FF0A628CF149F00949E05 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +72,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */,
+				C3D6454228D05E4700850505 /* FSCalendar in Frameworks */,
 				C32FF07828C7129C00949E05 /* SnapKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -104,6 +116,7 @@
 		C32FF06B28C70CE800949E05 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				C32FF0A128CF13AF00949E05 /* NaviBar */,
 				C32FF07228C70E4A00949E05 /* PageView */,
 				C32FF06D28C70D0300949E05 /* BaseView.swift */,
 				C32FF09828CAB71300949E05 /* MainView.swift */,
@@ -114,6 +127,7 @@
 		C32FF06C28C70CF400949E05 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				C32FF09E28CF137B00949E05 /* NaviBar */,
 				C32FF07328C70E5500949E05 /* PageViewController */,
 				C32FF06F28C70D0A00949E05 /* BaseViewController.swift */,
 				C32FF09A28CAB71D00949E05 /* MainViewController.swift */,
@@ -162,6 +176,24 @@
 			path = Font;
 			sourceTree = "<group>";
 		};
+		C32FF09E28CF137B00949E05 /* NaviBar */ = {
+			isa = PBXGroup;
+			children = (
+				C32FF09F28CF13A600949E05 /* CalendarViewController.swift */,
+				C32FF0A628CF149F00949E05 /* SettingViewController.swift */,
+			);
+			path = NaviBar;
+			sourceTree = "<group>";
+		};
+		C32FF0A128CF13AF00949E05 /* NaviBar */ = {
+			isa = PBXGroup;
+			children = (
+				C32FF0A228CF13BA00949E05 /* CalendarView.swift */,
+				C32FF0A428CF149600949E05 /* SettingView.swift */,
+			);
+			path = NaviBar;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -180,6 +212,8 @@
 			name = NewTro_Todo;
 			packageProductDependencies = (
 				C32FF07728C7129C00949E05 /* SnapKit */,
+				C37B16BD28CF7DAD0086E3C6 /* Toast */,
+				C3D6454128D05E4700850505 /* FSCalendar */,
 			);
 			productName = NewTro_Todo;
 			productReference = C32FF05428C70C8800949E05 /* NewTro_Todo.app */;
@@ -211,6 +245,8 @@
 			mainGroup = C32FF04B28C70C8700949E05;
 			packageReferences = (
 				C32FF07628C7129C00949E05 /* XCRemoteSwiftPackageReference "SnapKit" */,
+				C37B16BC28CF7DAD0086E3C6 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
+				C3D6454028D05E4700850505 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 			);
 			productRefGroup = C32FF05528C70C8800949E05 /* Products */;
 			projectDirPath = "";
@@ -243,6 +279,7 @@
 			files = (
 				C32FF08628C724CF00949E05 /* BasePageView.swift in Sources */,
 				C32FF06E28C70D0300949E05 /* BaseView.swift in Sources */,
+				C32FF0A028CF13A600949E05 /* CalendarViewController.swift in Sources */,
 				C32FF07528C70F1800949E05 /* PageViewController.swift in Sources */,
 				C32FF07028C70D0A00949E05 /* BaseViewController.swift in Sources */,
 				C32FF07A28C719E900949E05 /* FirstViewController.swift in Sources */,
@@ -250,10 +287,13 @@
 				C32FF05828C70C8800949E05 /* AppDelegate.swift in Sources */,
 				C32FF09B28CAB71D00949E05 /* MainViewController.swift in Sources */,
 				C32FF08228C7240900949E05 /* SecondView.swift in Sources */,
+				C32FF0A528CF149600949E05 /* SettingView.swift in Sources */,
 				C32FF07E28C719FA00949E05 /* ThirdViewController.swift in Sources */,
 				C32FF08428C7240F00949E05 /* ThirdView.swift in Sources */,
 				C32FF08028C7240300949E05 /* FirstView.swift in Sources */,
 				C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */,
+				C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */,
+				C32FF0A328CF13BA00949E05 /* CalendarView.swift in Sources */,
 				C32FF09128C9AE9900949E05 /* Font+Extension.swift in Sources */,
 				C32FF09928CAB71300949E05 /* MainView.swift in Sources */,
 				C32FF08928C72EE300949E05 /* Color+Extension.swift in Sources */,
@@ -410,6 +450,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -421,7 +462,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -439,6 +480,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -450,7 +492,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -486,6 +528,22 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		C37B16BC28CF7DAD0086E3C6 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scalessec/Toast-Swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		C3D6454028D05E4700850505 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -493,6 +551,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C32FF07628C7129C00949E05 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		C37B16BD28CF7DAD0086E3C6 /* Toast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C37B16BC28CF7DAD0086E3C6 /* XCRemoteSwiftPackageReference "Toast-Swift" */;
+			productName = Toast;
+		};
+		C3D6454128D05E4700850505 /* FSCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C3D6454028D05E4700850505 /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			productName = FSCalendar;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -17,7 +17,7 @@ class FirstView: BasePageView {
         view.text = "도트감성"
         view.alpha = 0
         view.textAlignment = .center
-        view.font = .mainFont30
+        view.font = .mainFont(size: 30)
         UIView.animate(withDuration: 3) {
             view.alpha = 1
         }
@@ -29,7 +29,7 @@ class FirstView: BasePageView {
         view.text = "할 일 목록 앱"
         view.alpha = 0
         view.textAlignment = .center
-        view.font = .mainFont50
+        view.font = .mainFont(size: 50)
         UIView.animate(withDuration: 3, delay: 1) {
             view.alpha = 1
         }
@@ -46,7 +46,7 @@ class FirstView: BasePageView {
         view.textColor = .yellow
         view.numberOfLines = 0
         view.textAlignment = .center
-        view.font = .boldFont60
+        view.font = .boldFont(size: 60)
         UIView.animate(withDuration: 3, delay: 1.5) {
             view.alpha = 1
         }
