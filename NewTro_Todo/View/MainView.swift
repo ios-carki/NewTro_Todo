@@ -54,19 +54,8 @@ class MainView: BaseView {
     //MARK: -- Todobtn
     let todoView: UIView = {
         let view = UIView()
-//        view.layer.cornerRadius = 10
-//        view.layer.borderWidth = 1
-//        view.layer.borderColor = UIColor.black.cgColor
         view.backgroundColor = .mainBackGroundColor
-        view.layer.cornerRadius = 10
-        
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.mainBackGroundColor.cgColor
-        
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize(width: 3, height: 3)
-        view.layer.shadowOpacity = 0.7
-        view.layer.shadowRadius = 4.0
+        shadowEffect(view: view)
         return view
     }()
     
@@ -90,15 +79,7 @@ class MainView: BaseView {
     let quickNoteView: UIView = {
         let view = UIView()
         view.backgroundColor = .mainBackGroundColor
-        view.layer.cornerRadius = 10
-        
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.mainBackGroundColor.cgColor
-        
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize(width: 3, height: 3)
-        view.layer.shadowOpacity = 0.7
-        view.layer.shadowRadius = 4.0
+        shadowEffect(view: view)
         return view
     }()
     
@@ -132,7 +113,14 @@ class MainView: BaseView {
         view.text = "오늘날짜"
         view.font = .boldFont(size: 30)
         view.textColor = .black
-        view.textAlignment = .center
+        view.textAlignment = .left
+        return view
+    }()
+    
+    let addColCellBtn: UIButton = {
+        let view = UIButton()
+        view.backgroundColor = .brown
+        view.setTitle("셀 추가", for: .normal)
         return view
     }()
     
@@ -144,12 +132,24 @@ class MainView: BaseView {
     }()
     
     let todoCollectionView: UICollectionView = {
-        let view = UICollectionView()
+        let layout = UICollectionViewFlowLayout()
+        let cellSize: CGFloat = self.bounds.width / 0.5
+        
+        layout.minimumInteritemSpacing = 5
+        layout.itemSize = CGSize(width: cellSize, height: 150)
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+       
+        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.backgroundColor = .mainBackGroundColor
         return view
     }()
+    
     //MARK: -- bottomView
     
+    func collectionViewConfigure() {
+        todoCollectionView.
+    }
     
     override func configureUI() {
         todoView.addSubview(todoImage)
@@ -159,6 +159,7 @@ class MainView: BaseView {
         quickNoteView.addSubview(quickNoteLabel)
         
         bottomView.addSubview(dateLabel)
+        bottomView.addSubview(addColCellBtn)
         bottomView.addSubview(boundaryLine)
         bottomView.addSubview(todoCollectionView)
         
@@ -250,7 +251,13 @@ class MainView: BaseView {
         
         dateLabel.snp.makeConstraints { make in
             make.top.equalTo(bottomView.snp.top).offset(12)
-            make.leading.trailing.equalTo(bottomView.safeAreaLayoutGuide)
+            make.leading.equalTo(bottomView.safeAreaLayoutGuide).offset(4)
+        }
+        
+        addColCellBtn.snp.makeConstraints { make in
+            make.top.trailing.equalTo(bottomView.safeAreaLayoutGuide)
+            make.bottom.equalTo(boundaryLine.snp.top).offset(8)
+            make.width.equalTo(80)
         }
         
         boundaryLine.snp.makeConstraints { make in
@@ -260,7 +267,7 @@ class MainView: BaseView {
             make.height.equalTo(1)
         }
         
-        todoTableView.snp.makeConstraints { make in
+        todoCollectionView.snp.makeConstraints { make in
             make.top.equalTo(boundaryLine.snp.bottom)
             make.leading.trailing.bottom.equalTo(bottomView.safeAreaLayoutGuide)
         }

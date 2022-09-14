@@ -34,15 +34,7 @@ final class CalendarView: BaseView {
     let calendarToDOView: UIView = {
         let view = UIView()
         view.backgroundColor = .mainBackGroundColor
-        view.layer.cornerRadius = 10
-        
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.mainBackGroundColor.cgColor
-        
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize(width: 3, height: 3)
-        view.layer.shadowOpacity = 0.7
-        view.layer.shadowRadius = 4.0
+        shadowEffect(view: view)
         return view
     }()
     
@@ -73,64 +65,11 @@ final class CalendarView: BaseView {
     }()
     //MARK: -- todo
     
-    //MARK: -- habit
-    let calendarHabitView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .mainBackGroundColor
-        view.layer.cornerRadius = 10
-        
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.mainBackGroundColor.cgColor
-        
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize(width: 3, height: 3)
-        view.layer.shadowOpacity = 0.7
-        view.layer.shadowRadius = 4.0
-        return view
-    }()
-    
-    let habitImage: UIImageView = {
-        let view = UIImageView()
-        view.image = UIImage(named: "HabitList")
-        view.contentMode = .scaleAspectFit
-        return view
-    }()
-    
-    let habitTextLabel: UILabel = {
-        let view = UILabel()
-        view.text = "습관 관리 목록 개수"
-        view.font = .boldFont(size: 15)
-        return view
-    }()
-    
-    let habitCountLabel: UILabel = {
-        let view = UILabel()
-        view.text = "총 9건이 기록되어있습니다."
-        view.font = .mainFont(size: 15)
-        view.textColor = .lightGray
-        return view
-    }()
-    
-    let habitMoveImage: UIImageView = {
-        let view = UIImageView()
-        view.image = UIImage(systemName: "chevron.right")
-        return view
-    }()
-    //MARK: -- habit
-    
     //MARK: -- quickNote
     let calendarQuickNoteView: UIView = {
         let view = UIView()
         view.backgroundColor = .mainBackGroundColor
-        view.layer.cornerRadius = 10
-        
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.mainBackGroundColor.cgColor
-        
-        view.layer.shadowColor = UIColor.black.cgColor
-        view.layer.shadowOffset = CGSize(width: 3, height: 3)
-        view.layer.shadowOpacity = 0.7
-        view.layer.shadowRadius = 4.0
+        shadowEffect(view: view)
         return view
     }()
     
@@ -169,17 +108,12 @@ final class CalendarView: BaseView {
         calendarToDOView.addSubview(todoCountLabel)
         calendarToDOView.addSubview(todoMoveImage)
         
-        calendarHabitView.addSubview(habitImage)
-        calendarHabitView.addSubview(habitTextLabel)
-        calendarHabitView.addSubview(habitCountLabel)
-        calendarHabitView.addSubview(habitMoveImage)
-        
         calendarQuickNoteView.addSubview(quickNoteImage)
         calendarQuickNoteView.addSubview(quickNoteTextLabel)
         calendarQuickNoteView.addSubview(quickNoteCountLabel)
         calendarQuickNoteView.addSubview(quickNoteMoveImage)
         
-        [calendar, calendarToDOView, calendarHabitView, calendarQuickNoteView].forEach {
+        [calendar, calendarToDOView, calendarQuickNoteView].forEach {
             self.addSubview($0)
         }
     }
@@ -222,40 +156,9 @@ final class CalendarView: BaseView {
 //        }
         //MARK: -- todo
         
-        //MARK: -- habit
-        calendarHabitView.snp.makeConstraints { make in
-            make.top.equalTo(calendarToDOView.snp.bottom).offset(12)
-            make.leading.equalTo(safeAreaLayoutGuide).offset(8)
-            make.trailing.equalTo(safeAreaLayoutGuide).offset(-8)
-            make.height.equalTo(80)
-        }
-        
-        habitImage.snp.makeConstraints { make in
-            make.top.leading.bottom.equalTo(calendarHabitView.safeAreaLayoutGuide)
-            make.width.equalTo(50)
-        }
-        
-        habitTextLabel.snp.makeConstraints { make in
-            make.top.equalTo(calendarHabitView.safeAreaLayoutGuide).offset(8)
-            make.leading.equalTo(habitImage.snp.trailing).offset(20)
-        }
-        
-        habitCountLabel.snp.makeConstraints { make in
-            make.top.equalTo(habitTextLabel.snp.bottom).offset(8)
-            make.leading.equalTo(habitImage.snp.trailing).offset(20)
-            make.bottom.equalTo(calendarHabitView.safeAreaLayoutGuide).offset(-8)
-        }
-        
-//        habitMoveImage.snp.makeConstraints { make in
-//            make.top.trailing.bottom.equalTo(calendarHabitView.safeAreaLayoutGuide)
-//            make.leading.equalTo(habitCountLabel.snp.trailing)
-//            make.width.equalTo(70)
-//        }
-        //MARK: -- habit
-        
         //MARK: -- quickNote
         calendarQuickNoteView.snp.makeConstraints { make in
-            make.top.equalTo(calendarHabitView.snp.bottom).offset(12)
+            make.top.equalTo(calendarToDOView.snp.bottom).offset(12)
             make.leading.equalTo(safeAreaLayoutGuide).offset(8)
             make.trailing.equalTo(safeAreaLayoutGuide).offset(-8)
             make.height.equalTo(80)

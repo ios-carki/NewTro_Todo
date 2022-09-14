@@ -38,6 +38,8 @@
 		C3D6454428D0ADEB00850505 /* Alert+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6454328D0ADEB00850505 /* Alert+Extension.swift */; };
 		C3D6454628D0DBD600850505 /* TodoWriteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6454528D0DBD600850505 /* TodoWriteView.swift */; };
 		C3D6454828D0DBE000850505 /* TodoWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6454728D0DBE000850505 /* TodoWriteViewController.swift */; };
+		C3D6454D28D1D59200850505 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6454C28D1D59200850505 /* UIView+Extension.swift */; };
+		C3D6455028D1E24A00850505 /* MainCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6454F28D1E24A00850505 /* MainCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -71,6 +73,8 @@
 		C3D6454328D0ADEB00850505 /* Alert+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Alert+Extension.swift"; sourceTree = "<group>"; };
 		C3D6454528D0DBD600850505 /* TodoWriteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoWriteView.swift; sourceTree = "<group>"; };
 		C3D6454728D0DBE000850505 /* TodoWriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoWriteViewController.swift; sourceTree = "<group>"; };
+		C3D6454C28D1D59200850505 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		C3D6454F28D1E24A00850505 /* MainCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +126,7 @@
 		C32FF06B28C70CE800949E05 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				C3D6454E28D1E23400850505 /* CustomCell */,
 				C32FF0A128CF13AF00949E05 /* NaviBar */,
 				C32FF07228C70E4A00949E05 /* PageView */,
 				C32FF06D28C70D0300949E05 /* BaseView.swift */,
@@ -172,6 +177,7 @@
 				C32FF08828C72EE300949E05 /* Color+Extension.swift */,
 				C32FF09028C9AE9900949E05 /* Font+Extension.swift */,
 				C3D6454328D0ADEB00850505 /* Alert+Extension.swift */,
+				C3D6454C28D1D59200850505 /* UIView+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -201,6 +207,14 @@
 				C32FF0A428CF149600949E05 /* SettingView.swift */,
 			);
 			path = NaviBar;
+			sourceTree = "<group>";
+		};
+		C3D6454E28D1E23400850505 /* CustomCell */ = {
+			isa = PBXGroup;
+			children = (
+				C3D6454F28D1E24A00850505 /* MainCollectionViewCell.swift */,
+			);
+			path = CustomCell;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -304,9 +318,11 @@
 				C32FF08428C7240F00949E05 /* ThirdView.swift in Sources */,
 				C32FF08028C7240300949E05 /* FirstView.swift in Sources */,
 				C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */,
+				C3D6454D28D1D59200850505 /* UIView+Extension.swift in Sources */,
 				C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */,
 				C32FF0A328CF13BA00949E05 /* CalendarView.swift in Sources */,
 				C32FF09128C9AE9900949E05 /* Font+Extension.swift in Sources */,
+				C3D6455028D1E24A00850505 /* MainCollectionViewCell.swift in Sources */,
 				C32FF09928CAB71300949E05 /* MainView.swift in Sources */,
 				C32FF08928C72EE300949E05 /* Color+Extension.swift in Sources */,
 			);

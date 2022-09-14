@@ -11,6 +11,8 @@ import UIKit
 class MainViewController: BaseViewController {
     
     let mainView = MainView()
+//    let colCell = MainCollectionViewCell()
+    var addColCell: [String] = []
     
     override func loadView() {
         self.view = mainView
@@ -21,6 +23,7 @@ class MainViewController: BaseViewController {
         
         view.backgroundColor = .mainBackGroundColor
         navigationSetting()
+        collectionSetting()
         todoTapGesture()
         quickNoteTapGesture()
     }
@@ -42,6 +45,12 @@ class MainViewController: BaseViewController {
         
         navigationItem.rightBarButtonItem = menuButton
         navigationItem.rightBarButtonItem?.tintColor = .orange
+    }
+    
+    func collectionSetting() {
+        mainView.todoCollectionView.register(MainCollectionViewCell.self, forCellWithReuseIdentifier: MainCollectionViewCell.identifier)
+        mainView.todoCollectionView.delegate = self
+        mainView.todoCollectionView.dataSource = self
     }
     
     func todoTapGesture() {
@@ -66,9 +75,6 @@ class MainViewController: BaseViewController {
     @objc func calendarButtonClicked() {
         let vc = CalendarViewController()
         let nav = UINavigationController(rootViewController: vc)
-//        nav.modalPresentationStyle = .popover
-//        nav.modalTransitionStyle = .flipHorizontal
-//        vc.modalTransitionStyle = .crossDissolve
         
         self.present(nav, animated: true)
     }
@@ -78,4 +84,19 @@ class MainViewController: BaseViewController {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+}
+
+extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return 2//addColCell.count
+    }
+
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.identifier, for: indexPath)
+        cell.backgroundColor = .red
+        
+        return cell
+    }
+
+
 }
