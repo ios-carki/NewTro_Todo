@@ -22,7 +22,6 @@ class MainViewController: BaseViewController {
         view.backgroundColor = .mainBackGroundColor
         navigationSetting()
         todoTapGesture()
-        habitTapGesture()
         quickNoteTapGesture()
     }
     
@@ -54,14 +53,6 @@ class MainViewController: BaseViewController {
         print("투두 클릭")
     }
     
-    func habitTapGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(habit))
-        mainView.habitView.addGestureRecognizer(tapGesture)
-    }
-    
-    @objc func habit() {
-        print("습관 클릭")
-    }
     
     func quickNoteTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(quickNote))

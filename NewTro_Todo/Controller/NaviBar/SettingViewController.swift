@@ -86,37 +86,26 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         case 0:
             cell?.accessoryType = .none
         case 1:
-            let title = "준비중입니다"
-            let message = "새로운 테마가 업데이트 예정입니다."
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let cancel = UIAlertAction(title: "확인", style: .cancel)
-            alert.addAction(cancel)
-            self.present(alert, animated: true)
+            customAlertSimple(title: "준비중입니다", message: "새로운 테마가 업데이트 예정입니다.", cancelButtonText: "확인")
         case 2:
-            let title = "백업 / 복구 / 초기화 선택"
-            let alert = UIAlertController(title: title, message: "", preferredStyle: .actionSheet)
             let backUP = UIAlertAction(title: "백업", style: .default) { action in
+                //백업 처리 구현해야됨
                 print("백업 눌림")
             }
             let restore = UIAlertAction(title: "복구", style: .default) { action in
+                //복구 처리 구현해야됨
                 print("복구 눌림")
             }
-            let clean = UIAlertAction(title: "초기화", style: .destructive) { action in
-                let title = "경고"
-                let message = "기기에 저장된 데이터가 삭제됩니다."
-                let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-                let ok = UIAlertAction(title: "데이터 삭제", style: .default)
-                let cancel = UIAlertAction(title: "취소", style: .cancel)
-                alert.addAction(ok)
-                alert.addAction(cancel)
-                self.present(alert, animated: true)
+            let clear = UIAlertAction(title: "초기화", style: .destructive) { action in
+                //초기화 처리 구현해야되는데 초기화는 신중해야되니 별도의 alert 추가
+                let ok = UIAlertAction(title: "데이터 삭제", style: .default) { action in
+                    //초기화 처리 구현해야됨
+                    print("데이터 초기화됨")
+                }
+                self.customAlert(title: "경고", message: "기기에 저장된 데이터가 삭제됩니다.", style: .alert, actions: ok)
             }
-            let cancel = UIAlertAction(title: "취소", style: .cancel)
-            alert.addAction((backUP))
-            alert.addAction(restore)
-            alert.addAction(clean)
-            alert.addAction(cancel)
-            self.present(alert, animated: true)
+            customActionSheet(title: "백업 / 복구 / 초기화 선택", message: nil, actions: backUP, restore, clear)
+
         case 3:
             cell?.accessoryType = .none
             sendMail()

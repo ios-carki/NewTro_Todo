@@ -14,7 +14,7 @@ final class CalendarView: BaseView {
     
     let calendar: FSCalendar = {
         let view = FSCalendar()
-        view.backgroundColor = .systemCyan
+        view.backgroundColor = .mainBackGroundColor
         view.scope = .month
         view.locale = Locale(identifier: "ko-KR")
         view.appearance.headerTitleFont = .mainFont(size: 20)
@@ -33,7 +33,16 @@ final class CalendarView: BaseView {
     //MARK: -- todo
     let calendarToDOView: UIView = {
         let view = UIView()
+        view.backgroundColor = .mainBackGroundColor
+        view.layer.cornerRadius = 10
         
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.mainBackGroundColor.cgColor
+        
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOffset = CGSize(width: 3, height: 3)
+        view.layer.shadowOpacity = 0.7
+        view.layer.shadowRadius = 4.0
         return view
     }()
     
@@ -67,7 +76,16 @@ final class CalendarView: BaseView {
     //MARK: -- habit
     let calendarHabitView: UIView = {
         let view = UIView()
+        view.backgroundColor = .mainBackGroundColor
+        view.layer.cornerRadius = 10
         
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.mainBackGroundColor.cgColor
+        
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOffset = CGSize(width: 3, height: 3)
+        view.layer.shadowOpacity = 0.7
+        view.layer.shadowRadius = 4.0
         return view
     }()
     
@@ -103,7 +121,16 @@ final class CalendarView: BaseView {
     //MARK: -- quickNote
     let calendarQuickNoteView: UIView = {
         let view = UIView()
+        view.backgroundColor = .mainBackGroundColor
+        view.layer.cornerRadius = 10
         
+        view.layer.borderWidth = 1
+        view.layer.borderColor = UIColor.mainBackGroundColor.cgColor
+        
+        view.layer.shadowColor = UIColor.black.cgColor
+        view.layer.shadowOffset = CGSize(width: 3, height: 3)
+        view.layer.shadowOpacity = 0.7
+        view.layer.shadowRadius = 4.0
         return view
     }()
     
@@ -166,92 +193,95 @@ final class CalendarView: BaseView {
         
         //MARK: -- todo
         calendarToDOView.snp.makeConstraints { make in
-            make.top.equalTo(calendar.snp.bottom)
-            make.leading.trailing.equalTo(safeAreaLayoutGuide)
-            make.height.equalTo(120)
+            make.top.equalTo(calendar.snp.bottom).offset(4)
+            make.leading.equalTo(safeAreaLayoutGuide).offset(8)
+            make.trailing.equalTo(safeAreaLayoutGuide).offset(-8)
+            make.height.equalTo(80)
         }
         
         todoImage.snp.makeConstraints { make in
             make.top.leading.bottom.equalTo(calendarToDOView.safeAreaLayoutGuide)
-            make.width.equalTo(70)
+            make.width.equalTo(50)
         }
         
         todoTextLabel.snp.makeConstraints { make in
-            make.top.equalTo(calendarToDOView.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(calendarToDOView.safeAreaLayoutGuide).offset(8)
             make.leading.equalTo(todoImage.snp.trailing).offset(20)
         }
         
         todoCountLabel.snp.makeConstraints { make in
-            make.top.equalTo(todoTextLabel.snp.bottom).offset(10)
+            make.top.equalTo(todoTextLabel.snp.bottom).offset(8)
             make.leading.equalTo(todoImage.snp.trailing).offset(20)
-            make.bottom.equalTo(calendarToDOView.safeAreaLayoutGuide).offset(-20)
+            make.bottom.equalTo(calendarToDOView.safeAreaLayoutGuide).offset(-8)
         }
         
-        todoMoveImage.snp.makeConstraints { make in
-            make.top.trailing.bottom.equalTo(calendarToDOView.safeAreaLayoutGuide)
-            make.leading.equalTo(todoCountLabel.snp.trailing)
-            make.width.equalTo(70)
-        }
+//        todoMoveImage.snp.makeConstraints { make in
+//            make.top.trailing.bottom.equalTo(calendarToDOView.safeAreaLayoutGuide)
+//            make.leading.equalTo(todoCountLabel.snp.trailing)
+//            make.width.equalTo(70)
+//        }
         //MARK: -- todo
         
         //MARK: -- habit
         calendarHabitView.snp.makeConstraints { make in
-            make.top.equalTo(calendarToDOView.snp.bottom)
-            make.leading.trailing.equalTo(safeAreaLayoutGuide)
-            make.height.equalTo(120)
+            make.top.equalTo(calendarToDOView.snp.bottom).offset(12)
+            make.leading.equalTo(safeAreaLayoutGuide).offset(8)
+            make.trailing.equalTo(safeAreaLayoutGuide).offset(-8)
+            make.height.equalTo(80)
         }
         
         habitImage.snp.makeConstraints { make in
             make.top.leading.bottom.equalTo(calendarHabitView.safeAreaLayoutGuide)
-            make.width.equalTo(70)
+            make.width.equalTo(50)
         }
         
         habitTextLabel.snp.makeConstraints { make in
-            make.top.equalTo(calendarHabitView.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(calendarHabitView.safeAreaLayoutGuide).offset(8)
             make.leading.equalTo(habitImage.snp.trailing).offset(20)
         }
         
         habitCountLabel.snp.makeConstraints { make in
-            make.top.equalTo(habitTextLabel.snp.bottom).offset(10)
+            make.top.equalTo(habitTextLabel.snp.bottom).offset(8)
             make.leading.equalTo(habitImage.snp.trailing).offset(20)
-            make.bottom.equalTo(calendarHabitView.safeAreaLayoutGuide).offset(-20)
+            make.bottom.equalTo(calendarHabitView.safeAreaLayoutGuide).offset(-8)
         }
         
-        habitMoveImage.snp.makeConstraints { make in
-            make.top.trailing.bottom.equalTo(calendarHabitView.safeAreaLayoutGuide)
-            make.leading.equalTo(habitCountLabel.snp.trailing)
-            make.width.equalTo(70)
-        }
+//        habitMoveImage.snp.makeConstraints { make in
+//            make.top.trailing.bottom.equalTo(calendarHabitView.safeAreaLayoutGuide)
+//            make.leading.equalTo(habitCountLabel.snp.trailing)
+//            make.width.equalTo(70)
+//        }
         //MARK: -- habit
         
         //MARK: -- quickNote
         calendarQuickNoteView.snp.makeConstraints { make in
-            make.top.equalTo(calendarHabitView.snp.bottom)
-            make.leading.trailing.equalTo(safeAreaLayoutGuide)
-            make.height.equalTo(120)
+            make.top.equalTo(calendarHabitView.snp.bottom).offset(12)
+            make.leading.equalTo(safeAreaLayoutGuide).offset(8)
+            make.trailing.equalTo(safeAreaLayoutGuide).offset(-8)
+            make.height.equalTo(80)
         }
         
         quickNoteImage.snp.makeConstraints { make in
             make.top.leading.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide)
-            make.width.equalTo(70)
+            make.width.equalTo(50)
         }
         
         quickNoteTextLabel.snp.makeConstraints { make in
-            make.top.equalTo(calendarQuickNoteView.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(calendarQuickNoteView.safeAreaLayoutGuide).offset(8)
             make.leading.equalTo(quickNoteImage.snp.trailing).offset(20)
         }
         
         quickNoteCountLabel.snp.makeConstraints { make in
-            make.top.equalTo(quickNoteTextLabel.snp.bottom).offset(10)
+            make.top.equalTo(quickNoteTextLabel.snp.bottom).offset(8)
             make.leading.equalTo(quickNoteImage.snp.trailing).offset(20)
-            make.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide).offset(-20)
+            make.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide).offset(-8)
         }
         
-        quickNoteMoveImage.snp.makeConstraints { make in
-            make.top.trailing.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide)
-            make.leading.equalTo(quickNoteCountLabel.snp.trailing)
-            make.width.equalTo(70)
-        }
+//        quickNoteMoveImage.snp.makeConstraints { make in
+//            make.top.trailing.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide)
+//            make.leading.equalTo(quickNoteCountLabel.snp.trailing)
+//            make.width.equalTo(70)
+//        }
         //MARK: -- quickNote
         
         
