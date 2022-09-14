@@ -12,7 +12,7 @@ class MainViewController: BaseViewController {
     
     let mainView = MainView()
 //    let colCell = MainCollectionViewCell()
-    var addColCell: [String] = []
+    var addColCell: [UICollectionViewCell] = []
     
     override func loadView() {
         self.view = mainView
@@ -20,12 +20,15 @@ class MainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        print(addColCell.count)
         view.backgroundColor = .mainBackGroundColor
         navigationSetting()
         collectionSetting()
         todoTapGesture()
         quickNoteTapGesture()
+        
+        mainView.addColCellBtn.addTarget(self, action: #selector(addColCellButtonClicked), for: .touchUpInside)
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -84,11 +87,24 @@ class MainViewController: BaseViewController {
         self.navigationController?.pushViewController(vc, animated: true)
     }
     
+    func addColCellButton() {
+        print("버튼눌림")
+        mainView.addColCellBtn.addTarget(self, action: #selector(addColCellButtonClicked), for: .touchUpInside)
+        print(addColCell.count)
+    }
+    
+    @objc func addColCellButtonClicked() {
+        print("버튼눌림")
+        addColCell.append(MainCollectionViewCell())
+        mainView.todoCollectionView.reloadData()
+        print(addColCell.count)
+    }
+    
 }
 
 extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 2//addColCell.count
+        return addColCell.count
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {

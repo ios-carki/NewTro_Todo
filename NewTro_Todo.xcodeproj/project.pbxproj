@@ -40,6 +40,7 @@
 		C3D6454828D0DBE000850505 /* TodoWriteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6454728D0DBE000850505 /* TodoWriteViewController.swift */; };
 		C3D6454D28D1D59200850505 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6454C28D1D59200850505 /* UIView+Extension.swift */; };
 		C3D6455028D1E24A00850505 /* MainCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6454F28D1E24A00850505 /* MainCollectionViewCell.swift */; };
+		C3D6455228D2346400850505 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455128D2346400850505 /* MainTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -75,6 +76,7 @@
 		C3D6454728D0DBE000850505 /* TodoWriteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoWriteViewController.swift; sourceTree = "<group>"; };
 		C3D6454C28D1D59200850505 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		C3D6454F28D1E24A00850505 /* MainCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainCollectionViewCell.swift; sourceTree = "<group>"; };
+		C3D6455128D2346400850505 /* MainTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -213,6 +215,7 @@
 			isa = PBXGroup;
 			children = (
 				C3D6454F28D1E24A00850505 /* MainCollectionViewCell.swift */,
+				C3D6455128D2346400850505 /* MainTableViewCell.swift */,
 			);
 			path = CustomCell;
 			sourceTree = "<group>";
@@ -300,6 +303,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C3D6455228D2346400850505 /* MainTableViewCell.swift in Sources */,
 				C3D6454628D0DBD600850505 /* TodoWriteView.swift in Sources */,
 				C32FF08628C724CF00949E05 /* BasePageView.swift in Sources */,
 				C32FF06E28C70D0300949E05 /* BaseView.swift in Sources */,
@@ -481,6 +485,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -511,6 +516,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

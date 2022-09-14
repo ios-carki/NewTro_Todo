@@ -132,13 +132,29 @@ class MainView: BaseView {
     }()
     
     let todoCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-        let cellSize: CGFloat = self.bounds.width / 0.5
+//        let layout = UICollectionViewFlowLayout()
+////        let cellSize: CGFloat = self.bounds.width / 0.5
+//
+//        layout.minimumInteritemSpacing = 5
+//        layout.itemSize = CGSize(width: 300, height: 400)
+//        layout.scrollDirection = .horizontal
+//        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+//
+//        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+//        view.backgroundColor = .mainBackGroundColor
+//        return view
         
+        let layout = UICollectionViewFlowLayout()
+                
+        //셀의 가로 넓이는 메인뷰의 여백을 제외한 넓이 * 보여주시고 싶은 비율
+        let cellSize: CGFloat = (UIScreen.main.bounds.width - 40) * 0.9
+        //높이는 추후에 delegate에서 수정!
+        layout.itemSize = CGSize(width: cellSize, height: 400)
+                
         layout.minimumInteritemSpacing = 5
-        layout.itemSize = CGSize(width: cellSize, height: 150)
+        layout.minimumLineSpacing = 5
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
        
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
         view.backgroundColor = .mainBackGroundColor
@@ -147,9 +163,9 @@ class MainView: BaseView {
     
     //MARK: -- bottomView
     
-    func collectionViewConfigure() {
-        todoCollectionView.
-    }
+//    func collectionViewConfigure() {
+//        todoCollectionView.
+//    }
     
     override func configureUI() {
         todoView.addSubview(todoImage)
