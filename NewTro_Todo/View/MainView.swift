@@ -119,8 +119,10 @@ class MainView: BaseView {
     
     let addColCellBtn: UIButton = {
         let view = UIButton()
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 30, weight: .light)
+        let image = UIImage(systemName: "pencil", withConfiguration: imageConfig)
         view.backgroundColor = .brown
-        view.setTitle("셀 추가", for: .normal)
+        view.setImage(image, for: .normal)
         return view
     }()
     
@@ -132,18 +134,6 @@ class MainView: BaseView {
     }()
     
     let todoCollectionView: UICollectionView = {
-//        let layout = UICollectionViewFlowLayout()
-////        let cellSize: CGFloat = self.bounds.width / 0.5
-//
-//        layout.minimumInteritemSpacing = 5
-//        layout.itemSize = CGSize(width: 300, height: 400)
-//        layout.scrollDirection = .horizontal
-//        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
-//
-//        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//        view.backgroundColor = .mainBackGroundColor
-//        return view
-        
         let layout = UICollectionViewFlowLayout()
                 
         //셀의 가로 넓이는 메인뷰의 여백을 제외한 넓이 * 보여주시고 싶은 비율
@@ -157,7 +147,7 @@ class MainView: BaseView {
         layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
        
         let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.backgroundColor = .mainBackGroundColor
+        view.backgroundColor = .red
         return view
     }()
     

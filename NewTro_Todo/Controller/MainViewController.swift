@@ -20,7 +20,10 @@ class MainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        //MARK: -- Print
         print(addColCell.count)
+        print("Realm is located at:", Todo.localRealm.configuration.fileURL!)
+        //MARK: -- Print
         view.backgroundColor = .mainBackGroundColor
         navigationSetting()
         collectionSetting()
@@ -109,10 +112,12 @@ extension MainViewController: UICollectionViewDelegate, UICollectionViewDataSour
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MainCollectionViewCell.identifier, for: indexPath)
-        cell.backgroundColor = .red
+        
         
         return cell
     }
+    
+    
 
 
 }
