@@ -10,7 +10,6 @@ import Foundation
 import RealmSwift
 
 class Todo: Object {
-    static let localRealm = try! Realm()
     
     @Persisted var todo: String?
     @Persisted var importance: Int
@@ -24,4 +23,6 @@ class Todo: Object {
         self.importance = importance
         self.regDate = regDate
     }
+    
+    
 }

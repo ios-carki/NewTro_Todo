@@ -117,15 +117,6 @@ class MainView: BaseView {
         return view
     }()
     
-    let addColCellBtn: UIButton = {
-        let view = UIButton()
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 30, weight: .light)
-        let image = UIImage(systemName: "pencil", withConfiguration: imageConfig)
-        view.backgroundColor = .brown
-        view.setImage(image, for: .normal)
-        return view
-    }()
-    
     let boundaryLine: UIView = {
         let view = UIView()
         view.layer.borderColor = UIColor.black.cgColor
@@ -133,23 +124,28 @@ class MainView: BaseView {
         return view
     }()
     
-    let todoCollectionView: UICollectionView = {
-        let layout = UICollectionViewFlowLayout()
-                
-        //셀의 가로 넓이는 메인뷰의 여백을 제외한 넓이 * 보여주시고 싶은 비율
-        let cellSize: CGFloat = (UIScreen.main.bounds.width - 40) * 0.9
-        //높이는 추후에 delegate에서 수정!
-        layout.itemSize = CGSize(width: cellSize, height: 400)
-                
-        layout.minimumInteritemSpacing = 5
-        layout.minimumLineSpacing = 5
-        layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-       
-        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        view.backgroundColor = .red
+    let tableView: UITableView = {
+        let view = UITableView()
         return view
     }()
+    
+//    let todoCollectionView: UICollectionView = {
+//        let layout = UICollectionViewFlowLayout()
+//
+//        //셀의 가로 넓이는 메인뷰의 여백을 제외한 넓이 * 보여주시고 싶은 비율
+//        let cellSize: CGFloat = (UIScreen.main.bounds.width - 40) * 0.9
+//        //높이는 추후에 delegate에서 수정!
+//        layout.itemSize = CGSize(width: cellSize, height: 400)
+//
+//        layout.minimumInteritemSpacing = 5
+//        layout.minimumLineSpacing = 5
+//        layout.scrollDirection = .horizontal
+//        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+//
+//        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
+//        view.backgroundColor = .red
+//        return view
+//    }()
     
     //MARK: -- bottomView
     
@@ -165,9 +161,8 @@ class MainView: BaseView {
         quickNoteView.addSubview(quickNoteLabel)
         
         bottomView.addSubview(dateLabel)
-        bottomView.addSubview(addColCellBtn)
         bottomView.addSubview(boundaryLine)
-        bottomView.addSubview(todoCollectionView)
+        bottomView.addSubview(tableView)
         
         [todoView, quickNoteView, bottomView, mainBackgroundImage, coinImage, coinCountLabel, heartImage1, heartImage2, heartImage3].forEach {
             self.addSubview($0)
@@ -260,12 +255,6 @@ class MainView: BaseView {
             make.leading.equalTo(bottomView.safeAreaLayoutGuide).offset(4)
         }
         
-        addColCellBtn.snp.makeConstraints { make in
-            make.top.trailing.equalTo(bottomView.safeAreaLayoutGuide)
-            make.bottom.equalTo(boundaryLine.snp.top).offset(8)
-            make.width.equalTo(80)
-        }
-        
         boundaryLine.snp.makeConstraints { make in
             make.top.equalTo(dateLabel.snp.bottom).offset(8)
             make.leading.equalTo(bottomView.safeAreaLayoutGuide).offset(8)
@@ -273,7 +262,7 @@ class MainView: BaseView {
             make.height.equalTo(1)
         }
         
-        todoCollectionView.snp.makeConstraints { make in
+        tableView.snp.makeConstraints { make in
             make.top.equalTo(boundaryLine.snp.bottom)
             make.leading.trailing.bottom.equalTo(bottomView.safeAreaLayoutGuide)
         }

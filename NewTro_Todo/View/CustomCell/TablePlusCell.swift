@@ -9,9 +9,12 @@ import Foundation
 import UIKit
 
 import SnapKit
+import RealmSwift
 
 class TablePlusCell: UITableViewCell {
     static let identifier = "tablePlusCell"
+    let localRealm = try! Realm()
+    let mainView = MainView()
     
     @objc let plusButton: UIButton = {
         let view = UIButton()
@@ -24,8 +27,13 @@ class TablePlusCell: UITableViewCell {
         return view
     }()
     
-    var test: ( () -> () )?
-    
+    var reloadCell: ( () -> () )?
+    var tasks: Results<Todo>! {
+        didSet {
+            //mainView.tableView.reloadSections(IndexSet(0...0), with: .automatic)
+            print("데이터 변함!")
+        }
+    }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -49,17 +57,34 @@ class TablePlusCell: UITableViewCell {
         }
     }
     
+    func updateItem(item: Todo, todo: String?, importance: Int, regDate: Date) {
+        do {
+            try localRealm.write({
+                item.todo = todo
+                item.importance = importance
+                item.regDate = regDate
+            })
+        } catch let error {
+            print(error)
+        }
+    }
+    
     @objc func plusButtonClicked() {
         print("셀 추가버튼 눌림")
-        MainCollectionViewCell.tableTodoData.append(TablePlusCell.identifier)
-        MainCollectionViewCell().todoTableView.snp.makeConstraints { make in
-            make.height.equalTo(MainCollectionViewCell().todoTableView.contentSize.height)
-        }
-//        MainCollectionViewCell().todoTableView.reloadSections(IndexSet(0...0), with: .automatic)
-        MainCollectionViewCell().todoTableView.reloadData()
-        test?()
+//        MainViewController.addTableCell.append(TablePlusCell.identifier)
+//        tasks.append()
+        
+        let task = Todo(todo: "", importance: 0, regDate: Date())
+        
+        try! localRealm.write({
+            localRealm.add(task)
+        })
+        
+        //mainView.tableView.reloadSections(IndexSet(0...0), with: .automatic)
+        //print("추가버튼 누르고 배열속 배열 확인용: ", MainViewController.addTableCell)
+        reloadCell?()
         //
-        print(MainCollectionViewCell.tableTodoData.count)
+        //print(MainViewController.addTableCell.count)
     }
     
 }
