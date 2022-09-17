@@ -3,7 +3,7 @@
 |일자|내용|새로 알게된 내용|어려웠던 점|이미지 링크
 |----------|--------------------|--------------------|--------------------|----------
 |2022.09.06|페이지 뷰 완성|도트 제작 사이트|테스트3|[페이지뷰](https://user-images.githubusercontent.com/44957712/190864376-28b88f4e-c7e5-42fc-af4b-14552e2733c8.png)
-|2022.09.07|메인 UI / 바버튼 UI||테스트3|[메인뷰](https://user-images.githubusercontent.com/44957712/190864898-98c5903a-dcdc-46d6-a3fe-7778819c0b99.png)
+|2022.09.07|메인 UI / 바버튼 UI||테스트3|
 |2022.09.08 ~ 2022.09.09|설정뷰 UI||테스트3|[설정뷰](https://user-images.githubusercontent.com/44957712/190864934-2f8be7e6-4ef5-436d-bc69-d6b7ecaaa580.png)
 |2022.09.11 ~ 2022.09.12|설정뷰 데이터복구 얼럿||테스트3|[데이터복구 얼럿](https://user-images.githubusercontent.com/44957712/190864944-5dba850e-1c15-4a76-bd28-59f37b671931.png)
 |2022.09.13|중복코드 줄이기 <br/>- Extension 활용||테스트3|[달력뷰](https://user-images.githubusercontent.com/44957712/190865252-6c8db32e-0c61-4fbd-a6ff-83c624d4e298.png)
