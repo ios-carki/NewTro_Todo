@@ -11,6 +11,7 @@
 |2022.09.15|메인 UI 커스텀 셀|일정 즐겨찾기 등록시 보관함으로<br/>들어가는 애니메이션 구상|컬렉션<br/>컬렉션, 테이블뷰 분기처리<br/>갱신|
 |2022.09.16|메인뷰 컬렉션뷰 삭제<br/>테이블뷰 단독 사용으로 변경||셀 추가 버튼 기능구현<br/>테이블뷰 갱신시점<br/>Realm CRUD|[변경 메인뷰](https://user-images.githubusercontent.com/44957712/190865170-9416c934-5c7f-48cb-9e91-498df667f729.png)
 |2022.09.17|Realm 쿼리 로직변경|ID값을 통한 데이터 업데이트|데이터 추가, 변경|
+|2022.09.18|캘린더뷰(이미지참고)|String, Int 비교속도|Realm데이터 상 원하는<br/>컬럼만 가져오기|[고민중인 중요도 배치](https://user-images.githubusercontent.com/44957712/190911198-dde39e4b-84b0-4245-8050-5471d6910afe.png)<br/>[캘린더뷰](https://user-images.githubusercontent.com/44957712/190911363-09dbbbad-ab9e-4e4c-b9cd-d301a75b262f.png)
 
 2022.09.18 - 데이터상에 저장된 시간데이터(UTC)를 데이트 포맷 형식에 맞춰서 READ할 수 있는지<br/>
             -해결: 동일한 시간의 데이터를 String타입의 컬럼을 추가하는 식으로 해결<br/>
