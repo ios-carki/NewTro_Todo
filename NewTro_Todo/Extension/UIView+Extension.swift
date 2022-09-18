@@ -20,4 +20,13 @@ extension UIView {
         view.layer.shadowOpacity = 0.7
         view.layer.shadowRadius = 4.0
     }
+    
+    static func dateFormat(formatType: String) -> String {
+        let nowDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = formatType
+        
+        let convertDate = dateFormatter.string(from: nowDate)
+        return convertDate
+    }
 }

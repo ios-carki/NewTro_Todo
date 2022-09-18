@@ -27,8 +27,9 @@ class MainView: BaseView {
     
     let coinCountLabel: UILabel = {
         let view = UILabel()
+        
         view.font = .boldFont(size: 20)
-        view.text = "00" + "\(Int.random(in: 100...10000))"
+        view.text = dateFormat(formatType: "yyMMdd")
         view.textColor = .coinCountLabelColor
         return view
     }()
@@ -110,7 +111,8 @@ class MainView: BaseView {
     
     let dateLabel: UILabel = {
         let view = UILabel()
-        view.text = "오늘날짜"
+        
+        view.text = dateFormat(formatType: "yyyy년 M월 d일")
         view.font = .boldFont(size: 30)
         view.textColor = .black
         view.textAlignment = .left
@@ -244,7 +246,7 @@ class MainView: BaseView {
         //MARK: -- QuickNote
         
         bottomView.snp.makeConstraints { make in
-            make.top.equalTo(todoView.snp.bottom).offset(8)
+            make.top.equalTo(todoView.snp.bottom).offset(12)
             make.leading.equalTo(safeAreaLayoutGuide).offset(20)
             make.trailing.equalTo(safeAreaLayoutGuide).offset(-20)
             make.bottom.equalTo(mainBackgroundImage.snp.top)
@@ -268,4 +270,5 @@ class MainView: BaseView {
         }
         
     }
+    
 }

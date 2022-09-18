@@ -73,8 +73,15 @@ class TablePlusCell: UITableViewCell {
         print("셀 추가버튼 눌림")
 //        MainViewController.addTableCell.append(TablePlusCell.identifier)
 //        tasks.append()
-        
-        let task = Todo(todo: "", importance: 0, regDate: Date())
+        let nowDate = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_KR")
+        dateFormatter.timeZone = TimeZone(abbreviation: "KST")
+        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+        let convertDate = dateFormatter.string(from: nowDate)
+//
+//        let formattedNowDate = dateFormatter
+        let task = Todo(todo: "", importance: 0, regDate: Date(), stringDate: convertDate)
         
         try! localRealm.write({
             localRealm.add(task)

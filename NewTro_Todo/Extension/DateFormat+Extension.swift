@@ -6,14 +6,15 @@
 //
 
 import Foundation
+import UIKit
 
-class DateFormat {
-    
-    func realmDateFormat() {
+extension UILabel {
+    func realmDateFormat() -> String {
         let nowDate = Date()
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "MM월 dd일 hh시 mm분"
+        dateFormatter.dateFormat = "yyMMdd"
         
         let convertDate = dateFormatter.string(from: nowDate)
+        return convertDate
     }
 }
