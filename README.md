@@ -12,7 +12,7 @@
 |2022.09.16|메인뷰 컬렉션뷰 삭제<br/>테이블뷰 단독 사용으로 변경||셀 추가 버튼 기능구현<br/>테이블뷰 갱신시점<br/>Realm CRUD|[변경 메인뷰](https://user-images.githubusercontent.com/44957712/190865170-9416c934-5c7f-48cb-9e91-498df667f729.png)
 |2022.09.17|Realm 쿼리 로직변경|ID값을 통한 데이터 업데이트|데이터 추가, 변경|
 |2022.09.18|캘린더뷰(이미지참고)<br/>중요도 배치 고민|String, Int 비교속도|Realm데이터 상 원하는<br/>컬럼만 가져오기|[중요도1](https://user-images.githubusercontent.com/44957712/190911198-dde39e4b-84b0-4245-8050-5471d6910afe.png)<br/>[중요도2](https://user-images.githubusercontent.com/44957712/190912589-24bf0d02-5a2c-4ba9-8eac-f20bd4952924.png)<br/>[중요도3](https://user-images.githubusercontent.com/44957712/190917010-e960f6d5-f076-4414-a131-24f617c2a9c4.png)<br/>[캘린더뷰](https://user-images.githubusercontent.com/44957712/190911363-09dbbbad-ab9e-4e4c-b9cd-d301a75b262f.png)
-|2022.09.19|오늘 날짜에 맞는 메인뷰|원하는 데이터에 맞춰서 데이터 정렬|Date 값전달|
+|2022.09.19|오늘 날짜에 맞는 메인뷰|원하는 데이터에 맞춰서 데이터 정렬|Date 값전달|[Date값전달 오류](https://user-images.githubusercontent.com/44957712/191012509-b9858e30-83e5-4312-a2ac-5f7cabae5f01.png)
 
 2022.09.18 <br/>
 -1. 데이터상에 저장된 시간데이터(UTC)를 데이트 포맷 형식에 맞춰서 READ할 수 있는지<br/>
@@ -27,3 +27,10 @@
 
 2022.09.19 <br/>
 -1. 이동된 날짜(메인뷰 - <, > 버튼)에 따른 TablePlusCell의 Date() 변수에 MainViewController의 pickNowDate 값에 대한<br/> 값전달이 제대로 이루어지지 않아서 어려움을 겪음(프로퍼티를 이용한 값전달 사용)
+
+
+
+
+
+
+
