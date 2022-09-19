@@ -28,6 +28,6 @@
 2022.09.19 <br/>
 -1. 이동된 날짜(메인뷰 - <, > 버튼)에 따른 TablePlusCell의 Date() 변수에 MainViewController의 pickNowDate 값에 대한<br/> 값전달이 제대로 이루어지지 않아서 어려움을 겪음(프로퍼티를 이용한 값전달 사용)
 
-
+ 
 
 
