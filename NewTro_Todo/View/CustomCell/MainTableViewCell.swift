@@ -37,7 +37,7 @@ class MainTableViewCell: UITableViewCell {
     
     let importanceView: UIView = {
         let view = UIView()
-        view.backgroundColor = .red
+        view.backgroundColor = .white
         
         return view
     }()

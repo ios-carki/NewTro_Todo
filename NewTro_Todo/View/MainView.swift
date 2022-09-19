@@ -109,13 +109,25 @@ class MainView: BaseView {
         return view
     }()
     
-    let dateLabel: UILabel = {
-        let view = UILabel()
-        
-        view.text = dateFormat(formatType: "yyyy년 M월 d일")
-        view.font = .boldFont(size: 30)
-        view.textColor = .black
-        view.textAlignment = .left
+    //추가
+    let leftButton: UIButton = {
+        let view = UIButton()
+        view.setImage(UIImage(systemName: "arrowtriangle.left.fill"), for: .normal)
+        return view
+    }()
+    
+    let datePickBtn: UIButton = {
+        let view = UIButton()
+        view.setTitle(dateFormat(formatType: "yyyy년 MM월 dd일"), for: .normal)
+        view.titleLabel?.font = .boldFont(size: 17)
+        view.titleLabel?.textAlignment = .center
+        view.titleLabel?.textColor = .black
+        return view
+    }()
+    
+    let rightButton: UIButton = {
+        let view = UIButton()
+        view.setImage(UIImage(systemName: "arrowtriangle.right.fill"), for: .normal)
         return view
     }()
     
@@ -162,7 +174,9 @@ class MainView: BaseView {
         quickNoteView.addSubview(quickNoteImage)
         quickNoteView.addSubview(quickNoteLabel)
         
-        bottomView.addSubview(dateLabel)
+        bottomView.addSubview(leftButton)
+        bottomView.addSubview(datePickBtn)
+        bottomView.addSubview(rightButton)
         bottomView.addSubview(boundaryLine)
         bottomView.addSubview(tableView)
         
@@ -252,13 +266,23 @@ class MainView: BaseView {
             make.bottom.equalTo(mainBackgroundImage.snp.top)
         }
         
-        dateLabel.snp.makeConstraints { make in
-            make.top.equalTo(bottomView.snp.top).offset(12)
-            make.leading.equalTo(bottomView.safeAreaLayoutGuide).offset(4)
+        leftButton.snp.makeConstraints { make in
+            make.top.leading.equalToSuperview().offset(12)
+            make.bottom.equalTo(boundaryLine.snp.top).offset(-8)
         }
         
+        datePickBtn.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(12)
+            make.centerX.equalToSuperview()
+            make.bottom.equalTo(boundaryLine.snp.top).offset(-8)
+        }
+        
+        rightButton.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(12)
+            make.bottom.equalTo(boundaryLine.snp.top).offset(-8)
+            make.trailing.equalToSuperview().offset(-12)
+        }
         boundaryLine.snp.makeConstraints { make in
-            make.top.equalTo(dateLabel.snp.bottom).offset(8)
             make.leading.equalTo(bottomView.safeAreaLayoutGuide).offset(8)
             make.trailing.equalTo(bottomView.safeAreaLayoutGuide).offset(-8)
             make.height.equalTo(1)

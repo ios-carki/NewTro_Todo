@@ -23,11 +23,11 @@ final class CalendarViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        calendarSetting()
-        let todoCount = localRealm.objects(Todo.self).count
+        let date = Date()
+        
         view.backgroundColor = .mainBackGroundColor
-        print("저장데이터 확인용: ", localRealm.objects(Todo.self).count)
-        mainView.todoCountLabel.text = "총 \(todoCount)건이 기록되어 있습니다."
+        calendarSetting()
+        mainView.todoCountLabel.text = "총 \(dateCounter(date: date))건이 기록되어 있습니다."
     }
     
     func calendarSetting() {

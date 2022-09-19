@@ -16,6 +16,11 @@ class TablePlusCell: UITableViewCell {
     let localRealm = try! Realm()
     let mainView = MainView()
     
+    
+    var nowDate = Date()
+    //메인에서 받아오는 선택된 날짜
+    var receivedNowDate = Date()
+    
     @objc let plusButton: UIButton = {
         let view = UIButton()
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 15, weight: .light)
@@ -37,6 +42,7 @@ class TablePlusCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        print("셀추가 누르기 전 받은 데이트", receivedNowDate)
         configure()
         setLayout()
         plusButton.addTarget(self, action: #selector(plusButtonClicked), for: .touchUpInside)
@@ -73,18 +79,20 @@ class TablePlusCell: UITableViewCell {
         print("셀 추가버튼 눌림")
 //        MainViewController.addTableCell.append(TablePlusCell.identifier)
 //        tasks.append()
-        let nowDate = Date()
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "ko_KR")
         dateFormatter.timeZone = TimeZone(abbreviation: "KST")
         dateFormatter.dateFormat = "yyyy년 MM월 dd일"
-        let convertDate = dateFormatter.string(from: nowDate)
+        let convertDate = dateFormatter.string(from: receivedNowDate)
 //
+        
 //        let formattedNowDate = dateFormatter
-        let task = Todo(todo: "", importance: 0, regDate: Date(), stringDate: convertDate)
+        let task = Todo(todo: "", importance: 0, regDate: receivedNowDate, stringDate: convertDate)
         
         try! localRealm.write({
             localRealm.add(task)
+            print("변환날짜", convertDate)
+            print("데이터 애드 될때 받은 데이트", receivedNowDate)
         })
         
         //mainView.tableView.reloadSections(IndexSet(0...0), with: .automatic)

@@ -47,13 +47,15 @@ final class CalendarView: BaseView {
     
     let todoTextLabel: UILabel = {
         let view = UILabel()
-        view.text = "할 일 목록 개수"
+        view.text = "작성된 할 일 목록"
+        view.font = .mainFont(size: 20)
         return view
     }()
     
     let todoCountLabel: UILabel = {
         let view = UILabel()
         view.text = "총 10건이 기록되어있습니다."
+        view.font = .mainFont(size: 15)
         view.textColor = .lightGray
         return view
     }()
@@ -139,7 +141,7 @@ final class CalendarView: BaseView {
         }
         
         todoTextLabel.snp.makeConstraints { make in
-            make.top.equalTo(calendarToDOView.safeAreaLayoutGuide).offset(8)
+            make.top.equalTo(calendarToDOView.safeAreaLayoutGuide).offset(12)
             make.leading.equalTo(todoImage.snp.trailing).offset(20)
         }
         
@@ -170,7 +172,7 @@ final class CalendarView: BaseView {
         }
         
         quickNoteTextLabel.snp.makeConstraints { make in
-            make.top.equalTo(calendarQuickNoteView.safeAreaLayoutGuide).offset(8)
+            make.top.equalTo(calendarQuickNoteView.safeAreaLayoutGuide).offset(12)
             make.leading.equalTo(quickNoteImage.snp.trailing).offset(20)
         }
         
