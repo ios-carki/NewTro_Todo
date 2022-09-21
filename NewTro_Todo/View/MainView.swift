@@ -140,6 +140,7 @@ class MainView: BaseView {
     
     let tableView: UITableView = {
         let view = UITableView()
+        view.backgroundColor = .white
         return view
     }()
     

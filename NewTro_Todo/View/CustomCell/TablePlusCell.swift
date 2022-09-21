@@ -19,6 +19,8 @@ class TablePlusCell: UITableViewCell {
     
     var nowDate = Date()
     //메인에서 받아오는 선택된 날짜
+//    var receivedNowDate = Date()
+//    var receivedNowDate: Date?
     var receivedNowDate = Date()
     
     @objc let plusButton: UIButton = {
@@ -87,7 +89,7 @@ class TablePlusCell: UITableViewCell {
 //
         
 //        let formattedNowDate = dateFormatter
-        let task = Todo(todo: "", importance: 0, regDate: receivedNowDate, stringDate: convertDate)
+        let task = Todo(todo: "", favorite: false, importance: 0, regDate: receivedNowDate, stringDate: convertDate)
         
         try! localRealm.write({
             localRealm.add(task)

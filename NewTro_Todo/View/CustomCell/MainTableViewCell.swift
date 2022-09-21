@@ -46,6 +46,8 @@ class MainTableViewCell: UITableViewCell {
         let view = UIButton()
         view.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
         view.tintColor = .black
+        //UIMenu터치 한번에
+        //view.showsMenuAsPrimaryAction = true
         return view
     }()
     
@@ -275,3 +277,4 @@ extension MainTableViewCell: UITextFieldDelegate {
     }
     
 }
+
