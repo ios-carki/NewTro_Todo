@@ -13,7 +13,7 @@
 |2022.09.17|Realm 쿼리 로직변경|ID값을 통한 데이터 업데이트|데이터 추가, 변경|
 |2022.09.18|캘린더뷰(이미지참고)<br/>중요도 배치 고민|String, Int 비교속도|Realm데이터 상 원하는<br/>컬럼만 가져오기|[중요도1](https://user-images.githubusercontent.com/44957712/190911198-dde39e4b-84b0-4245-8050-5471d6910afe.png)<br/>[중요도2](https://user-images.githubusercontent.com/44957712/190912589-24bf0d02-5a2c-4ba9-8eac-f20bd4952924.png)<br/>[중요도3](https://user-images.githubusercontent.com/44957712/190917010-e960f6d5-f076-4414-a131-24f617c2a9c4.png)<br/>[캘린더뷰](https://user-images.githubusercontent.com/44957712/190911363-09dbbbad-ab9e-4e4c-b9cd-d301a75b262f.png)
 |2022.09.19|오늘 날짜에 맞는 메인뷰|원하는 데이터에 맞춰서 데이터 정렬|Date 값전달|[Date값전달 오류](https://user-images.githubusercontent.com/44957712/191014148-01adafd0-bcc1-4f96-bd2f-22a954c804d3.png)
-|2022.09.20|- 앱 테마 컨센 살리기<br/>- 셀 세부설정(이미지 참고)<br/>- 멘토링을 통한<br/>앱 업데이트 방향성|||[셀 디테일 설정 버튼](https://user-images.githubusercontent.com/44957712/191313969-9860c9a0-5d11-4d0f-88f5-d43285487ad6.png)
+|2022.09.20|- 앱 테마 컨센 살리기<br/>- 셀 세부설정(이미지 참고)<br/>- 멘토링을 통한<br/>앱 업데이트 방향성||- 셀의 상세뷰 버튼에 대한<br/>인덱스 가져오기|[셀 디테일 설정 버튼](https://user-images.githubusercontent.com/44957712/191313969-9860c9a0-5d11-4d0f-88f5-d43285487ad6.png)
 
 2022.09.18 <br/>
 -1. 데이터상에 저장된 시간데이터(UTC)를 데이트 포맷 형식에 맞춰서 READ할 수 있는지<br/>
