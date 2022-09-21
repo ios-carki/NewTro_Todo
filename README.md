@@ -57,4 +57,22 @@
 
 ### 2022 09 21
 #### 화면전환시 테이블뷰 리로드<br/>
+셀에 대한 세부설정 중 셀 삭제기능구현 중 셀을 삭제하면 팝업뷰가 자동으로 dismiss됨<br/>
+하지만 dismiss이후에 메인뷰의 테이블뷰가 갱신이 되지않아, 다른뷰로 이동후 다시 돌아오면 그때서야 갱신이 되는문제가 발생함<br/>
+테이블 뷰에대한 갱신시점이 문제인가 싶어서 뷰의 라이프사이클, 상세설정뷰의 기능(중요도, 즐겨찾기, 삭제)메서드 내에서 리로드를 해주었지만<br/>
+문제가 해결되지 않아서 해결방법을 찾아보기 시작함<br/>
+여기서 알게된 것은 바로 NotificationCenter이다.<br/>
+커스텀 팝업뷰(상세설정뷰)를 VC1, 메인뷰(dismiss된 이후에 보여지는 메인뷰)를 VC2라고 한다면<br/>
+모달이 dismiss될때 NotificationCenter를 보내주려고 한다.<br/><br/>
+1. NotificationCenter Post<br/>
+VC1의 뷰가 사라지기 전(viewWillDisappear에서 다음과 같은 코드를 작성해주었다)<br/>
+<img width="700" alt="스크린샷 2022-09-22 오전 1 49 47" src="https://user-images.githubusercontent.com/44957712/191564429-867ed202-01ef-4676-a1dc-e098d7875298.png">
+<br/>
+Notification을 보냇으면 이것을 받아오는 과정도 필요하다<br/><br/>
+2. NotificationCenter AddObserver<br/>
+VC2의 viewDidLoad에 다음과 같은 옵저버를 추가해줬다.(주의: Post시의 노티피케이션 네임과 동일한 이름 작성)<br/><br/>
+<img width="700" alt="스크린샷 2022-09-22 오전 1 56 51" src="https://user-images.githubusercontent.com/44957712/191565853-b8bc218f-952e-46fb-97b0-2e0510e47129.png"><br/><br/>
+<img width="543" alt="스크린샷 2022-09-22 오전 1 58 47" src="https://user-images.githubusercontent.com/44957712/191566211-c533005a-b30e-45cd-b84a-febdec80d586.png"><br/><br/>
+
+<br/>
 컬러셋, 다국어대응 미리하기
