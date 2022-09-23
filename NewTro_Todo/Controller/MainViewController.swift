@@ -23,6 +23,8 @@ class MainViewController: BaseViewController {
     var pickedNowDate = Date()
     //데이트포맷 다 바꾸기
     let dateFormatter = DateFormatter()
+    
+    
     //MARK: -
     static var addTableCell: [String] = []
     
@@ -53,6 +55,21 @@ class MainViewController: BaseViewController {
         
         mainView.rightButton.addTarget(self, action: #selector(tomorrowFunc), for: .touchUpInside)
         mainView.leftButton.addTarget(self, action: #selector(yesterdayFunc), for: .touchUpInside)
+        
+        //셀 삭제 노티
+        NotificationCenter.default.addObserver(
+          self,
+          selector: #selector(self.didDismissDetailNotification(_:)),
+          name: NSNotification.Name("DismissDetailView"),
+          object: nil
+        )
+        
+    }
+    
+    @objc func didDismissDetailNotification(_ notification: Notification) {
+          DispatchQueue.main.async {
+              self.mainView.tableView.reloadData()
+          }
     }
     
     //날자 바꿀때마다 실행되어야 되니
@@ -73,7 +90,8 @@ class MainViewController: BaseViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         //테이블뷰의 키보드가 셀을 가릴때
-        keyboardObserver()
+        //keyboardObserver()
+        
         
         fetchRealm()
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.mainBackGroundColor]
@@ -83,7 +101,7 @@ class MainViewController: BaseViewController {
         super.viewWillDisappear(animated)
         
         //키보드 끝나면 없앰
-        keyboardObserverRemove()
+        //keyboardObserverRemove()
     }
     
     func navigationSetting() {
@@ -130,6 +148,16 @@ class MainViewController: BaseViewController {
         let vc = CalendarViewController()
         let nav = UINavigationController(rootViewController: vc)
         
+        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+        //방법1
+        vc.dateCompletionHandler = {
+            self.pickedNowDate = vc.selectedDate
+            let convertDate = self.dateFormatter.string(from: vc.selectedDate)
+            print("전달된 데이트: ", convertDate)
+            self.mainView.datePickBtn.setTitle(convertDate, for: .normal)
+            self.fetchRealm()
+            self.mainView.tableView.reloadData()
+        }
         self.present(nav, animated: true)
     }
     
@@ -188,7 +216,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     //check
     @objc func menuPopupButtonClicked(btnName: UIButton) {
         let nav = UINavigationController(rootViewController: cellDetailCustomVC)
-        print(btnName.tag)
         
         //같은방식
         //cellDetailCustomView.setImportanceButton.addTarget(self, action: #selector(cellDetailCustomVC.importanceButtonClicked), for: .touchUpInside)
@@ -197,7 +224,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         nav.modalPresentationStyle = .overCurrentContext
         cellDetailCustomVC.receivedTag = btnName.tag
         cellDetailCustomVC.tasks = self.tasks
-        print(cellDetailCustomVC.receivedTag)
+        
         self.present(nav, animated: false)
     }
     //MARK: --공부하기(버튼에 대한 태그전달)
@@ -249,11 +276,13 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 //            for i in 0..<tasks.count {
 //                cell.importanceSelectBtn.tag = i
 //            }
+//            cellDetailCustomVC.receivedTag = cell.importanceSelectBtn.tag
+//            cellDetailCustomVC.id = tasks[cell.importanceSelectBtn.tag].objectID
             //MARK: --공부하기(버튼에 대한 태그전달)
+            
             cell.importanceSelectBtn.tag = indexPath.row
-            cellDetailCustomVC.receivedTag = cell.importanceSelectBtn.tag
-            cellDetailCustomVC.id = tasks[cell.importanceSelectBtn.tag].objectID
             cell.importanceSelectBtn.addTarget(self, action: #selector(menuPopupButtonClicked), for: .touchUpInside)
+            
             //MARK: --공부하기(버튼에 대한 태그전달)
             
             //fetchRealm()
@@ -269,6 +298,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             let plusCell = tableView.dequeueReusableCell(withIdentifier: TablePlusCell.identifier, for: indexPath) as! TablePlusCell
             plusCell.receivedNowDate = pickedNowDate
             print("pickedNowDate", pickedNowDate)
+            
+            //타입지정에 값을 대입
             plusCell.reloadCell = {
                 tableView.reloadSections(IndexSet(0...0), with: .automatic)
             }
@@ -303,41 +334,41 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     
 }
 
-extension MainViewController {
-    func keyboardObserver() {
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHide), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    func keyboardObserverRemove() {
-            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-        }
-        
-        @objc func keyboardShow(notification: NSNotification) {
-            guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
-//            self.view.frame.origin.y -=
-//            self.view.frame.origin.y = 0 - keyboardSize.height
-//            self.mainView.bottomView.frame.origin.y = 0 - keyboardSize.height
-            self.mainView.bottomView.snp.remakeConstraints { make in
-                make.top.equalTo(mainView.safeAreaLayoutGuide)
-                make.leading.equalTo(mainView.safeAreaLayoutGuide).offset(20)
-                make.trailing.equalTo(mainView.safeAreaLayoutGuide).offset(-20)
-                make.bottom.equalTo(mainView.mainBackgroundImage.snp.top).offset(keyboardSize.height)
-            }
-        }
-        
-        @objc func keyboardHide(notification: NSNotification) {
-//            self.constraint.constant += 100
-//            self.view.frame.origin.y = 0
-//            self.mainView.bottomView.frame.origin.y = 0
-            self.mainView.bottomView.snp.remakeConstraints { make in
-                make.top.equalTo(mainView.todoView.snp.bottom).offset(8)
-                make.leading.equalTo(mainView.safeAreaLayoutGuide).offset(20)
-                make.trailing.equalTo(mainView.safeAreaLayoutGuide).offset(-20)
-                make.bottom.equalTo(mainView.mainBackgroundImage.snp.top)
-            }
-        }
-}
-
+//extension MainViewController {
+//    func keyboardObserver() {
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardShow), name: UIResponder.keyboardWillShowNotification, object: nil)
+//
+//        NotificationCenter.default.addObserver(self, selector: #selector(keyboardHide), name: UIResponder.keyboardWillHideNotification, object: nil)
+//    }
+//
+//    func keyboardObserverRemove() {
+//            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+//            NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+//        }
+//
+//        @objc func keyboardShow(notification: NSNotification) {
+//            guard let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue else { return }
+////            self.view.frame.origin.y -=
+////            self.view.frame.origin.y = 0 - keyboardSize.height
+////            self.mainView.bottomView.frame.origin.y = 0 - keyboardSize.height
+//            self.mainView.bottomView.snp.remakeConstraints { make in
+//                make.top.equalTo(mainView.safeAreaLayoutGuide)
+//                make.leading.equalTo(mainView.safeAreaLayoutGuide).offset(20)
+//                make.trailing.equalTo(mainView.safeAreaLayoutGuide).offset(-20)
+//                make.bottom.equalTo(mainView.mainBackgroundImage.snp.top).offset(keyboardSize.height)
+//            }
+//        }
+//
+//        @objc func keyboardHide(notification: NSNotification) {
+////            self.constraint.constant += 100
+////            self.view.frame.origin.y = 0
+////            self.mainView.bottomView.frame.origin.y = 0
+//            self.mainView.bottomView.snp.remakeConstraints { make in
+//                make.top.equalTo(mainView.todoView.snp.bottom).offset(8)
+//                make.leading.equalTo(mainView.safeAreaLayoutGuide).offset(20)
+//                make.trailing.equalTo(mainView.safeAreaLayoutGuide).offset(-20)
+//                make.bottom.equalTo(mainView.mainBackgroundImage.snp.top)
+//            }
+//        }
+//}
+//

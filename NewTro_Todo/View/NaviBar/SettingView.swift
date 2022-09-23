@@ -15,6 +15,7 @@ final class SettingView: BaseView {
     let backGroundImage: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(named: "SettingBackGround")
+        view.contentMode = .scaleAspectFit
         return view
     }()
     
@@ -34,7 +35,7 @@ final class SettingView: BaseView {
         
         backGroundImage.snp.makeConstraints { make in
             make.leading.trailing.equalTo(safeAreaLayoutGuide)
-            make.bottom.equalToSuperview()
+            make.bottom.equalToSuperview().offset(10)
             make.height.equalTo(100)
         }
         

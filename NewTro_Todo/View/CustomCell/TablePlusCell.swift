@@ -23,6 +23,15 @@ class TablePlusCell: UITableViewCell {
 //    var receivedNowDate: Date?
     var receivedNowDate = Date()
     
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(abbreviation: "KST")
+        formatter.dateFormat = "yyyy년 MM월 dd일"
+        
+        return formatter
+    }()
+    
     @objc let plusButton: UIButton = {
         let view = UIButton()
         let imageConfig = UIImage.SymbolConfiguration(pointSize: 15, weight: .light)
@@ -34,7 +43,9 @@ class TablePlusCell: UITableViewCell {
         return view
     }()
     
+    //타입지정
     var reloadCell: ( () -> () )?
+    
     var tasks: Results<Todo>! {
         didSet {
             //mainView.tableView.reloadSections(IndexSet(0...0), with: .automatic)
@@ -77,31 +88,23 @@ class TablePlusCell: UITableViewCell {
         }
     }
     
+    //        print("셀 추가버튼 눌림")
+    //
+    //        let dateFormatter = DateFormatter()
+    //        dateFormatter.locale = Locale(identifier: "ko_KR")
+    //        dateFormatter.timeZone = TimeZone(abbreviation: "KST")
+    //        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+    
     @objc func plusButtonClicked() {
-        print("셀 추가버튼 눌림")
-//        MainViewController.addTableCell.append(TablePlusCell.identifier)
-//        tasks.append()
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        dateFormatter.timeZone = TimeZone(abbreviation: "KST")
-        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
         let convertDate = dateFormatter.string(from: receivedNowDate)
-//
-        
-//        let formattedNowDate = dateFormatter
+
         let task = Todo(todo: "", favorite: false, importance: 0, regDate: receivedNowDate, stringDate: convertDate)
         
         try! localRealm.write({
             localRealm.add(task)
-            print("변환날짜", convertDate)
-            print("데이터 애드 될때 받은 데이트", receivedNowDate)
         })
-        
-        //mainView.tableView.reloadSections(IndexSet(0...0), with: .automatic)
-        //print("추가버튼 누르고 배열속 배열 확인용: ", MainViewController.addTableCell)
+        //MainVC -> 갱신
         reloadCell?()
-        //
-        //print(MainViewController.addTableCell.count)
     }
     
 }

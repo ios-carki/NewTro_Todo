@@ -12,6 +12,13 @@ import SnapKit
 
 final class CalendarView: BaseView {
     
+    let calendarViewBackgroundImage: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "CalendarViewBackGround")
+        view.contentMode = .scaleAspectFit
+        return view
+    }()
+    
     let calendar: FSCalendar = {
         let view = FSCalendar()
         view.backgroundColor = .mainBackGroundColor
@@ -68,39 +75,39 @@ final class CalendarView: BaseView {
     //MARK: -- todo
     
     //MARK: -- quickNote
-    let calendarQuickNoteView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .mainBackGroundColor
-        shadowEffect(view: view)
-        return view
-    }()
-    
-    let quickNoteImage: UIImageView = {
-        let view = UIImageView()
-        view.image = UIImage(named: "QuickNote")
-        view.contentMode = .scaleAspectFit
-        return view
-    }()
-    
-    let quickNoteTextLabel: UILabel = {
-        let view = UILabel()
-        view.text = "퀵노트 개수"
-        return view
-    }()
-    
-    let quickNoteCountLabel: UILabel = {
-        let view = UILabel()
-        view.text = "총 3건이 기록되어 있습니다."
-        view.textColor = .lightGray
-        return view
-    }()
-    
-    let quickNoteMoveImage: UIImageView = {
-        let view = UIImageView()
-        view.image = UIImage(systemName: "chevron.right")
-        return view
-    }()
-    //MARK: -- quickNote
+//    let calendarQuickNoteView: UIView = {
+//        let view = UIView()
+//        view.backgroundColor = .mainBackGroundColor
+//        shadowEffect(view: view)
+//        return view
+//    }()
+//
+//    let quickNoteImage: UIImageView = {
+//        let view = UIImageView()
+//        view.image = UIImage(named: "QuickNote")
+//        view.contentMode = .scaleAspectFit
+//        return view
+//    }()
+//
+//    let quickNoteTextLabel: UILabel = {
+//        let view = UILabel()
+//        view.text = "퀵노트 개수"
+//        return view
+//    }()
+//
+//    let quickNoteCountLabel: UILabel = {
+//        let view = UILabel()
+//        view.text = "총 3건이 기록되어 있습니다."
+//        view.textColor = .lightGray
+//        return view
+//    }()
+//
+//    let quickNoteMoveImage: UIImageView = {
+//        let view = UIImageView()
+//        view.image = UIImage(systemName: "chevron.right")
+//        return view
+//    }()
+//    //MARK: -- quickNote
     
     
     override func configureUI() {
@@ -110,17 +117,23 @@ final class CalendarView: BaseView {
         calendarToDOView.addSubview(todoCountLabel)
         calendarToDOView.addSubview(todoMoveImage)
         
-        calendarQuickNoteView.addSubview(quickNoteImage)
-        calendarQuickNoteView.addSubview(quickNoteTextLabel)
-        calendarQuickNoteView.addSubview(quickNoteCountLabel)
-        calendarQuickNoteView.addSubview(quickNoteMoveImage)
+//        calendarQuickNoteView.addSubview(quickNoteImage)
+//        calendarQuickNoteView.addSubview(quickNoteTextLabel)
+//        calendarQuickNoteView.addSubview(quickNoteCountLabel)
+//        calendarQuickNoteView.addSubview(quickNoteMoveImage)
         
-        [calendar, calendarToDOView, calendarQuickNoteView].forEach {
+        [calendarViewBackgroundImage, calendar, calendarToDOView].forEach { // 배열에 calendarQuickNoteView 추가
             self.addSubview($0)
         }
     }
     
     override func setConstraints() {
+        
+        calendarViewBackgroundImage.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
+            make.bottom.equalToSuperview().offset(10)
+            make.height.equalTo(100)
+        }
         
         calendar.snp.makeConstraints { make in
             make.top.leading.trailing.equalTo(safeAreaLayoutGuide)
@@ -159,36 +172,36 @@ final class CalendarView: BaseView {
         //MARK: -- todo
         
         //MARK: -- quickNote
-        calendarQuickNoteView.snp.makeConstraints { make in
-            make.top.equalTo(calendarToDOView.snp.bottom).offset(12)
-            make.leading.equalTo(safeAreaLayoutGuide).offset(8)
-            make.trailing.equalTo(safeAreaLayoutGuide).offset(-8)
-            make.height.equalTo(80)
-        }
-        
-        quickNoteImage.snp.makeConstraints { make in
-            make.top.leading.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide)
-            make.width.equalTo(50)
-        }
-        
-        quickNoteTextLabel.snp.makeConstraints { make in
-            make.top.equalTo(calendarQuickNoteView.safeAreaLayoutGuide).offset(12)
-            make.leading.equalTo(quickNoteImage.snp.trailing).offset(20)
-        }
-        
-        quickNoteCountLabel.snp.makeConstraints { make in
-            make.top.equalTo(quickNoteTextLabel.snp.bottom).offset(8)
-            make.leading.equalTo(quickNoteImage.snp.trailing).offset(20)
-            make.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide).offset(-8)
-        }
-        
-//        quickNoteMoveImage.snp.makeConstraints { make in
-//            make.top.trailing.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide)
-//            make.leading.equalTo(quickNoteCountLabel.snp.trailing)
-//            make.width.equalTo(70)
+//        calendarQuickNoteView.snp.makeConstraints { make in
+//            make.top.equalTo(calendarToDOView.snp.bottom).offset(12)
+//            make.leading.equalTo(safeAreaLayoutGuide).offset(8)
+//            make.trailing.equalTo(safeAreaLayoutGuide).offset(-8)
+//            make.height.equalTo(80)
 //        }
-        //MARK: -- quickNote
-        
+//
+//        quickNoteImage.snp.makeConstraints { make in
+//            make.top.leading.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide)
+//            make.width.equalTo(50)
+//        }
+//
+//        quickNoteTextLabel.snp.makeConstraints { make in
+//            make.top.equalTo(calendarQuickNoteView.safeAreaLayoutGuide).offset(12)
+//            make.leading.equalTo(quickNoteImage.snp.trailing).offset(20)
+//        }
+//
+//        quickNoteCountLabel.snp.makeConstraints { make in
+//            make.top.equalTo(quickNoteTextLabel.snp.bottom).offset(8)
+//            make.leading.equalTo(quickNoteImage.snp.trailing).offset(20)
+//            make.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide).offset(-8)
+//        }
+//
+////        quickNoteMoveImage.snp.makeConstraints { make in
+////            make.top.trailing.bottom.equalTo(calendarQuickNoteView.safeAreaLayoutGuide)
+////            make.leading.equalTo(quickNoteCountLabel.snp.trailing)
+////            make.width.equalTo(70)
+////        }
+//        //MARK: -- quickNote
+//
         
     }
 }

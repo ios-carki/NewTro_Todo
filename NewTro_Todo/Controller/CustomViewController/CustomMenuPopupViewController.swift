@@ -10,6 +10,9 @@ import Foundation
 import RealmSwift
 
 class CustomMenuPopupViewController: BaseViewController {
+    //노티피케이션이름상수
+//    let DidDismissPopupVC: Notification.Name = Notification.Name("DidDismissPopupVC")
+    
     let mainView = CustomMenuPopupView()
     let subView = MainView()
     
@@ -33,7 +36,7 @@ class CustomMenuPopupViewController: BaseViewController {
         mainView.cancelButton.addTarget(self, action: #selector(cancelButtonClicked), for: .touchUpInside)
         mainView.setImportanceButton.addTarget(self, action: #selector(importanceButtonClicked), for: .touchUpInside)
         mainView.setFavoriteButton.addTarget(self, action: #selector(favoriteButtonClicked), for: .touchUpInside)
-        
+        mainView.deleteButton.addTarget(self, action: #selector(deleteButtonClicked), for: .touchUpInside)
         
     }
     
@@ -56,8 +59,14 @@ class CustomMenuPopupViewController: BaseViewController {
         }
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        NotificationCenter.default.post(name: NSNotification.Name("DismissDetailView"), object: nil, userInfo: nil)
+    }
+    
     
     @objc func cancelButtonClicked() {
+        
         dismiss(animated: false)
     }
     
@@ -70,19 +79,19 @@ class CustomMenuPopupViewController: BaseViewController {
                 tasks[receivedTag!].importance = 1
             }
             mainView.setImportanceStatusLable.text = "...[ 중 ]"
-            subView.tableView.reloadData()
+//            subView.tableView.reloadData()
         } else if tasks[receivedTag!].importance == 1 {
             try! self.localRealm.write {
                 tasks[receivedTag!].importance = 2
             }
             mainView.setImportanceStatusLable.text = "...[ 상 ]"
-            subView.tableView.reloadData()
+//            subView.tableView.reloadData()
         } else if tasks[receivedTag!].importance == 2 {
             try! self.localRealm.write {
                 tasks[receivedTag!].importance = 0
             }
             mainView.setImportanceStatusLable.text = "...[ 하 ]"
-            subView.tableView.reloadData()
+//            subView.tableView.reloadData()
         }
     }
     //MARK: --공부하기(버튼에 대한 태그전달)
@@ -98,10 +107,13 @@ class CustomMenuPopupViewController: BaseViewController {
             mainView.setFavoriteStatusLabel.text = "...[ OFF ]"
         }
         
-        subView.tableView.reloadData()
+//        subView.tableView.reloadData()
     }
     
     @objc func deleteButtonClicked() {
-        
+        try! self.localRealm.write {
+            localRealm.delete(tasks[receivedTag!])
+        }
+        dismiss(animated: false)
     }
 }
