@@ -41,5 +41,13 @@ extension UIViewController {
         
         present(alert, animated: true)
     }
+    
+    func customAlertOneButton(alertTitle: String, alertMessage: String, actionTitle: String, action: UIAlertAction, style: UIAlertController.Style = .alert) {
+        let alert = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: style)
+       
+        alert.addAction(action)
+        
+        present(alert, animated: true)
+    }
 }
 

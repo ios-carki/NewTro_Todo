@@ -33,6 +33,7 @@
 		C32FF0A328CF13BA00949E05 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A228CF13BA00949E05 /* CalendarView.swift */; };
 		C32FF0A528CF149600949E05 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A428CF149600949E05 /* SettingView.swift */; };
 		C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A628CF149F00949E05 /* SettingViewController.swift */; };
+		C34644BB28DEDC840071EF13 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = C34644BA28DEDC840071EF13 /* Zip */; };
 		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
 		C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */; };
 		C3AF2FFC28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */; };
@@ -91,6 +92,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C34644BB28DEDC840071EF13 /* Zip in Frameworks */,
 				C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */,
 				C3D6454228D05E4700850505 /* FSCalendar in Frameworks */,
 				C3D6455828D3506F00850505 /* Realm in Frameworks */,
@@ -279,6 +281,7 @@
 				C3D6455728D3506F00850505 /* Realm */,
 				C3D6455928D3506F00850505 /* RealmSwift */,
 				C3EF20B828DBFB1400141757 /* IQKeyboardManagerSwift */,
+				C34644BA28DEDC840071EF13 /* Zip */,
 			);
 			productName = NewTro_Todo;
 			productReference = C32FF05428C70C8800949E05 /* NewTro_Todo.app */;
@@ -314,6 +317,7 @@
 				C3D6454028D05E4700850505 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				C3D6455628D3506F00850505 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				C3EF20B728DBFB1400141757 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
+				C34644B928DEDC840071EF13 /* XCRemoteSwiftPackageReference "Zip" */,
 			);
 			productRefGroup = C32FF05528C70C8800949E05 /* Products */;
 			projectDirPath = "";
@@ -605,6 +609,14 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		C34644B928DEDC840071EF13 /* XCRemoteSwiftPackageReference "Zip" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/marmelroy/Zip.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
 		C37B16BC28CF7DAD0086E3C6 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/scalessec/Toast-Swift.git";
@@ -644,6 +656,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C32FF07628C7129C00949E05 /* XCRemoteSwiftPackageReference "SnapKit" */;
 			productName = SnapKit;
+		};
+		C34644BA28DEDC840071EF13 /* Zip */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C34644B928DEDC840071EF13 /* XCRemoteSwiftPackageReference "Zip" */;
+			productName = Zip;
 		};
 		C37B16BD28CF7DAD0086E3C6 /* Toast */ = {
 			isa = XCSwiftPackageProductDependency;

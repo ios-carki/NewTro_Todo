@@ -16,6 +16,8 @@ class MainViewController: BaseViewController {
     let cellDetailCustomView = CustomMenuPopupView()
     let cellDetailCustomVC = CustomMenuPopupViewController()
     
+    
+    
     //MARK: -
     var calendar = Calendar.current
     
@@ -123,6 +125,11 @@ class MainViewController: BaseViewController {
         
         mainView.tableView.delegate = self
         mainView.tableView.dataSource = self
+        
+        //셀 Drag &  Drop
+        mainView.tableView.dragInteractionEnabled = true
+//        mainView.tableView.dragDelegate = self
+//        mainView.tableView.dropDelegate = self
     }
     
     func todoTapGesture() {
@@ -210,6 +217,7 @@ class MainViewController: BaseViewController {
     
 }
 
+//MARK: -- TableView
 extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     //MARK: -- Cell DetailButtonEvent(VC:CustomMenuPopupViewController)
     //MARK: --공부하기(버튼에 대한 태그전달)
@@ -228,19 +236,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         self.present(nav, animated: false)
     }
     //MARK: --공부하기(버튼에 대한 태그전달)
-    
-//    @objc func importanceButtonClicked() {
-//        
-//    }
-//    
-//    @objc func favoriteButtonClicked() {
-//        
-//    }
-//    
-//    @objc func deleteButtonClicked() {
-//        
-//    }
-    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -331,8 +326,46 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return 50
     }
     
+    //MARK: -- 테이블뷰 Drag & Drop
+    //Row Editable true
+    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
     
+    // Move Row Instance Method
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        print("\(sourceIndexPath.row) -> \(destinationIndexPath.row)")
+    }
 }
+
+////데이블뷰 Drag & Drop
+//extension MainViewController: UITableViewDragDelegate, UITableViewDropDelegate {
+//
+//    //드래그 시작되었을 때
+//    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+//        return localRealm.obj
+//    }
+//
+//    //Realm의 드래그 시작되는 데이터의 regDate를 드롭된 셀의 regDate과 바꾼다(Date관련 데이트만 빼고 나머지 유지)
+//    dragitem
+//
+//    //셀이 드래그 되는 순간마다 반복호출
+//    //드래그가 되는 동안 목적지indexPath에 반복호출됨
+//    func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
+//        if session.localDragSession != nil {
+//            return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+//        }
+//        return UITableViewDropProposal(operation: .cancel, intent: .unspecified)
+//    }
+//
+//    //드랍이 되었을때 ( indexPath를 비교하여 배열의 순서를 바꿈 )
+//    //내 앱에서 셀 순서? -> sort
+//    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
+//
+//    }
+//
+//
+//}
 
 //extension MainViewController {
 //    func keyboardObserver() {
