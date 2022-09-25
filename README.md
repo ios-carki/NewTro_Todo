@@ -105,6 +105,7 @@ VC2의 viewDidLoad에 다음과 같은 옵저버를 추가해줬다.(주의: Pos
 <img width="700" alt="스크린샷 2022-09-25 오후 4 24 16" src="https://user-images.githubusercontent.com/44957712/192132830-bc92d3e4-4b92-4598-a844-bf01eb3f7bb8.png"><br/><br/>
 에러가 발생하는 조건: 복구시 데이터 정보와 복구 전 데이터 정보가 서로 다를때(복구전 데이터와 복구 후 데이터가 같으면 에러발생 X)<br/><br/>
 ### 할일 완료여부
+https://user-images.githubusercontent.com/44957712/192133533-802eaf95-a066-45f3-9b3b-6aa8cfe92c93.mov<br/><br/>
 
 ### 2022 09 25
 
