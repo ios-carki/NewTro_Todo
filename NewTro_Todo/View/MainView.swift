@@ -52,29 +52,6 @@ class MainView: BaseView {
         return view
     }()
     
-    //MARK: -- Todobtn
-    let todoView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .mainBackGroundColor
-        shadowEffect(view: view)
-        return view
-    }()
-    
-    let todoImage: UIImageView = {
-        let view = UIImageView()
-        view.image = UIImage(named: "TodoList")
-        view.contentMode = .scaleToFill
-        return view
-    }()
-    
-//    let todoLabel: UILabel = {
-//        let view = UILabel()
-//        view.text = "할 일 작성 목록"
-//        view.font = .mainFont(size: 20)
-//        view.textAlignment = .center
-//        return view
-//    }()
-    //MARK: -- Todobtn
     
     //MARK: -- QuickNotebtn
     let quickNoteView: UIView = {
@@ -169,11 +146,8 @@ class MainView: BaseView {
 //    }
     
     override func configureUI() {
-        todoView.addSubview(todoImage)
-//        todoView.addSubview(todoLabel)
         
         quickNoteView.addSubview(quickNoteImage)
-//        quickNoteView.addSubview(quickNoteLabel)
         
         bottomView.addSubview(leftButton)
         bottomView.addSubview(datePickBtn)
@@ -181,7 +155,7 @@ class MainView: BaseView {
         bottomView.addSubview(boundaryLine)
         bottomView.addSubview(tableView)
         
-        [todoView, quickNoteView, bottomView, mainBackgroundImage, coinImage, coinCountLabel, heartImage1, heartImage2, heartImage3].forEach {
+        [quickNoteView, bottomView, mainBackgroundImage, coinImage, coinCountLabel, heartImage1, heartImage2, heartImage3].forEach {
             self.addSubview($0)
         }
     }
@@ -222,36 +196,10 @@ class MainView: BaseView {
             make.height.width.equalTo(50)
         }
         
-        //MARK: -- Todo
-        /*
-         heartImage1.snp.makeConstraints { make in
-             make.top.equalTo(safeAreaLayoutGuide).offset(5)
-             make.trailing.equalTo(heartImage2.snp.leading).offset(20)
-             make.height.width.equalTo(50)
-         }
-         */
-        todoView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(5)
-            make.leading.equalTo(coinCountLabel.snp.trailing).offset(8)
-            make.height.equalTo(heartImage1)
-            make.width.equalTo(heartImage1)
-        }
-        
-        todoImage.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-//        todoLabel.snp.makeConstraints { make in
-//            make.leading.trailing.bottom.equalTo(todoView.safeAreaLayoutGuide)
-//            make.top.equalTo(todoImage.snp.bottom)
-//            make.height.equalTo(20)
-//        }
-        //MARK: -- Todo
-        
         //MARK: -- QuickNote
         quickNoteView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide).offset(5)
-            make.trailing.equalTo(heartImage1.snp.leading).offset(-8)
+            make.centerX.equalToSuperview()
             make.height.equalTo(heartImage1)
             make.width.equalTo(heartImage1)
         }
@@ -268,7 +216,7 @@ class MainView: BaseView {
         //MARK: -- QuickNote
         
         bottomView.snp.makeConstraints { make in
-            make.top.equalTo(todoView.snp.bottom).offset(12)
+            make.top.equalTo(quickNoteView.snp.bottom).offset(12)
             make.leading.equalTo(safeAreaLayoutGuide).offset(20)
             make.trailing.equalTo(safeAreaLayoutGuide).offset(-20)
             make.bottom.equalTo(mainBackgroundImage.snp.top)

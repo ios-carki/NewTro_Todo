@@ -17,11 +17,10 @@ class TablePlusCell: UITableViewCell {
     let mainView = MainView()
     
     
-    var nowDate = Date()
     //메인에서 받아오는 선택된 날짜
 //    var receivedNowDate = Date()
-//    var receivedNowDate: Date?
     var receivedNowDate = Date()
+    
     
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -98,7 +97,7 @@ class TablePlusCell: UITableViewCell {
     @objc func plusButtonClicked() {
         let convertDate = dateFormatter.string(from: receivedNowDate)
 
-        let task = Todo(todo: "", favorite: false, importance: 0, regDate: receivedNowDate, stringDate: convertDate)
+        let task = Todo(todo: "", favorite: false, importance: 0, regDate: receivedNowDate, stringDate: convertDate, isFinished: false)
         
         try! localRealm.write({
             localRealm.add(task)

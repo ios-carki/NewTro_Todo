@@ -34,6 +34,9 @@
 		C32FF0A528CF149600949E05 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A428CF149600949E05 /* SettingView.swift */; };
 		C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A628CF149F00949E05 /* SettingViewController.swift */; };
 		C34644BB28DEDC840071EF13 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = C34644BA28DEDC840071EF13 /* Zip */; };
+		C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644BC28DF19810071EF13 /* File+Extension.swift */; };
+		C34644E428E2F0EA0071EF13 /* CustomNotePopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */; };
+		C34644E628E2F1200071EF13 /* CustomNotePopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */; };
 		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
 		C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */; };
 		C3AF2FFC28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */; };
@@ -77,6 +80,9 @@
 		C32FF0A228CF13BA00949E05 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		C32FF0A428CF149600949E05 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		C32FF0A628CF149F00949E05 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		C34644BC28DF19810071EF13 /* File+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "File+Extension.swift"; sourceTree = "<group>"; };
+		C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupViewController.swift; sourceTree = "<group>"; };
+		C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupView.swift; sourceTree = "<group>"; };
 		C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuPopupView.swift; sourceTree = "<group>"; };
 		C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuPopupViewController.swift; sourceTree = "<group>"; };
 		C3D6454328D0ADEB00850505 /* Alert+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Alert+Extension.swift"; sourceTree = "<group>"; };
@@ -194,6 +200,7 @@
 				C3D6454328D0ADEB00850505 /* Alert+Extension.swift */,
 				C3D6454C28D1D59200850505 /* UIView+Extension.swift */,
 				C3D6455B28D353B700850505 /* DateFormat+Extension.swift */,
+				C34644BC28DF19810071EF13 /* File+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -229,6 +236,7 @@
 			isa = PBXGroup;
 			children = (
 				C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */,
+				C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */,
 			);
 			path = CustomView;
 			sourceTree = "<group>";
@@ -237,6 +245,7 @@
 			isa = PBXGroup;
 			children = (
 				C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */,
+				C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */,
 			);
 			path = CustomViewController;
 			sourceTree = "<group>";
@@ -365,10 +374,13 @@
 				C32FF0A528CF149600949E05 /* SettingView.swift in Sources */,
 				C32FF07E28C719FA00949E05 /* ThirdViewController.swift in Sources */,
 				C32FF08428C7240F00949E05 /* ThirdView.swift in Sources */,
+				C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */,
 				C3D6455528D3503600850505 /* TodoScheme.swift in Sources */,
+				C34644E628E2F1200071EF13 /* CustomNotePopupView.swift in Sources */,
 				C32FF08028C7240300949E05 /* FirstView.swift in Sources */,
 				C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */,
 				C3D6454D28D1D59200850505 /* UIView+Extension.swift in Sources */,
+				C34644E428E2F0EA0071EF13 /* CustomNotePopupViewController.swift in Sources */,
 				C3AF2FFC28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift in Sources */,
 				C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */,
 				C32FF0A328CF13BA00949E05 /* CalendarView.swift in Sources */,
@@ -521,7 +533,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewTro_Todo/Info.plist;
@@ -532,6 +544,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -552,7 +565,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewTro_Todo/Info.plist;
@@ -563,6 +576,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

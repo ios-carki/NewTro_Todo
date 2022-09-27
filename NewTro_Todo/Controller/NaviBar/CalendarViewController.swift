@@ -19,6 +19,15 @@ final class CalendarViewController: BaseViewController {
     //델리게이트
     //노티
     
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone(abbreviation: "KST")
+        formatter.dateFormat = "yyyy년 MM월 dd일"
+        
+        return formatter
+    }()
+    
     var selectedDate = Date()
     let dateFormat = DateFormatter()
     
@@ -87,11 +96,6 @@ final class CalendarViewController: BaseViewController {
     
     func dateCounter(date: Date) -> Int {
         let selectedDate = date
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "ko_KR")
-        dateFormatter.timeZone = TimeZone(abbreviation: "KST")
-        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
-        
         let convertDate = dateFormatter.string(from: selectedDate)
         
         let dateFinder = localRealm.objects(Todo.self).where {

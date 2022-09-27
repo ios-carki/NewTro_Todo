@@ -9,14 +9,18 @@ import Foundation
 import UIKit
 import MessageUI
 
+import RealmSwift
 import Toast
 import Zip
+
 
 final class SettingViewController: BaseViewController {
     
     let mainView = SettingView()
-    let settingMenuList = ["버전정보", "테마", "데이터 백업 / 복구 / 초기화", "문의사항"]
+    let settingMenuList = ["테마", "데이터 백업 / 복구 / 초기화", "문의사항"]
     let settingImageList = ["info.circle", "paintbrush", "arrow.clockwise", "questionmark.circle"]
+    
+    let localRealm = try! Realm()
     
     override func loadView() {
         self.view = mainView
@@ -133,14 +137,11 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         switch (indexPath.row) {
         case 0:
             cell?.selectionStyle = .none
-            cell?.accessoryType = .none
+            cell?.accessoryType = .disclosureIndicator
         case 1:
             cell?.selectionStyle = .none
             cell?.accessoryType = .disclosureIndicator
         case 2:
-            cell?.selectionStyle = .none
-            cell?.accessoryType = .disclosureIndicator
-        case 3:
             cell?.selectionStyle = .none
             cell?.accessoryType = .disclosureIndicator
         default:
@@ -157,10 +158,8 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         
         switch (indexPath.row) {
         case 0:
-            cell?.accessoryType = .none
-        case 1:
             customAlertSimple(title: "준비중입니다", message: "새로운 테마가 업데이트 예정입니다.", cancelButtonText: "확인")
-        case 2:
+        case 1:
             let backUP = UIAlertAction(title: "백업", style: .default) { action in
                 //백업 처리 구현해야됨
                 print("백업 눌림")
@@ -175,6 +174,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
                     self.restoreFunction()
                 }
                 
+                //MARK: --백업, 복구 진행중에 다른 화면이 눌릴 수 없도록 조치하기MARK
                 self.customAlert(title: "주의", message: "복구가 완료되면 앱이 강제종료 될 수 있습니다, 진행중인 작업을 완료후에 복구를 진행해주세요", actions: goRestore)
 //                self.restoreFunction()
                 //복구 처리가 끝나면 얼럿으로 앱 재시작확인 메시지 띄우기
@@ -189,7 +189,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
             }
             customActionSheet(title: "백업 / 복구 / 초기화 선택", message: nil, actions: backUP, restore, clear)
 
-        case 3:
+        case 2:
             cell?.accessoryType = .none
             sendMail()
         default:
@@ -274,6 +274,7 @@ extension SettingViewController: UIDocumentPickerDelegate {
             let fileURL = path.appendingPathComponent("New_Tro_TODO_1.zip")
             
             do {
+                //MARK: -- 여기서부터 우석이한테 피드백
                 //풀어줄 파일 / 어디에 풀어줄건데 / 덮어쓸거냐 / 비밀번호 / 얼마나 진행된지(진행상황, 압축률 -> 로딩뷰 쓰기)
                 try Zip.unzipFile(fileURL, destination: path, overwrite: true, password: nil, progress: { progress in
                     print("압축 진행률  progress: \(progress)")
@@ -284,7 +285,21 @@ extension SettingViewController: UIDocumentPickerDelegate {
                     //압축파일을 리스트로 만들어주고
                     //스와이프 액션등으로 압축파일을 제거할 수 있게 만들어주는 기능도 필요할듯
                 })
-                
+//
+//                try Zip.unzipFile(fileURL, destination: path , overwrite: true, password: nil, progress: { progress in
+//                    }, fileOutputHandler: { [self] unzippedFile in
+//                        print(unzippedFile)
+//                        self.view.makeToast("복구가 완료되었습니다")
+//
+//                        localRealm.beginWrite()
+//                            do {
+//                                try self.localRealm.writeCopy(toFile: unzippedFile)
+//                            } catch {
+//                                // Error backing up data
+//                            }
+//                        localRealm.cancelWrite()
+//
+//                    }) //overwrite은 덮어씌우기
             } catch {
                 view.makeToast("압축 해제에 실패했습니다")
             }
@@ -304,17 +319,18 @@ extension SettingViewController: UIDocumentPickerDelegate {
                     print("unZippedFile: \(unzippedFile)")
                 })
                 
-                let exitApp = UIAlertAction(title: "확인", style: .default) { action in
-                    UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        exit(0)
-                    }
-                }
-                self.customAlertOneButton(alertTitle: "앱 데이터 복구 완료", alertMessage: "앱이 강제종료됩니다", actionTitle: "확인", action: exitApp)
+//                let exitApp = UIAlertAction(title: "확인", style: .default) { action in
+//                    UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//                        exit(0)
+//                    }
+//                }
+//                self.customAlertOneButton(alertTitle: "앱 데이터 복구 완료", alertMessage: "앱이 강제종료됩니다", actionTitle: "확인", action: exitApp)
                 
             } catch {
                 self.view.makeToast("압축 해제에 실패했습니다.")
             }
+            
         }
         
     }

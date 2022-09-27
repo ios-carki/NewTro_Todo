@@ -17,7 +17,6 @@ class MainViewController: BaseViewController {
     let cellDetailCustomVC = CustomMenuPopupViewController()
     
     
-    
     //MARK: -
     var calendar = Calendar.current
     
@@ -51,7 +50,6 @@ class MainViewController: BaseViewController {
         view.backgroundColor = .mainBackGroundColor
         navigationSetting()
         tableSetting()
-        todoTapGesture()
         quickNoteTapGesture()
         fetchRealm()
         
@@ -86,7 +84,7 @@ class MainViewController: BaseViewController {
         let convertDate = dateFormatter.string(from: pickedNowDate)
         tasks = localRealm.objects(Todo.self).sorted(byKeyPath: "regDate", ascending: true).where {
             $0.stringDate == convertDate
-        }
+        }//.sorted(byKeyPath: "", ascending: <#T##Bool#>)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -128,27 +126,23 @@ class MainViewController: BaseViewController {
         
         //셀 Drag &  Drop
         mainView.tableView.dragInteractionEnabled = true
-//        mainView.tableView.dragDelegate = self
-//        mainView.tableView.dropDelegate = self
+        mainView.tableView.dragDelegate = self
+        mainView.tableView.dropDelegate = self
     }
-    
-    func todoTapGesture() {
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(todoList))
-        mainView.todoView.addGestureRecognizer(tapGesture)
-    }
-    
-    @objc func todoList() {
-        print("투두 클릭")
-    }
-    
     
     func quickNoteTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(quickNote))
         mainView.quickNoteView.addGestureRecognizer(tapGesture)
     }
     
+    //퀵노트
     @objc func quickNote() {
-        print("퀵노트 클릭")
+        let vc = CustomNotePopupViewController()
+        let nav = UINavigationController(rootViewController: vc)
+        nav.modalPresentationStyle = .overCurrentContext
+        vc.nowDate = pickedNowDate
+        
+        self.present(nav, animated: false)
     }
     
     @objc func calendarButtonClicked() {
@@ -175,12 +169,12 @@ class MainViewController: BaseViewController {
     //MARK: -- cell dateCalculation
     func dayCalculation(formula: String) -> Date { // 월 별 일 수 계산
         dateFormatter.dateFormat = "yyyy년 MM월 dd일"
-        let result: Date
+        let result: Date?
         
         if formula == "plus" {
             result = calendar.date(byAdding: .day, value: 1,to: pickedNowDate)!
             print("+계산된 날짜", result)
-            pickedNowDate = result
+            pickedNowDate = result!
             
             let formattedPickedDate = dateFormatter.string(from: pickedNowDate)
             mainView.datePickBtn.setTitle(formattedPickedDate, for: .normal)
@@ -191,15 +185,17 @@ class MainViewController: BaseViewController {
             //MARK: - 리턴값 result로 바궈도 같은지 확인
             return pickedNowDate
         } else {
+            //값 전달을 pick가 아니라 계산된 값을 전달
             result = calendar.date(byAdding: .day, value: -1,to: pickedNowDate)!
             print("-계산된 날짜", result)
-            pickedNowDate = result
+            pickedNowDate = result!
             
             let formattedPickedDate = dateFormatter.string(from: pickedNowDate)
             mainView.datePickBtn.setTitle(formattedPickedDate, for: .normal)
             
             //**
             mainView.tableView.reloadData()
+            
             return pickedNowDate
         }
         
@@ -236,6 +232,20 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         self.present(nav, animated: false)
     }
     //MARK: --공부하기(버튼에 대한 태그전달)
+    
+    @objc func completeButtonClicked(btnName: UIButton) {
+        
+        if tasks[btnName.tag].isFinished == false {
+            try! self.localRealm.write {
+                tasks[btnName.tag].isFinished = true
+            }
+        } else {
+            try! self.localRealm.write {
+                tasks[btnName.tag].isFinished = false
+            }
+        }
+    }
+    
     func numberOfSections(in tableView: UITableView) -> Int {
         return 2
     }
@@ -275,8 +285,11 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
 //            cellDetailCustomVC.id = tasks[cell.importanceSelectBtn.tag].objectID
             //MARK: --공부하기(버튼에 대한 태그전달)
             
-            cell.importanceSelectBtn.tag = indexPath.row
+            cell.importanceSelectBtn.tag = indexPath.row //상세설정
+            cell.completeTodoBtn.tag = indexPath.row //완료버튼
             cell.importanceSelectBtn.addTarget(self, action: #selector(menuPopupButtonClicked), for: .touchUpInside)
+            cell.completeTodoBtn.addTarget(self, action: #selector(completeButtonClicked), for: .touchUpInside)
+            
             
             //MARK: --공부하기(버튼에 대한 태그전달)
             
@@ -296,7 +309,8 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             
             //타입지정에 값을 대입
             plusCell.reloadCell = {
-                tableView.reloadSections(IndexSet(0...0), with: .automatic)
+//                tableView.reloadSections(IndexSet(0...0), with: .automatic)
+                tableView.reloadData()
             }
             
             tableView.reloadSections(IndexSet(0...0), with: .automatic)
@@ -311,10 +325,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         
     }
     
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.identifier, for: indexPath) as! MainTableViewCell
-//        let thisCell = TablePlusCell() //해당 셀의 id
-//    }
+    
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
@@ -326,46 +337,138 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return 50
     }
     
-    //MARK: -- 테이블뷰 Drag & Drop
-    //Row Editable true
-    func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    
-    // Move Row Instance Method
     func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        print("\(sourceIndexPath.row) -> \(destinationIndexPath.row)")
+        
+        /*
+         1 -> regdate
+         2 -> regdate
+         1의 데이터가 2의 데이트
+
+         작성을 2가 먼저했다고
+         뒤에 1이 작선된거임
+
+         그럼 레그데이트만 바꾸면 되지않을까
+         그러고 나서 원래 1번 데이터상에서도 레그데이터가 바껴야되고
+         그러고 정렬시키면
+         */
+        
+//        =================😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡=================
+//        print("\(sourceIndexPath.row) -> \(destinationIndexPath.row)")
+//        print("함수호출", #function)
+//        
+//        var temp: Date?
+//        var temp1: Date?
+//        
+//        var dateArr: [Date] = []
+//        
+//        dateArr = localRealm.objects(Todo.self).map {
+//            $0.regDate
+//        }
+//        
+//        let moveCell = dateArr[sourceIndexPath.row]
+//        dateArr.remove(at: sourceIndexPath.row)
+//        dateArr.insert(moveCell, at: destinationIndexPath.row)
+//        
+//        print(dateArr)
+//        
+//        //tasks에 직접 변경
+//        //처음 몇번은 바뀜
+//        //뒤에 테이블 추가가 되긴하는데 뷰에 그려지지가 않음
+//        temp = tasks[sourceIndexPath.row].regDate
+//        temp1 = tasks[destinationIndexPath.row].regDate
+////        tasks[sourceIndexPath.row].regDate = temp1!
+////        tasks[destinationIndexPath.row].regDate = temp!
+//        
+//        try! localRealm.write {
+//            localRealm.create(Todo.self, value: ["objectID": tasks[sourceIndexPath.row].objectID, "regDate": temp1], update: .modified)
+//            localRealm.create(Todo.self, value: ["objectID": tasks[destinationIndexPath.row].objectID, "regDate": temp], update: .modified)
+////            fetchRealm()
+//        }
+//        mainView.tableView.reloadData()
+//
+//        print("무빙", start)
+//        print("데스티네이션", end)
+        
+//        //tasks에 직접 변경
+//        temp = tasks[sourceIndexPath.row].regDate
+//        temp1 = tasks[destinationIndexPath.row].regDate
+//        tasks[sourceIndexPath.row].regDate = temp1!
+//        tasks[destinationIndexPath.row].regDate = temp!
+        
+//        dateArr.forEach { swap in
+//            try! localRealm.write {
+//                localRealm.add(swap)//Todo(value: ["objectID": swap.objectID, "regDate": swap.regDate]), update: .modified)
+//            }
+//
+//        }
+        
+        
+        
+//        =================😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡😡=================
+        
+        //움직이려는 셀
+//        var start = localRealm.objects(Todo.self).where {
+//            $0.regDate == tasks[sourceIndexPath.row].regDate
+//        }
+
+        //떨어진위치의 셀
+//        var end = localRealm.objects(Todo.self).where {
+//            $0.regDate == tasks[destinationIndexPath.row].regDate
+//        }
+        
+//        var temp3: Results<Todo>?
+        
+        //데이터 교환
+        //        temp3 = start
+        //        start = end
+        //        end = temp3!
+        // start -> end
+        // end -> start
+        //로 바뀌게 됨
+    
+        //소스 인덱스를 start의 regDate
+//        try! localRealm.write {
+//            sourceToUpdate.regDate = start[0].regDate
+//        }
+        //데스티네이션 인덱스를 end로 해봤는데
+        //데이터가 안바뀌고 처음 바뀐 Date로만 계속 바껴서 나중에는 Date가 다 똑같아짐(똑같아져서 인덱스 오류 안남)
+//        try! localRealm.write {
+//            destiToUpdate.regDate = temp![0].regDate
+//        }
+//        mainView.tableView.reloadData()
+//        try! self.localRealm.write {
+//            print("destinationCell[0].regDate", start[0].regDate)
+//            print("movingCell[0].regDate", end[0].regDate)
+//            localRealm.create(Todo.self, value: ["objectID": tasks[sourceIndexPath.row].objectID, "regDate": end[0].regDate], update: .modified)
+//            localRealm.create(Todo.self, value: ["objectID": tasks[destinationIndexPath.row].objectID, "regDate": start[0].regDate], update: .modified)
+//            mainView.tableView.reloadData()
+//
+//
+//        }
+        
+        
+        print(tasks[0])
     }
 }
 
-////데이블뷰 Drag & Drop
-//extension MainViewController: UITableViewDragDelegate, UITableViewDropDelegate {
-//
-//    //드래그 시작되었을 때
-//    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-//        return localRealm.obj
-//    }
-//
-//    //Realm의 드래그 시작되는 데이터의 regDate를 드롭된 셀의 regDate과 바꾼다(Date관련 데이트만 빼고 나머지 유지)
-//    dragitem
-//
-//    //셀이 드래그 되는 순간마다 반복호출
-//    //드래그가 되는 동안 목적지indexPath에 반복호출됨
-//    func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
-//        if session.localDragSession != nil {
-//            return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
-//        }
-//        return UITableViewDropProposal(operation: .cancel, intent: .unspecified)
-//    }
-//
-//    //드랍이 되었을때 ( indexPath를 비교하여 배열의 순서를 바꿈 )
-//    //내 앱에서 셀 순서? -> sort
-//    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) {
-//
-//    }
-//
-//
-//}
+
+extension MainViewController: UITableViewDragDelegate {
+    func tableView(_ tableView: UITableView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
+            return [UIDragItem(itemProvider: NSItemProvider())]
+        }
+}
+
+extension MainViewController: UITableViewDropDelegate {
+    func tableView(_ tableView: UITableView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UITableViewDropProposal {
+        if session.localDragSession != nil {
+            return UITableViewDropProposal(operation: .move, intent: .insertAtDestinationIndexPath)
+        }
+        return UITableViewDropProposal(operation: .cancel, intent: .unspecified)
+    }
+    func tableView(_ tableView: UITableView, performDropWith coordinator: UITableViewDropCoordinator) { }
+}
+
+
 
 //extension MainViewController {
 //    func keyboardObserver() {
