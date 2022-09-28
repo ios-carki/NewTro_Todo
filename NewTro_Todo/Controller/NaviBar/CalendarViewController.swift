@@ -19,6 +19,7 @@ final class CalendarViewController: BaseViewController {
     //델리게이트
     //노티
     
+    var selectedDate = Date()
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
@@ -28,18 +29,11 @@ final class CalendarViewController: BaseViewController {
         return formatter
     }()
     
-    var selectedDate = Date()
-    let dateFormat = DateFormatter()
-    
-    //방법2
-    //받아올 날자
     var dateCompletionHandler: ( () -> () )?
     
-    //방법1. 전역변수 선언
-//    var testDate: Date?
-    
-    
     let localRealm = try! Realm()
+    var todoTasks: Results<Todo>!
+    var noteTasks: Results<QuickNote>!
     
     override func loadView() {
         self.view = mainView
@@ -75,8 +69,7 @@ final class CalendarViewController: BaseViewController {
     }
     
     @objc func todoListViewTapGesture() {
-        dateFormat.dateFormat = "yyyy년 MM월 dd일"
-        let convertDate = dateFormat.string(from: selectedDate)
+        let convertDate = dateFormatter.string(from: selectedDate)
         
         print("캘린더 투두 클릭됨: ", convertDate)
         
@@ -103,15 +96,29 @@ final class CalendarViewController: BaseViewController {
         }
         return dateFinder.count
     }
+    
+    func isNoteExist(date: Date) -> Int {
+        let selectedDate = date
+        let convertDate = dateFormatter.string(from: selectedDate)
+        
+        let noteFinder = localRealm.objects(QuickNote.self).where {
+            $0.stringToRegDate == convertDate
+        }
+        return noteFinder.count
+    }
 }
 
-extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource {
+extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
     func calendar(_ calendar: FSCalendar, numberOfEventsFor date: Date) -> Int {
-        //선택된 날짜에 대한 투두 개수를 가져와야됨
-        if dateCounter(date: date) == 0 {
+        //선택된 날짜에 대한 투두, 메모 개수를 가져와야됨
+        let formula = dateCounter(date: date) + isNoteExist(date: date)
+        
+        if formula == 0 {
             return 0
-        } else {
+        } else if formula == 1 {
             return 1
+        } else {
+            return 2
         }
     }
     
@@ -119,6 +126,7 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource {
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         mainView.todoCountLabel.text = "총 \(dateCounter(date: date))건이 기록되어 있습니다."
         self.selectedDate = date
+        print("캘린더 상에서 선택된 날짜", selectedDate)
     }
     
 }

@@ -30,10 +30,12 @@ final class CalendarView: BaseView {
         view.appearance.headerDateFormat = "YYYY년 MM월"
         view.appearance.headerTitleColor = .black
         view.appearance.todayColor = .systemGreen
-        view.appearance.titleWeekendColor = .red
+        view.appearance.titleWeekendColor = .calendarWeekendColor
         view.appearance.titleDefaultColor = .white
-        view.appearance.weekdayTextColor = .blue
+        view.appearance.weekdayTextColor = .calendarWeekdayColor
         view.appearance.selectionColor = .purple
+        view.appearance.eventDefaultColor = .calendarWeekendColor
+        view.appearance.eventSelectionColor = .calendarWeekendColor
         return view
     }()
     

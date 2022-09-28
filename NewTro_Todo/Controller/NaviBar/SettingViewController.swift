@@ -17,7 +17,7 @@ import Zip
 final class SettingViewController: BaseViewController {
     
     let mainView = SettingView()
-    let settingMenuList = ["테마", "데이터 백업 / 복구 / 초기화", "문의사항"]
+    let settingMenuList = ["테마", "데이터 초기화", "문의사항", "라이센스"]
     let settingImageList = ["info.circle", "paintbrush", "arrow.clockwise", "questionmark.circle"]
     
     let localRealm = try! Realm()
@@ -142,6 +142,9 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
             cell?.selectionStyle = .none
             cell?.accessoryType = .disclosureIndicator
         case 2:
+            cell?.selectionStyle = .none
+            cell?.accessoryType = .disclosureIndicator
+        case 3:
             cell?.selectionStyle = .none
             cell?.accessoryType = .disclosureIndicator
         default:

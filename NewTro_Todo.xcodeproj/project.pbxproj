@@ -37,6 +37,8 @@
 		C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644BC28DF19810071EF13 /* File+Extension.swift */; };
 		C34644E428E2F0EA0071EF13 /* CustomNotePopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */; };
 		C34644E628E2F1200071EF13 /* CustomNotePopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */; };
+		C34644EA28E3DCE80071EF13 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C34644E928E3DCE80071EF13 /* Realm */; };
+		C34644EC28E3DCE80071EF13 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C34644EB28E3DCE80071EF13 /* RealmSwift */; };
 		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
 		C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */; };
 		C3AF2FFC28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */; };
@@ -45,8 +47,6 @@
 		C3D6454D28D1D59200850505 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6454C28D1D59200850505 /* UIView+Extension.swift */; };
 		C3D6455228D2346400850505 /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455128D2346400850505 /* MainTableViewCell.swift */; };
 		C3D6455528D3503600850505 /* TodoScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455428D3503600850505 /* TodoScheme.swift */; };
-		C3D6455828D3506F00850505 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C3D6455728D3506F00850505 /* Realm */; };
-		C3D6455A28D3506F00850505 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C3D6455928D3506F00850505 /* RealmSwift */; };
 		C3D6455C28D353B700850505 /* DateFormat+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455B28D353B700850505 /* DateFormat+Extension.swift */; };
 		C3D6455E28D354F900850505 /* TablePlusCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455D28D354F900850505 /* TablePlusCell.swift */; };
 		C3EF20B928DBFB1400141757 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C3EF20B828DBFB1400141757 /* IQKeyboardManagerSwift */; };
@@ -98,11 +98,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C34644EA28E3DCE80071EF13 /* Realm in Frameworks */,
 				C34644BB28DEDC840071EF13 /* Zip in Frameworks */,
+				C34644EC28E3DCE80071EF13 /* RealmSwift in Frameworks */,
 				C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */,
 				C3D6454228D05E4700850505 /* FSCalendar in Frameworks */,
-				C3D6455828D3506F00850505 /* Realm in Frameworks */,
-				C3D6455A28D3506F00850505 /* RealmSwift in Frameworks */,
 				C32FF07828C7129C00949E05 /* SnapKit in Frameworks */,
 				C3EF20B928DBFB1400141757 /* IQKeyboardManagerSwift in Frameworks */,
 			);
@@ -287,10 +287,10 @@
 				C32FF07728C7129C00949E05 /* SnapKit */,
 				C37B16BD28CF7DAD0086E3C6 /* Toast */,
 				C3D6454128D05E4700850505 /* FSCalendar */,
-				C3D6455728D3506F00850505 /* Realm */,
-				C3D6455928D3506F00850505 /* RealmSwift */,
 				C3EF20B828DBFB1400141757 /* IQKeyboardManagerSwift */,
 				C34644BA28DEDC840071EF13 /* Zip */,
+				C34644E928E3DCE80071EF13 /* Realm */,
+				C34644EB28E3DCE80071EF13 /* RealmSwift */,
 			);
 			productName = NewTro_Todo;
 			productReference = C32FF05428C70C8800949E05 /* NewTro_Todo.app */;
@@ -324,9 +324,9 @@
 				C32FF07628C7129C00949E05 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				C37B16BC28CF7DAD0086E3C6 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
 				C3D6454028D05E4700850505 /* XCRemoteSwiftPackageReference "FSCalendar" */,
-				C3D6455628D3506F00850505 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				C3EF20B728DBFB1400141757 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 				C34644B928DEDC840071EF13 /* XCRemoteSwiftPackageReference "Zip" */,
+				C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			productRefGroup = C32FF05528C70C8800949E05 /* Products */;
 			projectDirPath = "";
@@ -631,6 +631,14 @@
 				minimumVersion = 2.0.0;
 			};
 		};
+		C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 10.0.0;
+			};
+		};
 		C37B16BC28CF7DAD0086E3C6 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/scalessec/Toast-Swift.git";
@@ -645,14 +653,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.0;
-			};
-		};
-		C3D6455628D3506F00850505 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/realm-swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.0.0;
 			};
 		};
 		C3EF20B728DBFB1400141757 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */ = {
@@ -676,6 +676,16 @@
 			package = C34644B928DEDC840071EF13 /* XCRemoteSwiftPackageReference "Zip" */;
 			productName = Zip;
 		};
+		C34644E928E3DCE80071EF13 /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		C34644EB28E3DCE80071EF13 /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		C37B16BD28CF7DAD0086E3C6 /* Toast */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C37B16BC28CF7DAD0086E3C6 /* XCRemoteSwiftPackageReference "Toast-Swift" */;
@@ -685,16 +695,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C3D6454028D05E4700850505 /* XCRemoteSwiftPackageReference "FSCalendar" */;
 			productName = FSCalendar;
-		};
-		C3D6455728D3506F00850505 /* Realm */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C3D6455628D3506F00850505 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = Realm;
-		};
-		C3D6455928D3506F00850505 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C3D6455628D3506F00850505 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
 		};
 		C3EF20B828DBFB1400141757 /* IQKeyboardManagerSwift */ = {
 			isa = XCSwiftPackageProductDependency;

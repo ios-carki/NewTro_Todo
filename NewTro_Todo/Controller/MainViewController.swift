@@ -137,12 +137,37 @@ class MainViewController: BaseViewController {
     
     //퀵노트
     @objc func quickNote() {
+        //옵셔널 id값을 선언하고 퀵노트가 만들어지면 id값 전달
+        var noteID: ObjectId?
         let vc = CustomNotePopupViewController()
+        let subVC = CalendarViewController()
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .overCurrentContext
-        vc.nowDate = pickedNowDate
         
-        self.present(nav, animated: false)
+        subVC.dateCompletionHandler = {
+            self.pickedNowDate = subVC.selectedDate
+        }
+    
+        let strPickedNowDate = dateFormatter.string(from: pickedNowDate)
+        vc.nowDate = pickedNowDate
+        vc.receivedStrDate = strPickedNowDate
+        
+        //
+        let isExisistedText = localRealm.objects(QuickNote.self).where {
+            $0.stringToRegDate == strPickedNowDate
+        }
+        
+        if isExisistedText.count == 0 {
+            let task = QuickNote(note: "", regDate: pickedNowDate, stringToRegDate: strPickedNowDate, isWrited: false)
+
+            try! localRealm.write({
+                localRealm.add(task)
+            })
+            self.present(nav, animated: false)
+        } else {
+            self.present(nav, animated: false)
+        }
+        
     }
     
     @objc func calendarButtonClicked() {

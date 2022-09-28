@@ -19,7 +19,7 @@ class ThirdViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.backgroundColor = .mainBackGroundColor
+        view.backgroundColor = .black
         
         mainView.signupButton.addTarget(self, action: #selector(enterMainView), for: .touchUpInside)
     }

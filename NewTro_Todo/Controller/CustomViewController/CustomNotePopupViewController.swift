@@ -14,6 +14,7 @@ class CustomNotePopupViewController: BaseViewController {
     let mainView = CustomNotePopupView()
     
     var nowDate: Date?
+    var receivedStrDate: String?
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
@@ -43,27 +44,29 @@ class CustomNotePopupViewController: BaseViewController {
         
         let isExisistedText = localRealm.objects(QuickNote.self).where {
             $0.stringToRegDate == strNowDate
-        }.first
+        }
         
+        //날짜가 존재하면
         if isExisistedText != nil {
-            
+            mainView.noteTextView.text = isExisistedText[0].note
         } else {
-            addRealm()
+            
+//            addRealm()
         }
         
         mainView.noteCancelButton.addTarget(self, action: #selector(noteCancelButtonClicked), for: .touchUpInside)
         mainView.noteSaveButton.addTarget(self, action: #selector(noteSaveButtonclicked), for: .touchUpInside)
     }
     
-    func addRealm() {
-        
-        let convertDate = dateFormatter.string(from: nowDate!)
-        let task = QuickNote(note: "", regDate: nowDate!, stringToRegDate: convertDate, isWrited: false)
-        
-        try! localRealm.write({
-            localRealm.add(task)
-        })
-    }
+//    func addRealm() {
+//
+//        let convertDate = dateFormatter.string(from: nowDate!)
+//        let task = QuickNote(note: "", regDate: nowDate!, stringToRegDate: convertDate, isWrited: false)
+//
+//        try! localRealm.write({
+//            localRealm.add(task)
+//        })
+//    }
     
     func showNoteText() {
         let findDate = localRealm.objects(QuickNote.self).where {
