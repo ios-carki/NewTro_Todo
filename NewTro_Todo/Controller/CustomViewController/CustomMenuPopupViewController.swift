@@ -10,8 +10,6 @@ import Foundation
 import RealmSwift
 
 class CustomMenuPopupViewController: BaseViewController {
-    //노티피케이션이름상수
-//    let DidDismissPopupVC: Notification.Name = Notification.Name("DidDismissPopupVC")
     
     let mainView = CustomMenuPopupView()
     let subView = MainView()
@@ -21,7 +19,7 @@ class CustomMenuPopupViewController: BaseViewController {
     var localRealm = try! Realm()
     var tasks: Results<Todo>! {
         didSet {
-            subView.tableView.reloadSections(IndexSet(0...0), with: .automatic)
+            subView.tableView.reloadData()
             print("데이터 변함!")
         }
     }

@@ -47,7 +47,7 @@ class TablePlusCell: UITableViewCell {
     
     var tasks: Results<Todo>! {
         didSet {
-            //mainView.tableView.reloadSections(IndexSet(0...0), with: .automatic)
+            //여기 원래 리로드있었음
             print("데이터 변함!")
         }
     }

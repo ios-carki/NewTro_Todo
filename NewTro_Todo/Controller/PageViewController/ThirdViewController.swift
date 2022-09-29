@@ -29,6 +29,14 @@ class ThirdViewController: UIViewController {
         let nav = UINavigationController(rootViewController: vc)
         nav.modalPresentationStyle = .fullScreen //풀스크린 모달방식
         
+        let firstLaunch = UserDefaults.standard.bool(forKey: "oldUser")
+        if firstLaunch {
+            
+        } else {
+            UserDefaults.standard.set(true, forKey: "oldUser")
+        }
+        
+        
         self.present(nav, animated: true)
     }
         

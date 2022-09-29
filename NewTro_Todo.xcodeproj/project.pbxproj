@@ -39,6 +39,8 @@
 		C34644E628E2F1200071EF13 /* CustomNotePopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */; };
 		C34644EA28E3DCE80071EF13 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C34644E928E3DCE80071EF13 /* Realm */; };
 		C34644EC28E3DCE80071EF13 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C34644EB28E3DCE80071EF13 /* RealmSwift */; };
+		C34644EF28E492670071EF13 /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = C34644EE28E492670071EF13 /* AcknowList */; };
+		C34644F128E493980071EF13 /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = C34644F028E493980071EF13 /* Package.resolved */; };
 		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
 		C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */; };
 		C3AF2FFC28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */; };
@@ -83,6 +85,7 @@
 		C34644BC28DF19810071EF13 /* File+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "File+Extension.swift"; sourceTree = "<group>"; };
 		C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupViewController.swift; sourceTree = "<group>"; };
 		C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupView.swift; sourceTree = "<group>"; };
+		C34644F028E493980071EF13 /* Package.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Package.resolved; path = NewTro_Todo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; sourceTree = "<group>"; };
 		C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuPopupView.swift; sourceTree = "<group>"; };
 		C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuPopupViewController.swift; sourceTree = "<group>"; };
 		C3D6454328D0ADEB00850505 /* Alert+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Alert+Extension.swift"; sourceTree = "<group>"; };
@@ -99,6 +102,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C34644EA28E3DCE80071EF13 /* Realm in Frameworks */,
+				C34644EF28E492670071EF13 /* AcknowList in Frameworks */,
 				C34644BB28DEDC840071EF13 /* Zip in Frameworks */,
 				C34644EC28E3DCE80071EF13 /* RealmSwift in Frameworks */,
 				C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */,
@@ -114,6 +118,7 @@
 		C32FF04B28C70C8700949E05 = {
 			isa = PBXGroup;
 			children = (
+				C34644F028E493980071EF13 /* Package.resolved */,
 				C32FF05628C70C8800949E05 /* NewTro_Todo */,
 				C32FF05528C70C8800949E05 /* Products */,
 			);
@@ -291,6 +296,7 @@
 				C34644BA28DEDC840071EF13 /* Zip */,
 				C34644E928E3DCE80071EF13 /* Realm */,
 				C34644EB28E3DCE80071EF13 /* RealmSwift */,
+				C34644EE28E492670071EF13 /* AcknowList */,
 			);
 			productName = NewTro_Todo;
 			productReference = C32FF05428C70C8800949E05 /* NewTro_Todo.app */;
@@ -327,6 +333,7 @@
 				C3EF20B728DBFB1400141757 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 				C34644B928DEDC840071EF13 /* XCRemoteSwiftPackageReference "Zip" */,
 				C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */,
+				C34644ED28E492670071EF13 /* XCRemoteSwiftPackageReference "AcknowList" */,
 			);
 			productRefGroup = C32FF05528C70C8800949E05 /* Products */;
 			projectDirPath = "";
@@ -346,6 +353,7 @@
 				C32FF06428C70C8800949E05 /* LaunchScreen.storyboard in Resources */,
 				C32FF06128C70C8800949E05 /* Assets.xcassets in Resources */,
 				C32FF09528C9AECF00949E05 /* Galmuri11-Condensed.ttf in Resources */,
+				C34644F128E493980071EF13 /* Package.resolved in Resources */,
 				C32FF05F28C70C8800949E05 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -533,7 +541,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewTro_Todo/Info.plist;
@@ -565,7 +573,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewTro_Todo/Info.plist;
@@ -639,6 +647,14 @@
 				minimumVersion = 10.0.0;
 			};
 		};
+		C34644ED28E492670071EF13 /* XCRemoteSwiftPackageReference "AcknowList" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/vtourraine/AcknowList.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.0;
+			};
+		};
 		C37B16BC28CF7DAD0086E3C6 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/scalessec/Toast-Swift.git";
@@ -685,6 +701,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
+		};
+		C34644EE28E492670071EF13 /* AcknowList */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C34644ED28E492670071EF13 /* XCRemoteSwiftPackageReference "AcknowList" */;
+			productName = AcknowList;
 		};
 		C37B16BD28CF7DAD0086E3C6 /* Toast */ = {
 			isa = XCSwiftPackageProductDependency;

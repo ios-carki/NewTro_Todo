@@ -21,14 +21,16 @@ class MainTableViewCell: UITableViewCell {
     
     let completeTodoBtn: UIButton = {
         let view = UIButton()
-        view.backgroundColor = .green
+        view.setImage(UIImage(named: "ClearBtn"), for: .normal)
+        view.imageView?.contentMode = .scaleToFill
         return view
     }()
     
     let todoTextField: UITextField = {
         let view = UITextField()
         view.placeholder = "일정을 입력하세요."
-        view.backgroundColor = .lightGray
+        view.backgroundColor = .mainBackGroundColor
+        view.font = .mainFont(size: 16)
         view.translatesAutoresizingMaskIntoConstraints = false
         view.returnKeyType = .done
         return view
@@ -52,7 +54,7 @@ class MainTableViewCell: UITableViewCell {
         let view = UIButton()
         view.setImage(UIImage(systemName: "ellipsis.circle"), for: .normal)
         view.tintColor = .black
-        view.backgroundColor = .red
+        view.backgroundColor = .mainBackGroundColor
         //UIMenu터치 한번에
         //view.showsMenuAsPrimaryAction = true
         return view
@@ -89,8 +91,10 @@ class MainTableViewCell: UITableViewCell {
         let standardMarkgin = 8
         
         completeTodoBtn.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().offset(standardMarkgin)
+            make.top.equalToSuperview().offset(standardMarkgin)
+            make.trailing.equalTo(todoTextField.snp.leading).offset(-8)
             make.bottom.equalToSuperview().offset(-standardMarkgin)
+            make.width.equalTo(40)
         }
         
         todoTextField.snp.makeConstraints { make in
@@ -120,6 +124,26 @@ extension MainTableViewCell: UITextFieldDelegate {
         textField.resignFirstResponder()
         
         return true
+    }
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        let findTextField = localRealm.objects(Todo.self).where {
+            $0.objectID == id!
+        }.first
+        try! localRealm.write {
+            findTextField?.setValue(textField.text!, forKey: "todo")
+        }
+         
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        let findTextField = localRealm.objects(Todo.self).where {
+            $0.objectID == id!
+        }.first
+        try! localRealm.write {
+            findTextField?.setValue(textField.text!, forKey: "todo")
+        }
     }
     
 }

@@ -52,44 +52,58 @@ class MainView: BaseView {
         return view
     }()
     
+    //MARK: -- bottomView
+    let bottomView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .mainBackGroundColor
+        
+        return view
+    }()
     
-    //MARK: -- QuickNotebtn
+    //추가
+    let btnStackView: UIStackView = {
+        let view = UIStackView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.axis = .horizontal
+        view.alignment = .fill
+        view.distribution = .equalSpacing
+        view.spacing = 0
+        return view
+    }()
+    
+    let todoPlusView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .mainBackGroundColor
+    
+        return view
+    }()
+    
+    let todoPlusImage: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "TodoBtn")
+        view.contentMode = .scaleToFill
+        return view
+    }()
+    
     let quickNoteView: UIView = {
         let view = UIView()
         view.backgroundColor = .mainBackGroundColor
-        shadowEffect(view: view)
+    
         return view
     }()
     
     let quickNoteImage: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(named: "QuickNote")
+        view.image = UIImage(named: "NoteBtn")
         view.contentMode = .scaleToFill
         return view
     }()
-    
-//    let quickNoteLabel: UILabel = {
-//        let view = UILabel()
-//        view.text = "퀵노트 목록"
-//        view.font = .mainFont(size: 20)
-//        view.textAlignment = .center
-//        return view
-//    }()
     //MARK: -- QuickNotebtn
     
-    //MARK: -- bottomView
-    let bottomView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .mainBackGroundColor
-        view.layer.borderWidth = 1
-        view.layer.borderColor = UIColor.white.cgColor
-        return view
-    }()
-    
-    //추가
     let leftButton: UIButton = {
         let view = UIButton()
-        view.setImage(UIImage(systemName: "arrowtriangle.left.fill"), for: .normal)
+        view.setImage(UIImage(named: "YesterDayBtn"), for: .normal)
+        view.imageView?.contentMode = .scaleToFill
         return view
     }()
     
@@ -104,7 +118,8 @@ class MainView: BaseView {
     
     let rightButton: UIButton = {
         let view = UIButton()
-        view.setImage(UIImage(systemName: "arrowtriangle.right.fill"), for: .normal)
+        view.setImage(UIImage(named: "TomorrowBtn"), for: .normal)
+        view.imageView?.contentMode = .scaleToFill
         return view
     }()
     
@@ -120,25 +135,6 @@ class MainView: BaseView {
         view.backgroundColor = .mainBackGroundColor
         return view
     }()
-    
-//    let todoCollectionView: UICollectionView = {
-//        let layout = UICollectionViewFlowLayout()
-//
-//        //셀의 가로 넓이는 메인뷰의 여백을 제외한 넓이 * 보여주시고 싶은 비율
-//        let cellSize: CGFloat = (UIScreen.main.bounds.width - 40) * 0.9
-//        //높이는 추후에 delegate에서 수정!
-//        layout.itemSize = CGSize(width: cellSize, height: 400)
-//
-//        layout.minimumInteritemSpacing = 5
-//        layout.minimumLineSpacing = 5
-//        layout.scrollDirection = .horizontal
-//        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
-//
-//        let view = UICollectionView(frame: .zero, collectionViewLayout: layout)
-//        view.backgroundColor = .red
-//        return view
-//    }()
-    
     //MARK: -- bottomView
     
 //    func collectionViewConfigure() {
@@ -146,16 +142,21 @@ class MainView: BaseView {
 //    }
     
     override func configureUI() {
-        
-        quickNoteView.addSubview(quickNoteImage)
-        
         bottomView.addSubview(leftButton)
         bottomView.addSubview(datePickBtn)
         bottomView.addSubview(rightButton)
+        bottomView.addSubview(btnStackView)
         bottomView.addSubview(boundaryLine)
         bottomView.addSubview(tableView)
         
-        [quickNoteView, bottomView, mainBackgroundImage, coinImage, coinCountLabel, heartImage1, heartImage2, heartImage3].forEach {
+        todoPlusView.addSubview(todoPlusImage)
+        quickNoteView.addSubview(quickNoteImage)
+        
+        [todoPlusView, quickNoteView].map {
+            self.btnStackView.addArrangedSubview($0)
+        }
+        
+        [bottomView, mainBackgroundImage, coinImage, coinCountLabel, heartImage1, heartImage2, heartImage3].forEach {
             self.addSubview($0)
         }
     }
@@ -196,27 +197,8 @@ class MainView: BaseView {
             make.height.width.equalTo(50)
         }
         
-        //MARK: -- QuickNote
-        quickNoteView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(5)
-            make.centerX.equalToSuperview()
-            make.height.equalTo(heartImage1)
-            make.width.equalTo(heartImage1)
-        }
-
-        quickNoteImage.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
-//        quickNoteLabel.snp.makeConstraints { make in
-//            make.leading.trailing.bottom.equalTo(quickNoteView.safeAreaLayoutGuide)
-//            make.top.equalTo(quickNoteImage.snp.bottom)
-//            make.height.equalTo(20)
-//        }
-        //MARK: -- QuickNote
-        
         bottomView.snp.makeConstraints { make in
-            make.top.equalTo(quickNoteView.snp.bottom).offset(12)
+            make.top.equalTo(heartImage1.snp.bottom).offset(12)
             make.leading.equalTo(safeAreaLayoutGuide).offset(20)
             make.trailing.equalTo(safeAreaLayoutGuide).offset(-20)
             make.bottom.equalTo(mainBackgroundImage.snp.top)
@@ -225,6 +207,7 @@ class MainView: BaseView {
         leftButton.snp.makeConstraints { make in
             make.top.leading.equalToSuperview().offset(12)
             make.bottom.equalTo(boundaryLine.snp.top).offset(-8)
+            make.height.width.equalTo(50)
         }
         
         datePickBtn.snp.makeConstraints { make in
@@ -237,15 +220,39 @@ class MainView: BaseView {
             make.top.equalToSuperview().offset(12)
             make.bottom.equalTo(boundaryLine.snp.top).offset(-8)
             make.trailing.equalToSuperview().offset(-12)
+            make.height.width.equalTo(50)
         }
+        
         boundaryLine.snp.makeConstraints { make in
             make.leading.equalTo(bottomView.safeAreaLayoutGuide).offset(8)
             make.trailing.equalTo(bottomView.safeAreaLayoutGuide).offset(-8)
             make.height.equalTo(1)
         }
         
-        tableView.snp.makeConstraints { make in
+        btnStackView.snp.makeConstraints { make in
+            make.centerX.equalTo(bottomView)
             make.top.equalTo(boundaryLine.snp.bottom)
+            make.height.equalTo(heartImage1.snp.height)
+        }
+        
+        todoPlusView.snp.makeConstraints { make in
+            make.height.width.equalTo(50)
+        }
+        
+        todoPlusImage.snp.makeConstraints { make in
+            make.edges.equalTo(todoPlusView.safeAreaLayoutGuide)
+        }
+        
+        quickNoteView.snp.makeConstraints { make in
+            make.height.width.equalTo(50)
+        }
+        
+        quickNoteImage.snp.makeConstraints { make in
+            make.edges.equalTo(quickNoteView.safeAreaLayoutGuide)
+        }
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(btnStackView.snp.bottom)
             make.leading.trailing.bottom.equalTo(bottomView.safeAreaLayoutGuide)
         }
         

@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import MessageUI
 
+import AcknowList
 import RealmSwift
 import Toast
 import Zip
@@ -18,7 +19,7 @@ final class SettingViewController: BaseViewController {
     
     let mainView = SettingView()
     let settingMenuList = ["테마", "데이터 초기화", "문의사항", "라이센스"]
-    let settingImageList = ["info.circle", "paintbrush", "arrow.clockwise", "questionmark.circle"]
+    let settingImageList = ["paintbrush", "arrow.clockwise", "questionmark.circle", "info.circle"]
     
     let localRealm = try! Realm()
     
@@ -31,6 +32,14 @@ final class SettingViewController: BaseViewController {
         naviSetting()
         tableSetting()
         view.backgroundColor = .mainBackGroundColor
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        navigationController?.navigationBar.backgroundColor = .mainBackGroundColor
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        navigationController?.navigationBar.backgroundColor = .systemGray6
     }
     
     func naviSetting() {
@@ -163,38 +172,44 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         case 0:
             customAlertSimple(title: "준비중입니다", message: "새로운 테마가 업데이트 예정입니다.", cancelButtonText: "확인")
         case 1:
-            let backUP = UIAlertAction(title: "백업", style: .default) { action in
-                //백업 처리 구현해야됨
-                print("백업 눌림")
-                self.backupFunction()
-            }
-            let restore = UIAlertAction(title: "복구", style: .default) { action in
-                //복구 처리 구현해야됨
-                //복구 눌리고 얼럿으로 앱을 재시작할 수 있으니 진행중인과정 완료 후 복구 누르라는 얼럿 띄우기
-                print("복구 눌림")
+            //초기화 처리 구현해야되는데 초기화는 신중해야되니 별도의 alert 추가
+//            let clearTodo = localRealm.objects(Todo.self)
+//            let clearQuickNote = localRealm.objects(QuickNote.self)
+            
+            let ok = UIAlertAction(title: "데이터 삭제", style: .default) { action in
+                //초기화 처리 구현해야됨
+                print("데이터 초기화됨")
+                UserDefaults.standard.set(false, forKey: "oldUser")
                 
-                let goRestore = UIAlertAction(title: "복구진행", style: .default) { action in
-                    self.restoreFunction()
+                // 데이터 전체 삭제
+                //        let del = realm.objects(Content.self)
+                //        try? realm.write{
+                //            realm.deleteAll(del)
+                //        }
+                //        alertA(msg: "데이터가 삭제 되었습니다.")
+                
+                try! self.localRealm.write {
+                    self.localRealm.deleteAll()
                 }
                 
-                //MARK: --백업, 복구 진행중에 다른 화면이 눌릴 수 없도록 조치하기MARK
-                self.customAlert(title: "주의", message: "복구가 완료되면 앱이 강제종료 될 수 있습니다, 진행중인 작업을 완료후에 복구를 진행해주세요", actions: goRestore)
-//                self.restoreFunction()
-                //복구 처리가 끝나면 얼럿으로 앱 재시작확인 메시지 띄우기
+                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+                let sceneDelegate = windowScene?.delegate as? SceneDelegate
+                let vc = PageViewController()
+                let nav = UINavigationController(rootViewController: vc)
+                
+                sceneDelegate?.window?.rootViewController = nav
+                sceneDelegate?.window?.makeKeyAndVisible()
+                
+                
             }
-            let clear = UIAlertAction(title: "초기화", style: .destructive) { action in
-                //초기화 처리 구현해야되는데 초기화는 신중해야되니 별도의 alert 추가
-                let ok = UIAlertAction(title: "데이터 삭제", style: .default) { action in
-                    //초기화 처리 구현해야됨
-                    print("데이터 초기화됨")
-                }
-                self.customAlert(title: "경고", message: "기기에 저장된 데이터가 삭제됩니다.", style: .alert, actions: ok)
-            }
-            customActionSheet(title: "백업 / 복구 / 초기화 선택", message: nil, actions: backUP, restore, clear)
-
+            self.customAlert(title: "경고", message: "기기에 저장된 데이터가 삭제됩니다.", style: .alert, actions: ok)
+            
         case 2:
             cell?.accessoryType = .none
             sendMail()
+        case 3:
+            let vc = AcknowListViewController()
+            navigationController?.pushViewController(vc, animated: true)
         default:
             cell?.accessoryType = .none
         }
