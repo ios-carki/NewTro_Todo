@@ -29,12 +29,13 @@ final class SettingViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        naviSetting()
+//        naviSetting()
         tableSetting()
         view.backgroundColor = .mainBackGroundColor
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        naviSetting()
         navigationController?.navigationBar.backgroundColor = .mainBackGroundColor
     }
     

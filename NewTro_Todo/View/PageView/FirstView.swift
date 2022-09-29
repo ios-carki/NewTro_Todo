@@ -53,9 +53,15 @@ class FirstView: BasePageView {
         return view
     }()
     
-    let swipeImage: UIImageView = {
-        let view = UIImageView()
-//        view.image = UIImage(named: <#T##String#>)
+    let swipeLabel: UILabel = {
+        let view = UILabel()
+        view.alpha = 0
+        view.text = "왼쪽으로 스와이프!"
+        view.textColor = .black
+        view.font = .mainFont(size: 16)
+        UIView.animate(withDuration: 3, delay: 2.0) {
+            view.alpha = 1
+        }
         return view
     }()
     
@@ -67,7 +73,8 @@ class FirstView: BasePageView {
     }()
     
     override func configureUI() {
-        [pageLabel1, pageLabel2, pageLabel3, backGroundImage].forEach {
+        
+        [pageLabel1, pageLabel2, pageLabel3, backGroundImage, swipeLabel].forEach {
             self.addSubview($0)
         }
     }
@@ -90,6 +97,11 @@ class FirstView: BasePageView {
             make.top.equalTo(pageLabel2.snp.bottom).inset(4)
             make.leading.equalTo(safeAreaLayoutGuide).offset(20)
             make.trailing.equalTo(safeAreaLayoutGuide).offset(-20)
+        }
+        
+        swipeLabel.snp.makeConstraints { make in
+            make.bottom.equalTo(backGroundImage.snp.top)
+            make.leading.equalTo(safeAreaLayoutGuide).offset(20)
         }
         
         backGroundImage.snp.makeConstraints { make in

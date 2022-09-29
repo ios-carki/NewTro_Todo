@@ -17,9 +17,29 @@ class ThirdView: BasePageView {
         return view
     }()
     
+    let pageNoteImage: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "PageThreeImage")
+        return view
+    }()
+    
+    let imageExplainLabel: UILabel = {
+        let view = UILabel()
+        view.numberOfLines = 0
+        view.font = .mainFont(size: 30)
+        view.textAlignment = .center
+        view.text = """
+                    도트 텍스트의 편리한
+                    메모장도 이용해 보세요!
+                    """
+        return view
+    }()
+    
     let signupButton: UIButton = {
         let view = UIButton()
         view.setTitle("시작하기", for: .normal)
+        view.setTitleColor(UIColor.black, for: .normal)
+        view.backgroundColor = .white.withAlphaComponent(0.5)
         view.titleLabel?.font = .mainFont(size: 30)
         view.layer.borderWidth = 1
         view.layer.borderColor = UIColor.black.cgColor
@@ -28,12 +48,23 @@ class ThirdView: BasePageView {
     }()
     
     override func configureUI() {
-        [backGroundImage, signupButton].forEach {
+        [backGroundImage, signupButton, pageNoteImage, imageExplainLabel].forEach {
             self.addSubview($0)
         }
     }
     
     override func setConstraints() {
+        
+        pageNoteImage.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).offset(30)
+            make.centerX.equalToSuperview()
+            make.height.equalTo(300)
+        }
+        
+        imageExplainLabel.snp.makeConstraints { make in
+            make.top.equalTo(pageNoteImage.snp.bottom).offset(20)
+            make.centerX.equalToSuperview()
+        }
         
         signupButton.snp.makeConstraints { make in
             make.centerX.equalTo(safeAreaLayoutGuide)
