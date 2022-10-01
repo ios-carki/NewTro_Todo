@@ -25,13 +25,6 @@ final class SettingView: BaseView {
         return view
     }()
     
-    let versionImageView: UIImageView = {
-        let view = UIImageView()
-        view.contentMode = .scaleAspectFit
-        view.image = UIImage(systemName: "star")
-        return view
-    }()
-    
     let versionInfoLabel: UILabel = {
         let view = UILabel()
         view.text = "현재 버전"
@@ -83,7 +76,6 @@ final class SettingView: BaseView {
      }()
      */
     override func configureUI() {
-        versionView.addSubview(versionImageView)
         versionView.addSubview(versionInfoLabel)
         versionView.addSubview(versionCreditLable)
         
@@ -102,17 +94,11 @@ final class SettingView: BaseView {
         
         versionView.snp.makeConstraints { make in
             make.leading.top.trailing.equalToSuperview()
-            make.height.equalTo(200)
-        }
-        
-        versionImageView.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide)
-            make.leading.equalTo(safeAreaLayoutGuide).offset(30)
-            make.trailing.equalTo(safeAreaLayoutGuide).offset(-30)
+            make.height.equalTo(150)
         }
         
         versionInfoLabel.snp.makeConstraints { make in
-            make.top.equalTo(versionImageView.snp.bottom)
+            make.top.equalTo(safeAreaLayoutGuide)
             make.centerX.equalTo(safeAreaLayoutGuide)
         }
         

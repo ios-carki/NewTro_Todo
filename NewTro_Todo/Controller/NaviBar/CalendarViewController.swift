@@ -22,8 +22,8 @@ final class CalendarViewController: BaseViewController {
     var selectedDate = Date()
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone(abbreviation: "KST")
+        formatter.locale = Locale.current//Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone.current//TimeZone(abbreviation: "KST")
         formatter.dateFormat = "yyyy년 MM월 dd일"
         
         return formatter

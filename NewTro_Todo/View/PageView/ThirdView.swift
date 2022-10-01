@@ -56,7 +56,7 @@ class ThirdView: BasePageView {
     override func setConstraints() {
         
         pageNoteImage.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(30)
+            make.top.equalTo(self.safeAreaLayoutGuide).offset(70)
             make.centerX.equalToSuperview()
             make.height.equalTo(300)
         }

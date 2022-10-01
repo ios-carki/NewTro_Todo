@@ -16,7 +16,6 @@ class MainViewController: BaseViewController {
     let cellDetailCustomView = CustomMenuPopupView()
     let cellDetailCustomVC = CustomMenuPopupViewController()
     
-    
     //MARK: -
     var calendar = Calendar.current
     
@@ -274,6 +273,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
                 tasks[btnName.tag].isFinished = false
             }
         }
+        mainView.tableView.reloadSections(IndexSet(0...0), with: .none)
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -285,21 +285,46 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return tasks.count
     }
     
+    @objc func makeToastMessageFunc(_ sender: UITextField) {
+        guard let text = sender.text else { return }
+        if text.count >= 20 {
+            view.makeToast("할 일 작성은 20자 이내로 작성해주세요")
+        }
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     
-            //셀 생성 시점에 클로저로 전달
-            let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.identifier, for: indexPath) as! MainTableViewCell
+        //셀 생성 시점에 클로저로 전달
+        let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.identifier, for: indexPath) as! MainTableViewCell
+        
+        cell.todoTextField.text = tasks[indexPath.row].todo!
+        //셀 생성 시점에 id도 전달함
+        cell.id = tasks[indexPath.row].objectID
+        cell.isCompleted = tasks[indexPath.row].isFinished
+        cell.todoTextField.addTarget(self, action: #selector(makeToastMessageFunc), for: .editingChanged)
+        
+        
+        if cell.isCompleted == true {
+//            cell.todoBoundLine.isHidden = false
+            cell.completeTodoLabel.isHidden = false
+            cell.todoTextField.isHidden = true
+            cell.importanceSelectBtn.isHidden = true
+            cell.completeTodoLabel.attributedText = tasks[indexPath.row].todo?.strikeThrough()
+            cell.completeTodoLabel.textColor = .lightGray
             
-            cell.todoTextField.text = tasks[indexPath.row].todo!
-            //셀 생성 시점에 id도 전달함
-            cell.id = tasks[indexPath.row].objectID
-            cell.importanceSelectBtn.tag = indexPath.row //상세설정
-            cell.completeTodoBtn.tag = indexPath.row //완료버튼
-            cell.importanceSelectBtn.addTarget(self, action: #selector(menuPopupButtonClicked), for: .touchUpInside)
-            cell.completeTodoBtn.addTarget(self, action: #selector(completeButtonClicked), for: .touchUpInside)
-            cell.backgroundColor = .mainBackGroundColor
-            cell.selectionStyle = .none
-            return cell
+        } else {
+//            cell.todoBoundLine.isHidden = true
+            cell.completeTodoLabel.isHidden = true
+            cell.todoTextField.isHidden = false
+            cell.importanceSelectBtn.isHidden = false
+        }
+        cell.importanceSelectBtn.tag = indexPath.row //상세설정
+        cell.completeTodoBtn.tag = indexPath.row //완료버튼
+        cell.importanceSelectBtn.addTarget(self, action: #selector(menuPopupButtonClicked), for: .touchUpInside)
+        cell.completeTodoBtn.addTarget(self, action: #selector(completeButtonClicked), for: .touchUpInside)
+        cell.backgroundColor = .cellBackGroundColor
+        cell.selectionStyle = .none
+        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -311,4 +336,12 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return 50
     }
     
+}
+
+extension String {
+    func strikeThrough() -> NSAttributedString {
+        let attributeString = NSMutableAttributedString(string: self)
+        attributeString.addAttribute(NSAttributedString.Key.strikethroughStyle, value: NSUnderlineStyle.single.rawValue, range: NSMakeRange(0, attributeString.length))
+        return attributeString
+    }
 }

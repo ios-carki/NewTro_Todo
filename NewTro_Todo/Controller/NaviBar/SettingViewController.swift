@@ -21,10 +21,14 @@ final class SettingViewController: BaseViewController {
     let settingMenuList = ["테마", "데이터 초기화", "문의사항", "라이센스"]
     let settingImageList = ["paintbrush", "arrow.clockwise", "questionmark.circle", "info.circle"]
     
+    let nowVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
+    
     let localRealm = try! Realm()
     
     override func loadView() {
         self.view = mainView
+        
+        mainView.versionInfoLabel.text = "현재버전: ver \(nowVersion)"
     }
     
     override func viewDidLoad() {
@@ -223,7 +227,7 @@ extension SettingViewController: MFMailComposeViewControllerDelegate {
         
         if MFMailComposeViewController.canSendMail() {
             let mail = MFMailComposeViewController()
-            mail.setToRecipients(["94.nogari@gmail.com"])
+            mail.setToRecipients(["newtrotodo@gmail.com"])
             mail.setSubject("New-Tro Todo 문의사항 - ")
             mail.mailComposeDelegate = self
             
@@ -234,11 +238,11 @@ extension SettingViewController: MFMailComposeViewControllerDelegate {
             let message = """
             (설정 앱 -> Mail -> 계정 -> 계정 연동 확인)
             or
-            '94.nogari@gmail.com' 메일 전송
+            'newtrotodo@gmail.com' 메일 전송
             """
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
             let copy = UIAlertAction(title: "문의 계정 복사", style: .default) { action in
-                UIPasteboard.general.string = "94.nogari@gmail.com"
+                UIPasteboard.general.string = "newtrotodo@gmail.com"
                 self.view.makeToast("클립보드에 복사되었습니다.")
             }
             let cancel = UIAlertAction(title: "확인", style: .cancel)

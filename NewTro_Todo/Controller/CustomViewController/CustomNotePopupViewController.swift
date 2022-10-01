@@ -8,17 +8,20 @@
 import Foundation
 
 import RealmSwift
+import Toast
+import UIKit
 
 class CustomNotePopupViewController: BaseViewController {
     
     let mainView = CustomNotePopupView()
+    let subView = MainViewController()
     
     var nowDate: Date?
     var receivedStrDate: String?
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone(abbreviation: "KST")
+        formatter.locale = Locale.current//Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone.current//TimeZone(abbreviation: "KST")
         formatter.dateFormat = "yyyy년 MM월 dd일"
         
         return formatter
@@ -98,8 +101,9 @@ class CustomNotePopupViewController: BaseViewController {
             findID?.setValue(true, forKey: "isWrited")
         }
         
+        view.makeToast("메모 저장 완료")
+        
         
     }
     
 }
-

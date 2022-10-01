@@ -89,7 +89,7 @@ class CustomNotePopupView: BaseView {
         noteTextView.snp.makeConstraints { make in
             make.top.equalTo(noteNameLabel.snp.bottom)
             make.leading.trailing.equalToSuperview()
-            make.bottom.equalTo(noteSaveButton.snp.bottom)
+            make.bottom.equalTo(noteSaveButton.snp.top)
         }
         
         noteSaveButton.snp.makeConstraints { make in

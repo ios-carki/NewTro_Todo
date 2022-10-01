@@ -1,11 +1,11 @@
 {
   "images" : [
     {
-      "filename" : "Page3BackGround.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "Page3BackGround.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
