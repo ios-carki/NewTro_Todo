@@ -27,7 +27,7 @@ final class SettingView: BaseView {
     
     let versionInfoLabel: UILabel = {
         let view = UILabel()
-        view.text = "현재 버전"
+        view.text = "versionInfoLabel_Text".localized()
         view.font = .mainFont(size: 16)
         return view
     }()
@@ -35,10 +35,7 @@ final class SettingView: BaseView {
     let versionCreditLable: UILabel = {
         let view = UILabel()
         view.numberOfLines = 0
-        view.text = """
-        개발자: Carki
-        디자이너: Carki
-        """
+        view.text = "versionCreditLabel_Text".localized()
         view.font = .mainFont(size: 16)
         return view
     }()

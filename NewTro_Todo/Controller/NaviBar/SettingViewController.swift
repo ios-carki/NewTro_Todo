@@ -18,7 +18,7 @@ import Zip
 final class SettingViewController: BaseViewController {
     
     let mainView = SettingView()
-    let settingMenuList = ["테마", "데이터 초기화", "문의사항", "라이센스"]
+    let settingMenuList = ["settingMenuList_Theme".localized(), "ClearData".localized(), "Contact_Developer".localized(), "License".localized()]
     let settingImageList = ["paintbrush", "arrow.clockwise", "questionmark.circle", "info.circle"]
     
     let nowVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
@@ -28,7 +28,7 @@ final class SettingViewController: BaseViewController {
     override func loadView() {
         self.view = mainView
         
-        mainView.versionInfoLabel.text = "현재버전: ver \(nowVersion)"
+        mainView.versionInfoLabel.text = "loadView_versionInfoLabel_Text".localized() + "\(nowVersion)"//"현재버전: ver \(nowVersion)"
     }
     
     override func viewDidLoad() {
@@ -48,7 +48,7 @@ final class SettingViewController: BaseViewController {
     }
     
     func naviSetting() {
-        title = "설정"
+        title = "NavigationBar_Title_SettingViewController".localized()
         self.navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.black]
         self.navigationController?.navigationBar.tintColor = .black
     }
@@ -175,13 +175,13 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         
         switch (indexPath.row) {
         case 0:
-            customAlertSimple(title: "준비중입니다", message: "새로운 테마가 업데이트 예정입니다.", cancelButtonText: "확인")
+            customAlertSimple(title: "Alert_SettingViewController_Theme_CustomAlertSimple_Title".localized(), message: "Alert_SettingViewController_Theme_CustomAlertSimple_Message".localized(), cancelButtonText: "Alert_SettingViewController_Theme_CustomAlertSimple_CancelButtonText".localized())
         case 1:
             //초기화 처리 구현해야되는데 초기화는 신중해야되니 별도의 alert 추가
 //            let clearTodo = localRealm.objects(Todo.self)
 //            let clearQuickNote = localRealm.objects(QuickNote.self)
             
-            let ok = UIAlertAction(title: "데이터 삭제", style: .default) { action in
+            let ok = UIAlertAction(title: "Alert_SettingViewController_DataClear_UIAlertAction_OkButton_Title".localized(), style: .default) { action in
                 //초기화 처리 구현해야됨
                 print("데이터 초기화됨")
                 UserDefaults.standard.set(false, forKey: "oldUser")
@@ -207,7 +207,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
                 
                 
             }
-            self.customAlert(title: "경고", message: "기기에 저장된 데이터가 삭제됩니다.", style: .alert, actions: ok)
+            self.customAlert(title: "Alert_SettingViewController_DataClear_UIAlertAction_Title".localized(), message: "Alert_SettingViewController_DataClear_UIAlertAction_Message".localized(), style: .alert, actions: ok)
             
         case 2:
             cell?.accessoryType = .none
@@ -228,24 +228,20 @@ extension SettingViewController: MFMailComposeViewControllerDelegate {
         if MFMailComposeViewController.canSendMail() {
             let mail = MFMailComposeViewController()
             mail.setToRecipients(["newtrotodo@gmail.com"])
-            mail.setSubject("New-Tro Todo 문의사항 - ")
+            mail.setSubject("SettingViewController_MailQuestions_Subject".localized())
             mail.mailComposeDelegate = self
             
             self.present(mail, animated: true)
         } else {
             //alert. 메일 등록을 해주시거나, 이메일로 문의 주세요
-            let title = "메일을 전송할 수 없습니다."
-            let message = """
-            (설정 앱 -> Mail -> 계정 -> 계정 연동 확인)
-            or
-            'newtrotodo@gmail.com' 메일 전송
-            """
+            let title = "SettingViewController_FailToMail_Alert_Title".localized()
+            let message = "SettingViewController_FailToMail_Alert_Message".localized()
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            let copy = UIAlertAction(title: "문의 계정 복사", style: .default) { action in
+            let copy = UIAlertAction(title: "SettingViewController_CopyMailAddress_Alert_Title".localized(), style: .default) { action in
                 UIPasteboard.general.string = "newtrotodo@gmail.com"
-                self.view.makeToast("클립보드에 복사되었습니다.")
+                self.view.makeToast("SettingViewController_CopyMailAddress_ToastMessage".localized())
             }
-            let cancel = UIAlertAction(title: "확인", style: .cancel)
+            let cancel = UIAlertAction(title: "SettingViewController_CopyMailAddress_CancelButton_Title".localized(), style: .cancel)
             alert.addAction(copy)
             alert.addAction(cancel)
             self.present(alert, animated: true)

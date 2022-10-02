@@ -14,7 +14,7 @@ class FirstView: BasePageView {
     
     let pageLabel1: UILabel = {
         let view = UILabel()
-        view.text = "도트감성"
+        view.text = "PageLabel1_Text".localized()
         view.alpha = 0
         view.textAlignment = .center
         view.font = .mainFont(size: 30)
@@ -26,7 +26,7 @@ class FirstView: BasePageView {
     
     let pageLabel2: UILabel = {
         let view = UILabel()
-        view.text = "할 일 목록 앱"
+        view.text = "PageLabel2_Text".localized()
         view.alpha = 0
         view.textAlignment = .center
         view.font = .mainFont(size: 50)
@@ -38,10 +38,7 @@ class FirstView: BasePageView {
     
     let pageLabel3: UILabel = {
         let view = UILabel()
-        view.text = """
-                    New-Tro
-                    ToDo!
-                    """
+        view.text = "pageLabel3_Text".localized()
         view.alpha = 0
         view.textColor = .yellow
         view.numberOfLines = 0
@@ -56,7 +53,7 @@ class FirstView: BasePageView {
     let swipeLabel: UILabel = {
         let view = UILabel()
         view.alpha = 0
-        view.text = "왼쪽으로 스와이프!"
+        view.text = "SwipeLabel_Text".localized()
         view.textColor = .black
         view.font = .mainFont(size: 16)
         UIView.animate(withDuration: 3, delay: 2.0) {

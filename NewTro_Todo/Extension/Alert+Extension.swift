@@ -19,7 +19,7 @@ extension UIViewController {
     
     func customActionSheet(title: String?, message: String?, style: UIAlertController.Style = .actionSheet, actions: UIAlertAction...) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
-        let cancel = UIAlertAction(title: "취소", style: .cancel)
+        let cancel = UIAlertAction(title: "Alert_Cancel_Title".localized(), style: .cancel)
         
         for action in actions {
             alert.addAction(action)
@@ -32,7 +32,7 @@ extension UIViewController {
     
     func customAlert(title: String, message: String, style: UIAlertController.Style = .alert, actions: UIAlertAction...) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
-        let cancel = UIAlertAction(title: "취소", style: .cancel)
+        let cancel = UIAlertAction(title: "Alert_Cancel_Title".localized(), style: .cancel)
         
         for action in actions {
             alert.addAction(action)

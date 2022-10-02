@@ -44,7 +44,7 @@ final class CalendarViewController: BaseViewController {
         
         view.backgroundColor = .mainBackGroundColor
         calendarSetting()
-        mainView.todoCountLabel.text = "총 \(dateCounter(date: selectedDate))건이 기록되어 있습니다."
+        mainView.todoCountLabel.text = "TodoCountLabel_Text %d".localized(with: dateCounter(date: selectedDate), comment: "")
         todoListViewClicked()
     }
     

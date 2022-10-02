@@ -56,14 +56,14 @@ final class CalendarView: BaseView {
     
     let todoTextLabel: UILabel = {
         let view = UILabel()
-        view.text = "작성된 할 일 목록"
+        view.text = "todoTextLabel_Text".localized()
         view.font = .mainFont(size: 20)
         return view
     }()
     
     let todoCountLabel: UILabel = {
         let view = UILabel()
-        view.text = "총 10건이 기록되어있습니다."
+        view.text = "todoCountLabel_Text".localized()
         view.font = .mainFont(size: 15)
         view.textColor = .lightGray
         return view

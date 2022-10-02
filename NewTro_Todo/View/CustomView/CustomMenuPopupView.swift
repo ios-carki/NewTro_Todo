@@ -20,7 +20,7 @@ class CustomMenuPopupView: BaseView {
     
     let detailTitleLabel: UILabel = {
         let view = UILabel()
-        view.text = "세부 설정"
+        view.text = "DetailTitleLable_Text".localized()
         view.textAlignment = .center
         view.backgroundColor = .blue
         view.font = .mainFont(size: 20)
@@ -31,14 +31,14 @@ class CustomMenuPopupView: BaseView {
     let cancelButton: UIButton = {
         let view = UIButton()
         view.titleLabel?.font = .mainFont(size: 20)
-        view.setTitle("확인", for: .normal)
+        view.setTitle("CancelButton_SetTitle".localized(), for: .normal)
         view.backgroundColor = .gray
         return view
     }()
     
     let setImportanceButton: UIButton = {
         let view = UIButton()
-        view.setTitle("[ 중요도 ]", for: .normal)
+        view.setTitle("SetImportanceButton_SetTitle".localized(), for: .normal)
         view.setTitleColor(UIColor.yellow, for: .highlighted)
         view.titleLabel?.font = .mainFont(size: 20)
         view.titleLabel?.textColor = .white
@@ -47,7 +47,7 @@ class CustomMenuPopupView: BaseView {
     
     let setImportanceStatusLable: UILabel = {
         let view = UILabel()
-        view.text = "...[ 하 ]"
+        view.text = "SetImportanceStatusLabel_Text".localized()
         view.font = .mainFont(size: 20)
         view.textColor = .lightGray
         return view
@@ -55,7 +55,7 @@ class CustomMenuPopupView: BaseView {
     
     let setFavoriteButton: UIButton = {
         let view = UIButton()
-        view.setTitle("[ 즐겨찾기 ]", for: .normal)
+        view.setTitle("SetFavoriteStatusButton_SetTitle".localized(), for: .normal)
         view.setTitleColor(UIColor.yellow, for: .highlighted)
         view.titleLabel?.font = .mainFont(size: 20)
         view.titleLabel?.textColor = .white
@@ -65,7 +65,7 @@ class CustomMenuPopupView: BaseView {
     
     let setFavoriteStatusLabel: UILabel = {
         let view = UILabel()
-        view.text = "...[ OFF ]"
+        view.text = "SetFavoriteStatusLabel_Text".localized()
         view.font = .mainFont(size: 20)
         view.textColor = .lightGray
         
@@ -74,7 +74,7 @@ class CustomMenuPopupView: BaseView {
     
     let deleteButton: UIButton = {
         let view = UIButton()
-        view.setTitle("[ 삭제 ]", for: .normal)
+        view.setTitle("DeleteButton_SetTitle".localized(), for: .normal)
         view.setTitleColor(UIColor.red, for: .normal)
         view.titleLabel?.font = .mainFont(size: 20)
         return view

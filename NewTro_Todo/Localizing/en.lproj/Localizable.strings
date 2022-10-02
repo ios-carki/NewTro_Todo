@@ -1,0 +1,144 @@
+/* Localizable.strings NewTro_Todo Created by Carki on 2022/10/02. */
+//MARK: --DateFormat
+//CalendarView
+"headerDateFormat" = "MMMM yyyy";
+
+//MainView
+//MARK: --DateFormat
+
+//MARK: -- View
+
+//PageView - FirstView
+"PageLabel1_Text" = "dot sensibility";
+
+"PageLabel2_Text" = "ToDo App";
+
+"pageLabel3_Text" = "New-Tro\nToDo!";
+
+"SwipeLabel_Text" = "Swipe Left!";
+
+//PageView - SecondView
+"page2_ImageExplainLabel_Text" = "Manage your to-dos\nwith cute dot theme\nand convenient UI!";
+
+//PageView = ThirdView
+"page3_ImageExplainLabel_Text" = "Also try the handy notepad\nof dot text!";
+
+"signupButton_SetTitle" = "Get started now";
+
+//MainView
+
+//SettingView
+"versionInfoLabel_Text" = "Current Version";
+
+"versionCreditLabel_Text" = "Developer: Carki\nDesigner: Carki";
+
+//CalendarView
+"todoTextLabel_Text" = "Written to-do list";
+
+"todoCountLabel_Text" = "A total of 10 cases have been recorded.";
+
+//MARK: -- View
+
+//MARK: -- ViewController
+//MainViewController
+//Func_fetchRealm
+"dateFormat" = "MMM dd YYYY";
+
+//Func_navigationSetting
+"navigationBar_Title" = "Main";
+
+//Func_makeToastMessageFunc
+"toastMessage" = "Please write to-dos in 20 characters or less.";
+
+//MainTableViewCell
+"CellPlaceHolder" = "Please enter your to-do.";
+
+//CalendarViewController
+"TodoCountLabel_Text %d" = "A total of %d cases have been recorded.";
+
+//SettingViewController
+//백업 복구부분 해야됨
+"settingMenuList_Theme" = "Theme";
+"settingMenuList_ClearData" = "Clear Data";
+"settingMenuList_Contact_Developer" = "Contact Developer";
+"settingMenuList_License" = "License";
+
+"loadView_versionInfoLabel_Text" = "Now Version: ver"; //뒤에 버전 변수가 붙으면?
+
+"NavigationBar_Title_SettingViewController" = "Setting";
+
+"Alert_SettingViewController_Theme_CustomAlertSimple_Title" = "Coming soon";
+
+"Alert_SettingViewController_Theme_CustomAlertSimple_Message" = "New themes will be updated soon";
+
+"Alert_SettingViewController_Theme_CustomAlertSimple_CancelButtonText" = "Confirm";
+
+"Alert_SettingViewController_DataClear_UIAlertAction_OkButton_Title" = "Clear Data";
+
+"Alert_SettingViewController_DataClear_UIAlertAction_Title" = "Warning";
+
+"Alert_SettingViewController_DataClear_UIAlertAction_Message" = "Data stored on the device will be deleted.";
+
+//customAlert
+"Alert_Cancel_Title" = "Cancel";
+
+"SettingViewController_MailQuestions_Subject" = "Questions of New-Tro Todo";
+
+"SettingViewController_FailToMail_Alert_Title" = "The mail could not be sent.";
+
+"SettingViewController_FailToMail_Alert_Message" = "Settings App -> Mail -> Accounts -> Check Account Linking\nor\nSend Mail to newtrotodo@gmail.com";
+
+"SettingViewController_CopyMailAddress_Alert_Title" = "Mail Account Copy";
+
+"SettingViewController_CopyMailAddress_ToastMessage" = "Copied to clipboard.";
+
+"SettingViewController_CopyMailAddress_CancelButton_Title" = "Ok";
+
+"SettingViewController_mailComposeController_Cancelled" = "Cancel";
+
+"SettingViewController_mailComposeController_Saved" = "Temporary Storage";
+
+"SettingViewController_mailComposeController_Sent" = "Sent";
+
+"SettingViewController_mailComposeController_Failed" = "Failed";
+//MARK: -- ViewController
+
+//MARK: -- CustomMenuPopupView
+
+"DetailTitleLable_Text" = "Detailed settings";
+
+"CancelButton_SetTitle" = "Ok";
+
+"SetImportanceButton_SetTitle" = "[ Importance ]";
+
+"SetImportanceStatusLabel_Text" = "...[ Low ]";
+
+"SetFavoriteStatusButton_SetTitle" = "[ Favorites ]";
+
+"SetFavoriteStatusLabel_Text" = "...[ OFF ]";
+
+"DeleteButton_SetTitle" = "[ Delete ]";
+//MARK: -- CustomMenuPopupView
+
+//MARK: -- CustomMenuPopupViewController
+
+"tasks[receivedTag!].importance_0" = "...[ Low ]";
+"tasks[receivedTag!].importance_1" = "...[ Medium ]";
+"tasks[receivedTag!].importance_2" = "...[ High ]";
+
+"tasks[receivedTag!].favorite_ON" = "...[ ON ]";
+"tasks[receivedTag!].favorite_OFF" = "...[ OFF ]";
+//MARK: -- CustomMenuPopupViewController
+
+//MARK: -- CustomNotePopupViewController
+"NoteSaveButtonClicked_ToastMessage" = "메모 저장 완료";
+
+//MARK: -- CustomNotePopupViewController
+
+//MARK: -- CustomNotePopupView
+
+"NoteNameLabel_Text" = "Take notes";
+
+"NoteSaveButton_SetTitle" = "Save";
+//MARK: -- CustomMenuPopupView
+

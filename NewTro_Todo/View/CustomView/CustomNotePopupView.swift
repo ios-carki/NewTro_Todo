@@ -23,7 +23,7 @@ class CustomNotePopupView: BaseView {
     let noteNameLabel: UILabel = {
         let view = UILabel()
         view.backgroundColor = .mainBackGroundColor
-        view.text = "메모작성"
+        view.text = "NoteNameLabel_Text".localized()
         view.textColor = .white
         view.textAlignment = .center
         view.font = .mainFont(size: 20)
@@ -46,7 +46,7 @@ class CustomNotePopupView: BaseView {
     
     let noteSaveButton: UIButton = {
         let view = UIButton()
-        view.setTitle("저장", for: .normal)
+        view.setTitle("NoteSaveButton_SetTitle".localized(), for: .normal)
         view.titleLabel?.font = .mainFont(size: 20)
         view.tintColor = .black
         view.backgroundColor = .mainBackGroundColor

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C306AFA628E9934300D4BB6B /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C306AFA528E9934300D4BB6B /* String+Extension.swift */; };
 		C32FF05828C70C8800949E05 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF05728C70C8800949E05 /* AppDelegate.swift */; };
 		C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF05928C70C8800949E05 /* SceneDelegate.swift */; };
 		C32FF05F28C70C8800949E05 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C32FF05D28C70C8800949E05 /* Main.storyboard */; };
@@ -42,6 +43,7 @@
 		C34644EF28E492670071EF13 /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = C34644EE28E492670071EF13 /* AcknowList */; };
 		C34644F128E493980071EF13 /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = C34644F028E493980071EF13 /* Package.resolved */; };
 		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
+		C398967528E8A12C0026B1AA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C398967728E8A12C0026B1AA /* Localizable.strings */; };
 		C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */; };
 		C3AF2FFC28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */; };
 		C3D6454228D05E4700850505 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = C3D6454128D05E4700850505 /* FSCalendar */; };
@@ -55,6 +57,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C306AFA528E9934300D4BB6B /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		C32FF05428C70C8800949E05 /* NewTro_Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewTro_Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32FF05728C70C8800949E05 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C32FF05928C70C8800949E05 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -86,6 +89,8 @@
 		C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupViewController.swift; sourceTree = "<group>"; };
 		C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupView.swift; sourceTree = "<group>"; };
 		C34644F028E493980071EF13 /* Package.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Package.resolved; path = NewTro_Todo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; sourceTree = "<group>"; };
+		C398967628E8A12C0026B1AA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C398967828E8A15F0026B1AA /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuPopupView.swift; sourceTree = "<group>"; };
 		C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuPopupViewController.swift; sourceTree = "<group>"; };
 		C3D6454328D0ADEB00850505 /* Alert+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Alert+Extension.swift"; sourceTree = "<group>"; };
@@ -135,6 +140,7 @@
 		C32FF05628C70C8800949E05 /* NewTro_Todo */ = {
 			isa = PBXGroup;
 			children = (
+				C398967228E8A0FE0026B1AA /* Localizing */,
 				C3D6455328D34FA100850505 /* Realm */,
 				C32FF08728C72EC500949E05 /* Extension */,
 				C32FF06C28C70CF400949E05 /* Controller */,
@@ -206,6 +212,7 @@
 				C3D6454C28D1D59200850505 /* UIView+Extension.swift */,
 				C3D6455B28D353B700850505 /* DateFormat+Extension.swift */,
 				C34644BC28DF19810071EF13 /* File+Extension.swift */,
+				C306AFA528E9934300D4BB6B /* String+Extension.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -235,6 +242,14 @@
 				C32FF0A428CF149600949E05 /* SettingView.swift */,
 			);
 			path = NaviBar;
+			sourceTree = "<group>";
+		};
+		C398967228E8A0FE0026B1AA /* Localizing */ = {
+			isa = PBXGroup;
+			children = (
+				C398967728E8A12C0026B1AA /* Localizable.strings */,
+			);
+			path = Localizing;
 			sourceTree = "<group>";
 		};
 		C3AF2FF728D9D22400AF1A60 /* CustomView */ = {
@@ -324,6 +339,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = C32FF04B28C70C8700949E05;
 			packageReferences = (
@@ -352,6 +368,7 @@
 				C32FF09728CAAB6F00949E05 /* Galmuri11-Bold.ttf in Resources */,
 				C32FF06428C70C8800949E05 /* LaunchScreen.storyboard in Resources */,
 				C32FF06128C70C8800949E05 /* Assets.xcassets in Resources */,
+				C398967528E8A12C0026B1AA /* Localizable.strings in Resources */,
 				C32FF09528C9AECF00949E05 /* Galmuri11-Condensed.ttf in Resources */,
 				C34644F128E493980071EF13 /* Package.resolved in Resources */,
 				C32FF05F28C70C8800949E05 /* Main.storyboard in Resources */,
@@ -381,6 +398,7 @@
 				C32FF08228C7240900949E05 /* SecondView.swift in Sources */,
 				C32FF0A528CF149600949E05 /* SettingView.swift in Sources */,
 				C32FF07E28C719FA00949E05 /* ThirdViewController.swift in Sources */,
+				C306AFA628E9934300D4BB6B /* String+Extension.swift in Sources */,
 				C32FF08428C7240F00949E05 /* ThirdView.swift in Sources */,
 				C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */,
 				C3D6455528D3503600850505 /* TodoScheme.swift in Sources */,
@@ -418,6 +436,15 @@
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
+		C398967728E8A12C0026B1AA /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C398967628E8A12C0026B1AA /* en */,
+				C398967828E8A15F0026B1AA /* ko */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
@@ -425,6 +452,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -485,6 +513,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";

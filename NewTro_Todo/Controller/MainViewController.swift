@@ -109,7 +109,7 @@ class MainViewController: BaseViewController {
         let calendarButton = UIBarButtonItem(image: UIImage(systemName: "calendar"), style: .plain, target: self, action: #selector(calendarButtonClicked))
         let menuButton = UIBarButtonItem(image: UIImage(systemName: "gearshape.fill"), style: .plain, target: self, action: #selector(menuButtonClicked))
         
-        title = "메인"
+        title = "navigationBar_Title".localized()
         navigationController?.navigationBar.backgroundColor = .calendarWeekdayColor
         navigationItem.leftBarButtonItem = calendarButton
         navigationItem.leftBarButtonItem?.tintColor = .gray
@@ -288,7 +288,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     @objc func makeToastMessageFunc(_ sender: UITextField) {
         guard let text = sender.text else { return }
         if text.count >= 20 {
-            view.makeToast("할 일 작성은 20자 이내로 작성해주세요")
+            view.makeToast("toastMessage".localized())
         }
     }
     

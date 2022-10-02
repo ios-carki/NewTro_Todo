@@ -42,18 +42,18 @@ class CustomMenuPopupViewController: BaseViewController {
         super.viewWillAppear(animated)
         
         if tasks[receivedTag!].importance == 0 {
-            mainView.setImportanceStatusLable.text = "...[ 하 ]"
+            mainView.setImportanceStatusLable.text = "tasks[receivedTag!].importance_0".localized()
         }else if tasks[receivedTag!].importance == 1 {
-            mainView.setImportanceStatusLable.text = "...[ 중 ]"
+            mainView.setImportanceStatusLable.text = "tasks[receivedTag!].importance_1".localized()
         }else {
-            mainView.setImportanceStatusLable.text = "...[ 상 ]"
+            mainView.setImportanceStatusLable.text = "tasks[receivedTag!].importance_2".localized()
         }
         
         print("페이보릿 상태 확인: ", tasks[receivedTag!].favorite)
         if tasks[receivedTag!].favorite {
-            mainView.setFavoriteStatusLabel.text = "...[ ON ]"
+            mainView.setFavoriteStatusLabel.text = "tasks[receivedTag!].favorite_ON".localized()
         } else {
-            mainView.setFavoriteStatusLabel.text = "...[ OFF ]"
+            mainView.setFavoriteStatusLabel.text = "tasks[receivedTag!].favorite_OFF".localized()
         }
     }
     
@@ -76,19 +76,19 @@ class CustomMenuPopupViewController: BaseViewController {
             try! self.localRealm.write {
                 tasks[receivedTag!].importance = 1
             }
-            mainView.setImportanceStatusLable.text = "...[ 중 ]"
+            mainView.setImportanceStatusLable.text = "tasks[receivedTag!].importance_1".localized()
 //            subView.tableView.reloadData()
         } else if tasks[receivedTag!].importance == 1 {
             try! self.localRealm.write {
                 tasks[receivedTag!].importance = 2
             }
-            mainView.setImportanceStatusLable.text = "...[ 상 ]"
+            mainView.setImportanceStatusLable.text = "tasks[receivedTag!].importance_2".localized()
 //            subView.tableView.reloadData()
         } else if tasks[receivedTag!].importance == 2 {
             try! self.localRealm.write {
                 tasks[receivedTag!].importance = 0
             }
-            mainView.setImportanceStatusLable.text = "...[ 하 ]"
+            mainView.setImportanceStatusLable.text = "tasks[receivedTag!].importance_0".localized()
 //            subView.tableView.reloadData()
         }
     }
@@ -100,9 +100,9 @@ class CustomMenuPopupViewController: BaseViewController {
         }
         
         if tasks[receivedTag!].favorite {
-            mainView.setFavoriteStatusLabel.text = "...[ ON ]"
+            mainView.setFavoriteStatusLabel.text = "tasks[receivedTag!].favorite_ON".localized()
         } else {
-            mainView.setFavoriteStatusLabel.text = "...[ OFF ]"
+            mainView.setFavoriteStatusLabel.text = "tasks[receivedTag!].favorite_OFF".localized()
         }
         
 //        subView.tableView.reloadData()

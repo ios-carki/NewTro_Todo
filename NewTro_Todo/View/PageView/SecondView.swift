@@ -23,21 +23,17 @@ class SecondView: BasePageView {
         return view
     }()
     
-    let imageExplainLabel: UILabel = {
+    let page2_ImageExplainLabel: UILabel = {
         let view = UILabel()
         view.numberOfLines = 0
         view.textAlignment = .center
-        view.text = """
-                    귀여운 도트 테마와
-                    편리한 UI로
-                    할 일을 관리해보세요!
-                    """
+        view.text = "page2_ImageExplainLabel_Text".localized()
         view.font = .mainFont(size: 30)
         return view
     }()
     
     override func configureUI() {
-        [backGroundImage, pageTodoImage, imageExplainLabel].forEach {
+        [backGroundImage, pageTodoImage, page2_ImageExplainLabel].forEach {
             self.addSubview($0)
         }
     }
@@ -55,7 +51,7 @@ class SecondView: BasePageView {
             make.centerX.equalToSuperview()
         }
         
-        imageExplainLabel.snp.makeConstraints { make in
+        page2_ImageExplainLabel.snp.makeConstraints { make in
             make.top.equalTo(pageTodoImage.snp.bottom).offset(20)
             make.centerX.equalToSuperview()
         }

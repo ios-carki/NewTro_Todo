@@ -101,7 +101,7 @@ class CustomNotePopupViewController: BaseViewController {
             findID?.setValue(true, forKey: "isWrited")
         }
         
-        view.makeToast("메모 저장 완료")
+        view.makeToast("NoteSaveButtonClicked_ToastMessage".localized())
         
         
     }

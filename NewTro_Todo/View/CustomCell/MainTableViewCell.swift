@@ -31,7 +31,7 @@ class MainTableViewCell: UITableViewCell {
     let todoTextField: UITextField = {
         let view = UITextField()
         view.isHidden = false
-        view.placeholder = "일정을 입력하세요."
+        view.placeholder = "CellPlaceHolder".localized()
         view.backgroundColor = .cellBackGroundColor
         view.font = .mainFont(size: 16)
         view.translatesAutoresizingMaskIntoConstraints = false
