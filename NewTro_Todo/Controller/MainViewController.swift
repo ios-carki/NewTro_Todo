@@ -52,6 +52,7 @@ class MainViewController: BaseViewController {
         todoPlusTapGesture()
         quickNoteTapGesture()
         fetchRealm()
+        setLanguage()
         
         mainView.rightButton.addTarget(self, action: #selector(tomorrowFunc), for: .touchUpInside)
         mainView.leftButton.addTarget(self, action: #selector(yesterdayFunc), for: .touchUpInside)
@@ -66,6 +67,19 @@ class MainViewController: BaseViewController {
         
     }
     
+    func setLanguage() {
+        var language = UserDefaults.standard.array(forKey: "language")?.first as? String
+        if language == nil {
+            let str = String(NSLocale.preferredLanguages[0])    // 언어코드-지역코드 (ex. ko-KR, en-US)
+            language = String(str.dropLast(3))                  // ko-KR => ko, en-US => en
+        }
+        
+        // 해당 언어 파일 가져오기
+        let path = Bundle.main.path(forResource: language, ofType: "lproj") ?? Bundle.main.path(forResource: "en", ofType: "lproj")
+        let bundle = Bundle(path: path!)
+        
+    }
+    
     @objc func didDismissDetailNotification(_ notification: Notification) {
           DispatchQueue.main.async {
               self.mainView.tableView.reloadData()
@@ -77,7 +91,8 @@ class MainViewController: BaseViewController {
     //날짜를 이동 - 해당 날짜
     //다른 뷰를 갔다와도 날짜유지
     func fetchRealm() {
-        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+        //데이트포맷 바꾸기
+        dateFormatter.dateFormat = "dateFormat".localized()
         
         //MARK: -- 날짜 변경에따른 테이블 뷰 갱신을위해 이부분 바꿔줌
         //변경 - > let convertDate = dateFormatter.string(from: nowDate)
@@ -185,7 +200,7 @@ class MainViewController: BaseViewController {
         let vc = CalendarViewController()
         let nav = UINavigationController(rootViewController: vc)
         
-        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+        dateFormatter.dateFormat = "dateFormat".localized()
         //방법1
         vc.dateCompletionHandler = {
             self.pickedNowDate = vc.selectedDate
@@ -205,7 +220,7 @@ class MainViewController: BaseViewController {
     
     //MARK: -- cell dateCalculation
     func dayCalculation(formula: String) -> Date { // 월 별 일 수 계산
-        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
+        dateFormatter.dateFormat = "dateFormat".localized()
         let result: Date?
         
         if formula == "plus" {

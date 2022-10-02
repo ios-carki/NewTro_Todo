@@ -5,6 +5,7 @@
 "headerDateFormat" = "YYYY년 MM월";
 
 //MainView
+"DatePickBtn_DateFormat" = "yyyy년 MM월 dd일";
 //MARK: --DateFormat
 
 //MARK: -- View
@@ -27,7 +28,7 @@
 "signupButton_SetTitle" = "시작하기";
 
 //MainView
-
+"CoinCountLabel_Text" = "yyMMdd";
 //SettingView
 "versionInfoLabel_Text" = "현재 버전";
 
@@ -60,8 +61,11 @@
 //SettingViewController
 //백업 복구부분 해야됨
 "settingMenuList_Theme" = "테마";
+
 "settingMenuList_ClearData" = "데이터 초기화";
+
 "settingMenuList_Contact_Developer" = "문의사항";
+
 "settingMenuList_License" = "라이센스";
 
 "loadView_versionInfoLabel_Text" = "현재버전: ver"; //뒤에 버전 변수가 붙으면?

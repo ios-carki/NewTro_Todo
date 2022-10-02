@@ -24,7 +24,7 @@ final class CalendarViewController: BaseViewController {
         let formatter = DateFormatter()
         formatter.locale = Locale.current//Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone.current//TimeZone(abbreviation: "KST")
-        formatter.dateFormat = "yyyy년 MM월 dd일"
+        formatter.dateFormat = "dateFormat".localized()
         
         return formatter
     }()
@@ -124,7 +124,7 @@ extension CalendarViewController: FSCalendarDelegate, FSCalendarDataSource, FSCa
     
     //날짜 선택시
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-        mainView.todoCountLabel.text = "총 \(dateCounter(date: date))건이 기록되어 있습니다."
+        mainView.todoCountLabel.text = "TodoCountLabel_Text %d".localized(with: dateCounter(date: date), comment: "")
         self.selectedDate = date
         print("캘린더 상에서 선택된 날짜", selectedDate)
     }

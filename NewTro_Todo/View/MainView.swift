@@ -29,7 +29,7 @@ class MainView: BaseView {
         let view = UILabel()
         
         view.font = .boldFont(size: 20)
-        view.text = dateFormat(formatType: "yyMMdd")
+        view.text = dateFormat(formatType: "CoinCountLabel_Text".localized())
         view.textColor = .coinCountLabelColor
         return view
     }()
@@ -109,7 +109,7 @@ class MainView: BaseView {
     
     let datePickBtn: UIButton = {
         let view = UIButton()
-        view.setTitle(dateFormat(formatType: "yyyy년 MM월 dd일"), for: .normal)
+        view.setTitle(dateFormat(formatType: "dateFormat".localized()), for: .normal)
         view.titleLabel?.font = .boldFont(size: 17)
         view.titleLabel?.textAlignment = .center
         view.titleLabel?.textColor = .black

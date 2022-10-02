@@ -22,7 +22,7 @@ class CustomNotePopupViewController: BaseViewController {
         let formatter = DateFormatter()
         formatter.locale = Locale.current//Locale(identifier: "ko_KR")
         formatter.timeZone = TimeZone.current//TimeZone(abbreviation: "KST")
-        formatter.dateFormat = "yyyy년 MM월 dd일"
+        formatter.dateFormat = "dateFormat".localized()
         
         return formatter
     }()

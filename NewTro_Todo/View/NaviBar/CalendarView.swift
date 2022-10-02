@@ -23,11 +23,11 @@ final class CalendarView: BaseView {
         let view = FSCalendar()
         view.backgroundColor = .mainBackGroundColor
         view.scope = .month
-        view.locale = Locale(identifier: "ko-KR")
+        view.locale = Locale.current//(identifier: "ko-KR")
         view.appearance.headerTitleFont = .mainFont(size: 20)
         view.appearance.weekdayFont = .mainFont(size: 17)
         view.appearance.titleFont = .mainFont(size: 17)
-        view.appearance.headerDateFormat = "YYYY년 MM월"
+        view.appearance.headerDateFormat = "headerDateFormat".localized()
         view.appearance.headerTitleColor = .black
         view.appearance.todayColor = .systemGreen
         view.appearance.titleWeekendColor = .calendarWeekendColor
