@@ -96,6 +96,21 @@ class MainView: BaseView {
         let view = UIImageView()
         view.image = UIImage(named: "NoteBtn")
         view.contentMode = .scaleToFill
+        
+        return view
+    }()
+    
+    let importanceView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .mainBackGroundColor
+        
+        return view
+    }()
+    
+    let importanceListImage: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(named: "MainImportanceView")
+        view.contentMode = .scaleToFill
         return view
     }()
     //MARK: -- QuickNotebtn
@@ -133,6 +148,10 @@ class MainView: BaseView {
     let tableView: UITableView = {
         let view = UITableView()
         view.backgroundColor = .mainBackGroundColor
+        
+        //동적 셀 높이
+        view.estimatedRowHeight = 50
+        view.rowHeight = UITableView.automaticDimension
         return view
     }()
     //MARK: -- bottomView
@@ -151,8 +170,9 @@ class MainView: BaseView {
         
         todoPlusView.addSubview(todoPlusImage)
         quickNoteView.addSubview(quickNoteImage)
+        importanceView.addSubview(importanceListImage)
         
-        [todoPlusView, quickNoteView].map {
+        [todoPlusView, quickNoteView, importanceView].map {
             self.btnStackView.addArrangedSubview($0)
         }
         
@@ -249,6 +269,14 @@ class MainView: BaseView {
         
         quickNoteImage.snp.makeConstraints { make in
             make.edges.equalTo(quickNoteView.safeAreaLayoutGuide)
+        }
+        
+        importanceView.snp.makeConstraints { make in
+            make.height.width.equalTo(50)
+        }
+        
+        importanceListImage.snp.makeConstraints { make in
+            make.edges.equalTo(importanceView.safeAreaLayoutGuide)
         }
         
         tableView.snp.makeConstraints { make in

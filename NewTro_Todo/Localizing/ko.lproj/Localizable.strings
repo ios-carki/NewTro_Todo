@@ -84,6 +84,9 @@
 
 "Alert_SettingViewController_DataClear_UIAlertAction_Message" = "기기에 저장된 데이터가 삭제됩니다.";
 
+//importanceViewController
+"importanceView_NavigationBar_Title" = "모아보기";
+
 //customAlert
 "Alert_Cancel_Title" = "취소";
 

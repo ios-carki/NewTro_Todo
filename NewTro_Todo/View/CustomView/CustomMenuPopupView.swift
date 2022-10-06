@@ -101,42 +101,40 @@ class CustomMenuPopupView: BaseView {
     override func setConstraints() {
         backgroundView.snp.makeConstraints { make in
             make.centerX.centerY.equalToSuperview()
-            make.width.equalTo(UIScreen.main.bounds.size.width / 2)
-            make.height.equalTo(UIScreen.main.bounds.size.height / 3)
 //            make.leading.equalToSuperview().offset(80)
 //            make.top.equalToSuperview().offset(200)
+            make.width.height.equalTo(300)
         }
         
         detailTitleLabel.snp.makeConstraints { make in
             make.top.leading.trailing.equalToSuperview()
         }
         
-//        setImportanceButton.snp.makeConstraints { make in
-//            make.top.equalTo(detailTitleLabel.snp.bottom).offset(40)
-//            make.leading.equalToSuperview().offset(20)
-//        }
-//
-//        setImportanceStatusLable.snp.makeConstraints { make in
-//            make.top.equalTo(detailTitleLabel.snp.bottom).offset(40)
-//            make.trailing.equalToSuperview().offset(-20)
-//            make.height.equalTo(setImportanceButton)
-//        }
-//
-//        setFavoriteButton.snp.makeConstraints { make in
-//            make.top.equalTo(setImportanceButton.snp.bottom).offset(12)
-//            make.leading.equalToSuperview().offset(20)
-//        }
-//
-//        setFavoriteStatusLabel.snp.makeConstraints { make in
-//            make.top.equalTo(setImportanceStatusLable.snp.bottom).offset(12)
-//            make.trailing.equalToSuperview().offset(-20)
-//            make.height.equalTo(setFavoriteButton)
-//        }
+        setImportanceButton.snp.makeConstraints { make in
+            make.top.equalTo(detailTitleLabel.snp.bottom).offset(40)
+            make.leading.equalToSuperview().offset(20)
+        }
+
+        setImportanceStatusLable.snp.makeConstraints { make in
+            make.top.equalTo(detailTitleLabel.snp.bottom).offset(40)
+            make.trailing.equalToSuperview().offset(-20)
+            make.height.equalTo(setImportanceButton)
+        }
+
+        setFavoriteButton.snp.makeConstraints { make in
+            make.top.equalTo(setImportanceButton.snp.bottom).offset(12)
+            make.leading.equalToSuperview().offset(20)
+        }
+
+        setFavoriteStatusLabel.snp.makeConstraints { make in
+            make.top.equalTo(setImportanceStatusLable.snp.bottom).offset(12)
+            make.trailing.equalToSuperview().offset(-20)
+            make.height.equalTo(setFavoriteButton)
+        }
         
         deleteButton.snp.makeConstraints { make in
-//            make.top.equalTo(setFavoriteButton.snp.bottom).offset(12)
-//            make.leading.equalToSuperview().offset(20)
-            make.centerX.centerY.equalToSuperview()
+            make.top.equalTo(setFavoriteButton.snp.bottom).offset(12)
+            make.leading.equalToSuperview().offset(20)
         }
 
         cancelButton.snp.makeConstraints { make in

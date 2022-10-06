@@ -83,6 +83,10 @@
 
 "Alert_SettingViewController_DataClear_UIAlertAction_Message" = "Data stored on the device will be deleted.";
 
+//importanceViewController
+"importanceView_NavigationBar_Title" = "
+See all";
+
 //customAlert
 "Alert_Cancel_Title" = "Cancel";
 

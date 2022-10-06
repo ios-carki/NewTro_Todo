@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 import RealmSwift
+import SnapKit
 
 class MainViewController: BaseViewController {
     
@@ -51,6 +52,7 @@ class MainViewController: BaseViewController {
         tableSetting()
         todoPlusTapGesture()
         quickNoteTapGesture()
+        importanceViewTapGesture()
         fetchRealm()
         setLanguage()
         
@@ -137,8 +139,12 @@ class MainViewController: BaseViewController {
         mainView.tableView.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.identifier) as? MainTableViewCell
         mainView.tableView.register(TablePlusCell.self, forCellReuseIdentifier: TablePlusCell.identifier) as? TablePlusCell
         
+        
+        mainView.tableView.rowHeight = UITableView.automaticDimension
+        mainView.tableView.estimatedRowHeight = 500
         mainView.tableView.delegate = self
         mainView.tableView.dataSource = self
+        
     }
     
     func todoPlusTapGesture() {
@@ -194,6 +200,21 @@ class MainViewController: BaseViewController {
             self.present(nav, animated: false)
         }
         
+    }
+    
+    func importanceViewTapGesture() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(importanceViewClikced))
+        mainView.importanceView.addGestureRecognizer(tapGesture)
+    }
+    
+    @objc func importanceViewClikced() {
+        let vc = ImportanceViewController()
+        let nav = UINavigationController(rootViewController: vc)
+        
+        vc.tasks = self.tasks
+        vc.date = pickedNowDate
+        
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     @objc func calendarButtonClicked() {
@@ -300,29 +321,39 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return tasks.count
     }
     
-    @objc func makeToastMessageFunc(_ sender: UITextField) {
-        guard let text = sender.text else { return }
-        if text.count >= 20 {
-            view.makeToast("toastMessage".localized())
-        }
-    }
+//    @objc func makeToastMessageFunc(_ sender: UITextField) {
+//        guard let text = sender.text else { return }
+//        if text.count >= 20 {
+//            view.makeToast("toastMessage".localized())
+//        }
+//    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     
         //셀 생성 시점에 클로저로 전달
         let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.identifier, for: indexPath) as! MainTableViewCell
         
-        cell.todoTextField.text = tasks[indexPath.row].todo!
+        cell.todoTextView.delegate = self
+        cell.todoTextView.text = tasks[indexPath.row].todo!
+        cell.todoTextView.tag = indexPath.row
         //셀 생성 시점에 id도 전달함
         cell.id = tasks[indexPath.row].objectID
         cell.isCompleted = tasks[indexPath.row].isFinished
-        cell.todoTextField.addTarget(self, action: #selector(makeToastMessageFunc), for: .editingChanged)
+        //cell.todoTextView.addTarget(self, action: #selector(makeToastMessageFunc), for: .editingChanged)
+        
+        if tasks[indexPath.row].importance == 1 {
+            cell.todoTextView.textColor = .blue
+        } else if tasks[indexPath.row].importance == 2{
+            cell.todoTextView.textColor = .yellow
+        } else {
+            cell.todoTextView.textColor = .white
+        }
         
         
         if cell.isCompleted == true {
 //            cell.todoBoundLine.isHidden = false
             cell.completeTodoLabel.isHidden = false
-            cell.todoTextField.isHidden = true
+            cell.todoTextView.isHidden = true
             cell.importanceSelectBtn.isHidden = true
             cell.completeTodoLabel.attributedText = tasks[indexPath.row].todo?.strikeThrough()
             cell.completeTodoLabel.textColor = .lightGray
@@ -330,7 +361,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
 //            cell.todoBoundLine.isHidden = true
             cell.completeTodoLabel.isHidden = true
-            cell.todoTextField.isHidden = false
+            cell.todoTextView.isHidden = false
             cell.importanceSelectBtn.isHidden = false
         }
         cell.importanceSelectBtn.tag = indexPath.row //상세설정
@@ -342,16 +373,62 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        if indexPath.section == 0 {
-            return 70
-        } else if indexPath.section == 1 {
-            return 60
-        }
-        return 50
-    }
+//    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+//
+//        return UITableView.automaticDimension
+//    }
+//
+//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+//
+//        return UITableView.automaticDimension
+//    }
+    
     
 }
+
+extension MainViewController: UITextViewDelegate {
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        let stingNowDate = dateFormatter.string(from: pickedNowDate)
+
+        let todoText = localRealm.objects(Todo.self).where {
+            $0.stringDate == stingNowDate
+        }[textView.tag]
+        try! localRealm.write {
+            todoText.setValue(textView.text!, forKey: "todo")
+        }
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        let cell = MainTableViewCell()
+        mainView.tableView.beginUpdates()
+        
+        let size = CGSize(width: cell.todoTextView.frame.width, height: .infinity)
+        let estimatedSize = textView.sizeThatFits(size)
+
+        textView.constraints.forEach { (constraint) in
+
+          /// 180 이하일때는 더 이상 줄어들지 않게하기
+            if estimatedSize.height >= 180 {
+
+            }
+            else {
+                if constraint.firstAttribute == .height {
+                    constraint.constant = estimatedSize.height
+                }
+            }
+        }
+        let fixedWidth = textView.frame.size.width
+        textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+        var newFrame = textView.frame
+        newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+        textView.frame = newFrame
+
+        mainView.tableView.endUpdates()
+    }
+}
+
 
 extension String {
     func strikeThrough() -> NSAttributedString {

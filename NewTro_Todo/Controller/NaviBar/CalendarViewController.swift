@@ -15,15 +15,12 @@ final class CalendarViewController: BaseViewController {
     
     let mainView = CalendarView()
     let mainVC = MainViewController()
-    //클로저
-    //델리게이트
-    //노티
     
     var selectedDate = Date()
     let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = Locale.current//Locale(identifier: "ko_KR")
-        formatter.timeZone = TimeZone.current//TimeZone(abbreviation: "KST")
+        formatter.locale = Locale.current
+        formatter.timeZone = TimeZone.current
         formatter.dateFormat = "dateFormat".localized()
         
         return formatter

@@ -119,6 +119,7 @@ final class CalendarView: BaseView {
         calendarToDOView.addSubview(todoCountLabel)
         calendarToDOView.addSubview(todoMoveImage)
         
+        
 //        calendarQuickNoteView.addSubview(quickNoteImage)
 //        calendarQuickNoteView.addSubview(quickNoteTextLabel)
 //        calendarQuickNoteView.addSubview(quickNoteCountLabel)
@@ -130,6 +131,7 @@ final class CalendarView: BaseView {
     }
     
     override func setConstraints() {
+        let bounds = UIScreen.main.bounds
         
         calendarViewBackgroundImage.snp.makeConstraints { make in
             make.leading.trailing.equalToSuperview()
@@ -166,11 +168,6 @@ final class CalendarView: BaseView {
             make.bottom.equalTo(calendarToDOView.safeAreaLayoutGuide).offset(-8)
         }
         
-//        todoMoveImage.snp.makeConstraints { make in
-//            make.top.trailing.bottom.equalTo(calendarToDOView.safeAreaLayoutGuide)
-//            make.leading.equalTo(todoCountLabel.snp.trailing)
-//            make.width.equalTo(70)
-//        }
         //MARK: -- todo
         
         //MARK: -- quickNote

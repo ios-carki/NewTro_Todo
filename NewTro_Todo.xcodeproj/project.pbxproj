@@ -42,6 +42,9 @@
 		C34644EC28E3DCE80071EF13 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C34644EB28E3DCE80071EF13 /* RealmSwift */; };
 		C34644EF28E492670071EF13 /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = C34644EE28E492670071EF13 /* AcknowList */; };
 		C34644F128E493980071EF13 /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = C34644F028E493980071EF13 /* Package.resolved */; };
+		C34A89D028EC632E00F8BA4B /* ImportanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */; };
+		C34A89D228EC633A00F8BA4B /* ImportanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */; };
+		C34A89D428EC6B4600F8BA4B /* ImportanceViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */; };
 		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
 		C398967528E8A12C0026B1AA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C398967728E8A12C0026B1AA /* Localizable.strings */; };
 		C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */; };
@@ -89,6 +92,9 @@
 		C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupViewController.swift; sourceTree = "<group>"; };
 		C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupView.swift; sourceTree = "<group>"; };
 		C34644F028E493980071EF13 /* Package.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Package.resolved; path = NewTro_Todo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; sourceTree = "<group>"; };
+		C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceView.swift; sourceTree = "<group>"; };
+		C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceViewController.swift; sourceTree = "<group>"; };
+		C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceViewCell.swift; sourceTree = "<group>"; };
 		C398967628E8A12C0026B1AA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C398967828E8A15F0026B1AA /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuPopupView.swift; sourceTree = "<group>"; };
@@ -164,6 +170,7 @@
 				C32FF07228C70E4A00949E05 /* PageView */,
 				C32FF06D28C70D0300949E05 /* BaseView.swift */,
 				C32FF09828CAB71300949E05 /* MainView.swift */,
+				C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -176,6 +183,7 @@
 				C32FF07328C70E5500949E05 /* PageViewController */,
 				C32FF06F28C70D0A00949E05 /* BaseViewController.swift */,
 				C32FF09A28CAB71D00949E05 /* MainViewController.swift */,
+				C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -275,6 +283,7 @@
 			children = (
 				C3D6455128D2346400850505 /* MainTableViewCell.swift */,
 				C3D6455D28D354F900850505 /* TablePlusCell.swift */,
+				C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */,
 			);
 			path = CustomCell;
 			sourceTree = "<group>";
@@ -385,6 +394,7 @@
 				C3D6455228D2346400850505 /* MainTableViewCell.swift in Sources */,
 				C32FF08628C724CF00949E05 /* BasePageView.swift in Sources */,
 				C32FF06E28C70D0300949E05 /* BaseView.swift in Sources */,
+				C34A89D028EC632E00F8BA4B /* ImportanceView.swift in Sources */,
 				C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */,
 				C3D6455C28D353B700850505 /* DateFormat+Extension.swift in Sources */,
 				C32FF0A028CF13A600949E05 /* CalendarViewController.swift in Sources */,
@@ -395,11 +405,13 @@
 				C32FF07C28C719F100949E05 /* SecondViewController.swift in Sources */,
 				C32FF05828C70C8800949E05 /* AppDelegate.swift in Sources */,
 				C32FF09B28CAB71D00949E05 /* MainViewController.swift in Sources */,
+				C34A89D228EC633A00F8BA4B /* ImportanceViewController.swift in Sources */,
 				C32FF08228C7240900949E05 /* SecondView.swift in Sources */,
 				C32FF0A528CF149600949E05 /* SettingView.swift in Sources */,
 				C32FF07E28C719FA00949E05 /* ThirdViewController.swift in Sources */,
 				C306AFA628E9934300D4BB6B /* String+Extension.swift in Sources */,
 				C32FF08428C7240F00949E05 /* ThirdView.swift in Sources */,
+				C34A89D428EC6B4600F8BA4B /* ImportanceViewCell.swift in Sources */,
 				C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */,
 				C3D6455528D3503600850505 /* TodoScheme.swift in Sources */,
 				C34644E628E2F1200071EF13 /* CustomNotePopupView.swift in Sources */,
@@ -570,7 +582,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 0;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -588,7 +600,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -603,7 +615,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 7;
+				CURRENT_PROJECT_VERSION = 0;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewTro_Todo/Info.plist;
@@ -620,7 +632,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
