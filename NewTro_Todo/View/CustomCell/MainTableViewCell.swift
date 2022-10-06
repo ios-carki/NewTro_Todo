@@ -28,18 +28,14 @@ class MainTableViewCell: UITableViewCell {
         return view
     }()
     
-    let todoTextView: UITextView = {
-        let view = UITextView()
-        view.textColor = .black
+    let todoTextField: UITextField = {
+        let view = UITextField()
         view.isHidden = false
-        view.backgroundColor = .mainBackGroundColor
+        view.placeholder = "CellPlaceHolder".localized()
+        view.backgroundColor = .cellBackGroundColor
         view.font = .mainFont(size: 16)
-        view.translatesAutoresizingMaskIntoConstraints = true
-        view.isScrollEnabled = false
-        view.isEditable = true
-        view.returnKeyType = .next
-        view.sizeToFit()
-        view.textContainer.maximumNumberOfLines = 5
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.returnKeyType = .done
         return view
     }()
     
@@ -92,25 +88,24 @@ class MainTableViewCell: UITableViewCell {
     private func configure() {
 //        contentView.addSubview(completeOverwrapImage)
         contentView.addSubview(completeTodoBtn)
-        contentView.addSubview(todoTextView)
+        contentView.addSubview(todoTextField)
         contentView.addSubview(importanceSelectBtn)
         contentView.addSubview(completeTodoLabel)
 //        contentView.addSubview(todoBoundLine)
+        
+        todoTextField.delegate = self
     }
     
     private func setLayout() {
         let standardMarkgin = 8
         
         completeTodoBtn.snp.makeConstraints { make in
-//            make.top.leading.equalToSuperview().offset(standardMarkgin)
-//            make.bottom.equalToSuperview().offset(-standardMarkgin)
-            make.leading.equalToSuperview().offset(standardMarkgin)
-            make.centerY.equalToSuperview()
+            make.top.leading.equalToSuperview().offset(standardMarkgin)
+            make.bottom.equalToSuperview().offset(-standardMarkgin)
             make.width.equalTo(40)
-            make.height.equalTo(50)
         }
         
-        todoTextView.snp.makeConstraints { make in
+        todoTextField.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(standardMarkgin)
             make.bottom.equalToSuperview().offset(-standardMarkgin)
             make.leading.equalTo(completeTodoBtn.snp.trailing).offset(standardMarkgin)
@@ -118,12 +113,9 @@ class MainTableViewCell: UITableViewCell {
         }
         
         importanceSelectBtn.snp.makeConstraints { make in
-//            make.top.equalToSuperview().offset(standardMarkgin)
-//            make.bottom.trailing.equalToSuperview().offset(-standardMarkgin)
-            make.trailing.equalToSuperview().offset(-standardMarkgin)
-            make.centerY.equalToSuperview()
+            make.top.equalToSuperview().offset(standardMarkgin)
+            make.bottom.trailing.equalToSuperview().offset(-standardMarkgin)
             make.width.equalTo(40)
-            make.height.equalTo(50)
         }
         
 //        todoBoundLine.snp.makeConstraints { make in
@@ -138,7 +130,55 @@ class MainTableViewCell: UITableViewCell {
 //        }
         
         completeTodoLabel.snp.makeConstraints { make in
-            make.edges.equalTo(todoTextView)
+            make.edges.equalTo(todoTextField)
         }
     }
+}
+
+extension MainTableViewCell: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        
+        let findTextField = localRealm.objects(Todo.self).where {
+            $0.objectID == id!
+        }.first
+        try! localRealm.write {
+            findTextField?.setValue(textField.text!, forKey: "todo")
+        }
+        
+        textField.resignFirstResponder()
+        
+        return true
+    }
+    
+    
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        print(string)
+        if let char = string.cString(using: String.Encoding.utf8) {
+            let isBackSpace = strcmp(char, "\\b")
+            if isBackSpace == -92 {
+                return true
+            }
+        }
+        guard textField.text!.count < 50 else { return false }
+        
+            
+        let findTextField = localRealm.objects(Todo.self).where {
+            $0.objectID == id!
+        }.first
+        try! localRealm.write {
+            findTextField?.setValue(textField.text!, forKey: "todo")
+        }
+         
+        return true
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        let findTextField = localRealm.objects(Todo.self).where {
+            $0.objectID == id!
+        }.first
+        try! localRealm.write {
+            findTextField?.setValue(textField.text!, forKey: "todo")
+        }
+    }
+    
 }

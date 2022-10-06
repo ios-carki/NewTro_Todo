@@ -17,6 +17,7 @@ class MainViewController: BaseViewController {
     let cellDetailCustomView = CustomMenuPopupView()
     let cellDetailCustomVC = CustomMenuPopupViewController()
     
+    
     //MARK: -
     var calendar = Calendar.current
     
@@ -118,6 +119,7 @@ class MainViewController: BaseViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        
         //키보드 끝나면 없앰
         //keyboardObserverRemove()
     }
@@ -139,9 +141,7 @@ class MainViewController: BaseViewController {
         mainView.tableView.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.identifier) as? MainTableViewCell
         mainView.tableView.register(TablePlusCell.self, forCellReuseIdentifier: TablePlusCell.identifier) as? TablePlusCell
         
-        
-        mainView.tableView.rowHeight = UITableView.automaticDimension
-        mainView.tableView.estimatedRowHeight = 500
+
         mainView.tableView.delegate = self
         mainView.tableView.dataSource = self
         
@@ -321,39 +321,39 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return tasks.count
     }
     
-//    @objc func makeToastMessageFunc(_ sender: UITextField) {
-//        guard let text = sender.text else { return }
-//        if text.count >= 20 {
-//            view.makeToast("toastMessage".localized())
-//        }
-//    }
+    @objc func makeToastMessageFunc(_ sender: UITextField) {
+        guard let text = sender.text else { return }
+        if text.count >= 50 {
+            //view.makeToast("toastMessage".localized())
+            view.makeToast("toastMessage".localized(), duration: 1.0, position: .top, title: nil, image: nil, style: .init(), completion: nil)
+            //view.makeToastActivity(.top)
+        }
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
     
         //셀 생성 시점에 클로저로 전달
         let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.identifier, for: indexPath) as! MainTableViewCell
         
-        cell.todoTextView.delegate = self
-        cell.todoTextView.text = tasks[indexPath.row].todo!
-        cell.todoTextView.tag = indexPath.row
+        
+        cell.todoTextField.text = tasks[indexPath.row].todo!
         //셀 생성 시점에 id도 전달함
         cell.id = tasks[indexPath.row].objectID
         cell.isCompleted = tasks[indexPath.row].isFinished
-        //cell.todoTextView.addTarget(self, action: #selector(makeToastMessageFunc), for: .editingChanged)
+        cell.todoTextField.addTarget(self, action: #selector(makeToastMessageFunc), for: .editingChanged)
         
         if tasks[indexPath.row].importance == 1 {
-            cell.todoTextView.textColor = .blue
+            cell.todoTextField.textColor = .blue
         } else if tasks[indexPath.row].importance == 2{
-            cell.todoTextView.textColor = .yellow
+            cell.todoTextField.textColor = .yellow
         } else {
-            cell.todoTextView.textColor = .white
+            cell.todoTextField.textColor = .white
         }
-        
         
         if cell.isCompleted == true {
 //            cell.todoBoundLine.isHidden = false
             cell.completeTodoLabel.isHidden = false
-            cell.todoTextView.isHidden = true
+            cell.todoTextField.isHidden = true
             cell.importanceSelectBtn.isHidden = true
             cell.completeTodoLabel.attributedText = tasks[indexPath.row].todo?.strikeThrough()
             cell.completeTodoLabel.textColor = .lightGray
@@ -361,7 +361,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         } else {
 //            cell.todoBoundLine.isHidden = true
             cell.completeTodoLabel.isHidden = true
-            cell.todoTextView.isHidden = false
+            cell.todoTextField.isHidden = false
             cell.importanceSelectBtn.isHidden = false
         }
         cell.importanceSelectBtn.tag = indexPath.row //상세설정
@@ -373,61 +373,79 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
     
-//    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
-//
-//        return UITableView.automaticDimension
-//    }
-//
-//    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-//
-//        return UITableView.automaticDimension
-//    }
-    
-    
-}
-
-extension MainViewController: UITextViewDelegate {
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        let stingNowDate = dateFormatter.string(from: pickedNowDate)
-
-        let todoText = localRealm.objects(Todo.self).where {
-            $0.stringDate == stingNowDate
-        }[textView.tag]
-        try! localRealm.write {
-            todoText.setValue(textView.text!, forKey: "todo")
-        }
-    }
-    
-    func textViewDidChange(_ textView: UITextView) {
-        let cell = MainTableViewCell()
-        mainView.tableView.beginUpdates()
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        let size = CGSize(width: cell.todoTextView.frame.width, height: .infinity)
-        let estimatedSize = textView.sizeThatFits(size)
-
-        textView.constraints.forEach { (constraint) in
-
-          /// 180 이하일때는 더 이상 줄어들지 않게하기
-            if estimatedSize.height >= 180 {
-
-            }
-            else {
-                if constraint.firstAttribute == .height {
-                    constraint.constant = estimatedSize.height
-                }
-            }
-        }
-        let fixedWidth = textView.frame.size.width
-        textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-        var newFrame = textView.frame
-        newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
-        textView.frame = newFrame
-
-        mainView.tableView.endUpdates()
+        return 70
     }
+    
 }
+
+//extension MainViewController: UITextViewDelegate {
+//
+//    func textViewDidEndEditing(_ textView: UITextView) {
+//        let stingNowDate = dateFormatter.string(from: pickedNowDate)
+//
+//        let todoText = localRealm.objects(Todo.self).where {
+//            $0.stringDate == stingNowDate
+//        }[textView.tag]
+//        try! localRealm.write {
+//            todoText.setValue(textView.text!, forKey: "todo")
+//        }
+//    }
+//
+////    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+////        if text == "\n" {
+////            enterKeyCount += 1
+////        }
+////        print("개행 수: ", enterKeyCount)
+////
+////        if enterKeyCount > 5 {
+////            view.makeToast("toastMessage".localized())
+////            textView.endEditing(true)
+////        }
+////
+////        return true
+////    }
+//
+//    func textViewDidChange(_ textView: UITextView) {
+//        let cell = MainTableViewCell()
+//        mainView.tableView.beginUpdates()
+//
+////        let size = CGSize(width: cell.todoTextView.frame.width, height: .infinity)
+////        let estimatedSize = textView.sizeThatFits(size)
+////
+////        textView.constraints.forEach { (constraint) in
+////
+////          /// 180 이하일때는 더 이상 줄어들지 않게하기
+////            if estimatedSize.height >= 180 {
+////
+////            }
+////            else {
+////                if constraint.firstAttribute == .height {
+////                    constraint.constant = estimatedSize.height
+////                }
+////            }
+////        }
+//        let fixedWidth = textView.frame.size.width
+//        textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+//        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
+//        var newFrame = textView.frame
+//        newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
+//        textView.frame = newFrame
+//
+//        mainView.tableView.endUpdates()
+//    }
+//}
+
+//extension UITextView {
+//    func numberOfLine() -> Int {
+//
+//        let size = CGSize(width: frame.width, height: .infinity)
+//        let estimatedSize = sizeThatFits(size)
+//
+//        return Int(estimatedSize.height / (self.font!.lineHeight))
+//    }
+//}
 
 
 extension String {

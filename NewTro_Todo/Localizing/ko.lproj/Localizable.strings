@@ -50,7 +50,7 @@
 "navigationBar_Title" = "메인";
 
 //Func_makeToastMessageFunc
-"toastMessage" = "할 일 작성은 20자 이내로 작성해주세요";
+"toastMessage" = "할 일 작성은 50자 이내로 작성해주세요";
 
 //MainTableViewCell
 "CellPlaceHolder" = "일정을 입력하세요.";
