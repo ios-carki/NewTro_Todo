@@ -10,7 +10,7 @@ import UIKit
 
 import SnapKit
 
-class MainView: BaseView {
+final class MainView: BaseView {
     
     let mainBackgroundImage: UIImageView = {
         let view = UIImageView()
@@ -170,9 +170,9 @@ class MainView: BaseView {
         
         todoPlusView.addSubview(todoPlusImage)
         quickNoteView.addSubview(quickNoteImage)
-        importanceView.addSubview(importanceListImage)
+        //importanceView.addSubview(importanceListImage)
         
-        [todoPlusView, quickNoteView, importanceView].map {
+        [todoPlusView, quickNoteView].map { //, importanceView
             self.btnStackView.addArrangedSubview($0)
         }
         
@@ -202,7 +202,8 @@ class MainView: BaseView {
         heartImage1.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide).offset(5)
             make.trailing.equalTo(heartImage2.snp.leading).offset(20)
-            make.height.width.equalTo(50)
+            make.size.equalTo(50) // = make.height.width.equalTo(50)
+            //make.height.width.equalTo(50)
         }
         
         heartImage2.snp.makeConstraints { make in
@@ -219,8 +220,10 @@ class MainView: BaseView {
         
         bottomView.snp.makeConstraints { make in
             make.top.equalTo(heartImage1.snp.bottom).offset(12)
-            make.leading.equalTo(safeAreaLayoutGuide).offset(20)
-            make.trailing.equalTo(safeAreaLayoutGuide).offset(-20)
+//            make.leading.equalTo(safeAreaLayoutGuide).offset(20)
+//            make.trailing.equalTo(safeAreaLayoutGuide).offset(-20)
+            make.horizontalEdges.equalTo(safeAreaLayoutGuide).inset(20)//leading,trailing
+            //make.ver
             make.bottom.equalTo(mainBackgroundImage.snp.top)
         }
         
@@ -271,13 +274,13 @@ class MainView: BaseView {
             make.edges.equalTo(quickNoteView.safeAreaLayoutGuide)
         }
         
-        importanceView.snp.makeConstraints { make in
-            make.height.width.equalTo(50)
-        }
-        
-        importanceListImage.snp.makeConstraints { make in
-            make.edges.equalTo(importanceView.safeAreaLayoutGuide)
-        }
+//        importanceView.snp.makeConstraints { make in
+//            make.height.width.equalTo(50)
+//        }
+//        
+//        importanceListImage.snp.makeConstraints { make in
+//            make.edges.equalTo(importanceView.safeAreaLayoutGuide)
+//        }
         
         tableView.snp.makeConstraints { make in
             make.top.equalTo(btnStackView.snp.bottom)

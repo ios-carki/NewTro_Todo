@@ -49,7 +49,9 @@
 "navigationBar_Title" = "Main";
 
 //Func_makeToastMessageFunc
-"toastMessage" = "Please write to-dos in 20 characters or less.";
+"toastMessage" = "Please write to-dos in 50 characters or less.";
+
+"already_completed_todo_toastMessage" = "This is a to-do that has already been completed.";
 
 //MainTableViewCell
 "CellPlaceHolder" = "Please enter your to-do.";
@@ -139,7 +141,7 @@ See all";
 //MARK: -- CustomMenuPopupViewController
 
 //MARK: -- CustomNotePopupViewController
-"NoteSaveButtonClicked_ToastMessage" = "메모 저장 완료";
+"NoteSaveButtonClicked_ToastMessage" = "Saved Your Memo";
 
 //MARK: -- CustomNotePopupViewController
 

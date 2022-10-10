@@ -80,6 +80,7 @@ extension ImportanceViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.todoLabel.text = tasks[indexPath.row].todo
         
+        //삼항연산자 활용하기
         if tasks[indexPath.row].isFinished {
             cell.completeView.backgroundColor = .blue
         } else {

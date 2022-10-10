@@ -11,7 +11,7 @@ import UIKit
 import RealmSwift
 import SnapKit
 
-class MainViewController: BaseViewController {
+final class MainViewController: BaseViewController {
     
     let mainView = MainView()
     let cellDetailCustomView = CustomMenuPopupView()
@@ -27,6 +27,17 @@ class MainViewController: BaseViewController {
     let dateFormatter = DateFormatter()
     
     
+    /*
+    let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "dateFormat".localized()
+        
+        return formatter
+    }()
+    */
+    
     //MARK: -
     static var addTableCell: [String] = []
     
@@ -38,6 +49,14 @@ class MainViewController: BaseViewController {
             print("데이터 변함!")
         }
     }
+    
+    //미루기 테스트
+//    var delayTasks: Results<Todo>! {
+//        didSet {
+//            mainView.tableView.reloadData()
+//            print("일정 미루기 등록됨!")
+//        }
+//    }
     
     override func loadView() {
         self.view = mainView
@@ -55,31 +74,18 @@ class MainViewController: BaseViewController {
         quickNoteTapGesture()
         importanceViewTapGesture()
         fetchRealm()
-        setLanguage()
         
         mainView.rightButton.addTarget(self, action: #selector(tomorrowFunc), for: .touchUpInside)
         mainView.leftButton.addTarget(self, action: #selector(yesterdayFunc), for: .touchUpInside)
         
         //셀 삭제 노티
+        //클로저로도 가능
         NotificationCenter.default.addObserver(
           self,
           selector: #selector(self.didDismissDetailNotification(_:)),
           name: NSNotification.Name("DismissDetailView"),
           object: nil
         )
-        
-    }
-    
-    func setLanguage() {
-        var language = UserDefaults.standard.array(forKey: "language")?.first as? String
-        if language == nil {
-            let str = String(NSLocale.preferredLanguages[0])    // 언어코드-지역코드 (ex. ko-KR, en-US)
-            language = String(str.dropLast(3))                  // ko-KR => ko, en-US => en
-        }
-        
-        // 해당 언어 파일 가져오기
-        let path = Bundle.main.path(forResource: language, ofType: "lproj") ?? Bundle.main.path(forResource: "en", ofType: "lproj")
-        let bundle = Bundle(path: path!)
         
     }
     
@@ -96,6 +102,9 @@ class MainViewController: BaseViewController {
     func fetchRealm() {
         //데이트포맷 바꾸기
         dateFormatter.dateFormat = "dateFormat".localized()
+        
+        //date타입 데이트를 포맷해서 원하는 형태로만 불러오기
+        //1.regDate, pickedNowDate
         
         //MARK: -- 날짜 변경에따른 테이블 뷰 갱신을위해 이부분 바꿔줌
         //변경 - > let convertDate = dateFormatter.string(from: nowDate)
@@ -138,8 +147,8 @@ class MainViewController: BaseViewController {
     }
     
     func tableSetting() {
-        mainView.tableView.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.identifier) as? MainTableViewCell
-        mainView.tableView.register(TablePlusCell.self, forCellReuseIdentifier: TablePlusCell.identifier) as? TablePlusCell
+        mainView.tableView.register(MainTableViewCell.self, forCellReuseIdentifier: MainTableViewCell.identifier)
+        mainView.tableView.register(TablePlusCell.self, forCellReuseIdentifier: TablePlusCell.identifier)
         
 
         mainView.tableView.delegate = self
@@ -153,6 +162,7 @@ class MainViewController: BaseViewController {
     }
     
     @objc func todoPlusButtonClikced() {
+        
         let convertDate = dateFormatter.string(from: pickedNowDate)
         let task = Todo(todo: "", favorite: false, importance: 0, regDate: Date(), stringDate: convertDate, isFinished: false)
         
@@ -240,7 +250,7 @@ class MainViewController: BaseViewController {
     }
     
     //MARK: -- cell dateCalculation
-    func dayCalculation(formula: String) -> Date { // 월 별 일 수 계산
+    @discardableResult func dayCalculation(formula: String) -> Date { // 월 별 일 수 계산
         dateFormatter.dateFormat = "dateFormat".localized()
         let result: Date?
         
@@ -298,19 +308,19 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         self.present(nav, animated: false)
     }
     
-    @objc func completeButtonClicked(btnName: UIButton) {
-        
-        if tasks[btnName.tag].isFinished == false {
-            try! self.localRealm.write {
-                tasks[btnName.tag].isFinished = true
-            }
-        } else {
-            try! self.localRealm.write {
-                tasks[btnName.tag].isFinished = false
-            }
-        }
-        mainView.tableView.reloadSections(IndexSet(0...0), with: .none)
-    }
+//    @objc func completeButtonClicked(btnName: UIButton) {
+//
+//        if tasks[btnName.tag].isFinished == false {
+//            try! self.localRealm.write {
+//                tasks[btnName.tag].isFinished = true
+//            }
+//        } else {
+//            try! self.localRealm.write {
+//                tasks[btnName.tag].isFinished = false
+//            }
+//        }
+//        mainView.tableView.reloadSections(IndexSet(0...0), with: .none)
+//    }
     
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -339,7 +349,41 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         cell.todoTextField.text = tasks[indexPath.row].todo!
         //셀 생성 시점에 id도 전달함
         cell.id = tasks[indexPath.row].objectID
+        
+        
+        //투두 완료, 미루기
+        let complete = UIAction(title: "완료 / 미완료") { action in
+            if self.tasks[cell.completeTodoBtn.tag].isFinished == false {
+                try! self.localRealm.write {
+                    self.tasks[cell.completeTodoBtn.tag].isFinished = true
+                }
+            } else {
+                try! self.localRealm.write {
+                    self.tasks[cell.completeTodoBtn.tag].isFinished = false
+                }
+            }
+            self.mainView.tableView.reloadSections(IndexSet(0...0), with: .none)
+        }
         cell.isCompleted = tasks[indexPath.row].isFinished
+        
+        //미루기 여기서 문제
+        //cell.isDelayed =
+        let postpone = UIAction(title: "다음날로 미루기") { action in
+            
+            if self.tasks[cell.completeTodoBtn.tag].isFinished {
+                self.view.makeToast("already_completed_todo_toastMessage".localized(), duration: 1.0, position: .top, title: nil, image: nil, style: .init(), completion: nil)
+            } else {
+                try! self.localRealm.write {
+                    self.tasks[cell.completeTodoBtn.tag].stringDate = self.dateFormatter.string(from: self.calendar.date(byAdding: .day, value: 1, to: self.pickedNowDate)!)
+                }
+            }
+            //self.fetchRealm()
+            self.mainView.tableView.reloadSections(IndexSet(0...0), with: .none)
+        }
+        
+        //미루기 보관함 -> 보관함 X -> 간단하게 다음날로 업데이트 시켜주기
+        cell.completeTodoBtn.menu = UIMenu(title: "투두 완료, 미루기", image: nil, identifier: nil, options: .displayInline, children: [complete, postpone])
+        
         cell.todoTextField.addTarget(self, action: #selector(makeToastMessageFunc), for: .editingChanged)
         
         if tasks[indexPath.row].importance == 1 {
@@ -367,7 +411,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         cell.importanceSelectBtn.tag = indexPath.row //상세설정
         cell.completeTodoBtn.tag = indexPath.row //완료버튼
         cell.importanceSelectBtn.addTarget(self, action: #selector(menuPopupButtonClicked), for: .touchUpInside)
-        cell.completeTodoBtn.addTarget(self, action: #selector(completeButtonClicked), for: .touchUpInside)
+//        cell.completeTodoBtn.addTarget(self, action: #selector(completeButtonClicked), for: .touchUpInside)
         cell.backgroundColor = .cellBackGroundColor
         cell.selectionStyle = .none
         return cell

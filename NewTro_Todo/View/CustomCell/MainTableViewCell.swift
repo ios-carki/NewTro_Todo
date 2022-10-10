@@ -18,6 +18,8 @@ class MainTableViewCell: UITableViewCell {
     //옵셔널바인딩처리
     var id: ObjectId?
     var isCompleted: Bool?
+    //미루기
+    //var isDelayed: Bool?
     
     let localRealm = try! Realm()
     
@@ -25,6 +27,7 @@ class MainTableViewCell: UITableViewCell {
         let view = UIButton()
         view.setImage(UIImage(named: "ClearBtn"), for: .normal)
         view.imageView?.contentMode = .scaleToFill
+        view.showsMenuAsPrimaryAction = true
         return view
     }()
     
