@@ -74,9 +74,20 @@ final class MainViewController: BaseViewController {
         quickNoteTapGesture()
         importanceViewTapGesture()
         fetchRealm()
+        requestAuthNoti()
         
-        mainView.rightButton.addTarget(self, action: #selector(tomorrowFunc), for: .touchUpInside)
-        mainView.leftButton.addTarget(self, action: #selector(yesterdayFunc), for: .touchUpInside)
+        //이거추가됨
+        
+        userNotiCenter.removeAllPendingNotificationRequests()
+//
+        print(userNotiCenter.getPendingNotificationRequests(completionHandler: {requests in
+            for request in requests {
+                print("🩴🩴🩴🩴🩴🩴🩴🩴🩴🩴🩴🩴🩴🩴🩴🩴🩴🩴:", request )
+            }
+        }))
+      
+        
+        mainView.rightButton.addTarget(self, action: #selector(yesterdayFunc), for: .touchUpInside)
         
         //셀 삭제 노티
         //클로저로도 가능
@@ -133,6 +144,9 @@ final class MainViewController: BaseViewController {
         //keyboardObserverRemove()
     }
     
+    //이거 추가됨
+    func getPendingNotificationRequests(completionHandler: ([UNNotificationRequest]) -> Void) {}
+    
     func navigationSetting() {
         let calendarButton = UIBarButtonItem(image: UIImage(systemName: "calendar"), style: .plain, target: self, action: #selector(calendarButtonClicked))
         let menuButton = UIBarButtonItem(image: UIImage(systemName: "gearshape.fill"), style: .plain, target: self, action: #selector(menuButtonClicked))
@@ -155,6 +169,84 @@ final class MainViewController: BaseViewController {
         mainView.tableView.dataSource = self
         
     }
+    
+    //MARK: -- Noti
+    //로컬 알림
+    let userNotiCenter = UNUserNotificationCenter.current()
+    func requestAuthNoti() {
+        let notiAuthOptions = UNAuthorizationOptions(arrayLiteral: [.alert, .badge, .sound]) // 노티 알림 설정 값
+        self.userNotiCenter.requestAuthorization(options: notiAuthOptions) { (success, error) in
+            // [success 부분에 권한을 허락하면 true / 권한을 허락하지 않으면 false 값이 들어갑니다]
+            if let error = error {
+                print("")
+                print("===============================")
+                print("[ViewController >> requestAuthNoti() :: 노티피케이션 권한 요청 에러]")
+                print("[error :: \(error.localizedDescription)]")
+                print("===============================")
+                print("")
+            }
+            else {
+                print("")
+                print("===============================")
+                print("[ViewController >> requestAuthNoti() :: 노티피케이션 권한 요청 응답 확인]")
+                print("[success :: \(success)]")
+                print("===============================")
+                print("")
+                // [알림 발생 실시]
+                self.sendNotiMessage(_seconds: 1.0, _title: "뉴트로 투두", _content: "오늘의 할 일을 작성해볼까요?")
+            }
+        }
+        
+    }
+    
+    func sendNotiMessage(_seconds: Double, _title: String, _content: String) {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        //설정뷰에서 이부분 건들여주면 지정시간 알림
+//        let date = calendar.date (
+//            bySettingHour: 21,
+//            minute: 30,
+//            second: 0,
+//            of: now
+//        )!
+        var date = DateComponents(timeZone: .current)
+        date.hour = 16
+        date.minute = 57
+        
+        // [알림 타이틀 및 내용 정의 실시]
+        let notiContent = UNMutableNotificationContent()
+        notiContent.title = _title // 타이틀
+        notiContent.body = _content // 내용
+        notiContent.badge = 1 // 뱃지 표시
+        notiContent.sound = UNNotificationSound.default // 알림음 설정 [무음일 경우 진동]
+
+        // [알림이 trigger 발생 되는 시간 설정]
+        //let dateComponents = Calendar.current.dateComponents([.hour, .minute, .second], from: date)
+        
+        let trigger = UNCalendarNotificationTrigger(dateMatching: date, repeats: true)
+        //let trigger = UNTimeIntervalNotificationTrigger(timeInterval: _seconds, repeats: false)
+
+        // [알림 값 설정 실시]
+        let request = UNNotificationRequest(
+            identifier: UUID().uuidString, // 식별자
+            content: notiContent, // 알림 제목, 내용
+            trigger: trigger // 발생 시간 정의
+        )
+
+        // [알림 추가 실시]
+        self.userNotiCenter.add(request) { (error) in
+            if let error = error {
+                print("")
+                print("===============================")
+                print("[ViewController >> sendNotiMessage() :: 노티피케이션 알림 전송 에러]")
+                print("[error :: \(error.localizedDescription)]")
+                print("===============================")
+                print("")
+            }
+        }
+    }
+    //MARK: -- Noti
     
     func todoPlusTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(todoPlusButtonClikced))

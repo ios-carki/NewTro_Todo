@@ -293,7 +293,6 @@ extension SettingViewController: UIDocumentPickerDelegate {
             let fileURL = path.appendingPathComponent("New_Tro_TODO_1.zip")
             
             do {
-                //MARK: -- 여기서부터 우석이한테 피드백
                 //풀어줄 파일 / 어디에 풀어줄건데 / 덮어쓸거냐 / 비밀번호 / 얼마나 진행된지(진행상황, 압축률 -> 로딩뷰 쓰기)
                 try Zip.unzipFile(fileURL, destination: path, overwrite: true, password: nil, progress: { progress in
                     print("압축 진행률  progress: \(progress)")
