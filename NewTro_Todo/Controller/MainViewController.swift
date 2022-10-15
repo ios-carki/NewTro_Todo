@@ -86,8 +86,8 @@ final class MainViewController: BaseViewController {
             }
         }))
       
-        
-        mainView.rightButton.addTarget(self, action: #selector(yesterdayFunc), for: .touchUpInside)
+        mainView.leftButton.addTarget(self, action: #selector(yesterdayFunc), for: .touchUpInside)
+        mainView.rightButton.addTarget(self, action: #selector(tomorrowFunc), for: .touchUpInside)
         
         //셀 삭제 노티
         //클로저로도 가능
@@ -211,8 +211,8 @@ final class MainViewController: BaseViewController {
 //            of: now
 //        )!
         var date = DateComponents(timeZone: .current)
-        date.hour = 16
-        date.minute = 57
+        date.hour = 07
+        date.minute = 00
         
         // [알림 타이틀 및 내용 정의 실시]
         let notiContent = UNMutableNotificationContent()
@@ -347,6 +347,7 @@ final class MainViewController: BaseViewController {
         let result: Date?
         
         if formula == "plus" {
+            print("현재날짜: ", pickedNowDate)
             result = calendar.date(byAdding: .day, value: 1,to: pickedNowDate)!
             print("+계산된 날짜", result)
             pickedNowDate = result!
@@ -360,6 +361,7 @@ final class MainViewController: BaseViewController {
             return pickedNowDate
         } else {
             //값 전달을 pick가 아니라 계산된 값을 전달
+            print("현재날짜: ", pickedNowDate)
             result = calendar.date(byAdding: .day, value: -1,to: pickedNowDate)!
             print("-계산된 날짜", result)
             pickedNowDate = result!

@@ -37,13 +37,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     //노티 뱃지 초기화 포함
     func sceneDidBecomeActive(_ scene: UIScene) {
-        print("")
-        print("===============================")
-        print("[SceneDelegate >> sceneDidBecomeActive]")
-        print("[설명 : Scene 활성화 및 사용자 이벤트에 응답 실시]")
-        print("===============================")
-        print("")
-
         // [앱 접속 시 : 푸시 알림 뱃지 카운트 초기화 실시]
         UIApplication.shared.applicationIconBadgeNumber = 0
     }

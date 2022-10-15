@@ -17,6 +17,19 @@ extension UIViewController {
         present(alert, animated: true)
     }
     
+    func userAlert(title: String, message: String?, style: UIAlertController.Style?, actions: UIAlertAction...) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: style!)
+        let cancel = UIAlertAction(title: "취소", style: .cancel)
+        
+        for action in actions {
+            alert.addAction(action)
+        }
+        //취소버튼 하나만 필요할때는?
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true)
+    }
+    
     func customActionSheet(title: String?, message: String?, style: UIAlertController.Style = .actionSheet, actions: UIAlertAction...) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: style)
         let cancel = UIAlertAction(title: "Alert_Cancel_Title".localized(), style: .cancel)
@@ -42,7 +55,7 @@ extension UIViewController {
         present(alert, animated: true)
     }
     
-    func customAlertOneButton(alertTitle: String, alertMessage: String, actionTitle: String, action: UIAlertAction, style: UIAlertController.Style = .alert) {
+    func customAlertOneButton(alertTitle: String, alertMessage: String?, actionTitle: String, action: UIAlertAction, style: UIAlertController.Style = .alert) {
         let alert = UIAlertController(title: alertTitle, message: alertMessage, preferredStyle: style)
        
         alert.addAction(action)

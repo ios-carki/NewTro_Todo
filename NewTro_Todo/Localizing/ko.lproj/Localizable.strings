@@ -64,7 +64,7 @@
 //백업 복구부분 해야됨
 "settingMenuList_Theme" = "테마";
 
-"settingMenuList_ClearData" = "데이터 초기화";
+"settingMenuList_ClearData" = "데이터 백업 / 복구 / 초기화";
 
 "settingMenuList_Contact_Developer" = "문의사항";
 
@@ -80,7 +80,7 @@
 
 "Alert_SettingViewController_Theme_CustomAlertSimple_CancelButtonText" = "확인";
 
-"Alert_SettingViewController_DataClear_UIAlertAction_OkButton_Title" = "데이터 삭제";
+"Alert_SettingViewController_DataClear_UIAlertAction_OkButton_Title" = "데이터 초기화";
 
 "Alert_SettingViewController_DataClear_UIAlertAction_Title" = "경고";
 

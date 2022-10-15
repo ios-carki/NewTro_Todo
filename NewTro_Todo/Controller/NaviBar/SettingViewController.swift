@@ -96,7 +96,6 @@ final class SettingViewController: BaseViewController {
             let zipFilePath = try Zip.quickZipFiles(urlPaths, fileName: "New_Tro_TODO_1")
             print("Archive Location: \(zipFilePath)")
             showActivityViewController()
-            print("백업완료")
         } catch {
             self.view.makeToast("압축을 실패했습니다.")
         }
@@ -123,7 +122,7 @@ final class SettingViewController: BaseViewController {
     //MARK: -- 복구
     
     func restoreFunction() {
-        
+        self.clearRealmData()
         let documnetPicker = UIDocumentPickerViewController(forOpeningContentTypes: [.archive], asCopy: true)
         documnetPicker.delegate = self
         documnetPicker.allowsMultipleSelection = false //여러개 선택 못하게
@@ -177,37 +176,37 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         case 0:
             customAlertSimple(title: "Alert_SettingViewController_Theme_CustomAlertSimple_Title".localized(), message: "Alert_SettingViewController_Theme_CustomAlertSimple_Message".localized(), cancelButtonText: "Alert_SettingViewController_Theme_CustomAlertSimple_CancelButtonText".localized())
         case 1:
-            //초기화 처리 구현해야되는데 초기화는 신중해야되니 별도의 alert 추가
-//            let clearTodo = localRealm.objects(Todo.self)
-//            let clearQuickNote = localRealm.objects(QuickNote.self)
+            //UIAction띄워서 3개
+            let backUp = UIAlertAction(title: "데이터 백업", style: .default) { action in
+                self.backupFunction()
+            }
             
-            let ok = UIAlertAction(title: "Alert_SettingViewController_DataClear_UIAlertAction_OkButton_Title".localized(), style: .default) { action in
+            let restore = UIAlertAction(title: "데이터 복구", style: .default) { action in
+                self.restoreFunction()
+            }
+            
+            let clearData = UIAlertAction(title: "Alert_SettingViewController_DataClear_UIAlertAction_OkButton_Title".localized(), style: .default) { action in
                 //초기화 처리 구현해야됨
                 print("데이터 초기화됨")
                 UserDefaults.standard.set(false, forKey: "oldUser")
                 
-                // 데이터 전체 삭제
-                //        let del = realm.objects(Content.self)
-                //        try? realm.write{
-                //            realm.deleteAll(del)
-                //        }
-                //        alertA(msg: "데이터가 삭제 되었습니다.")
+                self.clearRealmData()
                 
-                try! self.localRealm.write {
-                    self.localRealm.deleteAll()
+                let okAction = UIAlertAction(title: "확인", style: .default) { action in
+                    self.switchToFirstView()
                 }
-                
-                let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
-                let sceneDelegate = windowScene?.delegate as? SceneDelegate
-                let vc = PageViewController()
-                let nav = UINavigationController(rootViewController: vc)
-                
-                sceneDelegate?.window?.rootViewController = nav
-                sceneDelegate?.window?.makeKeyAndVisible()
-                
+                self.customAlertOneButton(alertTitle: "처음으로 돌아갑니다", alertMessage: "", actionTitle: "확인", action: okAction)
                 
             }
-            self.customAlert(title: "Alert_SettingViewController_DataClear_UIAlertAction_Title".localized(), message: "Alert_SettingViewController_DataClear_UIAlertAction_Message".localized(), style: .alert, actions: ok)
+            
+            customActionSheet(title: "데이터 백업 / 복구 / 초기화", message: "", actions: backUp, restore, clearData)
+            
+            //초기화 처리 구현해야되는데 초기화는 신중해야되니 별도의 alert 추가
+//            let clearTodo = localRealm.objects(Todo.self)
+//            let clearQuickNote = localRealm.objects(QuickNote.self)
+            
+            
+            //이거 초기화 되고 나서 실행할 얼럿self.customAlert(title: "Alert_SettingViewController_DataClear_UIAlertAction_Title".localized(), message: "Alert_SettingViewController_DataClear_UIAlertAction_Message".localized(), style: .alert, actions: ok)
             
         case 2:
             cell?.accessoryType = .none
@@ -218,6 +217,22 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         default:
             cell?.accessoryType = .none
         }
+    }
+    
+    func clearRealmData() {
+        try! self.localRealm.write {
+            self.localRealm.deleteAll()
+        }
+    }
+    
+    func switchToFirstView() {
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        let sceneDelegate = windowScene?.delegate as? SceneDelegate
+        let vc = PageViewController()
+        let nav = UINavigationController(rootViewController: vc)
+        
+        sceneDelegate?.window?.rootViewController = nav
+        sceneDelegate?.window?.makeKeyAndVisible()
     }
 }
 
