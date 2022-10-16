@@ -64,7 +64,7 @@
 //백업 복구부분 해야됨
 "settingMenuList_Theme" = "테마";
 
-"settingMenuList_ClearData" = "데이터 백업 / 복구 / 초기화";
+"settingMenuList_ClearData" = "데이터 초기화";
 
 "settingMenuList_Contact_Developer" = "문의사항";
 

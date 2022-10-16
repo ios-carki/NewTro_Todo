@@ -14,9 +14,9 @@
             filePath = "NewTro_Todo/Controller/NaviBar/SettingViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "241"
-            endingLineNumber = "241"
-            landmarkName = "sendMail()"
+            startingLineNumber = "290"
+            endingLineNumber = "290"
+            landmarkName = "switchToFirstView()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
