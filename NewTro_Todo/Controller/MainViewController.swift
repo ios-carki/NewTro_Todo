@@ -74,7 +74,20 @@ final class MainViewController: BaseViewController {
         quickNoteTapGesture()
         importanceViewTapGesture()
         fetchRealm()
-        requestAuthNoti()
+        
+        print("컨펌노티 상태: ", UserDefaults.standard.bool(forKey: "confirmNoti"))
+        if UserDefaults.standard.bool(forKey: "confirmNoti") {
+            print("컴펌노티 true로 통과")
+        } else {
+            requestAuthNoti()
+            print("컴펌노티 false에서 true로 바뀌고 통과")
+        }
+        
+        print("로컬 노티 상태: ", UserDefaults.standard.bool(forKey: "localNoti"))
+        if UserDefaults.standard.bool(forKey: "localNoti") {
+            self.sendNotiMessage(_seconds: 1.0, _title: "뉴트로 투두", _content: "오늘의 할 일을 작성해볼까요?")
+        }
+        
         
         //이거추가됨
         
@@ -130,7 +143,7 @@ final class MainViewController: BaseViewController {
         super.viewWillAppear(animated)
         //테이블뷰의 키보드가 셀을 가릴때
         //keyboardObserver()
-        
+        print("로컬 노티 상태: ", UserDefaults.standard.bool(forKey: "localNoti"))
         
         fetchRealm()
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.mainBackGroundColor]
@@ -186,17 +199,32 @@ final class MainViewController: BaseViewController {
                 print("")
             }
             else {
-                print("")
-                print("===============================")
-                print("[ViewController >> requestAuthNoti() :: 노티피케이션 권한 요청 응답 확인]")
-                print("[success :: \(success)]")
-                print("===============================")
-                print("")
-                // [알림 발생 실시]
-                self.sendNotiMessage(_seconds: 1.0, _title: "뉴트로 투두", _content: "오늘의 할 일을 작성해볼까요?")
+                if success {
+                    //권한 허락
+                    //앱을 한번이라도 실행했으면 필요없고, 처음 실행한 사람들에 한해서 알림
+                    //지금 문제는 처음에 알림 거부로 하면 영원히 거부되는 문제
+//                    if UserDefaults.standard.bool(forKey: "oldUser") {
+//
+//                    } else {
+//                        UserDefaults.standard.set(true, forKey: "localNoti")
+//                    }
+                    print("알림권한 허용함")
+                    UserDefaults.standard.set(true, forKey: "localNoti")
+                    print("로컬노티 권한값: ", UserDefaults.standard.bool(forKey: "localNoti"))
+                } else {
+//                    //권한 거부
+//                    if UserDefaults.standard.bool(forKey: "oldUser") {
+//
+//                    } else {
+//                        UserDefaults.standard.set(false, forKey: "localNoti")
+//                    }
+                    print("알림권한 거부함")
+                    UserDefaults.standard.set(false, forKey: "localNoti")
+                    print("로컬노티 권한값: ", UserDefaults.standard.bool(forKey: "localNoti"))
+                }
             }
         }
-        
+        UserDefaults.standard.set(true, forKey: "confirmNoti")
     }
     
     func sendNotiMessage(_seconds: Double, _title: String, _content: String) {
@@ -211,8 +239,8 @@ final class MainViewController: BaseViewController {
 //            of: now
 //        )!
         var date = DateComponents(timeZone: .current)
-        date.hour = 07
-        date.minute = 00
+        date.hour = 19
+        date.minute = 17
         
         // [알림 타이틀 및 내용 정의 실시]
         let notiContent = UNMutableNotificationContent()

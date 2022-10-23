@@ -40,10 +40,36 @@ final class SettingView: BaseView {
         return view
     }()
     
+    let localNotiView: UIView = {
+        let view = UIView()
+        return view
+    }()
+    
+    let localNotiImage: UIImageView = {
+        let view = UIImageView()
+        view.image = UIImage(systemName: "bell")
+        view.contentMode = .scaleAspectFit
+        view.tintColor = .black
+        return view
+    }()
+    
+    let localNotiLabel: UILabel = {
+        let view = UILabel()
+        view.text = "알림"
+        view.font = .mainFont(size: 20)
+        return view
+    }()
+    
+    let localNotiSwitch: UISwitch = {
+        let view = UISwitch()
+        return view
+    }()
+    
     let tableView: UITableView = {
         let view = UITableView()
         view.isScrollEnabled = false
         view.backgroundColor = .mainBackGroundColor
+        view.separatorStyle = .none
         return view
     }()
     
@@ -75,8 +101,10 @@ final class SettingView: BaseView {
     override func configureUI() {
         versionView.addSubview(versionInfoLabel)
         versionView.addSubview(versionCreditLable)
+        localNotiView.addSubview(localNotiLabel)
+        localNotiView.addSubview(localNotiSwitch)
         
-        [versionView, backGroundImage, tableView].forEach {
+        [versionView, localNotiImage, localNotiView, backGroundImage, tableView].forEach {
             self.addSubview($0)
         }
     }
@@ -104,9 +132,31 @@ final class SettingView: BaseView {
             make.centerX.equalTo(safeAreaLayoutGuide)
         }
         
-        tableView.snp.makeConstraints { make in
-            //make.top.leading.trailing.equalTo(safeAreaLayoutGuide)
+        localNotiImage.snp.makeConstraints { make in
             make.top.equalTo(versionView.snp.bottom)
+            make.leading.equalTo(safeAreaLayoutGuide).offset(20)
+            make.trailing.equalTo(localNotiView.snp.leading)
+            make.height.equalTo(localNotiView.snp.height)
+        }
+        
+        localNotiView.snp.makeConstraints { make in
+            make.top.equalTo(versionView.snp.bottom)
+            make.trailing.equalTo(safeAreaLayoutGuide)
+            make.height.equalTo(50)
+        }
+        
+        localNotiLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(localNotiView)
+            make.leading.equalTo(localNotiView.safeAreaLayoutGuide).offset(17)
+        }
+        
+        localNotiSwitch.snp.makeConstraints { make in
+            make.centerY.equalTo(localNotiView)
+            make.trailing.equalTo(localNotiView.safeAreaLayoutGuide).offset(-20)
+        }
+        
+        tableView.snp.makeConstraints { make in
+            make.top.equalTo(localNotiView.snp.bottom)
             make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(backGroundImage.snp.top)
         }

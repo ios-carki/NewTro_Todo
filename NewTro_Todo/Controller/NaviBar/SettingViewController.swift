@@ -27,7 +27,7 @@ final class SettingViewController: BaseViewController {
     
     override func loadView() {
         self.view = mainView
-        
+        print("로컬노티 상태: ", UserDefaults.standard.bool(forKey: "localNoti"))
         mainView.versionInfoLabel.text = "loadView_versionInfoLabel_Text".localized() + "\(nowVersion)"//"현재버전: ver \(nowVersion)"
     }
     
@@ -35,8 +35,16 @@ final class SettingViewController: BaseViewController {
         super.viewDidLoad()
 //        naviSetting()
         tableSetting()
+        
+        if UserDefaults.standard.bool(forKey: "localNoti") { //알림 켰을때 스위치 ON
+            mainView.localNotiSwitch.isOn = true
+        } else {
+            mainView.localNotiSwitch.isOn = false
+        }
+        mainView.localNotiSwitch.addTarget(self, action: #selector(switchIsOn), for: .valueChanged)
 //        fetchDocumentZipFile()
         view.backgroundColor = .mainBackGroundColor
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -59,6 +67,19 @@ final class SettingViewController: BaseViewController {
         mainView.tableView.dataSource = self
         mainView.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "settingCell")
         
+    }
+    
+    @objc func switchIsOn() {
+        
+        if mainView.localNotiSwitch.isOn {
+            print("🤢🤢🤢🤢🤢 스위치 ON 🤢🤢🤢🤢🤢")
+            UserDefaults.standard.set(true, forKey: "localNoti")
+            print("로컬노티 상태: ", UserDefaults.standard.bool(forKey: "localNoti"))
+        }else {
+            print("😡😡😡😡😡 스위치 OFF 😡😡😡😡😡")
+            UserDefaults.standard.set(false, forKey: "localNoti")
+            print("로컬노티 상태: ", UserDefaults.standard.bool(forKey: "localNoti"))
+        }
     }
     
     //MARK: -- 백업
@@ -266,6 +287,11 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         default:
             cell?.accessoryType = .none
         }
+    }
+    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        
+        return 50
     }
     
     func clearRealmData() {
