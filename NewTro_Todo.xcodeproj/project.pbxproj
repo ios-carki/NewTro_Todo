@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		C306AFA628E9934300D4BB6B /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C306AFA528E9934300D4BB6B /* String+Extension.swift */; };
+		C30F7CA92940C6190050C045 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F7CA82940C6190050C045 /* SplashView.swift */; };
+		C30F7CAC2940C7380050C045 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F7CAB2940C7380050C045 /* SplashViewController.swift */; };
 		C32FF05828C70C8800949E05 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF05728C70C8800949E05 /* AppDelegate.swift */; };
 		C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF05928C70C8800949E05 /* SceneDelegate.swift */; };
 		C32FF05F28C70C8800949E05 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C32FF05D28C70C8800949E05 /* Main.storyboard */; };
@@ -65,6 +67,8 @@
 
 /* Begin PBXFileReference section */
 		C306AFA528E9934300D4BB6B /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
+		C30F7CA82940C6190050C045 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
+		C30F7CAB2940C7380050C045 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		C32FF05428C70C8800949E05 /* NewTro_Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewTro_Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32FF05728C70C8800949E05 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C32FF05928C70C8800949E05 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -135,6 +139,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C30F7CA72940C5E70050C045 /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				C30F7CA82940C6190050C045 /* SplashView.swift */,
+			);
+			path = Splash;
+			sourceTree = "<group>";
+		};
+		C30F7CAA2940C72A0050C045 /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				C30F7CAB2940C7380050C045 /* SplashViewController.swift */,
+			);
+			path = Splash;
+			sourceTree = "<group>";
+		};
 		C32FF04B28C70C8700949E05 = {
 			isa = PBXGroup;
 			children = (
@@ -175,6 +195,7 @@
 		C32FF06B28C70CE800949E05 /* View */ = {
 			isa = PBXGroup;
 			children = (
+				C30F7CA72940C5E70050C045 /* Splash */,
 				C3AF2FF728D9D22400AF1A60 /* CustomView */,
 				C3D6454E28D1E23400850505 /* CustomCell */,
 				C32FF0A128CF13AF00949E05 /* NaviBar */,
@@ -189,6 +210,7 @@
 		C32FF06C28C70CF400949E05 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				C30F7CAA2940C72A0050C045 /* Splash */,
 				C3AF2FFA28D9D5E500AF1A60 /* CustomViewController */,
 				C32FF09E28CF137B00949E05 /* NaviBar */,
 				C32FF07328C70E5500949E05 /* PageViewController */,
@@ -411,6 +433,7 @@
 				C32FF08628C724CF00949E05 /* BasePageView.swift in Sources */,
 				C32FF06E28C70D0300949E05 /* BaseView.swift in Sources */,
 				C34A89D028EC632E00F8BA4B /* ImportanceView.swift in Sources */,
+				C30F7CAC2940C7380050C045 /* SplashViewController.swift in Sources */,
 				C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */,
 				C3D6455C28D353B700850505 /* DateFormat+Extension.swift in Sources */,
 				C32FF0A028CF13A600949E05 /* CalendarViewController.swift in Sources */,
@@ -424,6 +447,7 @@
 				C34A89D228EC633A00F8BA4B /* ImportanceViewController.swift in Sources */,
 				C32FF08228C7240900949E05 /* SecondView.swift in Sources */,
 				C32FF0A528CF149600949E05 /* SettingView.swift in Sources */,
+				C30F7CA92940C6190050C045 /* SplashView.swift in Sources */,
 				C32FF07E28C719FA00949E05 /* ThirdViewController.swift in Sources */,
 				C306AFA628E9934300D4BB6B /* String+Extension.swift in Sources */,
 				C32FF08428C7240F00949E05 /* ThirdView.swift in Sources */,
@@ -599,7 +623,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NewTro_Todo/NewTro_Todo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -617,7 +641,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -633,7 +657,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NewTro_Todo/NewTro_Todo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 6;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewTro_Todo/Info.plist;
@@ -650,7 +674,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.2;
+				MARKETING_VERSION = 1.2.4;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

@@ -186,6 +186,7 @@ final class MainViewController: BaseViewController {
     //MARK: -- Noti
     //로컬 알림
     let userNotiCenter = UNUserNotificationCenter.current()
+    
     func requestAuthNoti() {
         let notiAuthOptions = UNAuthorizationOptions(arrayLiteral: [.alert, .badge, .sound]) // 노티 알림 설정 값
         self.userNotiCenter.requestAuthorization(options: notiAuthOptions) { (success, error) in
@@ -467,7 +468,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         //셀 생성 시점에 클로저로 전달
         let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.identifier, for: indexPath) as! MainTableViewCell
         
-        
+
         cell.todoTextField.text = tasks[indexPath.row].todo!
         //셀 생성 시점에 id도 전달함
         cell.id = tasks[indexPath.row].objectID

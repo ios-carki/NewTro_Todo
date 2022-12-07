@@ -14,17 +14,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
+        guard let scene = (scene as? UIWindowScene) else { return }
+        window = UIWindow(windowScene: scene)
+        
         //first 초기 == false
-        if UserDefaults.standard.bool(forKey: "oldUser") { // == true
-            let vc = MainViewController()
-            let nav = UINavigationController(rootViewController: vc)
-            
-            window?.rootViewController = nav
-        } else {
-            let vc = PageViewController()
-            
-            window?.rootViewController = vc
-        }
+//        if UserDefaults.standard.bool(forKey: "oldUser") { // == true
+//            let vc = MainViewController()
+//            let nav = UINavigationController(rootViewController: vc)
+//
+//            window?.rootViewController = nav
+//
+//        } else {
+//            let vc = PageViewController()
+//
+//            window?.rootViewController = vc
+//        }
+//        window?.makeKeyAndVisible()
+        
+        //테스트
+        let vc = SplashViewController()
+        
+        window?.rootViewController = vc
         window?.makeKeyAndVisible()
     }
 
