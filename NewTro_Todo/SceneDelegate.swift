@@ -18,24 +18,24 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(windowScene: scene)
         
         //first 초기 == false
-//        if UserDefaults.standard.bool(forKey: "oldUser") { // == true
-//            let vc = MainViewController()
-//            let nav = UINavigationController(rootViewController: vc)
-//
-//            window?.rootViewController = nav
-//
-//        } else {
-//            let vc = PageViewController()
-//
-//            window?.rootViewController = vc
-//        }
-//        window?.makeKeyAndVisible()
+        if UserDefaults.standard.bool(forKey: "oldUser") { // == true
+            let vc = MainViewController()
+            let nav = UINavigationController(rootViewController: vc)
+
+            window?.rootViewController = nav
+
+        } else {
+            let vc = PageViewController()
+
+            window?.rootViewController = vc
+        }
+        window?.makeKeyAndVisible()
         
         //테스트
-        let vc = SplashViewController()
-        
-        window?.rootViewController = vc
-        window?.makeKeyAndVisible()
+//        let vc = SplashViewController()
+//        
+//        window?.rootViewController = vc
+//        window?.makeKeyAndVisible()
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -179,6 +179,7 @@ final class MainView: BaseView {
         [bottomView, mainBackgroundImage, coinImage, coinCountLabel, heartImage1, heartImage2, heartImage3].forEach {
             self.addSubview($0)
         }
+        self.backgroundColor = .mainBackGroundColor
     }
     
     override func setConstraints() {

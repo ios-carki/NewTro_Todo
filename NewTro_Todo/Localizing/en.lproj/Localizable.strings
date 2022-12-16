@@ -45,6 +45,11 @@
 //Func_fetchRealm
 "dateFormat" = "MMM dd YYYY";
 
+//todo status
+"todoStatus_notDone" = "Incomplete";
+"todoStatus_Done" = "Complete";
+"todoStatus" = "Complete / Incomplete";
+
 //Func_navigationSetting
 "navigationBar_Title" = "Main";
 

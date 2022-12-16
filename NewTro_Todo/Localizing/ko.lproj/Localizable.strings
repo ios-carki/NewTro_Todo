@@ -46,6 +46,11 @@
 //Func_fetchRealm
 "dateFormat" = "yyyy년 MM월 dd일";
 
+//todo status
+"todoStatus_notDone" = "미완료";
+"todoStatus_Done" = "완료";
+"todoStatus" = "완료 / 미완료";
+
 //Func_navigationSetting
 "navigationBar_Title" = "메인";
 
@@ -70,7 +75,7 @@
 
 "settingMenuList_License" = "라이센스";
 
-"loadView_versionInfoLabel_Text" = "현재버전: ver"; //뒤에 버전 변수가 붙으면?
+"loadView_versionInfoLabel_Text" = "현재버전: ver";
 
 "NavigationBar_Title_SettingViewController" = "설정";
 

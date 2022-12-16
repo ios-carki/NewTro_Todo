@@ -26,17 +26,8 @@ final class MainViewController: BaseViewController {
     //데이트포맷 다 바꾸기
     let dateFormatter = DateFormatter()
     
-    
-    /*
-    let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.timeZone = TimeZone.current
-        formatter.dateFormat = "dateFormat".localized()
-        
-        return formatter
-    }()
-    */
+    //todo 상태
+    var todoStatus: String?
     
     //MARK: -
     static var addTableCell: [String] = []
@@ -50,24 +41,15 @@ final class MainViewController: BaseViewController {
         }
     }
     
-    //미루기 테스트
-//    var delayTasks: Results<Todo>! {
-//        didSet {
-//            mainView.tableView.reloadData()
-//            print("일정 미루기 등록됨!")
-//        }
-//    }
-    
     override func loadView() {
         self.view = mainView
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        //MARK: -- Print
+        //RealmFile URL
         print("Realm is located at:", localRealm.configuration.fileURL!)
         //MARK: -- Print
-        view.backgroundColor = .mainBackGroundColor
         navigationSetting()
         tableSetting()
         todoPlusTapGesture()
@@ -87,9 +69,6 @@ final class MainViewController: BaseViewController {
         if UserDefaults.standard.bool(forKey: "localNoti") {
             self.sendNotiMessage(_seconds: 1.0, _title: "뉴트로 투두", _content: "오늘의 할 일을 작성해볼까요?")
         }
-        
-        
-        //이거추가됨
         
         userNotiCenter.removeAllPendingNotificationRequests()
 //
@@ -127,9 +106,6 @@ final class MainViewController: BaseViewController {
         //데이트포맷 바꾸기
         dateFormatter.dateFormat = "dateFormat".localized()
         
-        //date타입 데이트를 포맷해서 원하는 형태로만 불러오기
-        //1.regDate, pickedNowDate
-        
         //MARK: -- 날짜 변경에따른 테이블 뷰 갱신을위해 이부분 바꿔줌
         //변경 - > let convertDate = dateFormatter.string(from: nowDate)
         let convertDate = dateFormatter.string(from: pickedNowDate)
@@ -149,15 +125,6 @@ final class MainViewController: BaseViewController {
         navigationController?.navigationBar.titleTextAttributes = [.foregroundColor: UIColor.mainBackGroundColor]
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        
-        //키보드 끝나면 없앰
-        //keyboardObserverRemove()
-    }
-    
-    //이거 추가됨
     func getPendingNotificationRequests(completionHandler: ([UNNotificationRequest]) -> Void) {}
     
     func navigationSetting() {
@@ -475,7 +442,13 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         
         
         //투두 완료, 미루기
-        let complete = UIAction(title: "완료 / 미완료") { action in
+        if tasks[indexPath.row].isFinished {
+            todoStatus = "todoStatus_notDone".localized()
+        } else {
+            todoStatus = "todoStatus_Done".localized()
+        }
+        
+        let complete = UIAction(title: todoStatus ?? "todoStatus".localized()) { action in
             if self.tasks[cell.completeTodoBtn.tag].isFinished == false {
                 try! self.localRealm.write {
                     self.tasks[cell.completeTodoBtn.tag].isFinished = true
