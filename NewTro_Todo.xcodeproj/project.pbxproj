@@ -12,7 +12,6 @@
 		C30F7CAC2940C7380050C045 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F7CAB2940C7380050C045 /* SplashViewController.swift */; };
 		C32FF05828C70C8800949E05 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF05728C70C8800949E05 /* AppDelegate.swift */; };
 		C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF05928C70C8800949E05 /* SceneDelegate.swift */; };
-		C32FF05F28C70C8800949E05 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C32FF05D28C70C8800949E05 /* Main.storyboard */; };
 		C32FF06128C70C8800949E05 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C32FF06028C70C8800949E05 /* Assets.xcassets */; };
 		C32FF06428C70C8800949E05 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C32FF06228C70C8800949E05 /* LaunchScreen.storyboard */; };
 		C32FF06E28C70D0300949E05 /* BaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF06D28C70D0300949E05 /* BaseView.swift */; };
@@ -72,7 +71,6 @@
 		C32FF05428C70C8800949E05 /* NewTro_Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewTro_Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32FF05728C70C8800949E05 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C32FF05928C70C8800949E05 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		C32FF05E28C70C8800949E05 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		C32FF06028C70C8800949E05 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C32FF06328C70C8800949E05 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		C32FF06528C70C8800949E05 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -139,22 +137,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		C30F7CA72940C5E70050C045 /* Splash */ = {
-			isa = PBXGroup;
-			children = (
-				C30F7CA82940C6190050C045 /* SplashView.swift */,
-			);
-			path = Splash;
-			sourceTree = "<group>";
-		};
-		C30F7CAA2940C72A0050C045 /* Splash */ = {
-			isa = PBXGroup;
-			children = (
-				C30F7CAB2940C7380050C045 /* SplashViewController.swift */,
-			);
-			path = Splash;
-			sourceTree = "<group>";
-		};
 		C32FF04B28C70C8700949E05 = {
 			isa = PBXGroup;
 			children = (
@@ -175,72 +157,19 @@
 		C32FF05628C70C8800949E05 /* NewTro_Todo */ = {
 			isa = PBXGroup;
 			children = (
-				C38EC07D28F59D610027B0B0 /* NewTro_Todo.entitlements */,
-				C38EC07428F597E40027B0B0 /* GoogleService-Info.plist */,
+				C37AADAB294C84AA0051E68E /* Source */,
+				C37AADAA294C84890051E68E /* Utility */,
+				C37AADA3294C830B0051E68E /* Scene */,
 				C398967228E8A0FE0026B1AA /* Localizing */,
-				C3D6455328D34FA100850505 /* Realm */,
-				C32FF08728C72EC500949E05 /* Extension */,
-				C32FF06C28C70CF400949E05 /* Controller */,
-				C32FF06B28C70CE800949E05 /* View */,
 				C32FF05728C70C8800949E05 /* AppDelegate.swift */,
 				C32FF05928C70C8800949E05 /* SceneDelegate.swift */,
-				C32FF05D28C70C8800949E05 /* Main.storyboard */,
 				C32FF06028C70C8800949E05 /* Assets.xcassets */,
 				C32FF06228C70C8800949E05 /* LaunchScreen.storyboard */,
 				C32FF06528C70C8800949E05 /* Info.plist */,
+				C38EC07428F597E40027B0B0 /* GoogleService-Info.plist */,
+				C38EC07D28F59D610027B0B0 /* NewTro_Todo.entitlements */,
 			);
 			path = NewTro_Todo;
-			sourceTree = "<group>";
-		};
-		C32FF06B28C70CE800949E05 /* View */ = {
-			isa = PBXGroup;
-			children = (
-				C30F7CA72940C5E70050C045 /* Splash */,
-				C3AF2FF728D9D22400AF1A60 /* CustomView */,
-				C3D6454E28D1E23400850505 /* CustomCell */,
-				C32FF0A128CF13AF00949E05 /* NaviBar */,
-				C32FF07228C70E4A00949E05 /* PageView */,
-				C32FF06D28C70D0300949E05 /* BaseView.swift */,
-				C32FF09828CAB71300949E05 /* MainView.swift */,
-				C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */,
-			);
-			path = View;
-			sourceTree = "<group>";
-		};
-		C32FF06C28C70CF400949E05 /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				C30F7CAA2940C72A0050C045 /* Splash */,
-				C3AF2FFA28D9D5E500AF1A60 /* CustomViewController */,
-				C32FF09E28CF137B00949E05 /* NaviBar */,
-				C32FF07328C70E5500949E05 /* PageViewController */,
-				C32FF06F28C70D0A00949E05 /* BaseViewController.swift */,
-				C32FF09A28CAB71D00949E05 /* MainViewController.swift */,
-				C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */,
-			);
-			path = Controller;
-			sourceTree = "<group>";
-		};
-		C32FF07228C70E4A00949E05 /* PageView */ = {
-			isa = PBXGroup;
-			children = (
-				C32FF07F28C7240300949E05 /* FirstView.swift */,
-				C32FF08128C7240900949E05 /* SecondView.swift */,
-				C32FF08328C7240F00949E05 /* ThirdView.swift */,
-				C32FF08528C724CF00949E05 /* BasePageView.swift */,
-			);
-			path = PageView;
-			sourceTree = "<group>";
-		};
-		C32FF07328C70E5500949E05 /* PageViewController */ = {
-			isa = PBXGroup;
-			children = (
-				C32FF07428C70F1800949E05 /* PageViewController.swift */,
-				C32FF07928C719E900949E05 /* FirstViewController.swift */,
-				C32FF07B28C719F100949E05 /* SecondViewController.swift */,
-				C32FF07D28C719FA00949E05 /* ThirdViewController.swift */,
-			);
-			path = PageViewController;
 			sourceTree = "<group>";
 		};
 		C32FF08728C72EC500949E05 /* Extension */ = {
@@ -267,22 +196,102 @@
 			path = Font;
 			sourceTree = "<group>";
 		};
-		C32FF09E28CF137B00949E05 /* NaviBar */ = {
+		C37AADA3294C830B0051E68E /* Scene */ = {
 			isa = PBXGroup;
 			children = (
-				C32FF09F28CF13A600949E05 /* CalendarViewController.swift */,
-				C32FF0A628CF149F00949E05 /* SettingViewController.swift */,
+				C37AADA9294C83E00051E68E /* Splash */,
+				C37AADA8294C83A80051E68E /* Onboarding */,
+				C37AADA7294C83940051E68E /* Setting */,
+				C37AADA6294C83740051E68E /* Calendar */,
+				C37AADA5294C831E0051E68E /* Base */,
+				C37AADA4294C83160051E68E /* Main */,
 			);
-			path = NaviBar;
+			path = Scene;
 			sourceTree = "<group>";
 		};
-		C32FF0A128CF13AF00949E05 /* NaviBar */ = {
+		C37AADA4294C83160051E68E /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */,
+				C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */,
+				C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */,
+				C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */,
+				C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */,
+				C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */,
+				C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */,
+				C3D6455D28D354F900850505 /* TablePlusCell.swift */,
+				C3D6455128D2346400850505 /* MainTableViewCell.swift */,
+				C32FF09A28CAB71D00949E05 /* MainViewController.swift */,
+				C32FF09828CAB71300949E05 /* MainView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		C37AADA5294C831E0051E68E /* Base */ = {
+			isa = PBXGroup;
+			children = (
+				C32FF06F28C70D0A00949E05 /* BaseViewController.swift */,
+				C32FF06D28C70D0300949E05 /* BaseView.swift */,
+			);
+			path = Base;
+			sourceTree = "<group>";
+		};
+		C37AADA6294C83740051E68E /* Calendar */ = {
 			isa = PBXGroup;
 			children = (
 				C32FF0A228CF13BA00949E05 /* CalendarView.swift */,
-				C32FF0A428CF149600949E05 /* SettingView.swift */,
+				C32FF09F28CF13A600949E05 /* CalendarViewController.swift */,
 			);
-			path = NaviBar;
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		C37AADA7294C83940051E68E /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				C32FF0A428CF149600949E05 /* SettingView.swift */,
+				C32FF0A628CF149F00949E05 /* SettingViewController.swift */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		C37AADA8294C83A80051E68E /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+				C32FF07428C70F1800949E05 /* PageViewController.swift */,
+				C32FF07928C719E900949E05 /* FirstViewController.swift */,
+				C32FF07B28C719F100949E05 /* SecondViewController.swift */,
+				C32FF07D28C719FA00949E05 /* ThirdViewController.swift */,
+				C32FF07F28C7240300949E05 /* FirstView.swift */,
+				C32FF08128C7240900949E05 /* SecondView.swift */,
+				C32FF08328C7240F00949E05 /* ThirdView.swift */,
+				C32FF08528C724CF00949E05 /* BasePageView.swift */,
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		C37AADA9294C83E00051E68E /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				C30F7CAB2940C7380050C045 /* SplashViewController.swift */,
+				C30F7CA82940C6190050C045 /* SplashView.swift */,
+			);
+			path = Splash;
+			sourceTree = "<group>";
+		};
+		C37AADAA294C84890051E68E /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				C3D6455428D3503600850505 /* TodoScheme.swift */,
+			);
+			path = Utility;
+			sourceTree = "<group>";
+		};
+		C37AADAB294C84AA0051E68E /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				C32FF08728C72EC500949E05 /* Extension */,
+			);
+			path = Source;
 			sourceTree = "<group>";
 		};
 		C398967228E8A0FE0026B1AA /* Localizing */ = {
@@ -291,42 +300,6 @@
 				C398967728E8A12C0026B1AA /* Localizable.strings */,
 			);
 			path = Localizing;
-			sourceTree = "<group>";
-		};
-		C3AF2FF728D9D22400AF1A60 /* CustomView */ = {
-			isa = PBXGroup;
-			children = (
-				C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */,
-				C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */,
-			);
-			path = CustomView;
-			sourceTree = "<group>";
-		};
-		C3AF2FFA28D9D5E500AF1A60 /* CustomViewController */ = {
-			isa = PBXGroup;
-			children = (
-				C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */,
-				C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */,
-			);
-			path = CustomViewController;
-			sourceTree = "<group>";
-		};
-		C3D6454E28D1E23400850505 /* CustomCell */ = {
-			isa = PBXGroup;
-			children = (
-				C3D6455128D2346400850505 /* MainTableViewCell.swift */,
-				C3D6455D28D354F900850505 /* TablePlusCell.swift */,
-				C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */,
-			);
-			path = CustomCell;
-			sourceTree = "<group>";
-		};
-		C3D6455328D34FA100850505 /* Realm */ = {
-			isa = PBXGroup;
-			children = (
-				C3D6455428D3503600850505 /* TodoScheme.swift */,
-			);
-			path = Realm;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -418,7 +391,6 @@
 				C398967528E8A12C0026B1AA /* Localizable.strings in Resources */,
 				C32FF09528C9AECF00949E05 /* Galmuri11-Condensed.ttf in Resources */,
 				C34644F128E493980071EF13 /* Package.resolved in Resources */,
-				C32FF05F28C70C8800949E05 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -472,14 +444,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		C32FF05D28C70C8800949E05 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				C32FF05E28C70C8800949E05 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		C32FF06228C70C8800949E05 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -623,7 +587,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NewTro_Todo/NewTro_Todo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 0;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -641,7 +605,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.4;
+				MARKETING_VERSION = 1.2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -657,7 +621,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NewTro_Todo/NewTro_Todo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 0;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewTro_Todo/Info.plist;
@@ -674,7 +638,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.4;
+				MARKETING_VERSION = 1.2.5;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
