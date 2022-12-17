@@ -46,6 +46,7 @@
 		C34A89D028EC632E00F8BA4B /* ImportanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */; };
 		C34A89D228EC633A00F8BA4B /* ImportanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */; };
 		C34A89D428EC6B4600F8BA4B /* ImportanceViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */; };
+		C37AADAD294C86AB0051E68E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = C37AADAC294C86AB0051E68E /* .gitignore */; };
 		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
 		C38EC07528F597E40027B0B0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C38EC07428F597E40027B0B0 /* GoogleService-Info.plist */; };
 		C38EC07828F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C38EC07728F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport */; };
@@ -101,6 +102,7 @@
 		C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceView.swift; sourceTree = "<group>"; };
 		C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceViewController.swift; sourceTree = "<group>"; };
 		C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceViewCell.swift; sourceTree = "<group>"; };
+		C37AADAC294C86AB0051E68E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		C38EC07428F597E40027B0B0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C38EC07D28F59D610027B0B0 /* NewTro_Todo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NewTro_Todo.entitlements; sourceTree = "<group>"; };
 		C398967628E8A12C0026B1AA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -140,6 +142,7 @@
 		C32FF04B28C70C8700949E05 = {
 			isa = PBXGroup;
 			children = (
+				C37AADAC294C86AB0051E68E /* .gitignore */,
 				C34644F028E493980071EF13 /* Package.resolved */,
 				C32FF05628C70C8800949E05 /* NewTro_Todo */,
 				C32FF05528C70C8800949E05 /* Products */,
@@ -384,6 +387,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C37AADAD294C86AB0051E68E /* .gitignore in Resources */,
 				C32FF09728CAAB6F00949E05 /* Galmuri11-Bold.ttf in Resources */,
 				C38EC07528F597E40027B0B0 /* GoogleService-Info.plist in Resources */,
 				C32FF06428C70C8800949E05 /* LaunchScreen.storyboard in Resources */,
