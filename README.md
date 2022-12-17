@@ -1,4 +1,22 @@
-# NewTro_Todo 앱 출시 TIL
+
+<img width="1137" alt="스크린샷 2022-12-17 오후 1 15 34" src="https://user-images.githubusercontent.com/44957712/208224375-06213fc4-b612-4650-a4e6-f3f9843fbc51.png">
+
+***
+# 📱 About Project
+1. Todo App
+2. Pixel Theme (PiSKEL)
+3. Todo 완료 / 미루기
+4. 영어 대응
+5. 로컬 노티 (온 / 오프 가능)
+***
+
+# 📲 App Image (v_ 1.2.4)
+<img width="886" alt="스크린샷 2022-12-17 오후 1 18 58" src="https://user-images.githubusercontent.com/44957712/208224482-16cbcdb1-1750-44fb-b9f1-1861dcfad3e6.png">
+<img width="886" alt="스크린샷 2022-12-17 오후 1 21 45" src="https://user-images.githubusercontent.com/44957712/208224574-87de7c39-f682-40da-81b1-7d39d610b4ed.png">
+
+***
+
+# 💻 NewTro_Todo 앱 출시 Man-Month
 
 |일자|내용|새로 알게된 내용|어려웠던 점|이미지 링크
 |----------|--------------------|--------------------|--------------------|--------------------
@@ -20,9 +38,36 @@
 |[2022.09.24](#2022-09-24)|백업 복구 구현<br/>설정뷰 변경<br/>TODO 완료버튼추가<br/>||[복구관련에러](#복구에러)|[변경 설정뷰](https://user-images.githubusercontent.com/44957712/191313969-9860c9a0-5d11-4d0f-88f5-d43285487ad6.png)<br/>[TODO 완료버튼](#할일-완료여부)<br/>
 |[2022.09.25](#2022-09-25)| |||
 |[2022.09.26](#2022-09-26)| |||
-|[2022.09.27](#2022-09-27)|ToDo셀 드래그 포기..|||
+|[2022.09.27](#2022-09-27)|ToDo셀 드래그 위치에러..|||
 |[2022.09.28](#2022-09-28)| ||링크 이미지 참고|[2022.09.28](#2022-09-28)
+***
+<img width="1000" alt="스크린샷 2022-12-17 오후 1 23 44" src="https://user-images.githubusercontent.com/44957712/208224657-e139f68f-8b1a-4bc0-89f5-8634adebe933.png">
 
+***
+
+# 🔴 Critical Issue
+### 이슈
+
+앱 사용자 디바이스의 설정상 국가, 지역이 대한민국이 아닐 시, dateFormatter의 Locale identifier를 한국으로 제한했었던 이전 버전코드에서 Crash가 발생했습니다.
+
+### 문제인식
+
+Todo를 작성하기 위해서 Todo버튼의 .TouchUpInside 매서드로 인해 Todo의 contents가 Realm DB에 Add가 되는데, Todo 테이블의 Attribute중 하나인 regDate(등록시간, 날짜)가 대한민국을 제외한 국가의 시간데이터를 받아오지 못하는 이슈에 의한 Crash로 문제인식을 했습니다.
+
+### 해결
+
+dateFormatter locale.current로 사용자가 선택한 디바이스 지역속성 사용
+
+- 관련 내용 블로그 포스팅
+    
+    [앱 출시 회고](https://carki.tistory.com/37)
+    
+    [데이터 포맷](https://carki.tistory.com/40)
+    
+
+---
+
+# 📝 Daily Scrum
 
 ### 2022 09 06
 
