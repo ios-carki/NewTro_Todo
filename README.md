@@ -3,11 +3,19 @@
 
 ***
 # 📱 About Project
-1. Todo App
-2. Pixel Theme (PiSKEL)
-3. Todo 완료 / 미루기
-4. 영어 대응
-5. 로컬 노티 (온 / 오프 가능)
+**Realm DB를 활용**하여 사용자 **Todo 데이터의 영속성을 유지**시키고, App Depth를 낮추어 **하나의 뷰 안에서 사용자 Todo DB CRUD가 가능**한 **도트아트 테마 기반의 UI를 활용한 Todo앱**입니다. 
+
+부가적인 기능으로는 달력을 통한 **날짜이동**과 선택한 날짜에 작성된 **Todo 개수 확인**, **Todo 중요도에 따른 텍스트 컬러 변환**, **Todo 완료 및 미루기**, **사용자 Todo 데이터 초기화**가 있습니다.
+
+### 사용한 라이브러리
+<img src="https://img.shields.io/badge/IQKeyboardManager-F8DC75?style=for-the-badge&logo=IQKeyboardManager&logoColor=#39477F"> <img src="https://img.shields.io/badge/Realm-39477F?style=for-the-badge&logo=Realm&logoColor=#39477F">
+<img src="https://img.shields.io/badge/SnapKit-000000?style=for-the-badge&logo=SnapKit&logoColor=white">
+<img src="https://img.shields.io/badge/FSCalendar-4F0599?style=for-the-badge&logo=SnapKit&logoColor=white">
+<img src="https://img.shields.io/badge/Toast-29BEB0?style=for-the-badge&logo=SnapKit&logoColor=black">
+<img src="https://img.shields.io/badge/Zip-FF6666?style=for-the-badge&logo=SnapKit&logoColor=black">
+
+
+
 ***
 
 # 📲 App Image (v_ 1.2.4)
