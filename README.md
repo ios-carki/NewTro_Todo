@@ -9,7 +9,7 @@
 
 **앱 다운로드 최소 버전은 iOS 15 이상**이며, 해당 버전을 채택한 이유로는 App Store에서 처리한 결과에 의하면 2022년 5월 31일을 기준으로 **82%의 기기에서 iOS 15를 사용중**이기 때문에 해당 버전을 최소 버전으로 채택했습니다.
 ***
-### 사용한 라이브러리
+### 🔨사용한 라이브러리
 <img src="https://img.shields.io/badge/IQKeyboardManager-F8DC75?style=for-the-badge&logo=IQKeyboardManager&logoColor=#39477F"> <img src="https://img.shields.io/badge/Realm-39477F?style=for-the-badge&logo=Realm&logoColor=#39477F">
 <img src="https://img.shields.io/badge/SnapKit-000000?style=for-the-badge&logo=SnapKit&logoColor=white">
 <img src="https://img.shields.io/badge/FSCalendar-4F0599?style=for-the-badge&logo=SnapKit&logoColor=white">
@@ -23,6 +23,9 @@
 # 📲 App Image (v_ 1.2.4)
 <img width="886" alt="스크린샷 2022-12-17 오후 1 18 58" src="https://user-images.githubusercontent.com/44957712/208224482-16cbcdb1-1750-44fb-b9f1-1861dcfad3e6.png">
 <img width="886" alt="스크린샷 2022-12-17 오후 1 21 45" src="https://user-images.githubusercontent.com/44957712/208224574-87de7c39-f682-40da-81b1-7d39d610b4ed.png">
+
+# 👤 유저 리뷰
+<img width="816" alt="스크린샷 2022-12-20 오후 8 49 04" src="https://user-images.githubusercontent.com/44957712/208660110-41b91bae-84a8-4ecc-9f96-9a90e1a3d724.png">
 
 ***
 
