@@ -8,17 +8,16 @@
 부가적인 기능으로는 하루마다 간단한 메모를 작성할 수 있는 **퀵메모,** 달력을 통한 **날짜이동**과 선택한 날짜에 작성된 **Todo 개수 확인**, **Todo 중요도에 따른 텍스트 컬러 변환**, **Todo 완료 및 미루기**, **영어 대응**, **로컬 노티**, **사용자 Todo 데이터 초기화**가 있습니다.
 
 **앱 다운로드 최소 버전은 iOS 15 이상**이며, 해당 버전을 채택한 이유로는 App Store에서 처리한 결과에 의하면 2022년 5월 31일을 기준으로 **82%의 기기에서 iOS 15를 사용중**이기 때문에 해당 버전을 최소 버전으로 채택했습니다.
-***
-### 🔨사용한 라이브러리
-<img src="https://img.shields.io/badge/IQKeyboardManager-F8DC75?style=for-the-badge&logo=IQKeyboardManager&logoColor=#39477F"> <img src="https://img.shields.io/badge/Realm-39477F?style=for-the-badge&logo=Realm&logoColor=#39477F">
-<img src="https://img.shields.io/badge/SnapKit-000000?style=for-the-badge&logo=SnapKit&logoColor=white">
-<img src="https://img.shields.io/badge/FSCalendar-4F0599?style=for-the-badge&logo=SnapKit&logoColor=white">
-<img src="https://img.shields.io/badge/Toast-29BEB0?style=for-the-badge&logo=SnapKit&logoColor=black">
-<img src="https://img.shields.io/badge/Zip-FF6666?style=for-the-badge&logo=SnapKit&logoColor=black">
 
 
+# 🔨Tech
+Architecture - MVC 
 
-***
+Framework - Foundation / UIKit / UserNotification
+
+Library - Realm / Firebase / IQKeyboardManager / SnapKit / Toast / FSCalendar 
+
+
 
 # 📲 App Image (v_ 1.2.4)
 <img width="886" alt="스크린샷 2022-12-17 오후 1 18 58" src="https://user-images.githubusercontent.com/44957712/208224482-16cbcdb1-1750-44fb-b9f1-1861dcfad3e6.png">
@@ -33,7 +32,7 @@
 
 ***
 
-# 🔴 Critical Issue
+# 🔴 Trouble Shooting
 ### 이슈
 
 앱 사용자 디바이스의 설정상 국가, 지역이 대한민국이 아닐 시, dateFormatter의 Locale identifier를 한국으로 제한했었던 이전 버전코드에서 Crash가 발생했습니다.
@@ -54,6 +53,17 @@ dateFormatter locale.current로 사용자가 선택한 디바이스 지역속성
     
 
 ---
+
+# 🤔 프로젝트 회고
+
+앱 출시 고려사항 (HIG, 리젝사유)에 대한 경험과 학습 내용을 프로젝트에 구현하는 과정을 통해 러닝커브가 급격하게 상승했습니다.
+
+- **SnapKit**을 이용한 **Code Base UI.**
+- **Realm**을 활용하여 DataBase **스키마 설계에 대한 이해, 유저 데이터 영속성, PK값을 활용한 렘 데이터 중복 방지, 마이그레이션을 통한 스키마 변동사항 대응**을 처리.
+- **LocalNotification을 통해** **알림 권한 상태에 따른 분기처리**와, **앱 생명주기에 따른 로컬 노티 메시지 분기**를 구현.
+- 다양한 국가에서 서비스하기 위한 **Localizing** 구현.
+- **Enum**과 **Property Wrapper**를 통해 **App Theme(Color/ImageSet) 구조화.**
+
 # 💻 NewTro_Todo 앱 출시 Man-Month
 
 |일자|내용|새로 알게된 내용|어려웠던 점|이미지 링크
