@@ -3,18 +3,66 @@
 
 ***
 # 📱 About Project
-1. Todo App
-2. Pixel Theme (PiSKEL)
-3. Todo 완료 / 미루기
-4. 영어 대응
-5. 로컬 노티 (온 / 오프 가능)
-***
+**Realm DB를 활용**하여 사용자 **Todo 데이터의 영속성을 유지**시키고, App Depth를 낮추어 **하나의 뷰 안에서 사용자 Todo DB CRUD가 가능**한 **자체 제작 도트아트 테마 기반의 UI를 활용한 Todo앱**입니다. 
+
+부가적인 기능으로는 하루마다 간단한 메모를 작성할 수 있는 **퀵메모,** 달력을 통한 **날짜이동**과 선택한 날짜에 작성된 **Todo 개수 확인**, **Todo 중요도에 따른 텍스트 컬러 변환**, **Todo 완료 및 미루기**, **영어 대응**, **로컬 노티**, **사용자 Todo 데이터 초기화**가 있습니다.
+
+**앱 다운로드 최소 버전은 iOS 15 이상**이며, 해당 버전을 채택한 이유로는 App Store에서 처리한 결과에 의하면 2022년 5월 31일을 기준으로 **82%의 기기에서 iOS 15를 사용중**이기 때문에 해당 버전을 최소 버전으로 채택했습니다.
+
+
+# 🔨Tech
+Architecture - MVC 
+
+Framework - Foundation / UIKit / UserNotification
+
+Library - Realm / Firebase / IQKeyboardManager / SnapKit / Toast / FSCalendar 
+
+
 
 # 📲 App Image (v_ 1.2.4)
 <img width="886" alt="스크린샷 2022-12-17 오후 1 18 58" src="https://user-images.githubusercontent.com/44957712/208224482-16cbcdb1-1750-44fb-b9f1-1861dcfad3e6.png">
 <img width="886" alt="스크린샷 2022-12-17 오후 1 21 45" src="https://user-images.githubusercontent.com/44957712/208224574-87de7c39-f682-40da-81b1-7d39d610b4ed.png">
 
+# 👤 유저 리뷰
+<img width="816" alt="스크린샷 2022-12-20 오후 8 49 04" src="https://user-images.githubusercontent.com/44957712/208660110-41b91bae-84a8-4ecc-9f96-9a90e1a3d724.png">
+
 ***
+
+<img width="1000" alt="스크린샷 2022-12-17 오후 1 23 44" src="https://user-images.githubusercontent.com/44957712/208224657-e139f68f-8b1a-4bc0-89f5-8634adebe933.png">
+
+***
+
+# 🔴 Trouble Shooting
+### 이슈
+
+앱 사용자 디바이스의 설정상 국가, 지역이 대한민국이 아닐 시, dateFormatter의 Locale identifier를 한국으로 제한했었던 이전 버전코드에서 Crash가 발생했습니다.
+
+### 문제인식
+
+Todo를 작성하기 위해서 Todo버튼의 .TouchUpInside 매서드로 인해 Todo의 contents가 Realm DB에 Add가 되는데, Todo 테이블의 Attribute중 하나인 regDate(등록시간, 날짜)가 대한민국을 제외한 국가의 시간데이터를 받아오지 못하는 이슈에 의한 Crash로 문제인식을 했습니다.
+
+### 해결
+
+dateFormatter locale.current로 사용자가 선택한 디바이스 지역속성 사용
+
+- 관련 내용 블로그 포스팅
+    
+    [앱 출시 회고](https://carki.tistory.com/37)
+    
+    [데이터 포맷](https://carki.tistory.com/40)
+    
+
+---
+
+# 🤔 프로젝트 회고
+
+앱 출시 고려사항 (HIG, 리젝사유)에 대한 경험과 학습 내용을 프로젝트에 구현하는 과정을 통해 러닝커브가 급격하게 상승했습니다.
+
+- **SnapKit**을 이용한 **Code Base UI.**
+- **Realm**을 활용하여 DataBase **스키마 설계에 대한 이해, 유저 데이터 영속성, PK값을 활용한 렘 데이터 중복 방지, 마이그레이션을 통한 스키마 변동사항 대응**을 처리.
+- **LocalNotification을 통해** **알림 권한 상태에 따른 분기처리**와, **앱 생명주기에 따른 로컬 노티 메시지 분기**를 구현.
+- 다양한 국가에서 서비스하기 위한 **Localizing** 구현.
+- **Enum**과 **Property Wrapper**를 통해 **App Theme(Color/ImageSet) 구조화.**
 
 # 💻 NewTro_Todo 앱 출시 Man-Month
 
@@ -41,31 +89,6 @@
 |[2022.09.27](#2022-09-27)|ToDo셀 드래그 위치에러..|||
 |[2022.09.28](#2022-09-28)| ||링크 이미지 참고|[2022.09.28](#2022-09-28)
 ***
-<img width="1000" alt="스크린샷 2022-12-17 오후 1 23 44" src="https://user-images.githubusercontent.com/44957712/208224657-e139f68f-8b1a-4bc0-89f5-8634adebe933.png">
-
-***
-
-# 🔴 Critical Issue
-### 이슈
-
-앱 사용자 디바이스의 설정상 국가, 지역이 대한민국이 아닐 시, dateFormatter의 Locale identifier를 한국으로 제한했었던 이전 버전코드에서 Crash가 발생했습니다.
-
-### 문제인식
-
-Todo를 작성하기 위해서 Todo버튼의 .TouchUpInside 매서드로 인해 Todo의 contents가 Realm DB에 Add가 되는데, Todo 테이블의 Attribute중 하나인 regDate(등록시간, 날짜)가 대한민국을 제외한 국가의 시간데이터를 받아오지 못하는 이슈에 의한 Crash로 문제인식을 했습니다.
-
-### 해결
-
-dateFormatter locale.current로 사용자가 선택한 디바이스 지역속성 사용
-
-- 관련 내용 블로그 포스팅
-    
-    [앱 출시 회고](https://carki.tistory.com/37)
-    
-    [데이터 포맷](https://carki.tistory.com/40)
-    
-
----
 
 # 📝 Daily Scrum
 
