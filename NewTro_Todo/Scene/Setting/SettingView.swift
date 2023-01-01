@@ -55,7 +55,7 @@ final class SettingView: BaseView {
     
     let localNotiLabel: UILabel = {
         let view = UILabel()
-        view.text = "알림"
+        view.text = "settingMenuList_Noti".localized()
         view.font = .mainFont(size: 20)
         return view
     }()

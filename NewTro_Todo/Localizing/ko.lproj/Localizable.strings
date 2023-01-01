@@ -67,6 +67,8 @@
 
 //SettingViewController
 //백업 복구부분 해야됨
+"settingMenuList_Noti" = "알림";
+
 "settingMenuList_Theme" = "테마";
 
 "settingMenuList_ClearData" = "데이터 초기화";
