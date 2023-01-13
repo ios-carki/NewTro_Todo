@@ -1,5 +1,6 @@
 <p align="center">
-    <img width="908" alt="스크린샷 2023-01-09 오전 5 31 32" src="https://user-images.githubusercontent.com/44957712/211586794-f92697b6-872d-4f9f-9683-edf213162800.png">
+    <img width="979" alt="스크린샷 2023-01-13 오후 11 02 34" src="https://user-images.githubusercontent.com/44957712/212338109-d176b9b1-b891-4211-b2a1-363042c1288b.png">
+    
 </p>  
 
 ***
@@ -21,7 +22,7 @@
 # 🔨Tech
 Architecture - MVC 
 
-Framework - Foundation / UIKit / UserNotification
+Framework - SwiftUI / Foundation / UIKit / UserNotification / WidgetKit
 
 Library - Realm / Firebase / IQKeyboardManager / SnapKit / Toast / FSCalendar 
 
@@ -31,6 +32,9 @@ Library - Realm / Firebase / IQKeyboardManager / SnapKit / Toast / FSCalendar
 <p align="center">
     <img width="886" alt="스크린샷 2022-12-17 오후 1 18 58" src="https://user-images.githubusercontent.com/44957712/208224482-16cbcdb1-1750-44fb-b9f1-1861dcfad3e6.png">
     <img width="886" alt="스크린샷 2022-12-17 오후 1 21 45" src="https://user-images.githubusercontent.com/44957712/208224574-87de7c39-f682-40da-81b1-7d39d610b4ed.png">
+  
+<img width="229" alt="스크린샷 2023-01-13 오후 11 09 16" src="https://user-images.githubusercontent.com/44957712/212339260-378c1870-5bb4-4014-b388-142527a98f8e.png">
+    
 </p>
 
 # 👤 유저 리뷰
