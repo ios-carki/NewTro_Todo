@@ -1,7 +1,15 @@
-
-<img width="1137" alt="스크린샷 2022-12-17 오후 1 15 34" src="https://user-images.githubusercontent.com/44957712/208224375-06213fc4-b612-4650-a4e6-f3f9843fbc51.png">
+<p align="center">
+    <img width="908" alt="스크린샷 2023-01-09 오전 5 31 32" src="https://user-images.githubusercontent.com/44957712/211586794-f92697b6-872d-4f9f-9683-edf213162800.png">
+</p>  
 
 ***
+
+<p align="center">
+<img width="1137" alt="스크린샷 2022-12-17 오후 1 15 34" src="https://user-images.githubusercontent.com/44957712/208224375-06213fc4-b612-4650-a4e6-f3f9843fbc51.png">
+</p>
+
+***
+
 # 📱 About Project
 **Realm DB를 활용**하여 사용자 **Todo 데이터의 영속성을 유지**시키고, App Depth를 낮추어 **하나의 뷰 안에서 사용자 Todo DB CRUD가 가능**한 **자체 제작 도트아트 테마 기반의 UI를 활용한 Todo앱**입니다. 
 
@@ -20,15 +28,22 @@ Library - Realm / Firebase / IQKeyboardManager / SnapKit / Toast / FSCalendar
 
 
 # 📲 App Image (v_ 1.2.4)
-<img width="886" alt="스크린샷 2022-12-17 오후 1 18 58" src="https://user-images.githubusercontent.com/44957712/208224482-16cbcdb1-1750-44fb-b9f1-1861dcfad3e6.png">
-<img width="886" alt="스크린샷 2022-12-17 오후 1 21 45" src="https://user-images.githubusercontent.com/44957712/208224574-87de7c39-f682-40da-81b1-7d39d610b4ed.png">
+<p align="center">
+    <img width="886" alt="스크린샷 2022-12-17 오후 1 18 58" src="https://user-images.githubusercontent.com/44957712/208224482-16cbcdb1-1750-44fb-b9f1-1861dcfad3e6.png">
+    <img width="886" alt="스크린샷 2022-12-17 오후 1 21 45" src="https://user-images.githubusercontent.com/44957712/208224574-87de7c39-f682-40da-81b1-7d39d610b4ed.png">
+</p>
 
 # 👤 유저 리뷰
+<p align="center">
 <img width="816" alt="스크린샷 2022-12-20 오후 8 49 04" src="https://user-images.githubusercontent.com/44957712/208660110-41b91bae-84a8-4ecc-9f96-9a90e1a3d724.png">
+</p>
 
-***
+# 🧭 개발 공수
+<p align="center">
 
-<img width="1000" alt="스크린샷 2022-12-17 오후 1 23 44" src="https://user-images.githubusercontent.com/44957712/208224657-e139f68f-8b1a-4bc0-89f5-8634adebe933.png">
+<img width="851" alt="스크린샷 2023-01-11 오전 12 11 29" src="https://user-images.githubusercontent.com/44957712/211588508-f854148a-2e48-4173-91e2-c8def7a3aac5.png">
+
+</p>
 
 ***
 
