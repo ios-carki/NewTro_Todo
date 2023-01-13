@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import WidgetKit
 
 import RealmSwift
 
@@ -112,6 +113,7 @@ class CustomMenuPopupViewController: BaseViewController {
         try! self.localRealm.write {
             localRealm.delete(tasks[receivedTag!])
         }
+        WidgetCenter.shared.reloadAllTimelines()
         dismiss(animated: false)
     }
 }

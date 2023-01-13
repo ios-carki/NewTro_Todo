@@ -10,6 +10,13 @@
 		C306AFA628E9934300D4BB6B /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C306AFA528E9934300D4BB6B /* String+Extension.swift */; };
 		C30F7CA92940C6190050C045 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F7CA82940C6190050C045 /* SplashView.swift */; };
 		C30F7CAC2940C7380050C045 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F7CAB2940C7380050C045 /* SplashViewController.swift */; };
+		C319235329713C5D00DB669D /* TodoScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455428D3503600850505 /* TodoScheme.swift */; };
+		C319235529713D0A00DB669D /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C319235429713D0A00DB669D /* Realm */; };
+		C319235729713D0E00DB669D /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C319235629713D0E00DB669D /* RealmSwift */; };
+		C319235929715BE200DB669D /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C319235829715BE200DB669D /* RealmManager.swift */; };
+		C319235A29715D7900DB669D /* DateFormat+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455B28D353B700850505 /* DateFormat+Extension.swift */; };
+		C319235B29715E0100DB669D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C398967728E8A12C0026B1AA /* Localizable.strings */; };
+		C319235C2971624C00DB669D /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C319235829715BE200DB669D /* RealmManager.swift */; };
 		C32FF05828C70C8800949E05 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF05728C70C8800949E05 /* AppDelegate.swift */; };
 		C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF05928C70C8800949E05 /* SceneDelegate.swift */; };
 		C32FF06128C70C8800949E05 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C32FF06028C70C8800949E05 /* Assets.xcassets */; };
@@ -35,6 +42,13 @@
 		C32FF0A328CF13BA00949E05 /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A228CF13BA00949E05 /* CalendarView.swift */; };
 		C32FF0A528CF149600949E05 /* SettingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A428CF149600949E05 /* SettingView.swift */; };
 		C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF0A628CF149F00949E05 /* SettingViewController.swift */; };
+		C332698929704AB1009B1E1C /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C332698829704AB1009B1E1C /* WidgetKit.framework */; };
+		C332698B29704AB1009B1E1C /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C332698A29704AB1009B1E1C /* SwiftUI.framework */; };
+		C332698E29704AB1009B1E1C /* NewtroWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C332698D29704AB1009B1E1C /* NewtroWidget.swift */; };
+		C332699129704AB2009B1E1C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C332699029704AB2009B1E1C /* Assets.xcassets */; };
+		C332699329704AB2009B1E1C /* NewtroWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C332698F29704AB1009B1E1C /* NewtroWidget.intentdefinition */; };
+		C332699429704AB2009B1E1C /* NewtroWidget.intentdefinition in Sources */ = {isa = PBXBuildFile; fileRef = C332698F29704AB1009B1E1C /* NewtroWidget.intentdefinition */; };
+		C332699729704AB2009B1E1C /* NewtroWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C332698629704AB1009B1E1C /* NewtroWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		C34644BB28DEDC840071EF13 /* Zip in Frameworks */ = {isa = PBXBuildFile; productRef = C34644BA28DEDC840071EF13 /* Zip */; };
 		C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644BC28DF19810071EF13 /* File+Extension.swift */; };
 		C34644E428E2F0EA0071EF13 /* CustomNotePopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */; };
@@ -48,6 +62,8 @@
 		C34A89D428EC6B4600F8BA4B /* ImportanceViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */; };
 		C37AADAD294C86AB0051E68E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = C37AADAC294C86AB0051E68E /* .gitignore */; };
 		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
+		C383DF1C29713222000C62CD /* Galmuri11-Condensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C32FF09428C9AECF00949E05 /* Galmuri11-Condensed.ttf */; };
+		C383DF1E2971358E000C62CD /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF08828C72EE300949E05 /* Color+Extension.swift */; };
 		C38EC07528F597E40027B0B0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C38EC07428F597E40027B0B0 /* GoogleService-Info.plist */; };
 		C38EC07828F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C38EC07728F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		C38EC07A28F599B70027B0B0 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = C38EC07928F599B70027B0B0 /* FirebaseCrashlytics */; };
@@ -65,10 +81,35 @@
 		C3EF20B928DBFB1400141757 /* IQKeyboardManagerSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C3EF20B828DBFB1400141757 /* IQKeyboardManagerSwift */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		C332699529704AB2009B1E1C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = C32FF04C28C70C8700949E05 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C332698529704AB1009B1E1C;
+			remoteInfo = NewtroWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C332699829704AB2009B1E1C /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				C332699729704AB2009B1E1C /* NewtroWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		C306AFA528E9934300D4BB6B /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		C30F7CA82940C6190050C045 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		C30F7CAB2940C7380050C045 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
+		C319235829715BE200DB669D /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
 		C32FF05428C70C8800949E05 /* NewTro_Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewTro_Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32FF05728C70C8800949E05 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C32FF05928C70C8800949E05 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -95,6 +136,13 @@
 		C32FF0A228CF13BA00949E05 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		C32FF0A428CF149600949E05 /* SettingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingView.swift; sourceTree = "<group>"; };
 		C32FF0A628CF149F00949E05 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		C332698629704AB1009B1E1C /* NewtroWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NewtroWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C332698829704AB1009B1E1C /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C332698A29704AB1009B1E1C /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C332698D29704AB1009B1E1C /* NewtroWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewtroWidget.swift; sourceTree = "<group>"; };
+		C332698F29704AB1009B1E1C /* NewtroWidget.intentdefinition */ = {isa = PBXFileReference; lastKnownFileType = file.intentdefinition; path = NewtroWidget.intentdefinition; sourceTree = "<group>"; };
+		C332699029704AB2009B1E1C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C332699229704AB2009B1E1C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C34644BC28DF19810071EF13 /* File+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "File+Extension.swift"; sourceTree = "<group>"; };
 		C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupViewController.swift; sourceTree = "<group>"; };
 		C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupView.swift; sourceTree = "<group>"; };
@@ -103,11 +151,11 @@
 		C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceViewController.swift; sourceTree = "<group>"; };
 		C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceViewCell.swift; sourceTree = "<group>"; };
 		C37AADAC294C86AB0051E68E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
+		C383DF1D29713535000C62CD /* NewtroWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NewtroWidgetExtension.entitlements; sourceTree = "<group>"; };
 		C38EC07428F597E40027B0B0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		C38EC07D28F59D610027B0B0 /* NewTro_Todo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NewTro_Todo.entitlements; sourceTree = "<group>"; };
 		C398967628E8A12C0026B1AA /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		C398967828E8A15F0026B1AA /* ko */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ko; path = ko.lproj/Localizable.strings; sourceTree = "<group>"; };
-		C3A1EFEC29615C8400ADB845 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		C3AF2FF828D9D25400AF1A60 /* CustomMenuPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuPopupView.swift; sourceTree = "<group>"; };
 		C3AF2FFB28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMenuPopupViewController.swift; sourceTree = "<group>"; };
 		C3D6454328D0ADEB00850505 /* Alert+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Alert+Extension.swift"; sourceTree = "<group>"; };
@@ -137,15 +185,29 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C332698329704AB1009B1E1C /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C319235729713D0E00DB669D /* RealmSwift in Frameworks */,
+				C319235529713D0A00DB669D /* Realm in Frameworks */,
+				C332698B29704AB1009B1E1C /* SwiftUI.framework in Frameworks */,
+				C332698929704AB1009B1E1C /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		C32FF04B28C70C8700949E05 = {
 			isa = PBXGroup;
 			children = (
+				C383DF1D29713535000C62CD /* NewtroWidgetExtension.entitlements */,
 				C37AADAC294C86AB0051E68E /* .gitignore */,
 				C34644F028E493980071EF13 /* Package.resolved */,
 				C32FF05628C70C8800949E05 /* NewTro_Todo */,
+				C332698C29704AB1009B1E1C /* NewtroWidget */,
+				C332698729704AB1009B1E1C /* Frameworks */,
 				C32FF05528C70C8800949E05 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -154,6 +216,7 @@
 			isa = PBXGroup;
 			children = (
 				C32FF05428C70C8800949E05 /* NewTro_Todo.app */,
+				C332698629704AB1009B1E1C /* NewtroWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -198,6 +261,27 @@
 				C32FF09428C9AECF00949E05 /* Galmuri11-Condensed.ttf */,
 			);
 			path = Font;
+			sourceTree = "<group>";
+		};
+		C332698729704AB1009B1E1C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C332698829704AB1009B1E1C /* WidgetKit.framework */,
+				C332698A29704AB1009B1E1C /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C332698C29704AB1009B1E1C /* NewtroWidget */ = {
+			isa = PBXGroup;
+			children = (
+				C332698D29704AB1009B1E1C /* NewtroWidget.swift */,
+				C332698F29704AB1009B1E1C /* NewtroWidget.intentdefinition */,
+				C332699029704AB2009B1E1C /* Assets.xcassets */,
+				C332699229704AB2009B1E1C /* Info.plist */,
+				C319235829715BE200DB669D /* RealmManager.swift */,
+			);
+			path = NewtroWidget;
 			sourceTree = "<group>";
 		};
 		C37AADA3294C830B0051E68E /* Scene */ = {
@@ -316,10 +400,12 @@
 				C32FF05028C70C8700949E05 /* Sources */,
 				C32FF05128C70C8700949E05 /* Frameworks */,
 				C32FF05228C70C8700949E05 /* Resources */,
+				C332699829704AB2009B1E1C /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				C332699629704AB2009B1E1C /* PBXTargetDependency */,
 			);
 			name = NewTro_Todo;
 			packageProductDependencies = (
@@ -339,6 +425,27 @@
 			productReference = C32FF05428C70C8800949E05 /* NewTro_Todo.app */;
 			productType = "com.apple.product-type.application";
 		};
+		C332698529704AB1009B1E1C /* NewtroWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C332699B29704AB2009B1E1C /* Build configuration list for PBXNativeTarget "NewtroWidgetExtension" */;
+			buildPhases = (
+				C332698229704AB1009B1E1C /* Sources */,
+				C332698329704AB1009B1E1C /* Frameworks */,
+				C332698429704AB1009B1E1C /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NewtroWidgetExtension;
+			packageProductDependencies = (
+				C319235429713D0A00DB669D /* Realm */,
+				C319235629713D0E00DB669D /* RealmSwift */,
+			);
+			productName = NewtroWidgetExtension;
+			productReference = C332698629704AB1009B1E1C /* NewtroWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -346,11 +453,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1340;
+				LastSwiftUpdateCheck = 1400;
 				LastUpgradeCheck = 1340;
 				TargetAttributes = {
 					C32FF05328C70C8700949E05 = {
 						CreatedOnToolsVersion = 13.4.1;
+					};
+					C332698529704AB1009B1E1C = {
+						CreatedOnToolsVersion = 14.0.1;
 					};
 				};
 			};
@@ -380,6 +490,7 @@
 			projectRoot = "";
 			targets = (
 				C32FF05328C70C8700949E05 /* NewTro_Todo */,
+				C332698529704AB1009B1E1C /* NewtroWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -397,6 +508,16 @@
 				C398967528E8A12C0026B1AA /* Localizable.strings in Resources */,
 				C32FF09528C9AECF00949E05 /* Galmuri11-Condensed.ttf in Resources */,
 				C34644F128E493980071EF13 /* Package.resolved in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C332698429704AB1009B1E1C /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C383DF1C29713222000C62CD /* Galmuri11-Condensed.ttf in Resources */,
+				C319235B29715E0100DB669D /* Localizable.strings in Resources */,
+				C332699129704AB2009B1E1C /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -433,11 +554,13 @@
 				C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */,
 				C3D6455528D3503600850505 /* TodoScheme.swift in Sources */,
 				C34644E628E2F1200071EF13 /* CustomNotePopupView.swift in Sources */,
+				C319235929715BE200DB669D /* RealmManager.swift in Sources */,
 				C32FF08028C7240300949E05 /* FirstView.swift in Sources */,
 				C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */,
 				C3D6454D28D1D59200850505 /* UIView+Extension.swift in Sources */,
 				C34644E428E2F0EA0071EF13 /* CustomNotePopupViewController.swift in Sources */,
 				C3AF2FFC28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift in Sources */,
+				C332699429704AB2009B1E1C /* NewtroWidget.intentdefinition in Sources */,
 				C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */,
 				C32FF0A328CF13BA00949E05 /* CalendarView.swift in Sources */,
 				C3D6455E28D354F900850505 /* TablePlusCell.swift in Sources */,
@@ -447,7 +570,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C332698229704AB1009B1E1C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C332698E29704AB1009B1E1C /* NewtroWidget.swift in Sources */,
+				C383DF1E2971358E000C62CD /* Color+Extension.swift in Sources */,
+				C319235A29715D7900DB669D /* DateFormat+Extension.swift in Sources */,
+				C319235329713C5D00DB669D /* TodoScheme.swift in Sources */,
+				C332699329704AB2009B1E1C /* NewtroWidget.intentdefinition in Sources */,
+				C319235C2971624C00DB669D /* RealmManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		C332699629704AB2009B1E1C /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C332698529704AB1009B1E1C /* NewtroWidgetExtension */;
+			targetProxy = C332699529704AB2009B1E1C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		C32FF06228C70C8800949E05 /* LaunchScreen.storyboard */ = {
@@ -463,7 +607,6 @@
 			children = (
 				C398967628E8A12C0026B1AA /* en */,
 				C398967828E8A15F0026B1AA /* ko */,
-				C3A1EFEC29615C8400ADB845 /* zh-Hans */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -590,6 +733,7 @@
 		C32FF06928C70C8800949E05 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NewTro_Todo/NewTro_Todo.entitlements;
@@ -624,6 +768,7 @@
 		C32FF06A28C70C8800949E05 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NewTro_Todo/NewTro_Todo.entitlements;
@@ -654,6 +799,66 @@
 			};
 			name = Release;
 		};
+		C332699929704AB2009B1E1C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = NewtroWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48S4T8HCYX;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NewtroWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NewtroWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo.NewtroWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C332699A29704AB2009B1E1C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_ENTITLEMENTS = NewtroWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 48S4T8HCYX;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = NewtroWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = NewtroWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo.NewtroWidget";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -671,6 +876,15 @@
 			buildConfigurations = (
 				C32FF06928C70C8800949E05 /* Debug */,
 				C32FF06A28C70C8800949E05 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C332699B29704AB2009B1E1C /* Build configuration list for PBXNativeTarget "NewtroWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C332699929704AB2009B1E1C /* Debug */,
+				C332699A29704AB2009B1E1C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -745,6 +959,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		C319235429713D0A00DB669D /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		C319235629713D0E00DB669D /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
 		C32FF07728C7129C00949E05 /* SnapKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C32FF07628C7129C00949E05 /* XCRemoteSwiftPackageReference "SnapKit" */;

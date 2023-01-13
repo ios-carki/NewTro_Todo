@@ -9,7 +9,7 @@ import Foundation
 
 import RealmSwift
 
-class Todo: Object {
+class Todo: Object, ObjectKeyIdentifiable {
     
     @Persisted var todo: String?
     @Persisted var favorite: Bool
@@ -50,3 +50,4 @@ class QuickNote: Object {
         self.isWrited = isWrited
     }
 }
+

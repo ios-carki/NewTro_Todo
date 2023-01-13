@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import WidgetKit
 
 import SnapKit
 import RealmSwift
@@ -85,14 +86,8 @@ class TablePlusCell: UITableViewCell {
         } catch let error {
             print(error)
         }
+        WidgetCenter.shared.reloadAllTimelines()
     }
-    
-    //        print("셀 추가버튼 눌림")
-    //
-    //        let dateFormatter = DateFormatter()
-    //        dateFormatter.locale = Locale(identifier: "ko_KR")
-    //        dateFormatter.timeZone = TimeZone(abbreviation: "KST")
-    //        dateFormatter.dateFormat = "yyyy년 MM월 dd일"
     
     @objc func plusButtonClicked() {
         let convertDate = dateFormatter.string(from: receivedNowDate)
@@ -104,6 +99,7 @@ class TablePlusCell: UITableViewCell {
         })
         //MainVC -> 갱신
         reloadCell?()
+        //WidgetCenter.shared.reloadAllTimelines()
     }
     
 }

@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import MessageUI
+import WidgetKit
 
 import AcknowList
 import RealmSwift
@@ -226,6 +227,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
                 try! self.localRealm.write {
                     self.localRealm.deleteAll()
                 }
+                WidgetCenter.shared.reloadAllTimelines()
                 
                 let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
                 let sceneDelegate = windowScene?.delegate as? SceneDelegate
@@ -298,6 +300,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         try! self.localRealm.write {
             self.localRealm.deleteAll()
         }
+        WidgetCenter.shared.reloadAllTimelines()
     }
     
     func switchToFirstView() {

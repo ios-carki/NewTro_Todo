@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import WidgetKit
 
 import RealmSwift
 import SnapKit
@@ -37,6 +38,7 @@ final class MainViewController: BaseViewController {
     var tasks: Results<Todo>! {
         didSet {
             mainView.tableView.reloadData()
+            WidgetCenter.shared.reloadAllTimelines()
             print("데이터 변함!")
         }
     }
@@ -258,6 +260,7 @@ final class MainViewController: BaseViewController {
             localRealm.add(task)
         })
         mainView.tableView.reloadSections(IndexSet(0...0), with: .fade)
+        WidgetCenter.shared.reloadAllTimelines()
     }
     
     func quickNoteTapGesture() {
@@ -519,73 +522,6 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
 }
-
-//extension MainViewController: UITextViewDelegate {
-//
-//    func textViewDidEndEditing(_ textView: UITextView) {
-//        let stingNowDate = dateFormatter.string(from: pickedNowDate)
-//
-//        let todoText = localRealm.objects(Todo.self).where {
-//            $0.stringDate == stingNowDate
-//        }[textView.tag]
-//        try! localRealm.write {
-//            todoText.setValue(textView.text!, forKey: "todo")
-//        }
-//    }
-//
-////    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-////        if text == "\n" {
-////            enterKeyCount += 1
-////        }
-////        print("개행 수: ", enterKeyCount)
-////
-////        if enterKeyCount > 5 {
-////            view.makeToast("toastMessage".localized())
-////            textView.endEditing(true)
-////        }
-////
-////        return true
-////    }
-//
-//    func textViewDidChange(_ textView: UITextView) {
-//        let cell = MainTableViewCell()
-//        mainView.tableView.beginUpdates()
-//
-////        let size = CGSize(width: cell.todoTextView.frame.width, height: .infinity)
-////        let estimatedSize = textView.sizeThatFits(size)
-////
-////        textView.constraints.forEach { (constraint) in
-////
-////          /// 180 이하일때는 더 이상 줄어들지 않게하기
-////            if estimatedSize.height >= 180 {
-////
-////            }
-////            else {
-////                if constraint.firstAttribute == .height {
-////                    constraint.constant = estimatedSize.height
-////                }
-////            }
-////        }
-//        let fixedWidth = textView.frame.size.width
-//        textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-//        let newSize = textView.sizeThatFits(CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude))
-//        var newFrame = textView.frame
-//        newFrame.size = CGSize(width: max(newSize.width, fixedWidth), height: newSize.height)
-//        textView.frame = newFrame
-//
-//        mainView.tableView.endUpdates()
-//    }
-//}
-
-//extension UITextView {
-//    func numberOfLine() -> Int {
-//
-//        let size = CGSize(width: frame.width, height: .infinity)
-//        let estimatedSize = sizeThatFits(size)
-//
-//        return Int(estimatedSize.height / (self.font!.lineHeight))
-//    }
-//}
 
 
 extension String {

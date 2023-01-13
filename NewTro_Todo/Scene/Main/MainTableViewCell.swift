@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import WidgetKit
 
 import SnapKit
 import RealmSwift
@@ -121,17 +122,6 @@ class MainTableViewCell: UITableViewCell {
             make.width.equalTo(40)
         }
         
-//        todoBoundLine.snp.makeConstraints { make in
-//            make.centerY.equalToSuperview()
-//            make.leading.equalTo(completeTodoBtn.snp.trailing)
-//            make.width.equalTo(completeTodoLabel.text?.count)
-//            make.height.equalTo(1)
-//        }
-        
-//        completeOverwrapImage.snp.makeConstraints { make in
-//            make.edges.equalTo(<#T##other: ConstraintRelatableTarget##ConstraintRelatableTarget#>)
-//        }
-        
         completeTodoLabel.snp.makeConstraints { make in
             make.edges.equalTo(todoTextField)
         }
@@ -182,6 +172,7 @@ extension MainTableViewCell: UITextFieldDelegate {
         try! localRealm.write {
             findTextField?.setValue(textField.text!, forKey: "todo")
         }
+        WidgetCenter.shared.reloadAllTimelines()
     }
     
 }
