@@ -40,6 +40,7 @@ Library - Realm / Firebase / IQKeyboardManager / SnapKit / Toast / FSCalendar
 # 👤 유저 리뷰
 <p align="center">
 <img width="816" alt="스크린샷 2022-12-20 오후 8 49 04" src="https://user-images.githubusercontent.com/44957712/208660110-41b91bae-84a8-4ecc-9f96-9a90e1a3d724.png">
+<img width="816" alt="IMG_9439" src="https://user-images.githubusercontent.com/44957712/212804605-7b233a08-9884-46cf-8538-2348070958b7.jpg">
 </p>
 
 # 🧭 개발 공수
