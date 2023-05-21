@@ -124,7 +124,7 @@ final class MainView: BaseView {
     
     let datePickBtn: UIButton = {
         let view = UIButton()
-        view.setTitle(dateFormat(formatType: "dateFormat".localized()), for: .normal)
+        view.setTitle(dateFormat(formatType: "showDateFormat".localized()), for: .normal)
         view.titleLabel?.font = .boldFont(size: 17)
         view.titleLabel?.textAlignment = .center
         view.titleLabel?.textColor = .black

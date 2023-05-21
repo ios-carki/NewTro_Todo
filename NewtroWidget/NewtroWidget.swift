@@ -63,51 +63,92 @@ struct NewtroWidgetEntryView : View {
         
         ZStack {
             Color(.mainBackGroundColor)
-            VStack(alignment: .center, spacing: 0) {
-                HStack(alignment: .center) {
-                    VStack {
-                        Text("오늘의 Todo")
-                            .padding(12)
-                            .font(.custom("Galmuri11-Condensed", size: 12))
-                        Text("\(list.count)개")
-                            .font(.custom("Galmuri11-Condensed", size: 12))
-                            
+            switch widgetFamily {
+            case .systemMedium:
+                VStack(alignment: .center, spacing: 0) {
+                    HStack(alignment: .center) {
+                        VStack {
+                            Text("오늘의 Todo")
+                                .padding(12)
+                                .font(.custom("Galmuri11-Condensed", size: 12))
+                            Text("\(list.count)개")
+                                .font(.custom("Galmuri11-Condensed", size: 12))
+                        }
+                        VStack(alignment: .center) {
+                                let count = list.count >= 3 ? 3 : list.count
+                                ForEach(0..<count) { i in
+                                    if count < 3 {
+                                        Text(list[i].todo ?? "")
+                                            .font(.custom("Galmuri11-Condensed", size: 12))
+                                        Divider()
+                                    } else {
+                                        Divider()
+                                        Text(list[i].todo ?? "")
+                                            .font(.custom("Galmuri11-Condensed", size: 12))
+                                    }
+                                }
+                        }
                     }
-                    VStack(alignment: .center) {
-                        switch widgetFamily {
-                        case .systemMedium:
-                            let count = list.count >= 3 ? 3 : list.count
-                            ForEach(0..<count) { i in
-                                if count < 3 {
-                                    Text(list[i].todo ?? "")
+                    Image("SettingBackGround")
+                        .resizable()
+                        .frame(maxWidth: .infinity)
+                }
+                
+            //Large
+            case .systemLarge:
+                ZStack {
+                    if UserDefaults.standard.data(forKey: "KEY") != nil {
+                        Image(uiImage: loadImage()!)
+                            .resizable()
+                            .aspectRatio(1.0, contentMode: .fill)
+                        Color.black.opacity(0.2)
+                        VStack(alignment: .center, spacing: 0) {
+                            HStack(alignment: .center) {
+                                VStack {
+                                    Text("오늘의 Todo")
+                                        .padding(12)
                                         .font(.custom("Galmuri11-Condensed", size: 12))
-                                    Divider()
-                                } else {
-                                    Divider()
-                                    Text(list[i].todo ?? "")
+                                    Text("\(list.count)개")
                                         .font(.custom("Galmuri11-Condensed", size: 12))
+                                    Text(String(UserDefaults.standard.data(forKey: "KEY") != nil))
+                                        .foregroundColor(.white)
+                                }
+                                VStack(alignment: .center) {
+                                        let count = list.count >= 3 ? 3 : list.count
+                                        ForEach(0..<count) { i in
+                                            if count < 3 {
+                                                Text(list[i].todo ?? "")
+                                                    .font(.custom("Galmuri11-Condensed", size: 12))
+                                                Divider()
+                                            } else {
+                                                Divider()
+                                                Text(list[i].todo ?? "")
+                                                    .font(.custom("Galmuri11-Condensed", size: 12))
+                                            }
+                                        }
                                 }
                             }
-                        @unknown default:
-                            let count = list.count >= 3 ? 3 : list.count
                         }
-//                        Divider()
-//                        Text(entry.todo)
-//                            .font(.custom("Galmuri11-Condensed", size: 12))
-//                        Divider()
-//                        Text("테스트")
-//                            .font(.custom("Galmuri11-Condensed", size: 12))
-//                        Divider()
-//                        Text("테스트")
-//                            .font(.custom("Galmuri11-Condensed", size: 12))
+                    } else {
+                        Text("이미지 없음")
                     }
+                    
                 }
-                Image("SettingBackGround")
-                    .resizable()
-                    .frame(maxWidth: .infinity)
+                
+            @unknown default:
+                let count = list.count >= 3 ? 3 : list.count
             }
+            
         }
     
+    }
+    
+    func loadImage() -> UIImage? {
+         guard let data = UserDefaults.standard.data(forKey: "KEY") else { return UIImage(systemName: "x.square")}
+         let decoded = try! PropertyListDecoder().decode(Data.self, from: data)
+         let image = UIImage(data: decoded)
+        
+        return image
     }
 }
 
@@ -121,14 +162,14 @@ struct NewtroWidget: Widget {
         }
         .configurationDisplayName("뉴트로 투두 위젯")
         .description("오늘 작성된 Todo를 확인 해보세요!")
-        .supportedFamilies([.systemMedium])
+        .supportedFamilies([.systemMedium, .systemLarge])
     }
 }
 
 struct NewtroWidget_Previews: PreviewProvider {
     static var previews: some View {
         NewtroWidgetEntryView(entry: SimpleEntry(date: Date()))
-            .previewContext(WidgetPreviewContext(family: .systemSmall))
+            .previewContext(WidgetPreviewContext(family: .systemLarge))
     }
 }
 

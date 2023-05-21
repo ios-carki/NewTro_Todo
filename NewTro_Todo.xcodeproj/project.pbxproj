@@ -57,6 +57,13 @@
 		C34644EC28E3DCE80071EF13 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C34644EB28E3DCE80071EF13 /* RealmSwift */; };
 		C34644EF28E492670071EF13 /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = C34644EE28E492670071EF13 /* AcknowList */; };
 		C34644F128E493980071EF13 /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = C34644F028E493980071EF13 /* Package.resolved */; };
+		C34970262A18FDFE00112A7F /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34970252A18FDFE00112A7F /* OnboardingView.swift */; };
+		C349702A2A18FF1D00112A7F /* MainViewSU.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34970292A18FF1D00112A7F /* MainViewSU.swift */; };
+		C34970472A1906B400112A7F /* WidgetImagePreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34970462A1906B400112A7F /* WidgetImagePreviewView.swift */; };
+		C349704B2A1908CC00112A7F /* WidgetImagePreviewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C349704A2A1908CC00112A7F /* WidgetImagePreviewViewModel.swift */; };
+		C349704E2A190B3400112A7F /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C349704D2A190B3400112A7F /* CustomImagePicker.swift */; };
+		C34970502A190B9F00112A7F /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C349704F2A190B9F00112A7F /* CustomButton.swift */; };
+		C34970532A190BE200112A7F /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34970522A190BE200112A7F /* Constant.swift */; };
 		C34A89D028EC632E00F8BA4B /* ImportanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */; };
 		C34A89D228EC633A00F8BA4B /* ImportanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */; };
 		C34A89D428EC6B4600F8BA4B /* ImportanceViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */; };
@@ -147,6 +154,13 @@
 		C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupViewController.swift; sourceTree = "<group>"; };
 		C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNotePopupView.swift; sourceTree = "<group>"; };
 		C34644F028E493980071EF13 /* Package.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Package.resolved; path = NewTro_Todo.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved; sourceTree = "<group>"; };
+		C34970252A18FDFE00112A7F /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		C34970292A18FF1D00112A7F /* MainViewSU.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewSU.swift; sourceTree = "<group>"; };
+		C34970462A1906B400112A7F /* WidgetImagePreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetImagePreviewView.swift; sourceTree = "<group>"; };
+		C349704A2A1908CC00112A7F /* WidgetImagePreviewViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WidgetImagePreviewViewModel.swift; sourceTree = "<group>"; };
+		C349704D2A190B3400112A7F /* CustomImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
+		C349704F2A190B9F00112A7F /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
+		C34970522A190BE200112A7F /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
 		C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceView.swift; sourceTree = "<group>"; };
 		C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceViewController.swift; sourceTree = "<group>"; };
 		C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceViewCell.swift; sourceTree = "<group>"; };
@@ -224,6 +238,7 @@
 		C32FF05628C70C8800949E05 /* NewTro_Todo */ = {
 			isa = PBXGroup;
 			children = (
+				C34970242A18FD4500112A7F /* Presentation */,
 				C37AADAB294C84AA0051E68E /* Source */,
 				C37AADAA294C84890051E68E /* Utility */,
 				C37AADA3294C830B0051E68E /* Scene */,
@@ -282,6 +297,75 @@
 				C319235829715BE200DB669D /* RealmManager.swift */,
 			);
 			path = NewtroWidget;
+			sourceTree = "<group>";
+		};
+		C34970242A18FD4500112A7F /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				C349704C2A190B1800112A7F /* CustomView */,
+				C34970452A1906A000112A7F /* Setting */,
+				C34970282A18FEE500112A7F /* Main */,
+				C34970272A18FE4600112A7F /* Onboarding */,
+				C34970252A18FDFE00112A7F /* OnboardingView.swift */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		C34970272A18FE4600112A7F /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		C34970282A18FEE500112A7F /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				C34970292A18FF1D00112A7F /* MainViewSU.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		C34970452A1906A000112A7F /* Setting */ = {
+			isa = PBXGroup;
+			children = (
+				C34970492A1908C200112A7F /* View */,
+				C34970482A1908BC00112A7F /* ViewModel */,
+			);
+			path = Setting;
+			sourceTree = "<group>";
+		};
+		C34970482A1908BC00112A7F /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				C349704A2A1908CC00112A7F /* WidgetImagePreviewViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		C34970492A1908C200112A7F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				C34970462A1906B400112A7F /* WidgetImagePreviewView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		C349704C2A190B1800112A7F /* CustomView */ = {
+			isa = PBXGroup;
+			children = (
+				C349704D2A190B3400112A7F /* CustomImagePicker.swift */,
+				C349704F2A190B9F00112A7F /* CustomButton.swift */,
+			);
+			path = CustomView;
+			sourceTree = "<group>";
+		};
+		C34970512A190BC900112A7F /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				C34970522A190BE200112A7F /* Constant.swift */,
+			);
+			path = Helper;
 			sourceTree = "<group>";
 		};
 		C37AADA3294C830B0051E68E /* Scene */ = {
@@ -377,6 +461,7 @@
 		C37AADAB294C84AA0051E68E /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				C34970512A190BC900112A7F /* Helper */,
 				C32FF08728C72EC500949E05 /* Extension */,
 			);
 			path = Source;
@@ -531,16 +616,19 @@
 				C3D6455228D2346400850505 /* MainTableViewCell.swift in Sources */,
 				C32FF08628C724CF00949E05 /* BasePageView.swift in Sources */,
 				C32FF06E28C70D0300949E05 /* BaseView.swift in Sources */,
+				C34970472A1906B400112A7F /* WidgetImagePreviewView.swift in Sources */,
 				C34A89D028EC632E00F8BA4B /* ImportanceView.swift in Sources */,
 				C30F7CAC2940C7380050C045 /* SplashViewController.swift in Sources */,
 				C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */,
 				C3D6455C28D353B700850505 /* DateFormat+Extension.swift in Sources */,
 				C32FF0A028CF13A600949E05 /* CalendarViewController.swift in Sources */,
 				C32FF07528C70F1800949E05 /* PageViewController.swift in Sources */,
+				C349704E2A190B3400112A7F /* CustomImagePicker.swift in Sources */,
 				C3D6454428D0ADEB00850505 /* Alert+Extension.swift in Sources */,
 				C32FF07028C70D0A00949E05 /* BaseViewController.swift in Sources */,
 				C32FF07A28C719E900949E05 /* FirstViewController.swift in Sources */,
 				C32FF07C28C719F100949E05 /* SecondViewController.swift in Sources */,
+				C34970262A18FDFE00112A7F /* OnboardingView.swift in Sources */,
 				C32FF05828C70C8800949E05 /* AppDelegate.swift in Sources */,
 				C32FF09B28CAB71D00949E05 /* MainViewController.swift in Sources */,
 				C34A89D228EC633A00F8BA4B /* ImportanceViewController.swift in Sources */,
@@ -549,16 +637,20 @@
 				C30F7CA92940C6190050C045 /* SplashView.swift in Sources */,
 				C32FF07E28C719FA00949E05 /* ThirdViewController.swift in Sources */,
 				C306AFA628E9934300D4BB6B /* String+Extension.swift in Sources */,
+				C349702A2A18FF1D00112A7F /* MainViewSU.swift in Sources */,
 				C32FF08428C7240F00949E05 /* ThirdView.swift in Sources */,
 				C34A89D428EC6B4600F8BA4B /* ImportanceViewCell.swift in Sources */,
 				C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */,
 				C3D6455528D3503600850505 /* TodoScheme.swift in Sources */,
+				C34970502A190B9F00112A7F /* CustomButton.swift in Sources */,
 				C34644E628E2F1200071EF13 /* CustomNotePopupView.swift in Sources */,
 				C319235929715BE200DB669D /* RealmManager.swift in Sources */,
 				C32FF08028C7240300949E05 /* FirstView.swift in Sources */,
+				C34970532A190BE200112A7F /* Constant.swift in Sources */,
 				C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */,
 				C3D6454D28D1D59200850505 /* UIView+Extension.swift in Sources */,
 				C34644E428E2F0EA0071EF13 /* CustomNotePopupViewController.swift in Sources */,
+				C349704B2A1908CC00112A7F /* WidgetImagePreviewViewModel.swift in Sources */,
 				C3AF2FFC28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift in Sources */,
 				C332699429704AB2009B1E1C /* NewtroWidget.intentdefinition in Sources */,
 				C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */,
@@ -738,12 +830,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NewTro_Todo/NewTro_Todo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewTro_Todo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "뉴트로 투두";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
@@ -756,7 +849,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.6;
+				MARKETING_VERSION = 1.2.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -773,11 +866,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = NewTro_Todo/NewTro_Todo.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 0;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = 48S4T8HCYX;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = NewTro_Todo/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "뉴트로 투두";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
@@ -790,7 +884,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.2.6;
+				MARKETING_VERSION = 1.2.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

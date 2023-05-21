@@ -1,0 +1,20 @@
+//
+//  MainViewSU.swift
+//  NewTro_Todo
+//
+//  Created by Carki on 2023/05/20.
+//
+
+import SwiftUI
+
+struct MainViewSU: View {
+    var body: some View {
+        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+    }
+}
+
+struct MainViewSU_Previews: PreviewProvider {
+    static var previews: some View {
+        MainViewSU()
+    }
+}

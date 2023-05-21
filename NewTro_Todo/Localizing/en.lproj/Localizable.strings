@@ -44,6 +44,7 @@
 //MainViewController
 //Func_fetchRealm
 "dateFormat" = "MMM dd YYYY";
+"showDateFormat" = "EEE, MMM dd YYYY";
 
 //todo status
 "todoStatus_notDone" = "Incomplete";
@@ -75,6 +76,8 @@
 "settingMenuList_Contact_Developer" = "Contact Developer";
 
 "settingMenuList_License" = "License";
+
+"settingMenuList_SetWidgetBackgroundImage" = "Widget Image";
 
 "loadView_versionInfoLabel_Text" = "Now Version: ver"; //뒤에 버전 변수가 붙으면?
 

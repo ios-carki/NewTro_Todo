@@ -26,6 +26,8 @@ final class MainViewController: BaseViewController {
     var pickedNowDate = Date()
     //데이트포맷 다 바꾸기
     let dateFormatter = DateFormatter()
+    let nowDateFormatter = DateFormatter()
+    let defaultDateFormatter = DateFormatter()
     
     //todo 상태
     var todoStatus: String?
@@ -49,6 +51,10 @@ final class MainViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+//        defaultDateFormatter.dateFormat = "showDateFormat".localized()
+//        let todayDate = nowDateFormatter.string(from: Date())
+//
+//        mainView.datePickBtn.setTitle(todayDate, for: .normal)
         //RealmFile URL
         print("Realm is located at:", localRealm.configuration.fileURL!)
         //MARK: -- Print
@@ -323,12 +329,19 @@ final class MainViewController: BaseViewController {
         let nav = UINavigationController(rootViewController: vc)
         
         dateFormatter.dateFormat = "dateFormat".localized()
+        nowDateFormatter.dateFormat = "showDateFormat".localized()
         //방법1
         vc.dateCompletionHandler = {
             self.pickedNowDate = vc.selectedDate
             let convertDate = self.dateFormatter.string(from: vc.selectedDate)
+            
+            //MARK: 보여지는 날짜 형식 변경
+            let showDate = self.nowDateFormatter.string(from: vc.selectedDate)
+            
             print("전달된 데이트: ", convertDate)
-            self.mainView.datePickBtn.setTitle(convertDate, for: .normal)
+            
+            self.mainView.datePickBtn.setTitle(showDate, for: .normal)
+            
             self.fetchRealm()
             self.mainView.tableView.reloadData()
         }
@@ -343,6 +356,8 @@ final class MainViewController: BaseViewController {
     //MARK: -- cell dateCalculation
     @discardableResult func dayCalculation(formula: String) -> Date { // 월 별 일 수 계산
         dateFormatter.dateFormat = "dateFormat".localized()
+        nowDateFormatter.dateFormat = "showDateFormat".localized()
+        
         let result: Date?
         
         if formula == "plus" {
@@ -351,8 +366,9 @@ final class MainViewController: BaseViewController {
             print("+계산된 날짜", result)
             pickedNowDate = result!
             
-            let formattedPickedDate = dateFormatter.string(from: pickedNowDate)
-            mainView.datePickBtn.setTitle(formattedPickedDate, for: .normal)
+            let nowFormattedDate = nowDateFormatter.string(from: pickedNowDate)
+            //MARK: 여기
+            mainView.datePickBtn.setTitle(nowFormattedDate, for: .normal)
             
             //**
             mainView.tableView.reloadSections(IndexSet(0...0), with: .left)
@@ -365,8 +381,9 @@ final class MainViewController: BaseViewController {
             print("-계산된 날짜", result)
             pickedNowDate = result!
             
-            let formattedPickedDate = dateFormatter.string(from: pickedNowDate)
-            mainView.datePickBtn.setTitle(formattedPickedDate, for: .normal)
+            let nowFormattedDate = nowDateFormatter.string(from: pickedNowDate)
+            
+            mainView.datePickBtn.setTitle(nowFormattedDate, for: .normal)
             
             //**
             mainView.tableView.reloadSections(IndexSet(0...0), with: .right)

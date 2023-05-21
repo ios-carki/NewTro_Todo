@@ -5,7 +5,7 @@
 //  Created by Carki on 2022/09/12.
 //
 
-import Foundation
+import SwiftUI
 import UIKit
 import MessageUI
 import WidgetKit
@@ -19,8 +19,8 @@ import Zip
 final class SettingViewController: BaseViewController {
     
     let mainView = SettingView()
-    let settingMenuList = ["settingMenuList_Theme".localized(), "settingMenuList_ClearData".localized(), "settingMenuList_Contact_Developer".localized(), "settingMenuList_License".localized()]
-    let settingImageList = ["paintbrush", "arrow.clockwise", "questionmark.circle", "info.circle"]
+    let settingMenuList = ["settingMenuList_Theme".localized(), "settingMenuList_ClearData".localized(), "settingMenuList_Contact_Developer".localized(), "settingMenuList_License".localized(), "settingMenuList_SetWidgetBackgroundImage".localized()]
+    let settingImageList = ["paintbrush", "arrow.clockwise", "questionmark.circle", "info.circle", "photo"]
     
     let nowVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as! String
     
@@ -203,6 +203,9 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         case 3:
             cell?.selectionStyle = .none
             cell?.accessoryType = .disclosureIndicator
+        case 4:
+            cell?.selectionStyle = .none
+            cell?.accessoryType = .disclosureIndicator
         default:
             cell?.selectionStyle = .none
             cell?.accessoryType = .none
@@ -286,6 +289,8 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
         case 3:
             let vc = AcknowListViewController()
             navigationController?.pushViewController(vc, animated: true)
+        case 4:
+            navigationController?.pushViewController(UIHostingController(rootView: WidgetImagePreviewView(navigation: UINavigationController())), animated: true)
         default:
             cell?.accessoryType = .none
         }

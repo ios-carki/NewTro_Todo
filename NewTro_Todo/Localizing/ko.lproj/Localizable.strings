@@ -45,6 +45,7 @@
 //MainViewController
 //Func_fetchRealm
 "dateFormat" = "yyyy년 MM월 dd일";
+"showDateFormat" = "yyyy년 MM월 dd일 EEE";
 
 //todo status
 "todoStatus_notDone" = "미완료";
@@ -76,6 +77,8 @@
 "settingMenuList_Contact_Developer" = "문의사항";
 
 "settingMenuList_License" = "라이센스";
+
+"settingMenuList_SetWidgetBackgroundImage" = "위젯 배경사진";
 
 "loadView_versionInfoLabel_Text" = "현재버전: ver";
 

@@ -123,7 +123,7 @@ final class SettingView: BaseView {
         }
         
         versionInfoLabel.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide)
+            make.top.equalTo(safeAreaLayoutGuide).offset(12)
             make.centerX.equalTo(safeAreaLayoutGuide)
         }
         
@@ -133,14 +133,14 @@ final class SettingView: BaseView {
         }
         
         localNotiImage.snp.makeConstraints { make in
-            make.top.equalTo(versionView.snp.bottom)
+            make.top.equalTo(versionView.snp.bottom).offset(12)
             make.leading.equalTo(safeAreaLayoutGuide).offset(20)
             make.trailing.equalTo(localNotiView.snp.leading)
             make.height.equalTo(localNotiView.snp.height)
         }
         
         localNotiView.snp.makeConstraints { make in
-            make.top.equalTo(versionView.snp.bottom)
+            make.top.equalTo(versionView.snp.bottom).offset(12)
             make.trailing.equalTo(safeAreaLayoutGuide)
             make.height.equalTo(50)
         }
