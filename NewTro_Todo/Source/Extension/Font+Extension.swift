@@ -5,7 +5,7 @@
 //  Created by Carki on 2022/09/08.
 //
 
-import Foundation
+import SwiftUI
 import UIKit
 
 extension UIFont {
@@ -18,5 +18,40 @@ extension UIFont {
     static func boldFont(size: Double) -> UIFont {
         let galmuriBold = UIFont(name: "Galmuri11-Bold", size: size)
         return galmuriBold!
+    }
+}
+
+extension Font {
+    enum Galmuri {
+        case galmuriBold
+        case galmuriCondensed
+        
+        var value: String {
+            switch self {
+            case .galmuriBold:
+                return "Galmuri11-Bold"
+            case .galmuriCondensed:
+                return "Galmuri11-Condensed"
+            }
+        }
+    }
+    
+    //MARK: Bold
+    static func galBold40() -> Font {
+        return .custom(Galmuri.galmuriBold.value, size: 40)
+    }
+    static func galBold20() -> Font {
+        return .custom(Galmuri.galmuriBold.value, size: 20)
+    }
+    
+    //MARK: Condensend
+    static func galCondensed20() -> Font {
+        return .custom(Galmuri.galmuriCondensed.value, size: 20)
+    }
+    static func galCondensed18() -> Font {
+        return .custom(Galmuri.galmuriCondensed.value, size: 18)
+    }
+    static func galCondensed16() -> Font {
+        return .custom(Galmuri.galmuriCondensed.value, size: 16)
     }
 }

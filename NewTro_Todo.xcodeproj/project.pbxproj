@@ -17,6 +17,7 @@
 		C319235A29715D7900DB669D /* DateFormat+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455B28D353B700850505 /* DateFormat+Extension.swift */; };
 		C319235B29715E0100DB669D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C398967728E8A12C0026B1AA /* Localizable.strings */; };
 		C319235C2971624C00DB669D /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C319235829715BE200DB669D /* RealmManager.swift */; };
+		C32521EE2A23703B005EA5C2 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32521ED2A23703B005EA5C2 /* Date+Extension.swift */; };
 		C32FF05828C70C8800949E05 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF05728C70C8800949E05 /* AppDelegate.swift */; };
 		C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF05928C70C8800949E05 /* SceneDelegate.swift */; };
 		C32FF06128C70C8800949E05 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C32FF06028C70C8800949E05 /* Assets.xcassets */; };
@@ -64,9 +65,12 @@
 		C349704E2A190B3400112A7F /* CustomImagePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = C349704D2A190B3400112A7F /* CustomImagePicker.swift */; };
 		C34970502A190B9F00112A7F /* CustomButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = C349704F2A190B9F00112A7F /* CustomButton.swift */; };
 		C34970532A190BE200112A7F /* Constant.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34970522A190BE200112A7F /* Constant.swift */; };
+		C34970562A22464900112A7F /* TodoCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34970552A22464900112A7F /* TodoCellView.swift */; };
+		C34970592A22471800112A7F /* CustomTextField in Frameworks */ = {isa = PBXBuildFile; productRef = C34970582A22471800112A7F /* CustomTextField */; };
 		C34A89D028EC632E00F8BA4B /* ImportanceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */; };
 		C34A89D228EC633A00F8BA4B /* ImportanceViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */; };
 		C34A89D428EC6B4600F8BA4B /* ImportanceViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */; };
+		C36567CD2AF7726100DD56F3 /* NewSplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C36567CC2AF7726100DD56F3 /* NewSplashView.swift */; };
 		C37AADAD294C86AB0051E68E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = C37AADAC294C86AB0051E68E /* .gitignore */; };
 		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
 		C383DF1C29713222000C62CD /* Galmuri11-Condensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C32FF09428C9AECF00949E05 /* Galmuri11-Condensed.ttf */; };
@@ -117,6 +121,7 @@
 		C30F7CA82940C6190050C045 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		C30F7CAB2940C7380050C045 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
 		C319235829715BE200DB669D /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
+		C32521ED2A23703B005EA5C2 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		C32FF05428C70C8800949E05 /* NewTro_Todo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NewTro_Todo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C32FF05728C70C8800949E05 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C32FF05928C70C8800949E05 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -161,9 +166,11 @@
 		C349704D2A190B3400112A7F /* CustomImagePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomImagePicker.swift; sourceTree = "<group>"; };
 		C349704F2A190B9F00112A7F /* CustomButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomButton.swift; sourceTree = "<group>"; };
 		C34970522A190BE200112A7F /* Constant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constant.swift; sourceTree = "<group>"; };
+		C34970552A22464900112A7F /* TodoCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoCellView.swift; sourceTree = "<group>"; };
 		C34A89CF28EC632E00F8BA4B /* ImportanceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceView.swift; sourceTree = "<group>"; };
 		C34A89D128EC633A00F8BA4B /* ImportanceViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceViewController.swift; sourceTree = "<group>"; };
 		C34A89D328EC6B4600F8BA4B /* ImportanceViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImportanceViewCell.swift; sourceTree = "<group>"; };
+		C36567CC2AF7726100DD56F3 /* NewSplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewSplashView.swift; sourceTree = "<group>"; };
 		C37AADAC294C86AB0051E68E /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		C383DF1D29713535000C62CD /* NewtroWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = NewtroWidgetExtension.entitlements; sourceTree = "<group>"; };
 		C38EC07428F597E40027B0B0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -192,6 +199,7 @@
 				C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */,
 				C3D6454228D05E4700850505 /* FSCalendar in Frameworks */,
 				C32FF07828C7129C00949E05 /* SnapKit in Frameworks */,
+				C34970592A22471800112A7F /* CustomTextField in Frameworks */,
 				C38EC07A28F599B70027B0B0 /* FirebaseCrashlytics in Frameworks */,
 				C38EC07828F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				C38EC07C28F599B70027B0B0 /* FirebaseMessaging in Frameworks */,
@@ -238,6 +246,7 @@
 		C32FF05628C70C8800949E05 /* NewTro_Todo */ = {
 			isa = PBXGroup;
 			children = (
+				C36567C62AF7720A00DD56F3 /* Refactor */,
 				C34970242A18FD4500112A7F /* Presentation */,
 				C37AADAB294C84AA0051E68E /* Source */,
 				C37AADAA294C84890051E68E /* Utility */,
@@ -258,6 +267,7 @@
 			isa = PBXGroup;
 			children = (
 				C32FF09328C9AEC100949E05 /* Font */,
+				C32521ED2A23703B005EA5C2 /* Date+Extension.swift */,
 				C32FF08828C72EE300949E05 /* Color+Extension.swift */,
 				C32FF09028C9AE9900949E05 /* Font+Extension.swift */,
 				C3D6454328D0ADEB00850505 /* Alert+Extension.swift */,
@@ -354,6 +364,8 @@
 		C349704C2A190B1800112A7F /* CustomView */ = {
 			isa = PBXGroup;
 			children = (
+				C3539B102ADC0F88003D2710 /* New Group */,
+				C34970542A22463F00112A7F /* ReuseableView */,
 				C349704D2A190B3400112A7F /* CustomImagePicker.swift */,
 				C349704F2A190B9F00112A7F /* CustomButton.swift */,
 			);
@@ -366,6 +378,53 @@
 				C34970522A190BE200112A7F /* Constant.swift */,
 			);
 			path = Helper;
+			sourceTree = "<group>";
+		};
+		C34970542A22463F00112A7F /* ReuseableView */ = {
+			isa = PBXGroup;
+			children = (
+				C34970552A22464900112A7F /* TodoCellView.swift */,
+			);
+			path = ReuseableView;
+			sourceTree = "<group>";
+		};
+		C3539B102ADC0F88003D2710 /* New Group */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "New Group";
+			sourceTree = "<group>";
+		};
+		C36567C62AF7720A00DD56F3 /* Refactor */ = {
+			isa = PBXGroup;
+			children = (
+				C36567C92AF7722700DD56F3 /* Main */,
+				C36567C82AF7722000DD56F3 /* Splash */,
+				C36567C72AF7721400DD56F3 /* Onboarding */,
+			);
+			path = Refactor;
+			sourceTree = "<group>";
+		};
+		C36567C72AF7721400DD56F3 /* Onboarding */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Onboarding;
+			sourceTree = "<group>";
+		};
+		C36567C82AF7722000DD56F3 /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				C36567CC2AF7726100DD56F3 /* NewSplashView.swift */,
+			);
+			path = Splash;
+			sourceTree = "<group>";
+		};
+		C36567C92AF7722700DD56F3 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Main;
 			sourceTree = "<group>";
 		};
 		C37AADA3294C830B0051E68E /* Scene */ = {
@@ -505,6 +564,7 @@
 				C38EC07728F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				C38EC07928F599B70027B0B0 /* FirebaseCrashlytics */,
 				C38EC07B28F599B70027B0B0 /* FirebaseMessaging */,
+				C34970582A22471800112A7F /* CustomTextField */,
 			);
 			productName = NewTro_Todo;
 			productReference = C32FF05428C70C8800949E05 /* NewTro_Todo.app */;
@@ -569,6 +629,7 @@
 				C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				C34644ED28E492670071EF13 /* XCRemoteSwiftPackageReference "AcknowList" */,
 				C38EC07628F599B70027B0B0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				C34970572A22471800112A7F /* XCRemoteSwiftPackageReference "SwiftUI-Custom-TextField" */,
 			);
 			productRefGroup = C32FF05528C70C8800949E05 /* Products */;
 			projectDirPath = "";
@@ -618,14 +679,17 @@
 				C32FF06E28C70D0300949E05 /* BaseView.swift in Sources */,
 				C34970472A1906B400112A7F /* WidgetImagePreviewView.swift in Sources */,
 				C34A89D028EC632E00F8BA4B /* ImportanceView.swift in Sources */,
+				C32521EE2A23703B005EA5C2 /* Date+Extension.swift in Sources */,
 				C30F7CAC2940C7380050C045 /* SplashViewController.swift in Sources */,
 				C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */,
 				C3D6455C28D353B700850505 /* DateFormat+Extension.swift in Sources */,
+				C34970562A22464900112A7F /* TodoCellView.swift in Sources */,
 				C32FF0A028CF13A600949E05 /* CalendarViewController.swift in Sources */,
 				C32FF07528C70F1800949E05 /* PageViewController.swift in Sources */,
 				C349704E2A190B3400112A7F /* CustomImagePicker.swift in Sources */,
 				C3D6454428D0ADEB00850505 /* Alert+Extension.swift in Sources */,
 				C32FF07028C70D0A00949E05 /* BaseViewController.swift in Sources */,
+				C36567CD2AF7726100DD56F3 /* NewSplashView.swift in Sources */,
 				C32FF07A28C719E900949E05 /* FirstViewController.swift in Sources */,
 				C32FF07C28C719F100949E05 /* SecondViewController.swift in Sources */,
 				C34970262A18FDFE00112A7F /* OnboardingView.swift in Sources */,
@@ -852,6 +916,10 @@
 				MARKETING_VERSION = 1.2.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -887,6 +955,10 @@
 				MARKETING_VERSION = 1.2.7;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.jun.NewTro-Todo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -1018,6 +1090,14 @@
 				minimumVersion = 3.0.0;
 			};
 		};
+		C34970572A22471800112A7F /* XCRemoteSwiftPackageReference "SwiftUI-Custom-TextField" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/esatgozcu/SwiftUI-Custom-TextField.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		C37B16BC28CF7DAD0086E3C6 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/scalessec/Toast-Swift.git";
@@ -1087,6 +1167,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C34644ED28E492670071EF13 /* XCRemoteSwiftPackageReference "AcknowList" */;
 			productName = AcknowList;
+		};
+		C34970582A22471800112A7F /* CustomTextField */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C34970572A22471800112A7F /* XCRemoteSwiftPackageReference "SwiftUI-Custom-TextField" */;
+			productName = CustomTextField;
 		};
 		C37B16BD28CF7DAD0086E3C6 /* Toast */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -339,7 +339,6 @@ final class MainViewController: BaseViewController {
             let showDate = self.nowDateFormatter.string(from: vc.selectedDate)
             
             print("전달된 데이트: ", convertDate)
-            
             self.mainView.datePickBtn.setTitle(showDate, for: .normal)
             
             self.fetchRealm()

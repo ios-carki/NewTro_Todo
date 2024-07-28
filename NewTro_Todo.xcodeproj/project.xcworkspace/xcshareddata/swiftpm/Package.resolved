@@ -163,6 +163,15 @@
       }
     },
     {
+      "identity" : "swiftui-custom-textfield",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/esatgozcu/SwiftUI-Custom-TextField.git",
+      "state" : {
+        "branch" : "main",
+        "revision" : "39ab56a35a19fe87749769df32f929ec62bcbc6f"
+      }
+    },
+    {
       "identity" : "toast-swift",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/scalessec/Toast-Swift.git",
