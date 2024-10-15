@@ -29,8 +29,20 @@ class Todo: Object, ObjectKeyIdentifiable {
         self.stringDate = stringDate
         self.isFinished = isFinished
     }
-    
-    
+}
+
+extension Todo {
+    func toTodoDomain() -> TodoDomain {
+        TodoDomain(
+            id: self.objectID.stringValue,
+            todo: self.todo,
+            favorite: self.favorite,
+            importance: self.importance,
+            regDate: self.regDate,
+            stringDate: self.stringDate,
+            isFinished: self.isFinished
+        )
+    }
 }
 
 class QuickNote: Object {

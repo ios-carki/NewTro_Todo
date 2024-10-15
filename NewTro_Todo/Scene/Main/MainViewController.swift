@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SwiftUI
 import WidgetKit
 
 import RealmSwift
@@ -88,6 +89,9 @@ final class MainViewController: BaseViewController {
       
         mainView.leftButton.addTarget(self, action: #selector(yesterdayFunc), for: .touchUpInside)
         mainView.rightButton.addTarget(self, action: #selector(tomorrowFunc), for: .touchUpInside)
+        
+        //TODO: 테스트용
+        mainView.coinButton.addTarget(self, action: #selector(coinButton), for: .touchUpInside)
         
         //셀 삭제 노티
         //클로저로도 가능
@@ -400,6 +404,11 @@ final class MainViewController: BaseViewController {
     @objc func tomorrowFunc() {
         dayCalculation(formula: "plus")
         fetchRealm()
+    }
+    
+    //TODO: 테스트용
+    @objc func coinButton() {
+        self.navigationController?.pushViewController(UIHostingController(rootView: TodoListView(navigation: navigationController)), animated: true)
     }
 }
 

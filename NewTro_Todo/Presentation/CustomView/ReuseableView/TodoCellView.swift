@@ -17,7 +17,7 @@ struct TodoCellView: View {
     
     var body: some View {
         RoundedRectangle(cornerRadius: 12)
-            .foregroundColor(.textFieldC)
+            .foregroundColor(.black)
             .overlay(
                 HStack(alignment: .center, spacing: 4, content: {
                     Image("ClearBtn")

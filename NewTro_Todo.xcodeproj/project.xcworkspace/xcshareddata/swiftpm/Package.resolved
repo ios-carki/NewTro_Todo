@@ -1,4 +1,5 @@
 {
+  "originHash" : "7cfc039c3c87c40525a90db6567da7f1dee595dd022406af3c88f10bc535dada",
   "pins" : [
     {
       "identity" : "abseil-cpp-swiftpm",
@@ -25,6 +26,15 @@
       "state" : {
         "revision" : "dd3eda2b05a3f459fc3073695ad1b28659066eab",
         "version" : "0.9.1"
+      }
+    },
+    {
+      "identity" : "factory",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hmlongco/Factory",
+      "state" : {
+        "revision" : "dfe0852e8ebc146fe0f913af54a541d423b5ef37",
+        "version" : "2.4.0"
       }
     },
     {
@@ -190,5 +200,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }

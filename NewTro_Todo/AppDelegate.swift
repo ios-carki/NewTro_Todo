@@ -89,19 +89,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
         
-        //Custom TextField
-        let shared = EGTextFieldConfig.shared
-        shared.defaultTextColor = .white
-        shared.defaultTitleColor = .white
-        shared.titleFont = .galBold20()
-        shared.defaultPlaceHolderTextColor = .placeHolderC
-        shared.defaultBackgroundColor = .textFieldC
-        shared.defaultBorderColor = .clear
-        shared.defaultTrailingImageForegroundColor = .white
-//        shared.defaultErrorTextColor = .statusAlert
-//        shared.errorFont = .medium12()
-        shared.cornerRadius = 12
-        shared.textFieldHeight = 40
+//        //Custom TextField
+//        let shared = EGTextFieldConfig.shared
+//        shared.defaultTextColor = .white
+//        shared.defaultTitleColor = .white
+//        shared.titleFont = .galBold20()
+//        shared.defaultPlaceHolderTextColor = .placeHolderC
+//        shared.defaultBackgroundColor = .textFieldC
+//        shared.defaultBorderColor = .clear
+//        shared.defaultTrailingImageForegroundColor = .white
+////        shared.defaultErrorTextColor = .statusAlert
+////        shared.errorFont = .medium12()
+//        shared.cornerRadius = 12
+//        shared.textFieldHeight = 40
         
         return true
     }

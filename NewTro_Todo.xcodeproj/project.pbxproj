@@ -7,6 +7,23 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		5A37E2702CBE50B30046FFBD /* CustomCalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A37E26F2CBE50B30046FFBD /* CustomCalendarView.swift */; };
+		5A37E2722CBE51740046FFBD /* CalendarCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A37E2712CBE51740046FFBD /* CalendarCell.swift */; };
+		5A46EE062CBE290500F59624 /* TodoListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE052CBE290500F59624 /* TodoListView.swift */; };
+		5A46EE082CBE296C00F59624 /* TodoListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE072CBE296C00F59624 /* TodoListViewModel.swift */; };
+		5A46EE0B2CBE297E00F59624 /* TodoListUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE0A2CBE297E00F59624 /* TodoListUseCase.swift */; };
+		5A46EE0F2CBE29CC00F59624 /* Factory in Frameworks */ = {isa = PBXBuildFile; productRef = 5A46EE0E2CBE29CC00F59624 /* Factory */; };
+		5A46EE122CBE29FF00F59624 /* TodoRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE112CBE29FF00F59624 /* TodoRepository.swift */; };
+		5A46EE152CBE2A2500F59624 /* Todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE142CBE2A2500F59624 /* Todo.swift */; };
+		5A46EE1C2CBE2AF900F59624 /* MemoTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE1B2CBE2AF900F59624 /* MemoTable.swift */; };
+		5A46EE212CBE2CAD00F59624 /* TodoRepositoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE202CBE2CAD00F59624 /* TodoRepositoryImpl.swift */; };
+		5A46EE242CBE2CEB00F59624 /* LocalTodoDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE232CBE2CEB00F59624 /* LocalTodoDataSource.swift */; };
+		5A46EE272CBE2D3A00F59624 /* LocalTodoDataSourceImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE262CBE2D3A00F59624 /* LocalTodoDataSourceImpl.swift */; };
+		5A46EE2B2CBE2E6000F59624 /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE2A2CBE2E6000F59624 /* DIContainer.swift */; };
+		5A46EE2D2CBE2FBE00F59624 /* TodoListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE2C2CBE2FBE00F59624 /* TodoListCell.swift */; };
+		5A46EE312CBE41D000F59624 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE302CBE41D000F59624 /* Color+Extension.swift */; };
+		5A46EE352CBE424700F59624 /* NewtroColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE342CBE424700F59624 /* NewtroColor.swift */; };
+		5A46EE362CBE499800F59624 /* Todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE142CBE2A2500F59624 /* Todo.swift */; };
 		C306AFA628E9934300D4BB6B /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C306AFA528E9934300D4BB6B /* String+Extension.swift */; };
 		C30F7CA92940C6190050C045 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F7CA82940C6190050C045 /* SplashView.swift */; };
 		C30F7CAC2940C7380050C045 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F7CAB2940C7380050C045 /* SplashViewController.swift */; };
@@ -33,7 +50,7 @@
 		C32FF08228C7240900949E05 /* SecondView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF08128C7240900949E05 /* SecondView.swift */; };
 		C32FF08428C7240F00949E05 /* ThirdView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF08328C7240F00949E05 /* ThirdView.swift */; };
 		C32FF08628C724CF00949E05 /* BasePageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF08528C724CF00949E05 /* BasePageView.swift */; };
-		C32FF08928C72EE300949E05 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF08828C72EE300949E05 /* Color+Extension.swift */; };
+		C32FF08928C72EE300949E05 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF08828C72EE300949E05 /* UIColor+Extension.swift */; };
 		C32FF09128C9AE9900949E05 /* Font+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF09028C9AE9900949E05 /* Font+Extension.swift */; };
 		C32FF09528C9AECF00949E05 /* Galmuri11-Condensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C32FF09428C9AECF00949E05 /* Galmuri11-Condensed.ttf */; };
 		C32FF09728CAAB6F00949E05 /* Galmuri11-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C32FF09628CAAB6F00949E05 /* Galmuri11-Bold.ttf */; };
@@ -74,7 +91,7 @@
 		C37AADAD294C86AB0051E68E /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = C37AADAC294C86AB0051E68E /* .gitignore */; };
 		C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = C37B16BD28CF7DAD0086E3C6 /* Toast */; };
 		C383DF1C29713222000C62CD /* Galmuri11-Condensed.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C32FF09428C9AECF00949E05 /* Galmuri11-Condensed.ttf */; };
-		C383DF1E2971358E000C62CD /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF08828C72EE300949E05 /* Color+Extension.swift */; };
+		C383DF1E2971358E000C62CD /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C32FF08828C72EE300949E05 /* UIColor+Extension.swift */; };
 		C38EC07528F597E40027B0B0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C38EC07428F597E40027B0B0 /* GoogleService-Info.plist */; };
 		C38EC07828F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */ = {isa = PBXBuildFile; productRef = C38EC07728F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport */; };
 		C38EC07A28F599B70027B0B0 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = C38EC07928F599B70027B0B0 /* FirebaseCrashlytics */; };
@@ -117,6 +134,21 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		5A37E26F2CBE50B30046FFBD /* CustomCalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCalendarView.swift; sourceTree = "<group>"; };
+		5A37E2712CBE51740046FFBD /* CalendarCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarCell.swift; sourceTree = "<group>"; };
+		5A46EE052CBE290500F59624 /* TodoListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListView.swift; sourceTree = "<group>"; };
+		5A46EE072CBE296C00F59624 /* TodoListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListViewModel.swift; sourceTree = "<group>"; };
+		5A46EE0A2CBE297E00F59624 /* TodoListUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListUseCase.swift; sourceTree = "<group>"; };
+		5A46EE112CBE29FF00F59624 /* TodoRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoRepository.swift; sourceTree = "<group>"; };
+		5A46EE142CBE2A2500F59624 /* Todo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Todo.swift; sourceTree = "<group>"; };
+		5A46EE1B2CBE2AF900F59624 /* MemoTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemoTable.swift; sourceTree = "<group>"; };
+		5A46EE202CBE2CAD00F59624 /* TodoRepositoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoRepositoryImpl.swift; sourceTree = "<group>"; };
+		5A46EE232CBE2CEB00F59624 /* LocalTodoDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalTodoDataSource.swift; sourceTree = "<group>"; };
+		5A46EE262CBE2D3A00F59624 /* LocalTodoDataSourceImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalTodoDataSourceImpl.swift; sourceTree = "<group>"; };
+		5A46EE2A2CBE2E6000F59624 /* DIContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DIContainer.swift; sourceTree = "<group>"; };
+		5A46EE2C2CBE2FBE00F59624 /* TodoListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoListCell.swift; sourceTree = "<group>"; };
+		5A46EE302CBE41D000F59624 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
+		5A46EE342CBE424700F59624 /* NewtroColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewtroColor.swift; sourceTree = "<group>"; };
 		C306AFA528E9934300D4BB6B /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		C30F7CA82940C6190050C045 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		C30F7CAB2940C7380050C045 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
@@ -138,7 +170,7 @@
 		C32FF08128C7240900949E05 /* SecondView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondView.swift; sourceTree = "<group>"; };
 		C32FF08328C7240F00949E05 /* ThirdView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdView.swift; sourceTree = "<group>"; };
 		C32FF08528C724CF00949E05 /* BasePageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasePageView.swift; sourceTree = "<group>"; };
-		C32FF08828C72EE300949E05 /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
+		C32FF08828C72EE300949E05 /* UIColor+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		C32FF09028C9AE9900949E05 /* Font+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Font+Extension.swift"; sourceTree = "<group>"; };
 		C32FF09428C9AECF00949E05 /* Galmuri11-Condensed.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Galmuri11-Condensed.ttf"; sourceTree = "<group>"; };
 		C32FF09628CAAB6F00949E05 /* Galmuri11-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Galmuri11-Bold.ttf"; sourceTree = "<group>"; };
@@ -202,6 +234,7 @@
 				C34970592A22471800112A7F /* CustomTextField in Frameworks */,
 				C38EC07A28F599B70027B0B0 /* FirebaseCrashlytics in Frameworks */,
 				C38EC07828F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
+				5A46EE0F2CBE29CC00F59624 /* Factory in Frameworks */,
 				C38EC07C28F599B70027B0B0 /* FirebaseMessaging in Frameworks */,
 				C3EF20B928DBFB1400141757 /* IQKeyboardManagerSwift in Frameworks */,
 			);
@@ -221,6 +254,181 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5A2254152CBE1E2000E515D0 /* V2 */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE282CBE2E4900F59624 /* Application */,
+				5A2254182CBE1E2C00E515D0 /* Presentation */,
+				5A2254172CBE1E2800E515D0 /* Domain */,
+				5A2254162CBE1E2500E515D0 /* Data */,
+			);
+			path = V2;
+			sourceTree = "<group>";
+		};
+		5A2254162CBE1E2500E515D0 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE252CBE2D2400F59624 /* DataSourceIMPL */,
+				5A46EE1F2CBE2C9A00F59624 /* RepositoriesIMPL */,
+				5A46EE162CBE2ACD00F59624 /* DTO */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		5A2254172CBE1E2800E515D0 /* Domain */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE222CBE2CCE00F59624 /* DataSourceProtocols */,
+				5A46EE102CBE29EF00F59624 /* RepositoryProtocols */,
+				5A46EE132CBE2A1900F59624 /* Entities */,
+				5A46EE092CBE297200F59624 /* UseCase */,
+			);
+			path = Domain;
+			sourceTree = "<group>";
+		};
+		5A2254182CBE1E2C00E515D0 /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE332CBE422E00F59624 /* Color */,
+				5A46EE2E2CBE31BB00F59624 /* Extensions */,
+				5A46EE042CBE28FB00F59624 /* TodoList */,
+			);
+			path = Presentation;
+			sourceTree = "<group>";
+		};
+		5A46EE042CBE28FB00F59624 /* TodoList */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE052CBE290500F59624 /* TodoListView.swift */,
+				5A46EE072CBE296C00F59624 /* TodoListViewModel.swift */,
+				5A46EE2C2CBE2FBE00F59624 /* TodoListCell.swift */,
+				5A37E26F2CBE50B30046FFBD /* CustomCalendarView.swift */,
+				5A37E2712CBE51740046FFBD /* CalendarCell.swift */,
+			);
+			path = TodoList;
+			sourceTree = "<group>";
+		};
+		5A46EE092CBE297200F59624 /* UseCase */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE0A2CBE297E00F59624 /* TodoListUseCase.swift */,
+			);
+			path = UseCase;
+			sourceTree = "<group>";
+		};
+		5A46EE102CBE29EF00F59624 /* RepositoryProtocols */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE112CBE29FF00F59624 /* TodoRepository.swift */,
+			);
+			path = RepositoryProtocols;
+			sourceTree = "<group>";
+		};
+		5A46EE132CBE2A1900F59624 /* Entities */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE1E2CBE2B2100F59624 /* Memo */,
+				5A46EE1D2CBE2B1D00F59624 /* Todo */,
+			);
+			path = Entities;
+			sourceTree = "<group>";
+		};
+		5A46EE162CBE2ACD00F59624 /* DTO */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE1A2CBE2AED00F59624 /* Memo */,
+				5A46EE192CBE2AE800F59624 /* Todo */,
+			);
+			path = DTO;
+			sourceTree = "<group>";
+		};
+		5A46EE192CBE2AE800F59624 /* Todo */ = {
+			isa = PBXGroup;
+			children = (
+				C3D6455428D3503600850505 /* TodoScheme.swift */,
+			);
+			path = Todo;
+			sourceTree = "<group>";
+		};
+		5A46EE1A2CBE2AED00F59624 /* Memo */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE1B2CBE2AF900F59624 /* MemoTable.swift */,
+			);
+			path = Memo;
+			sourceTree = "<group>";
+		};
+		5A46EE1D2CBE2B1D00F59624 /* Todo */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE142CBE2A2500F59624 /* Todo.swift */,
+			);
+			path = Todo;
+			sourceTree = "<group>";
+		};
+		5A46EE1E2CBE2B2100F59624 /* Memo */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Memo;
+			sourceTree = "<group>";
+		};
+		5A46EE1F2CBE2C9A00F59624 /* RepositoriesIMPL */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE202CBE2CAD00F59624 /* TodoRepositoryImpl.swift */,
+			);
+			path = RepositoriesIMPL;
+			sourceTree = "<group>";
+		};
+		5A46EE222CBE2CCE00F59624 /* DataSourceProtocols */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE232CBE2CEB00F59624 /* LocalTodoDataSource.swift */,
+			);
+			path = DataSourceProtocols;
+			sourceTree = "<group>";
+		};
+		5A46EE252CBE2D2400F59624 /* DataSourceIMPL */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE262CBE2D3A00F59624 /* LocalTodoDataSourceImpl.swift */,
+			);
+			path = DataSourceIMPL;
+			sourceTree = "<group>";
+		};
+		5A46EE282CBE2E4900F59624 /* Application */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE292CBE2E4E00F59624 /* Injected */,
+			);
+			path = Application;
+			sourceTree = "<group>";
+		};
+		5A46EE292CBE2E4E00F59624 /* Injected */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE2A2CBE2E6000F59624 /* DIContainer.swift */,
+			);
+			path = Injected;
+			sourceTree = "<group>";
+		};
+		5A46EE2E2CBE31BB00F59624 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE302CBE41D000F59624 /* Color+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		5A46EE332CBE422E00F59624 /* Color */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE342CBE424700F59624 /* NewtroColor.swift */,
+			);
+			path = Color;
+			sourceTree = "<group>";
+		};
 		C32FF04B28C70C8700949E05 = {
 			isa = PBXGroup;
 			children = (
@@ -246,6 +454,7 @@
 		C32FF05628C70C8800949E05 /* NewTro_Todo */ = {
 			isa = PBXGroup;
 			children = (
+				5A2254152CBE1E2000E515D0 /* V2 */,
 				C36567C62AF7720A00DD56F3 /* Refactor */,
 				C34970242A18FD4500112A7F /* Presentation */,
 				C37AADAB294C84AA0051E68E /* Source */,
@@ -268,7 +477,7 @@
 			children = (
 				C32FF09328C9AEC100949E05 /* Font */,
 				C32521ED2A23703B005EA5C2 /* Date+Extension.swift */,
-				C32FF08828C72EE300949E05 /* Color+Extension.swift */,
+				C32FF08828C72EE300949E05 /* UIColor+Extension.swift */,
 				C32FF09028C9AE9900949E05 /* Font+Extension.swift */,
 				C3D6454328D0ADEB00850505 /* Alert+Extension.swift */,
 				C3D6454C28D1D59200850505 /* UIView+Extension.swift */,
@@ -512,7 +721,6 @@
 		C37AADAA294C84890051E68E /* Utility */ = {
 			isa = PBXGroup;
 			children = (
-				C3D6455428D3503600850505 /* TodoScheme.swift */,
 			);
 			path = Utility;
 			sourceTree = "<group>";
@@ -565,6 +773,7 @@
 				C38EC07928F599B70027B0B0 /* FirebaseCrashlytics */,
 				C38EC07B28F599B70027B0B0 /* FirebaseMessaging */,
 				C34970582A22471800112A7F /* CustomTextField */,
+				5A46EE0E2CBE29CC00F59624 /* Factory */,
 			);
 			productName = NewTro_Todo;
 			productReference = C32FF05428C70C8800949E05 /* NewTro_Todo.app */;
@@ -630,6 +839,7 @@
 				C34644ED28E492670071EF13 /* XCRemoteSwiftPackageReference "AcknowList" */,
 				C38EC07628F599B70027B0B0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C34970572A22471800112A7F /* XCRemoteSwiftPackageReference "SwiftUI-Custom-TextField" */,
+				5A46EE0D2CBE29CC00F59624 /* XCRemoteSwiftPackageReference "Factory" */,
 			);
 			productRefGroup = C32FF05528C70C8800949E05 /* Products */;
 			projectDirPath = "";
@@ -681,10 +891,14 @@
 				C34A89D028EC632E00F8BA4B /* ImportanceView.swift in Sources */,
 				C32521EE2A23703B005EA5C2 /* Date+Extension.swift in Sources */,
 				C30F7CAC2940C7380050C045 /* SplashViewController.swift in Sources */,
+				5A37E2722CBE51740046FFBD /* CalendarCell.swift in Sources */,
+				5A46EE122CBE29FF00F59624 /* TodoRepository.swift in Sources */,
+				5A46EE2D2CBE2FBE00F59624 /* TodoListCell.swift in Sources */,
 				C3AF2FF928D9D25400AF1A60 /* CustomMenuPopupView.swift in Sources */,
 				C3D6455C28D353B700850505 /* DateFormat+Extension.swift in Sources */,
 				C34970562A22464900112A7F /* TodoCellView.swift in Sources */,
 				C32FF0A028CF13A600949E05 /* CalendarViewController.swift in Sources */,
+				5A46EE242CBE2CEB00F59624 /* LocalTodoDataSource.swift in Sources */,
 				C32FF07528C70F1800949E05 /* PageViewController.swift in Sources */,
 				C349704E2A190B3400112A7F /* CustomImagePicker.swift in Sources */,
 				C3D6454428D0ADEB00850505 /* Alert+Extension.swift in Sources */,
@@ -694,9 +908,13 @@
 				C32FF07C28C719F100949E05 /* SecondViewController.swift in Sources */,
 				C34970262A18FDFE00112A7F /* OnboardingView.swift in Sources */,
 				C32FF05828C70C8800949E05 /* AppDelegate.swift in Sources */,
+				5A46EE312CBE41D000F59624 /* Color+Extension.swift in Sources */,
 				C32FF09B28CAB71D00949E05 /* MainViewController.swift in Sources */,
+				5A46EE272CBE2D3A00F59624 /* LocalTodoDataSourceImpl.swift in Sources */,
 				C34A89D228EC633A00F8BA4B /* ImportanceViewController.swift in Sources */,
 				C32FF08228C7240900949E05 /* SecondView.swift in Sources */,
+				5A46EE1C2CBE2AF900F59624 /* MemoTable.swift in Sources */,
+				5A46EE0B2CBE297E00F59624 /* TodoListUseCase.swift in Sources */,
 				C32FF0A528CF149600949E05 /* SettingView.swift in Sources */,
 				C30F7CA92940C6190050C045 /* SplashView.swift in Sources */,
 				C32FF07E28C719FA00949E05 /* ThirdViewController.swift in Sources */,
@@ -707,22 +925,29 @@
 				C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */,
 				C3D6455528D3503600850505 /* TodoScheme.swift in Sources */,
 				C34970502A190B9F00112A7F /* CustomButton.swift in Sources */,
+				5A46EE212CBE2CAD00F59624 /* TodoRepositoryImpl.swift in Sources */,
 				C34644E628E2F1200071EF13 /* CustomNotePopupView.swift in Sources */,
 				C319235929715BE200DB669D /* RealmManager.swift in Sources */,
 				C32FF08028C7240300949E05 /* FirstView.swift in Sources */,
 				C34970532A190BE200112A7F /* Constant.swift in Sources */,
+				5A46EE082CBE296C00F59624 /* TodoListViewModel.swift in Sources */,
 				C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */,
 				C3D6454D28D1D59200850505 /* UIView+Extension.swift in Sources */,
 				C34644E428E2F0EA0071EF13 /* CustomNotePopupViewController.swift in Sources */,
+				5A46EE062CBE290500F59624 /* TodoListView.swift in Sources */,
+				5A37E2702CBE50B30046FFBD /* CustomCalendarView.swift in Sources */,
 				C349704B2A1908CC00112A7F /* WidgetImagePreviewViewModel.swift in Sources */,
 				C3AF2FFC28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift in Sources */,
 				C332699429704AB2009B1E1C /* NewtroWidget.intentdefinition in Sources */,
+				5A46EE2B2CBE2E6000F59624 /* DIContainer.swift in Sources */,
 				C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */,
+				5A46EE352CBE424700F59624 /* NewtroColor.swift in Sources */,
 				C32FF0A328CF13BA00949E05 /* CalendarView.swift in Sources */,
+				5A46EE152CBE2A2500F59624 /* Todo.swift in Sources */,
 				C3D6455E28D354F900850505 /* TablePlusCell.swift in Sources */,
 				C32FF09128C9AE9900949E05 /* Font+Extension.swift in Sources */,
 				C32FF09928CAB71300949E05 /* MainView.swift in Sources */,
-				C32FF08928C72EE300949E05 /* Color+Extension.swift in Sources */,
+				C32FF08928C72EE300949E05 /* UIColor+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -730,8 +955,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5A46EE362CBE499800F59624 /* Todo.swift in Sources */,
 				C332698E29704AB1009B1E1C /* NewtroWidget.swift in Sources */,
-				C383DF1E2971358E000C62CD /* Color+Extension.swift in Sources */,
+				C383DF1E2971358E000C62CD /* UIColor+Extension.swift in Sources */,
 				C319235A29715D7900DB669D /* DateFormat+Extension.swift in Sources */,
 				C319235329713C5D00DB669D /* TodoScheme.swift in Sources */,
 				C332699329704AB2009B1E1C /* NewtroWidget.intentdefinition in Sources */,
@@ -1058,6 +1284,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		5A46EE0D2CBE29CC00F59624 /* XCRemoteSwiftPackageReference "Factory" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hmlongco/Factory";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.0;
+			};
+		};
 		C32FF07628C7129C00949E05 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -1133,6 +1367,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		5A46EE0E2CBE29CC00F59624 /* Factory */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5A46EE0D2CBE29CC00F59624 /* XCRemoteSwiftPackageReference "Factory" */;
+			productName = Factory;
+		};
 		C319235429713D0A00DB669D /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */;

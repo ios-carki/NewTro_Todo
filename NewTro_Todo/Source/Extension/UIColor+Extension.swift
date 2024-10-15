@@ -4,8 +4,6 @@
 //
 //  Created by Carki on 2022/09/06.
 //
-
-import SwiftUI
 import UIKit
 
 extension UIColor {
@@ -21,24 +19,4 @@ extension UIColor {
     static let calendarWeekendColor = UIColor(red: 199/255, green: 10/255, blue: 128/255, alpha: 1.0)
     static let calendarWeekdayColor = UIColor(red: 61/255, green: 123/255, blue: 53/255, alpha: 1.0)
     
-}
-
-extension Color {
-    
-    init(hex: String) {
-        let scanner = Scanner(string: hex)
-        _ = scanner.scanString("#")
-        
-        var rgb: UInt64 = 0
-        scanner.scanHexInt64(&rgb)
-        
-        let r = Double((rgb >> 16) & 0xFF) / 255.0
-        let g = Double((rgb >>  8) & 0xFF) / 255.0
-        let b = Double((rgb >>  0) & 0xFF) / 255.0
-        self.init(red: r, green: g, blue: b)
-    }
-    
-    static let placeHolderC = Color(hex: "#929292")
-    static let mainBackGroundC = Color(hex: "#6ddaf2")
-    static let textFieldC = Color(hex: "#4ec8ea")
 }
