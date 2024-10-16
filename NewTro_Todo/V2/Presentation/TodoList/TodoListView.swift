@@ -140,13 +140,8 @@ struct TodoListView: View {
                                 GeometryReader { proxy in
                                     Color.clear
                                         .onChange(of: proxy.frame(in: .global).minY) { newValue in
-                                            //                                                print("proxy.frame(in: .global).minY: ", proxy.frame(in: .global).minY)
-                                            //                                                print("NewValue: ", newValue)
                                             offsetY = newValue
                                             self.initOffsetY = newValue
-                                            //                                                if self.initOffsetY == nil {
-                                            //                                                    self.initOffsetY = newValue
-                                            //                                                }
                                         }
                                 }
                             )
@@ -159,7 +154,7 @@ struct TodoListView: View {
         .onAppear {
             self.offsetY = self.initOffsetY ?? 0.0
             
-            viewModel.getAllTodoData()
+            viewModel.getPickedDateTodoData()
         }
     }
 }

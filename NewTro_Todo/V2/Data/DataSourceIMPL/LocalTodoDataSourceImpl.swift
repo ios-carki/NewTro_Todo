@@ -34,4 +34,12 @@ final class LocalTodoDataSourceImpl: LocalTodoDataSource {
             .filter("selectedDate >= %@ AND selectedDate < %@", startOfDay, endOfDay)
             .map{ $0.toTodoDomain() }
     }
+    
+    func getAllTodoDate() -> [Date] {
+        let realm = try! Realm()
+        
+        return realm
+            .objects(Todo.self)
+            .map{ $0.toTodoDomain().selectedDate }
+    }
 }

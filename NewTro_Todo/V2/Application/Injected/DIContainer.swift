@@ -26,7 +26,10 @@ extension Container {
 //MARK: UseCase
 extension Container {
     //MARK: Todo
-    var todoListUseCase: Factory<TodoListUseCase> {
-        Factory(self) { TodoListUseCase(repository: self.TodoRepository()) }
+    var getPickedDateTodoUseCase: Factory<GetPickedDateTodoUseCase> {
+        Factory(self) { GetPickedDateTodoUseCase(repository: self.TodoRepository()) }
+    }
+    var getAllTodoDateUseCase: Factory<GetAllTodoDateUseCase> {
+        Factory(self) { GetAllTodoDateUseCase(repository: self.TodoRepository()) }
     }
 }

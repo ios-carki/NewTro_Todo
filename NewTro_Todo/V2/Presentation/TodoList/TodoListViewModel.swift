@@ -10,14 +10,14 @@ import Foundation
 import Factory
 
 final class TodoListViewModel: ObservableObject {
-    @Injected(\.todoListUseCase) private var todoListUseCase
+    @Injected(\.getPickedDateTodoUseCase) private var getPickedDateTodoUseCase
     @Published var todoData: [TodoDomain] = []
     
     //Calendar
-    @Published var selectedDate: Date = Date() { didSet { getAllTodoData() } }
+    @Published var selectedDate: Date = Date() { didSet { getPickedDateTodoData() } }
     @Published var currentMonth: Date = Date()
     
-    func getAllTodoData() {
-        self.todoData = self.todoListUseCase.execute(pickedDate: selectedDate)
+    func getPickedDateTodoData() {
+        self.todoData = self.getPickedDateTodoUseCase.execute(pickedDate: selectedDate)
     }
 }

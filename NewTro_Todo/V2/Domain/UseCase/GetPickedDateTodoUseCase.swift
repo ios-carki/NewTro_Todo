@@ -1,5 +1,5 @@
 //
-//  TodoListUseCase.swift
+//  GetPickedDateTodoUseCase.swift
 //  NewTro_Todo
 //
 //  Created by OWEN on 10/15/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class TodoListUseCase {
+final class GetPickedDateTodoUseCase {
     let repository: TodoRepository
     
     init(repository: TodoRepository) {

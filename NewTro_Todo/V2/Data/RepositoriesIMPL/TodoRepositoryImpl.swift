@@ -17,4 +17,8 @@ final class TodoRepositoryImpl: TodoRepository {
     func getPickedDateTodoData(pickedDate: Date) -> [TodoDomain] {
         self.dataBase.getPickedDateTodoData(pickedDate: pickedDate)
     }
+    
+    func getAllTodoDate() -> [Date] {
+        self.dataBase.getAllTodoDate()
+    }
 }
