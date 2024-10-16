@@ -13,21 +13,23 @@ final class LocalTodoDataSourceImpl: LocalTodoDataSource {
     func getPickedDateTodoData(pickedDate: Date) -> [TodoDomain] {
         let realm = try! Realm()
         
-        // 선택한 날짜의 year, month, day 추출
-        let calendar = Calendar.current
-        let selectedYear = calendar.component(.year, from: pickedDate)
-        let selectedMonth = calendar.component(.month, from: pickedDate)
-        let selectedDay = calendar.component(.day, from: pickedDate)
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current//Locale(identifier: "ko_KR")
+        formatter.timeZone = TimeZone.current//TimeZone(abbreviation: "KST")
+        formatter.dateFormat = "yyyy년 MM월 dd일"
         
-        // Realm 쿼리로 해당 년/월/일이 같은 데이터를 필터링
-        let results = realm.objects(Todo.self).filter { todo in
-            let todoYear = calendar.component(.year, from: todo.regDate)
-            let todoMonth = calendar.component(.month, from: todo.regDate)
-            let todoDay = calendar.component(.day, from: todo.regDate)
-            
-            return todoYear == selectedYear && todoMonth == selectedMonth && todoDay == selectedDay
-        }
+        let stringDate = formatter.string(from: pickedDate)
         
-        return results.map{ $0.toTodoDomain() }
+        return realm.objects(Todo.self).filter("stringDate == %@", stringDate).map{ $0.toTodoDomain() }
+        
+//        let formatter = DateFormatter()
+////        formatter.locale = Locale.current//Locale(identifier: "ko_KR")
+////        formatter.timeZone = TimeZone.current//TimeZone(abbreviation: "KST")
+////        formatter.dateFormat = "yyyy년 MM월 dd일"
+//        // Calendar를 사용하여 주어진 Date에서 년, 월, 일만 추출
+//            let calendar = Calendar.current
+//            let startOfDay = calendar.startOfDay(for: pickedDate) // 날짜의 00:00:00
+//        guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else { return [] } // 다음 날의 00:00:00
+//        return realm.objects(Todo.self).filter("stringDate >= %@ AND stringDate < %@", startOfDay, endOfDay).map{ $0.toTodoDomain() }
     }
 }

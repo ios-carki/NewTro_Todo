@@ -13,6 +13,6 @@ struct TodoDomain {
     let favorite: Bool
     let importance: Int
     let regDate: Date
-    let stringDate: String
+    let selectedDate: Date
     let isFinished: Bool
 }

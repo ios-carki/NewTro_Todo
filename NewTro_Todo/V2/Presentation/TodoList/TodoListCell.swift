@@ -49,7 +49,7 @@ struct TodoListCell: View {
             favorite: false,
             importance: 0,
             regDate: Date(),
-            stringDate: "",
+            selectedDate: Date(),
             isFinished: true
         )
     ) {

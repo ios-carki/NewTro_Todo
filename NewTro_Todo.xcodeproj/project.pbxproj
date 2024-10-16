@@ -24,12 +24,14 @@
 		5A46EE312CBE41D000F59624 /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE302CBE41D000F59624 /* Color+Extension.swift */; };
 		5A46EE352CBE424700F59624 /* NewtroColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE342CBE424700F59624 /* NewtroColor.swift */; };
 		5A46EE362CBE499800F59624 /* Todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE142CBE2A2500F59624 /* Todo.swift */; };
+		5AF195A82CBF4060006D29CE /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 5AF195A72CBF4060006D29CE /* Realm */; };
+		5AF195AA2CBF4060006D29CE /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5AF195A92CBF4060006D29CE /* RealmSwift */; };
+		5AF195AC2CBF40EA006D29CE /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 5AF195AB2CBF40EA006D29CE /* Realm */; };
+		5AF195AE2CBF40EA006D29CE /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5AF195AD2CBF40EA006D29CE /* RealmSwift */; };
 		C306AFA628E9934300D4BB6B /* String+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C306AFA528E9934300D4BB6B /* String+Extension.swift */; };
 		C30F7CA92940C6190050C045 /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F7CA82940C6190050C045 /* SplashView.swift */; };
 		C30F7CAC2940C7380050C045 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C30F7CAB2940C7380050C045 /* SplashViewController.swift */; };
 		C319235329713C5D00DB669D /* TodoScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455428D3503600850505 /* TodoScheme.swift */; };
-		C319235529713D0A00DB669D /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C319235429713D0A00DB669D /* Realm */; };
-		C319235729713D0E00DB669D /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C319235629713D0E00DB669D /* RealmSwift */; };
 		C319235929715BE200DB669D /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C319235829715BE200DB669D /* RealmManager.swift */; };
 		C319235A29715D7900DB669D /* DateFormat+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455B28D353B700850505 /* DateFormat+Extension.swift */; };
 		C319235B29715E0100DB669D /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C398967728E8A12C0026B1AA /* Localizable.strings */; };
@@ -71,8 +73,6 @@
 		C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644BC28DF19810071EF13 /* File+Extension.swift */; };
 		C34644E428E2F0EA0071EF13 /* CustomNotePopupViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644E328E2F0EA0071EF13 /* CustomNotePopupViewController.swift */; };
 		C34644E628E2F1200071EF13 /* CustomNotePopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34644E528E2F1200071EF13 /* CustomNotePopupView.swift */; };
-		C34644EA28E3DCE80071EF13 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = C34644E928E3DCE80071EF13 /* Realm */; };
-		C34644EC28E3DCE80071EF13 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = C34644EB28E3DCE80071EF13 /* RealmSwift */; };
 		C34644EF28E492670071EF13 /* AcknowList in Frameworks */ = {isa = PBXBuildFile; productRef = C34644EE28E492670071EF13 /* AcknowList */; };
 		C34644F128E493980071EF13 /* Package.resolved in Resources */ = {isa = PBXBuildFile; fileRef = C34644F028E493980071EF13 /* Package.resolved */; };
 		C34970262A18FDFE00112A7F /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C34970252A18FDFE00112A7F /* OnboardingView.swift */; };
@@ -224,14 +224,14 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C34644EA28E3DCE80071EF13 /* Realm in Frameworks */,
 				C34644EF28E492670071EF13 /* AcknowList in Frameworks */,
 				C34644BB28DEDC840071EF13 /* Zip in Frameworks */,
-				C34644EC28E3DCE80071EF13 /* RealmSwift in Frameworks */,
 				C37B16BE28CF7DAD0086E3C6 /* Toast in Frameworks */,
+				5AF195AA2CBF4060006D29CE /* RealmSwift in Frameworks */,
 				C3D6454228D05E4700850505 /* FSCalendar in Frameworks */,
 				C32FF07828C7129C00949E05 /* SnapKit in Frameworks */,
 				C34970592A22471800112A7F /* CustomTextField in Frameworks */,
+				5AF195A82CBF4060006D29CE /* Realm in Frameworks */,
 				C38EC07A28F599B70027B0B0 /* FirebaseCrashlytics in Frameworks */,
 				C38EC07828F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport in Frameworks */,
 				5A46EE0F2CBE29CC00F59624 /* Factory in Frameworks */,
@@ -244,8 +244,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C319235729713D0E00DB669D /* RealmSwift in Frameworks */,
-				C319235529713D0A00DB669D /* Realm in Frameworks */,
+				5AF195AE2CBF40EA006D29CE /* RealmSwift in Frameworks */,
+				5AF195AC2CBF40EA006D29CE /* Realm in Frameworks */,
 				C332698B29704AB1009B1E1C /* SwiftUI.framework in Frameworks */,
 				C332698929704AB1009B1E1C /* WidgetKit.framework in Frameworks */,
 			);
@@ -766,14 +766,14 @@
 				C3D6454128D05E4700850505 /* FSCalendar */,
 				C3EF20B828DBFB1400141757 /* IQKeyboardManagerSwift */,
 				C34644BA28DEDC840071EF13 /* Zip */,
-				C34644E928E3DCE80071EF13 /* Realm */,
-				C34644EB28E3DCE80071EF13 /* RealmSwift */,
 				C34644EE28E492670071EF13 /* AcknowList */,
 				C38EC07728F599B70027B0B0 /* FirebaseAnalyticsWithoutAdIdSupport */,
 				C38EC07928F599B70027B0B0 /* FirebaseCrashlytics */,
 				C38EC07B28F599B70027B0B0 /* FirebaseMessaging */,
 				C34970582A22471800112A7F /* CustomTextField */,
 				5A46EE0E2CBE29CC00F59624 /* Factory */,
+				5AF195A72CBF4060006D29CE /* Realm */,
+				5AF195A92CBF4060006D29CE /* RealmSwift */,
 			);
 			productName = NewTro_Todo;
 			productReference = C32FF05428C70C8800949E05 /* NewTro_Todo.app */;
@@ -793,8 +793,8 @@
 			);
 			name = NewtroWidgetExtension;
 			packageProductDependencies = (
-				C319235429713D0A00DB669D /* Realm */,
-				C319235629713D0E00DB669D /* RealmSwift */,
+				5AF195AB2CBF40EA006D29CE /* Realm */,
+				5AF195AD2CBF40EA006D29CE /* RealmSwift */,
 			);
 			productName = NewtroWidgetExtension;
 			productReference = C332698629704AB1009B1E1C /* NewtroWidgetExtension.appex */;
@@ -835,11 +835,11 @@
 				C3D6454028D05E4700850505 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				C3EF20B728DBFB1400141757 /* XCRemoteSwiftPackageReference "IQKeyboardManager" */,
 				C34644B928DEDC840071EF13 /* XCRemoteSwiftPackageReference "Zip" */,
-				C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */,
 				C34644ED28E492670071EF13 /* XCRemoteSwiftPackageReference "AcknowList" */,
 				C38EC07628F599B70027B0B0 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				C34970572A22471800112A7F /* XCRemoteSwiftPackageReference "SwiftUI-Custom-TextField" */,
 				5A46EE0D2CBE29CC00F59624 /* XCRemoteSwiftPackageReference "Factory" */,
+				5AF195A62CBF405F006D29CE /* XCRemoteSwiftPackageReference "realm-swift" */,
 			);
 			productRefGroup = C32FF05528C70C8800949E05 /* Products */;
 			projectDirPath = "";
@@ -1292,6 +1292,14 @@
 				minimumVersion = 2.4.0;
 			};
 		};
+		5AF195A62CBF405F006D29CE /* XCRemoteSwiftPackageReference "realm-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/realm/realm-swift";
+			requirement = {
+				kind = exactVersion;
+				version = 10.44.0;
+			};
+		};
 		C32FF07628C7129C00949E05 /* XCRemoteSwiftPackageReference "SnapKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/SnapKit/SnapKit.git";
@@ -1306,14 +1314,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.0.0;
-			};
-		};
-		C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/realm-swift.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 10.0.0;
 			};
 		};
 		C34644ED28E492670071EF13 /* XCRemoteSwiftPackageReference "AcknowList" */ = {
@@ -1372,14 +1372,24 @@
 			package = 5A46EE0D2CBE29CC00F59624 /* XCRemoteSwiftPackageReference "Factory" */;
 			productName = Factory;
 		};
-		C319235429713D0A00DB669D /* Realm */ = {
+		5AF195A72CBF4060006D29CE /* Realm */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			package = 5AF195A62CBF405F006D29CE /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = Realm;
 		};
-		C319235629713D0E00DB669D /* RealmSwift */ = {
+		5AF195A92CBF4060006D29CE /* RealmSwift */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */;
+			package = 5AF195A62CBF405F006D29CE /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = RealmSwift;
+		};
+		5AF195AB2CBF40EA006D29CE /* Realm */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AF195A62CBF405F006D29CE /* XCRemoteSwiftPackageReference "realm-swift" */;
+			productName = Realm;
+		};
+		5AF195AD2CBF40EA006D29CE /* RealmSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5AF195A62CBF405F006D29CE /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
 		};
 		C32FF07728C7129C00949E05 /* SnapKit */ = {
@@ -1391,16 +1401,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = C34644B928DEDC840071EF13 /* XCRemoteSwiftPackageReference "Zip" */;
 			productName = Zip;
-		};
-		C34644E928E3DCE80071EF13 /* Realm */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = Realm;
-		};
-		C34644EB28E3DCE80071EF13 /* RealmSwift */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = C34644E828E3DCE80071EF13 /* XCRemoteSwiftPackageReference "realm-swift" */;
-			productName = RealmSwift;
 		};
 		C34644EE28E492670071EF13 /* AcknowList */ = {
 			isa = XCSwiftPackageProductDependency;

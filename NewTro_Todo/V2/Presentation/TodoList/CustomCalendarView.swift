@@ -96,7 +96,7 @@ struct CustomCalendarView: UIViewRepresentable {
     
     class CalendarCoordinator: NSObject, FSCalendarDelegate, FSCalendarDataSource, FSCalendarDelegateAppearance {
         var parent: CustomCalendarView
-        var action: () ->()
+        var action: () -> ()
         
         init(calendar: CustomCalendarView, action: @escaping () -> ()) {
             print("Init 호출")

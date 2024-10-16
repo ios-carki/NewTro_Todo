@@ -264,7 +264,7 @@ final class MainViewController: BaseViewController {
     @objc func todoPlusButtonClikced() {
         
         let convertDate = dateFormatter.string(from: pickedNowDate)
-        let task = Todo(todo: "", favorite: false, importance: 0, regDate: Date(), stringDate: convertDate, isFinished: false)
+        let task = Todo(todo: "", favorite: false, importance: 0, regDate: Date(), stringDate: convertDate, selectedDate: convertDate.stringToUTCDate(), isFinished: false)
         
         try! localRealm.write({
             localRealm.add(task)

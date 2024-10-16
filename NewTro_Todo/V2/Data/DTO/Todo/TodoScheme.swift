@@ -17,10 +17,11 @@ class Todo: Object, ObjectKeyIdentifiable {
     @Persisted var regDate = Date()
     @Persisted var stringDate: String
     @Persisted var isFinished: Bool
+    @Persisted var selectedDate: Date
     
     @Persisted(primaryKey: true) var objectID: ObjectId
     
-    convenience init(todo: String?, favorite: Bool, importance: Int, regDate: Date, stringDate: String, isFinished: Bool) {
+    convenience init(todo: String?, favorite: Bool, importance: Int, regDate: Date, stringDate: String, selectedDate: Date, isFinished: Bool) {
         self.init()
         self.todo = todo
         self.favorite = favorite
@@ -28,6 +29,7 @@ class Todo: Object, ObjectKeyIdentifiable {
         self.regDate = regDate
         self.stringDate = stringDate
         self.isFinished = isFinished
+        self.selectedDate = selectedDate
     }
 }
 
@@ -39,7 +41,7 @@ extension Todo {
             favorite: self.favorite,
             importance: self.importance,
             regDate: self.regDate,
-            stringDate: self.stringDate,
+            selectedDate: self.selectedDate,
             isFinished: self.isFinished
         )
     }

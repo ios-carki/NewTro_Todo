@@ -92,7 +92,7 @@ class TablePlusCell: UITableViewCell {
     @objc func plusButtonClicked() {
         let convertDate = dateFormatter.string(from: receivedNowDate)
 
-        let task = Todo(todo: "", favorite: false, importance: 0, regDate: receivedNowDate, stringDate: convertDate, isFinished: false)
+        let task = Todo(todo: "", favorite: false, importance: 0, regDate: receivedNowDate, stringDate: convertDate, selectedDate: convertDate.stringToUTCDate(), isFinished: false)
         
         try! localRealm.write({
             localRealm.add(task)

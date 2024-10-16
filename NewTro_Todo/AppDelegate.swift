@@ -25,19 +25,55 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let realmURL = container?.appendingPathComponent("default.realm")
         var config: Realm.Configuration!
 
-        // Checking the old realm config is exist
-        if FileManager.default.fileExists(atPath: defaultRealm.path) {
-            do {
-                _ = try FileManager.default.replaceItemAt(realmURL!, withItemAt: defaultRealm)
-               config = Realm.Configuration(fileURL: realmURL, schemaVersion: 1)
-            } catch {
-               print("Error info: \(error)")
+        // Define the new configuration with migration
+        config = Realm.Configuration(
+            // Set the new schema version. This must be greater than the previously used version.
+            // Specify the file URL for the Realm database
+            fileURL: realmURL,
+            schemaVersion: 2,
+            // Define the migration block
+            migrationBlock: { migration, oldSchemaVersion in
+                if oldSchemaVersion < 2 {
+                    // Perform migration for DiaryModel
+                    migration.enumerateObjects(ofType: Todo.className()) { oldObject, newObject in
+                        // 문자열을 Date로 변환
+                        if let stringDate = oldObject?["stringDate"] as? String {
+                            // DateFormatter로 String을 Date로 변환
+                            let formatter = DateFormatter()
+                            formatter.locale = Locale.current // POSIX 로케일 설정
+                            formatter.timeZone = TimeZone(abbreviation: "UTC")   // UTC 타임존 설정
+                            
+                            // 시도할 여러 가지 포맷
+                            let possibleFormats = [
+                                "MMM dd yyyy",         // "Oct 16 2024" 형식
+                                "yyyy년 MM월 dd일"     // "2024년 10월 16일" 형식
+                            ]
+                            // 가능한 포맷을 순회하며 날짜 변환 시도
+                            for format in possibleFormats {
+                                formatter.dateFormat = format
+                                if let date = formatter.date(from: stringDate) {
+                                    newObject?["selectedDate"] = date
+                                }
+                            }
+                        }
+                    }
+                }
             }
-        } else {
-             config = Realm.Configuration(fileURL: realmURL, schemaVersion: 1)
-        }
+            // Optionally, set other configuration options here
+            // e.g., encryptionKey, readOnly, etc.
+        )
 
+        // Set the new configuration as the default configuration
         Realm.Configuration.defaultConfiguration = config
+
+        do {
+            // Initialize Realm with the new configuration, triggering migration if needed
+            let realm = try Realm()
+            print("Realm initialized successfully with schema version \(config.schemaVersion)")
+        } catch {
+            // Handle initialization errors
+            print("Failed to initialize Realm: \(error.localizedDescription)")
+        }
         
         // Override point for customization after application launch.
         // iq키보드 spm -> 메이저 버전에 6.5.0

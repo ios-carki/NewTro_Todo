@@ -174,5 +174,4 @@ extension MainTableViewCell: UITextFieldDelegate {
         }
         WidgetCenter.shared.reloadAllTimelines()
     }
-    
 }
