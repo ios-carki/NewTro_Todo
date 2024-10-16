@@ -28,7 +28,7 @@ struct TodoListView: View {
                                 .overlay(
                                     VStack(spacing: 0) {
                                         CustomCalendarView(selectedDate: $viewModel.selectedDate, todoData: $viewModel.todoData, pageCurrent: $viewModel.currentMonth) {
-                                            viewModel.getAllTodoData()
+                                            //viewModel.getAllTodoData()
                                         }
                                         .background( GeometryReader { proxy in Color.clear.onAppear { headerHeight = proxy.size.height } } )
                                         .offset(y: headerHeight + screenGeometry.safeAreaInsets.top - offsetY)

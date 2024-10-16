@@ -14,7 +14,7 @@ final class TodoListViewModel: ObservableObject {
     @Published var todoData: [TodoDomain] = []
     
     //Calendar
-    @Published var selectedDate: Date = Date()
+    @Published var selectedDate: Date = Date() { didSet { getAllTodoData() } }
     @Published var currentMonth: Date = Date()
     
     func getAllTodoData() {
