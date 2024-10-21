@@ -14,7 +14,7 @@ class CalendarCell: FSCalendarCell {
     
     var backImageView = {
         let view = UIImageView()
-        view.contentMode = .scaleAspectFill
+        view.contentMode = .scaleAspectFit
         view.clipsToBounds = true
         return view
     }()
@@ -22,7 +22,6 @@ class CalendarCell: FSCalendarCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        // 날짜 텍스트가 디폴트로 약간 위로 올라가 있어서, 아예 레이아웃을 잡아준다
         self.titleLabel.snp.makeConstraints { make in
             make.center.equalTo(contentView)
         }
@@ -30,9 +29,8 @@ class CalendarCell: FSCalendarCell {
         contentView.insertSubview(backImageView, at: 0)
         backImageView.snp.makeConstraints { make in
             make.center.equalTo(contentView)
-            make.size.equalTo(24)
+            make.size.equalTo(40)
         }
-//        backImageView.layer.cornerRadius = minSize()/2
     }
     
     required init(coder aDecoder: NSCoder!) {

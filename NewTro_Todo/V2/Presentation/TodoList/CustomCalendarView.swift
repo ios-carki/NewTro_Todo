@@ -65,7 +65,6 @@ struct CustomCalendarView: UIViewRepresentable {
         
         view.appearance.titleFont = .mainFont(size: 17)
         view.appearance.titleWeekendColor = UIColor.red// 주말 요일 색
-        view.appearance.titleDefaultColor = UIColor.black //요일 색
         
         view.appearance.titlePlaceholderColor = UIColor(.white.opacity(0.4)) // 달에 유효하지 않은 날짜의 색 지정
         
@@ -110,7 +109,7 @@ struct CustomCalendarView: UIViewRepresentable {
         }
         
         func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
-            //            print("선택한 날짜: \(date.toKoreanDateString())")
+            print("선택한 날짜: \(date)")
             DispatchQueue.main.async {
                 self.parent.selectedDate = date
             }
@@ -118,71 +117,55 @@ struct CustomCalendarView: UIViewRepresentable {
             action()
         }
         
-        // 특정 날짜에 이미지 세팅
-        func calendar(_ calendar: FSCalendar, imageFor date: Date) -> UIImage? {
-            // 시, 분, 초를 0으로 변환하여 자정 시간으로 설정 (UTC 기준)
-            self.parent.allDate = self.parent.getAllTodoDateUseCase.execute()
+        func calendar(_ calendar: FSCalendar, titleFor date: Date) -> String? {
+            let calendar = Calendar.current
+            var components = calendar.dateComponents([.year, .month, .day], from: date)
+            components.timeZone = TimeZone(abbreviation: "UTC")
             
-            // UTC 기준으로 시, 분, 초를 0으로 변환하여 자정 시간으로 설정
-                    let calendar = Calendar.current
-                    if let timeZone = TimeZone(secondsFromGMT: 0) {
-                        var calendar = Calendar.current
-                        calendar.timeZone = timeZone
-                        
-                        // 선택된 날짜에서 년, 월, 일만 추출하고 자정으로 변환
-                        let components = calendar.dateComponents([.year, .month, .day], from: date)
-                        
-                        if let startOfDay = calendar.date(from: components) {
-                            // recordedData 배열에서 자정으로 설정한 날짜가 포함되어 있는지 확인
-                            if self.parent.allDate.contains(startOfDay) {
-                                return UIImage(systemName: "person") // 특정 날짜에 해당하는 이미지
-                            }
-                        }
-                    }
-                    
-                    return UIImage(systemName: "xmark") // 기본 이미지
+            guard let dateOnly = calendar.date(from: components) else {
+                return nil
+            }
+            
+            let allDate = self.parent.getAllTodoDateUseCase.execute()
+            
+            if allDate.contains(dateOnly) {
+                return ""
+            } else {
+                return nil
+            }
         }
+        
         // MARK: Todo. 특정 날짜에 이모지 띄우기
-        //        func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
-        //            guard let cell = calendar.dequeueReusableCell(withIdentifier: CalendarCell.description(), for: date, at: position) as? CalendarCell else { return FSCalendarCell() }
-        //
-        ////            guard let emojiString = self.parent.localRepository.getDiaryEmotionImage(date: date) else {
-        ////                return FSCalendarCell()
-        ////            }
-        //
-        //            if self.getDateEventArray().contains(date) {
-        //                cell.backImageView.image = UIImage(systemName: "person")
-        //            } else {
-        //                cell.backImageView.image = nil
-        //            }
-        //            cell.backImageView.alpha = 0.5
-        //
-        //            return cell
-        //        }
+        func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
+            guard let cell = calendar.dequeueReusableCell(withIdentifier: CalendarCell.description(), for: date, at: position) as? CalendarCell else { return FSCalendarCell() }
+            
+            let calendar = Calendar.current
+            var components = calendar.dateComponents([.year, .month, .day], from: date)
+            components.timeZone = TimeZone(abbreviation: "UTC")
+            
+            guard let dateOnly = calendar.date(from: components) else {
+                return FSCalendarCell()
+            }
+            
+            let allDate = self.parent.getAllTodoDateUseCase.execute()
+            
+            if allDate.contains(dateOnly) {
+                cell.backImageView.image = UIImage(named: "Coin")
+            } else {
+                cell.backImageView.image = nil
+            }
+            
+            return cell
+        }
         
         func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
             DispatchQueue.main.async {
                 self.parent.pageCurrent = calendar.currentPage
             }
         }
-        
-        private func getDateEventArray() -> [Date] {
-            var dateArray : [Date] = []
-            
-            //            let formatter = DateFormatter()
-            //            formatter.locale = Locale(identifier: "ko_KR")
-            //            formatter.dateFormat = "yyyy-MM-dd"
-            
-            self.parent.todoData.forEach { data in
-                //print("다이어리 데이트: ", date.selectedDate.convertFormat())
-                dateArray.append(data.selectedDate)
-            }
-            
-            print("함수 내 데이트: ", dateArray)
-            
-            return dateArray
-        }
     }
+    
+    
 }
 
 private extension String {
@@ -233,6 +216,30 @@ private extension Date {
             return self // 포함된다면 해당 Date 리턴
         } else {
             return Date()
+        }
+    }
+    
+    func convertLocal() -> Date {
+        let formatter = DateFormatter()
+        
+        // Set the date format and UTC timezone for the input
+        formatter.timeZone = TimeZone(abbreviation: "UTC") // Input is in UTC
+        
+        // Convert the date to a string in UTC format
+        let dateString = formatter.string(from: self)
+        
+        // Now set the formatter to the system's local timezone
+        formatter.timeZone = TimeZone.current  // Local device timezone
+        
+        // Convert the date string back to a Date object in the local timezone
+        return formatter.date(from: dateString) ?? Date()
+    }
+}
+
+extension UIImage {
+    func resized(to size: CGSize) -> UIImage {
+        return UIGraphicsImageRenderer(size: size).image { _ in
+            draw(in: CGRect(origin: .zero, size: size))
         }
     }
 }

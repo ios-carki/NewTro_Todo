@@ -52,7 +52,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                             for format in possibleFormats {
                                 formatter.dateFormat = format
                                 if let date = formatter.date(from: stringDate) {
-                                    newObject?["selectedDate"] = date
+                                    // UTC 기준으로 시, 분, 초를 0으로 변환하여 자정 시간으로 설정
+                                    let calendar = Calendar.current
+                                    var components = calendar.dateComponents([.year, .month, .day], from: date)
+                                    components.timeZone = TimeZone(abbreviation: "UTC")
+                                    
+                                    // 자정으로 설정된 Date
+                                    if let dateOnly = calendar.date(from: components) {
+                                        newObject?["selectedDate"] = dateOnly
+                                    }
                                 }
                             }
                         }
