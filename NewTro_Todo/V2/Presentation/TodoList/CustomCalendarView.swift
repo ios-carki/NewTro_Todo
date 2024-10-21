@@ -14,7 +14,6 @@ import RealmSwift
 
 struct CustomCalendarView: UIViewRepresentable {
     @Injected(\.getAllTodoDateUseCase) private var getAllTodoDateUseCase
-    @State private var allDate: [Date] = []
     
     @Binding var selectedDate: Date
     @Binding var todoData: [TodoDomain]
@@ -37,10 +36,8 @@ struct CustomCalendarView: UIViewRepresentable {
         view.scrollDirection = .horizontal // 사용자 스크롤 방향
         
         view.appearance.borderRadius = 0.5 //선택된 날짜, or 오늘날짜 원에서 사각형으로 변경
-        
         view.appearance.borderDefaultColor = UIColor(.clear)
-        view.appearance.borderSelectionColor = UIColor.black //선택된 날짜 컬러
-        
+        view.appearance.borderSelectionColor = UIColor(NewtroColor.success) //선택된 날짜 컬러
         
         // MARK: 맨 위 "년도 월" 표기 설정
         view.appearance.headerTitleColor = .black
@@ -53,13 +50,13 @@ struct CustomCalendarView: UIViewRepresentable {
         //view.firstWeekday = 2 // 월요일부터 시작
         
         // MARK: 날짜별 설정
-        view.appearance.todaySelectionColor = UIColor.white //오늘날짜 선택시 색상
-        view.appearance.titleTodayColor = UIColor.black // 오늘 날짜 글자 색
-        view.appearance.todayColor = UIColor.black // 오늘 요일 배경 색
+        view.appearance.todaySelectionColor = UIColor(NewtroColor.success) //오늘날짜 선택시 색상
+        view.appearance.titleTodayColor = UIColor(NewtroColor.success) // 오늘 날짜 글자 색
+        view.appearance.todayColor = nil // 오늘 요일 배경 색
         
         
-        view.appearance.selectionColor = UIColor.red //선택 일자 색
-        view.appearance.titleSelectionColor = UIColor.white // 선택한 날짜 글자색
+        view.appearance.selectionColor = nil //선택 일자 색
+        view.appearance.titleSelectionColor = .white // 선택한 날짜 글자색
         
         view.appearance.titlePlaceholderColor = .gray // 지난달 혹은 이후 달에 있는 날짜들 색상
         
@@ -163,9 +160,17 @@ struct CustomCalendarView: UIViewRepresentable {
                 self.parent.pageCurrent = calendar.currentPage
             }
         }
+        
+        func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
+            // 유효하지 않은 날짜 클릭 시 동작 (ex. 다른 달의 날짜인 경우)
+            if monthPosition != .current {
+                // 선택한 날짜가 속한 달로 이동
+                calendar.setCurrentPage(date, animated: true)
+            }
+            
+            return true // 유효한 날짜일 경우 선택 허용
+        }
     }
-    
-    
 }
 
 private extension String {
