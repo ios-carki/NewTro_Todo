@@ -16,7 +16,7 @@ struct CustomCalendarView: UIViewRepresentable {
     @Injected(\.getAllTodoDateUseCase) private var getAllTodoDateUseCase
     
     @Binding var selectedDate: Date
-    @Binding var todoData: [TodoDomain]
+    @Binding var allTodoDateData: [Date]
     @Binding var pageCurrent: Date
     var action: () -> ()
     
@@ -36,7 +36,7 @@ struct CustomCalendarView: UIViewRepresentable {
         view.scrollDirection = .horizontal // 사용자 스크롤 방향
         
         view.appearance.borderRadius = 0.5 //선택된 날짜, or 오늘날짜 원에서 사각형으로 변경
-        view.appearance.borderDefaultColor = UIColor(.clear)
+        view.appearance.borderDefaultColor = UIColor.clear
         view.appearance.borderSelectionColor = UIColor(NewtroColor.success) //선택된 날짜 컬러
         
         // MARK: 맨 위 "년도 월" 표기 설정
@@ -50,10 +50,9 @@ struct CustomCalendarView: UIViewRepresentable {
         //view.firstWeekday = 2 // 월요일부터 시작
         
         // MARK: 날짜별 설정
-        view.appearance.todaySelectionColor = UIColor(NewtroColor.success) //오늘날짜 선택시 색상
-        view.appearance.titleTodayColor = UIColor(NewtroColor.success) // 오늘 날짜 글자 색
-        view.appearance.todayColor = nil // 오늘 요일 배경 색
-        
+        view.appearance.todaySelectionColor = UIColor.clear //오늘날짜 선택시 색상
+        view.appearance.titleTodayColor = UIColor.white // 오늘 날짜 글자 색
+        view.appearance.todayColor = UIColor.clear // 오늘 요일 배경 색
         
         view.appearance.selectionColor = nil //선택 일자 색
         view.appearance.titleSelectionColor = .white // 선택한 날짜 글자색
@@ -123,9 +122,7 @@ struct CustomCalendarView: UIViewRepresentable {
                 return nil
             }
             
-            let allDate = self.parent.getAllTodoDateUseCase.execute()
-            
-            if allDate.contains(dateOnly) {
+            if self.parent.allTodoDateData.contains(dateOnly) {
                 return ""
             } else {
                 return nil
@@ -144,9 +141,7 @@ struct CustomCalendarView: UIViewRepresentable {
                 return FSCalendarCell()
             }
             
-            let allDate = self.parent.getAllTodoDateUseCase.execute()
-            
-            if allDate.contains(dateOnly) {
+            if self.parent.allTodoDateData.contains(dateOnly) {
                 cell.backImageView.image = UIImage(named: "Coin")
             } else {
                 cell.backImageView.image = nil

@@ -10,7 +10,7 @@ import SwiftUI
 struct TodoListCell: View {
     let data: TodoDomain
     
-    let clearButton: () -> ()
+    let action: () -> ()
     
     var body: some View {
         VStack {
@@ -18,11 +18,11 @@ struct TodoListCell: View {
                 HStack(spacing: 8) {
                     Circle()
                         .foregroundColor(NewtroColor.white)
-                        .frame(width: 30, height: 30)
+                        .frame(width: 15, height: 15)
                         .overlay(
                             Circle()
                                 .foregroundColor(data.isFinished ? NewtroColor.success : NewtroColor.fail)
-                                .frame(width: 25, height: 25)
+                                .frame(width: 10, height: 10)
                         )
                     VStack(spacing: 4) {
                         if let todoText = data.todo {
@@ -38,6 +38,9 @@ struct TodoListCell: View {
             }
         }
         .cornerRadius(12)
+        .onTapGesture {
+            action()
+        }
     }
 }
 

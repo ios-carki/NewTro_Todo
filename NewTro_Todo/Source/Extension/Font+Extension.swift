@@ -57,4 +57,7 @@ extension Font {
     static func galCondensed15() -> Font {
         return .custom(Galmuri.galmuriCondensed.value, size: 15)
     }
+    static func galCondensed12() -> Font {
+        return .custom(Galmuri.galmuriCondensed.value, size: 12)
+    }
 }

@@ -35,4 +35,29 @@ final class LocalTodoDataSourceImpl: LocalTodoDataSource {
             .objects(Todo.self)
             .map{ $0.toTodoDomain().selectedDate }
     }
+    
+    func deleteTodo(id: String) {
+        do {
+            let realm = try Realm()
+            
+            guard let todoID = try? ObjectId(string: id) else {
+                print("Invalid objectID")
+                return
+            }
+            
+            guard let todo = realm.objects(Todo.self).filter("objectID == %@", todoID).first else {
+                print("Diary not found")
+                return
+            }
+            
+            try realm.write {
+                realm.delete(todo)
+            }
+            
+            print("Deleted diary successfully.")
+            
+        } catch {
+            print("Error deleting diary: \(error.localizedDescription)")
+        }
+    }
 }

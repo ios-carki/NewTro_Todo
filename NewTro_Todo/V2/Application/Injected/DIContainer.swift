@@ -32,4 +32,7 @@ extension Container {
     var getAllTodoDateUseCase: Factory<GetAllTodoDateUseCase> {
         Factory(self) { GetAllTodoDateUseCase(repository: self.TodoRepository()) }
     }
+    var deleteTodoUseCase: Factory<DeleteTodoUseCase> {
+        Factory(self) { DeleteTodoUseCase(repository: self.TodoRepository()) }
+    }
 }

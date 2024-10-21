@@ -27,7 +27,7 @@ struct TodoListView: View {
                                 .frame(height: headerHeight)
                                 .overlay(
                                     VStack(spacing: 0) {
-                                        CustomCalendarView(selectedDate: $viewModel.selectedDate, todoData: $viewModel.todoData, pageCurrent: $viewModel.currentMonth) {
+                                        CustomCalendarView(selectedDate: $viewModel.selectedDate, allTodoDateData: $viewModel.allTodoDateData, pageCurrent: $viewModel.currentMonth) {
                                             //viewModel.getAllTodoData()
                                         }
                                         .background( GeometryReader { proxy in Color.clear.onAppear { headerHeight = proxy.size.height } } )
@@ -130,7 +130,7 @@ struct TodoListView: View {
                                     VStack {
                                         ForEach(viewModel.todoData, id: \.id) { todo in
                                             TodoListCell(data: todo) {
-                                                
+                                                self.navigation?.pushViewController(UIHostingController(rootView: TodoDetailView(navigation: navigation, viewModel: TodoDetailViewModel(todo: todo))), animated: true)
                                             }
                                             .padding(.horizontal, 16)
                                         }
@@ -159,6 +159,12 @@ struct TodoListView: View {
             self.offsetY = self.initOffsetY ?? 0.0
             
             viewModel.getPickedDateTodoData()
+            viewModel.reloadDateData()
+        }
+        .onDisappear {
+            print("캘린더 Deinit 실행")
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name("ReloadCalendar"), object: nil)
+            NotificationCenter.default.removeObserver(self, name: NSNotification.Name("goToToday"), object: nil)
         }
     }
 }

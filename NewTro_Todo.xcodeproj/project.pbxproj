@@ -26,6 +26,10 @@
 		5A46EE362CBE499800F59624 /* Todo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE142CBE2A2500F59624 /* Todo.swift */; };
 		5AA26DD42CBF87250000D909 /* GetAllTodoDateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA26DD32CBF87250000D909 /* GetAllTodoDateUseCase.swift */; };
 		5AA26DE02CC5E86D0000D909 /* BounceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA26DDF2CC5E86D0000D909 /* BounceButton.swift */; };
+		5AA26DE22CC5EC1E0000D909 /* TodoDetailPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA26DE12CC5EC1E0000D909 /* TodoDetailPopupView.swift */; };
+		5AA26DE42CC614350000D909 /* DeleteTodoUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA26DE32CC614350000D909 /* DeleteTodoUseCase.swift */; };
+		5AA26DE62CC61F470000D909 /* TodoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA26DE52CC61F470000D909 /* TodoDetailView.swift */; };
+		5AA26DE82CC620610000D909 /* TodoDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA26DE72CC620610000D909 /* TodoDetailViewModel.swift */; };
 		5AF195A82CBF4060006D29CE /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 5AF195A72CBF4060006D29CE /* Realm */; };
 		5AF195AA2CBF4060006D29CE /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 5AF195A92CBF4060006D29CE /* RealmSwift */; };
 		5AF195AC2CBF40EA006D29CE /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 5AF195AB2CBF40EA006D29CE /* Realm */; };
@@ -153,6 +157,10 @@
 		5A46EE342CBE424700F59624 /* NewtroColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewtroColor.swift; sourceTree = "<group>"; };
 		5AA26DD32CBF87250000D909 /* GetAllTodoDateUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllTodoDateUseCase.swift; sourceTree = "<group>"; };
 		5AA26DDF2CC5E86D0000D909 /* BounceButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BounceButton.swift; sourceTree = "<group>"; };
+		5AA26DE12CC5EC1E0000D909 /* TodoDetailPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailPopupView.swift; sourceTree = "<group>"; };
+		5AA26DE32CC614350000D909 /* DeleteTodoUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteTodoUseCase.swift; sourceTree = "<group>"; };
+		5AA26DE52CC61F470000D909 /* TodoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailView.swift; sourceTree = "<group>"; };
+		5AA26DE72CC620610000D909 /* TodoDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailViewModel.swift; sourceTree = "<group>"; };
 		C306AFA528E9934300D4BB6B /* String+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extension.swift"; sourceTree = "<group>"; };
 		C30F7CA82940C6190050C045 /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		C30F7CAB2940C7380050C045 /* SplashViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
@@ -309,6 +317,9 @@
 				5A46EE2C2CBE2FBE00F59624 /* TodoListCell.swift */,
 				5A37E26F2CBE50B30046FFBD /* CustomCalendarView.swift */,
 				5A37E2712CBE51740046FFBD /* CalendarCell.swift */,
+				5AA26DE12CC5EC1E0000D909 /* TodoDetailPopupView.swift */,
+				5AA26DE52CC61F470000D909 /* TodoDetailView.swift */,
+				5AA26DE72CC620610000D909 /* TodoDetailViewModel.swift */,
 			);
 			path = TodoList;
 			sourceTree = "<group>";
@@ -318,6 +329,7 @@
 			children = (
 				5A46EE0A2CBE297E00F59624 /* GetPickedDateTodoUseCase.swift */,
 				5AA26DD32CBF87250000D909 /* GetAllTodoDateUseCase.swift */,
+				5AA26DE32CC614350000D909 /* DeleteTodoUseCase.swift */,
 			);
 			path = UseCase;
 			sourceTree = "<group>";
@@ -945,6 +957,7 @@
 				C349702A2A18FF1D00112A7F /* MainViewSU.swift in Sources */,
 				C32FF08428C7240F00949E05 /* ThirdView.swift in Sources */,
 				C34A89D428EC6B4600F8BA4B /* ImportanceViewCell.swift in Sources */,
+				5AA26DE22CC5EC1E0000D909 /* TodoDetailPopupView.swift in Sources */,
 				C34644BD28DF19810071EF13 /* File+Extension.swift in Sources */,
 				C3D6455528D3503600850505 /* TodoScheme.swift in Sources */,
 				C34970502A190B9F00112A7F /* CustomButton.swift in Sources */,
@@ -954,6 +967,7 @@
 				C32FF08028C7240300949E05 /* FirstView.swift in Sources */,
 				C34970532A190BE200112A7F /* Constant.swift in Sources */,
 				5A46EE082CBE296C00F59624 /* TodoListViewModel.swift in Sources */,
+				5AA26DE62CC61F470000D909 /* TodoDetailView.swift in Sources */,
 				5AA26DD42CBF87250000D909 /* GetAllTodoDateUseCase.swift in Sources */,
 				C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */,
 				C3D6454D28D1D59200850505 /* UIView+Extension.swift in Sources */,
@@ -961,7 +975,9 @@
 				5A46EE062CBE290500F59624 /* TodoListView.swift in Sources */,
 				5A37E2702CBE50B30046FFBD /* CustomCalendarView.swift in Sources */,
 				C349704B2A1908CC00112A7F /* WidgetImagePreviewViewModel.swift in Sources */,
+				5AA26DE42CC614350000D909 /* DeleteTodoUseCase.swift in Sources */,
 				C3AF2FFC28D9D5F800AF1A60 /* CustomMenuPopupViewController.swift in Sources */,
+				5AA26DE82CC620610000D909 /* TodoDetailViewModel.swift in Sources */,
 				C332699429704AB2009B1E1C /* NewtroWidget.intentdefinition in Sources */,
 				5A46EE2B2CBE2E6000F59624 /* DIContainer.swift in Sources */,
 				C32FF0A728CF149F00949E05 /* SettingViewController.swift in Sources */,

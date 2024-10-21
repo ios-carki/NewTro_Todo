@@ -21,4 +21,8 @@ final class TodoRepositoryImpl: TodoRepository {
     func getAllTodoDate() -> [Date] {
         self.dataBase.getAllTodoDate()
     }
+    
+    func deleteTodo(id: String) {
+        self.dataBase.deleteTodo(id: id)
+    }
 }

@@ -24,10 +24,13 @@ class NewtroColor {
     static let gray200: Color = Color(hex: "#DBDBDB")
     static let gray100: Color = Color(hex: "#F5F5F5")
     
-    
     static let fail: Color = Color(hex: "#DE2E2E")
     static let pending = Color(hex: "#FFC700")
     static let success: Color = Color(hex: "#27AA74")
+    
+    static let retroGray: Color = Color(hex: "#808080")
+    static let retroBlue: Color = Color(hex: "#0000AA")
+    static let retroRed: Color = Color(hex: "#AA0000")
     
     //MARK: rgb
     static let mainBackgroundColor: Color = Color(r: 109, g: 218, b: 242)
