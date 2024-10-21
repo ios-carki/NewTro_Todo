@@ -161,3 +161,8 @@
 "tasks[receivedTag!].favorite_ON" = "...[ ON ]";
 "tasks[receivedTag!].favorite_OFF" = "...[ OFF ]";
 //MARK: -- CustomNotePopupViewController
+
+//MARK: V2
+// Calendar View
+"calendar_Month_Text" = "YYYY년 MMM ";
+"calendar_Selected_Date_Text" = "YYYY년 MMM dd일 EEEE";

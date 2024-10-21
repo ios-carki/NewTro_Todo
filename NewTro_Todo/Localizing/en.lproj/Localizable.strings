@@ -162,3 +162,8 @@ See all";
 "NoteSaveButton_SetTitle" = "Save";
 //MARK: -- CustomMenuPopupView
 
+
+//MARK: V2
+// Calendar View
+"calendar_Month_Text" = "MMM YYYY";
+"calendar_Selected_Date_Text" = "EEE, MMM dd YYYY";

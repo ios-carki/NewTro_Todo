@@ -34,17 +34,17 @@ extension Date {
         return "\(year ?? 0)년 \(mounth ?? 0)월 \(day ?? 0)일 \(weekday ?? 0)요일"
     }
     
-    func calendarSelectedDateFormat() -> String {
+    func calendarTodayDateFormat() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "dateFormat".localized()
+        dateFormatter.dateFormat = "calendar_Month_Text".localized()
         
         let convertDate = dateFormatter.string(from: self)
         return convertDate
     }
     
-    func calendarTodayDateFormat() -> String {
+    func calendarSelectedDateFormat() -> String {
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "showDateFormat".localized()
+        dateFormatter.dateFormat = "calendar_Selected_Date_Text".localized()
         
         let convertDate = dateFormatter.string(from: self)
         return convertDate

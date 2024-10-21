@@ -13,31 +13,44 @@ struct TodoListCell: View {
     let action: () -> ()
     
     var body: some View {
-        VStack {
-            VStack(spacing: 8) {
-                HStack(spacing: 8) {
+        HStack(spacing: 8) {
+            Circle()
+                .foregroundColor(NewtroColor.white)
+                .frame(width: 15, height: 15)
+                .overlay(
                     Circle()
-                        .foregroundColor(NewtroColor.white)
-                        .frame(width: 15, height: 15)
-                        .overlay(
-                            Circle()
-                                .foregroundColor(data.isFinished ? NewtroColor.success : NewtroColor.fail)
-                                .frame(width: 10, height: 10)
-                        )
-                    VStack(spacing: 4) {
-                        if let todoText = data.todo {
-                            Text(todoText)
-                                .foregroundColor(NewtroColor.black)
-                        } else {
-                            Text("투두를 작성하지 않았습니다.")
-                                .foregroundColor(NewtroColor.gray200)
-                        }
+                        .foregroundColor(data.isFinished ? NewtroColor.success : NewtroColor.fail)
+                        .frame(width: 10, height: 10)
+                )
+            VStack(spacing: 8) {
+                if let todoText = data.todo {
+                    if todoText == "" {
+                        Text("투두를 작성하지 않았습니다.")
+                            .font(.galCondensed15())
+                            .foregroundColor(NewtroColor.gray200)
+                    } else {
+                        Text(todoText)
+                            .font(.galCondensed15())
+                            .foregroundColor(NewtroColor.black)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                } else {
+                    Text("투두를 작성하지 않았습니다.")
+                        .font(.galCondensed15())
+                        .foregroundColor(NewtroColor.gray200)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            
+            Image(systemName: "chevron.right")
+                .foregroundColor(NewtroColor.black)
         }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 8)
+        .background(NewtroColor.mainBackgroundColor)
         .cornerRadius(12)
+        .shadow(color: .black.opacity(0.2), radius: 15, x: 0.0, y: 0.0)
         .onTapGesture {
             action()
         }
@@ -45,17 +58,20 @@ struct TodoListCell: View {
 }
 
 #Preview {
-    TodoListCell(
-        data: TodoDomain(
-            id: "",
-            todo: "afdsiasdfasdfasdfasdfasdfasdfasdfasdfjasdfijonasdfioasdfojasdfafdsiasdfasdfasdfasdfasdfasdfasdfasdfjasdfijonasdfioasdfojasdf",
-            favorite: false,
-            importance: 0,
-            regDate: Date(),
-            selectedDate: Date(),
-            isFinished: true
-        )
-    ) {
-        
+    ZStack {
+        NewtroColor.mainBackgroundColor.ignoresSafeArea()
+        TodoListCell(
+            data: TodoDomain(
+                id: "",
+                todo: "afdsiasdfasdfasdfasdfasdfasdfasdfasdfjasdfijonasdfioasdfojasdfafdsiasdfasdfasdfasdfasdfasdfasdfasdfjasdfijonasdfioasdfojasdf",
+                favorite: false,
+                importance: 0,
+                regDate: Date(),
+                selectedDate: Date(),
+                isFinished: true
+            )
+        ) {
+            
+        }
     }
 }
