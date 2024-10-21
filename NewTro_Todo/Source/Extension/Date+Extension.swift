@@ -33,4 +33,20 @@ extension Date {
 //        return "\(day ?? 0)/\(mounth ?? 0)/\(year ?? 0)"
         return "\(year ?? 0)년 \(mounth ?? 0)월 \(day ?? 0)일 \(weekday ?? 0)요일"
     }
+    
+    func calendarSelectedDateFormat() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "dateFormat".localized()
+        
+        let convertDate = dateFormatter.string(from: self)
+        return convertDate
+    }
+    
+    func calendarTodayDateFormat() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "showDateFormat".localized()
+        
+        let convertDate = dateFormatter.string(from: self)
+        return convertDate
+    }
 }

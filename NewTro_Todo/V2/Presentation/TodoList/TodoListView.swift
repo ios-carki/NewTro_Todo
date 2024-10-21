@@ -43,7 +43,7 @@ struct TodoListView: View {
                                 )
                             
                             ZStack {
-                                Color.green.cornerRadius(35).shadow(color: .black.opacity(0.2), radius: 15, x: 0.0, y: 0.0)
+                                NewtroColor.mainBackgroundColor.cornerRadius(35).shadow(color: .black.opacity(0.2), radius: 15, x: 0.0, y: 0.0)
                                     .padding(.bottom, -50).ignoresSafeArea()
                                 
                                 VStack {
@@ -68,8 +68,9 @@ struct TodoListView: View {
                                             print("이전날짜 ")
                                         }
                                         
-                                        Text("\(viewModel.currentMonth)")
-                                            .foregroundColor(.white)
+                                        Text("\(viewModel.currentMonth.calendarTodayDateFormat())")
+                                            .font(.galCondensed18())
+                                            .foregroundColor(NewtroColor.white)
                                             .underline(color: .black)
                                             .frame(maxWidth: .infinity, alignment: .center)
                                             .onTapGesture {
@@ -103,7 +104,8 @@ struct TodoListView: View {
                                     .padding(.horizontal, 16)
                                     
                                     HStack {
-                                        Text("선택 날짜: \(viewModel.selectedDate)")
+                                        Text("선택 날짜: \(viewModel.selectedDate.calendarSelectedDateFormat())")
+                                            .font(.galCondensed15())
                                             .foregroundColor(.black)
                                         Spacer()
                                         Button(action: {
@@ -115,8 +117,10 @@ struct TodoListView: View {
                                             }
                                         }, label: {
                                             Text("오늘로 이동")
+                                                .font(.galCondensed15())
                                                 .foregroundColor(.black)
                                         })
+                                        .buttonStyle(BounceButton())
                                     }
                                     .frame(maxWidth: .infinity, alignment: .trailing)
                                     .padding(.horizontal, 16)
