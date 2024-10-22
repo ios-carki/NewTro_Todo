@@ -25,13 +25,6 @@ final class MainView: BaseView {
         return view
     }()
     
-    let coinButton: UIButton = {
-        let view = UIButton()
-        view.setImage(UIImage(named: "Coin"), for: .normal)
-        view.imageView?.contentMode = .scaleToFill
-        return view
-    }()
-    
     let coinCountLabel: UILabel = {
         let view = UILabel()
         
@@ -183,7 +176,7 @@ final class MainView: BaseView {
             self.btnStackView.addArrangedSubview($0)
         }
         
-        [bottomView, mainBackgroundImage, coinImage, coinButton, coinCountLabel, heartImage1, heartImage2, heartImage3].forEach {
+        [bottomView, mainBackgroundImage, coinImage, coinCountLabel, heartImage1, heartImage2, heartImage3].forEach {
             self.addSubview($0)
         }
         self.backgroundColor = .mainBackGroundColor
@@ -202,15 +195,9 @@ final class MainView: BaseView {
             make.height.width.equalTo(50)
         }
         
-        coinButton.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(5)
-            make.leading.equalTo(coinImage).offset(5)
-            make.height.width.equalTo(50)
-        }
-        
         coinCountLabel.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide).offset(19)
-            make.leading.equalTo(coinButton.snp.trailing)
+            make.leading.equalTo(coinImage.snp.trailing)
         }
         
         heartImage1.snp.makeConstraints { make in

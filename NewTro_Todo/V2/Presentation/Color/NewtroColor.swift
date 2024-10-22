@@ -34,4 +34,14 @@ class NewtroColor {
     
     //MARK: rgb
     static let mainBackgroundColor: Color = Color(r: 109, g: 218, b: 242)
+    
+    //MARK: V2
+    static let primaryColor = Color(hex: "#A78CD3")
+    static let secondaryColor = Color(hex: "#C3B1E1")
+    static let myWhite = Color(hex: "#FFFFFF")
+    static let myBlack = Color(hex: "#000000")
+    static let myBlue: Color = Color(hex: "#008CC3")
+    static let myGray = Color(hex: "#F5F5F5")
+    static let myGray200: Color = Color(hex: "#DBDBDB")
+    static let myGray600: Color = Color(hex: "#757575")
 }

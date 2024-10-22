@@ -90,9 +90,6 @@ final class MainViewController: BaseViewController {
         mainView.leftButton.addTarget(self, action: #selector(yesterdayFunc), for: .touchUpInside)
         mainView.rightButton.addTarget(self, action: #selector(tomorrowFunc), for: .touchUpInside)
         
-        //TODO: 테스트용
-        mainView.coinButton.addTarget(self, action: #selector(coinButton), for: .touchUpInside)
-        
         //셀 삭제 노티
         //클로저로도 가능
         NotificationCenter.default.addObserver(
@@ -329,26 +326,27 @@ final class MainViewController: BaseViewController {
     }
     
     @objc func calendarButtonClicked() {
-        let vc = CalendarViewController()
-        let nav = UINavigationController(rootViewController: vc)
-        
-        dateFormatter.dateFormat = "dateFormat".localized()
-        nowDateFormatter.dateFormat = "showDateFormat".localized()
-        //방법1
-        vc.dateCompletionHandler = {
-            self.pickedNowDate = vc.selectedDate
-            let convertDate = self.dateFormatter.string(from: vc.selectedDate)
-            
-            //MARK: 보여지는 날짜 형식 변경
-            let showDate = self.nowDateFormatter.string(from: vc.selectedDate)
-            
-            print("전달된 데이트: ", convertDate)
-            self.mainView.datePickBtn.setTitle(showDate, for: .normal)
-            
-            self.fetchRealm()
-            self.mainView.tableView.reloadData()
-        }
-        self.present(nav, animated: true)
+//        let vc = CalendarViewController()
+//        let nav = UINavigationController(rootViewController: vc)
+        self.navigationController?.pushViewController(UIHostingController(rootView: TodoListView(navigation: self.navigationController)), animated: true)
+//
+//        dateFormatter.dateFormat = "dateFormat".localized()
+//        nowDateFormatter.dateFormat = "showDateFormat".localized()
+//        //방법1
+//        vc.dateCompletionHandler = {
+//            self.pickedNowDate = vc.selectedDate
+//            let convertDate = self.dateFormatter.string(from: vc.selectedDate)
+//            
+//            //MARK: 보여지는 날짜 형식 변경
+//            let showDate = self.nowDateFormatter.string(from: vc.selectedDate)
+//            
+//            print("전달된 데이트: ", convertDate)
+//            self.mainView.datePickBtn.setTitle(showDate, for: .normal)
+//            
+//            self.fetchRealm()
+//            self.mainView.tableView.reloadData()
+//        }
+//        self.present(nav, animated: true)
     }
     
     @objc func menuButtonClicked() {

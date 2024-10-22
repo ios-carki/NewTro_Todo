@@ -31,8 +31,19 @@ struct TodoDetailView: View {
                 Spacer()
                 
                 Button(action: {
-                    viewModel.deleteTodo()
-                    self.navigation?.popViewController(animated: true)
+                    let vc = UIHostingController(
+                        rootView: DeleteTodoPopupView(mainTitleText: "삭제하기", subTitleText: "삭제 버튼을 누르면 삭제됩니다.", deleteAction: {
+                            viewModel.deleteTodo()
+                            self.navigation?.dismiss(animated: false)
+                            self.navigation?.popViewController(animated: true)
+                        }, dismissAction: {
+                            self.navigation?.dismiss(animated: false)
+                        })
+                    )
+                    
+                    vc.view.backgroundColor = UIColor.clear
+                    vc.modalPresentationStyle = .overCurrentContext
+                    self.navigation?.present(vc, animated: false)
                 }, label: {
                     Text("DeleteButton_SetTitle".localized())
                         .font(.galCondensed20())

@@ -134,10 +134,22 @@ struct TodoListView: View {
                                             }
                                             .padding(.horizontal, 16)
                                         }
+                                        
+                                        Color.clear
+                                            .frame(height: 90)
+                                            .frame(maxWidth: .infinity)
+                                        
                                         Spacer()
+                                        
+                                        Image("CalendarViewBackGround")
+                                            .resizable()
+                                            .frame(height: 90)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.horizontal, 0)
+                                            .padding(.bottom, -40)
                                     }
                                 }
-                                .frame(minHeight: 700)
+                                .frame(maxWidth: .infinity, minHeight: screenGeometry.size.height, alignment: .bottom)
                                 .padding(.top)
                             }
                             .overlay(

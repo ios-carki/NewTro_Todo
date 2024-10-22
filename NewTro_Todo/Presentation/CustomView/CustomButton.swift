@@ -20,7 +20,7 @@ struct CustomButton: View {
         VStack{
             Text(title ?? "").font(.custom("Galmuri11-Condensed", size: 18))
             .frame(maxWidth: .infinity, alignment: .center)
-            .frame(height: 54)
+            .frame(height: 44)
             .opacity(disabled?.wrappedValue ?? false ? 0.5 : 1)
             .background(
                 (disabled?.wrappedValue == true) ? Color.gray : backgroundColor
@@ -30,7 +30,7 @@ struct CustomButton: View {
             .overlay(RoundedRectangle(cornerRadius: 5.0)
                 .stroke(
                     disabled?.wrappedValue ?? false ? .gray : borderColor ?? .white
-                ).frame(height:55)
+                ).frame(height: 44)
             )
             .font(.custom("Galmuri11-Condensed", size: 18))
             .contentShape(Rectangle())
