@@ -54,69 +54,20 @@ struct TodoListView: View {
                                         .background(Color(red: 0.52, green: 0.52, blue: 0.52))
                                         .cornerRadius(30)
                                     
-                                    
-                                    HStack(spacing: 12) {
-                                        VStack {
-                                            Image(systemName: "chevron.left")
-                                                .foregroundColor(.black)
-                                        }
-                                        .padding(.all, 4)
-                                        .background(Color.clear)
-                                        .frame(width: 25, height: 25)
-                                        .onTapGesture {
-                                            viewModel.currentMonth = Calendar.current.date(byAdding: .month, value: -1, to: viewModel.currentMonth)!
-                                            print("이전날짜 ")
-                                        }
-                                        
-                                        Text("\(viewModel.currentMonth.calendarTodayDateFormat())")
-                                            .font(.galCondensed18())
-                                            .foregroundColor(NewtroColor.white)
-                                            .underline(color: .black)
-                                            .frame(maxWidth: .infinity, alignment: .center)
-                                            .onTapGesture {
-//                                                let vc = UIHostingController(
-//                                                    rootView: SelectCalendarMonthView(navigation: navigation, selectedDate: viewModel.selectedDate, returnDate: { date in
-//                                                        self.navigation?.dismiss(animated: true)
-//                                                        viewModel.currentMonth = date
-//                                                    }, emptyViewClickAction: {
-//                                                        self.navigation?.dismiss(animated: true)
-//                                                    })
-//                                                )
-//                                                
-//                                                vc.view.backgroundColor = UIColor.clear
-//                                                vc.modalPresentationStyle = .overCurrentContext
-//                                                self.navigation?.present(vc, animated: true)
-                                            }
-                                        
-                                        VStack {
-                                            Image(systemName: "chevron.right")
-                                                .foregroundColor(.black)
-                                        }
-                                        .padding(.all, 4)
-                                        .background(Color.clear)
-                                        .frame(width: 25, height: 25)
-                                        .onTapGesture {
-                                            print("다음날짜 ")
-                                            viewModel.currentMonth = Calendar.current.date(byAdding: .month, value: 1, to: viewModel.currentMonth)!
-                                        }
-                                    }
-                                    .padding(.top, 8)
-                                    .padding(.horizontal, 16)
-                                    
                                     HStack {
-                                        Text("선택 날짜: \(viewModel.selectedDate.calendarSelectedDateFormat())")
+                                        Text("\("view_selected_date_text".localized())\(viewModel.selectedDate.calendarSelectedDateFormat())")
                                             .font(.galCondensed15())
                                             .foregroundColor(.black)
                                         Spacer()
                                         Button(action: {
-                                            print("오늘로 이동")
+                                            print("view_go_today_button_text".localized())
                                             viewModel.currentMonth = Date()
                                             viewModel.selectedDate = Date()
                                             DispatchQueue.main.async {
                                                 NotificationCenter.default.post(name: NSNotification.Name("goToToday"), object: nil)
                                             }
                                         }, label: {
-                                            Text("오늘로 이동")
+                                            Text("view_go_today_button_text".localized())
                                                 .font(.galCondensed15())
                                                 .foregroundColor(.black)
                                         })
@@ -178,6 +129,83 @@ struct TodoListView: View {
             NotificationCenter.default.removeObserver(self, name: NSNotification.Name("ReloadCalendar"), object: nil)
             NotificationCenter.default.removeObserver(self, name: NSNotification.Name("goToToday"), object: nil)
         }
+        .toolbar {
+            ToolbarItem(placement: .principal) {
+                navigationToolBar()
+            }
+        }
+        .navigationBarItems(
+            trailing: navigationTrailingItem()
+        )
+    }
+    
+    @ViewBuilder
+    private func navigationTrailingItem() -> some View {
+        HStack(spacing: 16) {
+            HStack(spacing: 10) {
+                Image(systemName: "calendar.badge.clock")
+//                    .resizable()
+//                    .frame(width: 20, height: 20, alignment: .trailing)
+                    .foregroundColor(.black)
+            }
+            .onTapGesture {
+                let vc = UIHostingController(
+                    rootView: SelectCalendarMonthView(navigation: navigation, selectedDate: viewModel.selectedDate, returnDate: { date in
+                        self.navigation?.dismiss(animated: true)
+                        viewModel.currentMonth = date
+                    }, emptyViewClickAction: {
+                        self.navigation?.dismiss(animated: true)
+                    })
+                )
+                
+                vc.view.backgroundColor = UIColor.clear
+                vc.modalPresentationStyle = .overCurrentContext
+                self.navigation?.present(vc, animated: true)
+            }
+        }
+        .padding(.vertical, 10)
+        .frame(height: 40, alignment: .center)
+    }
+    
+    @ViewBuilder
+    private func navigationToolBar() -> some View {
+        HStack(alignment: .center, spacing: 8) {
+            VStack {
+                Image(systemName: "arrowtriangle.left.fill")
+                    .foregroundColor(.black)
+            }
+            .padding(.all, 4)
+            .background(Color.clear)
+            .frame(width: 25, height: 25)
+            .onTapGesture {
+                viewModel.currentMonth = Calendar.current.date(byAdding: .month, value: -1, to: viewModel.currentMonth)!
+                print("이전날짜 ")
+            }
+            
+            Button {
+                //
+            } label: {
+                Text("\(viewModel.currentMonth.calendarTodayDateFormat())")
+                    .font(.galCondensed18())
+                    .foregroundColor(NewtroColor.white)
+                    .padding(.horizontal, 4)
+            }
+            .disabled(true)
+            
+            VStack {
+                Image(systemName: "arrowtriangle.right.fill")
+                    .foregroundColor(.black)
+            }
+            .padding(.all, 4)
+            .background(Color.clear)
+            .frame(width: 25, height: 25)
+            .onTapGesture {
+                print("다음날짜 ")
+                viewModel.currentMonth = Calendar.current.date(byAdding: .month, value: 1, to: viewModel.currentMonth)!
+            }
+        }
+        .padding(.vertical, 10)
+        .frame(height: 40, alignment: .center)
     }
 }
 

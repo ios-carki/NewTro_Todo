@@ -8,6 +8,16 @@
 import Foundation
 
 extension Date {
+    func year() -> Int {
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year], from: self)
+        
+        guard let data = components.year else {
+            return 0
+        }
+        
+        return data
+    }
     /// Returns the amount of days from another date
     func days() -> Int {
         return Calendar.current.dateComponents([.day], from: self, to: Date()).day ?? 0
@@ -48,5 +58,13 @@ extension Date {
         
         let convertDate = dateFormatter.string(from: self)
         return convertDate
+    }
+    
+    //TODO: 현지화
+    func remainOnlyYearString() -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "select_month_popup_year_text".localized()
+        dateFormatter.timeZone = TimeZone.current
+        return dateFormatter.string(from: self)
     }
 }

@@ -37,7 +37,7 @@ struct DeleteTodoPopupView: View {
                 }
                 
                 HStack(spacing: 0) {
-                    Text("삭제")
+                    Text("popup_delete_button_delete_text".localized())
                         .font(.galCondensed18())
                         .padding(.vertical, 8)
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -47,7 +47,7 @@ struct DeleteTodoPopupView: View {
                             deleteAction()
                         }
                     
-                    Text("취소")
+                    Text("popup_delete_button_cancel_text".localized())
                         .font(.galCondensed18())
                         .padding(.vertical, 8)
                         .frame(maxWidth: .infinity, alignment: .center)

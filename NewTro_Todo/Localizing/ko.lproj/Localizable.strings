@@ -52,6 +52,11 @@
 "todoStatus_Done" = "완료";
 "todoStatus" = "완료 / 미완료";
 
+//Check
+"main_todo_menu_text" = "투두 완료 / 미루기";
+"main_todo_clear_text" = "완료";
+"main_todo_delay_text" = "미루기";
+
 //Func_navigationSetting
 "navigationBar_Title" = "메인";
 
@@ -166,3 +171,32 @@
 // Calendar View
 "calendar_Month_Text" = "YYYY년 MMM ";
 "calendar_Selected_Date_Text" = "YYYY년 MMM dd일 EEEE";
+
+"view_selected_date_text" = "선택날짜: ";
+"view_go_today_button_text" = "오늘로 이동";
+
+"select_month_popup_year_text" = "yyyy년";
+
+// Detail
+"detail_importance_text" = "중요도";
+"detail_favorite_text" = "즐겨찾기";
+"detail_registered_date_text" = "등록날짜";
+"detail_is_completed_text" = "완료 / 미완료";
+
+"detail_delete_button_text" = "[ 삭제 ]";
+
+"popup_delete_title_text" = "삭제하기";
+"popup_delete_main_text" = "삭제 버튼을 누르면 삭제됩니다.";
+"popup_delete_button_delete_text" = "삭제";
+"popup_delete_button_cancel_text" = "취소";
+
+// Detail Text
+"detail_importance_high" = "높음";
+"detail_importance_medium" = "중간";
+"detail_importance_low" = "낮음";
+
+"detail_favorite_true" = "등록 됨";
+"detail_favorite_false" = "등록되지 않음";
+
+"detail_completed_true" = "완료된 투두";
+"detail_completed_false" = "미완료";

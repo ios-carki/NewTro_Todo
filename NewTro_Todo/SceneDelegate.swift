@@ -15,15 +15,41 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
         guard let scene = (scene as? UIWindowScene) else { return }
+        
+        // MARK: Navigation bar appearance
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithOpaqueBackground()
+        navigationBarAppearance.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor : UIColor.black
+        ]
+        navigationBarAppearance.backgroundColor = UIColor(NewtroColor.mainBackgroundColor)
+        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
+        UINavigationBar.appearance().compactAppearance = navigationBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
+        
         window = UIWindow(windowScene: scene)
         
         //first 초기 == false
         if UserDefaults.standard.bool(forKey: "oldUser") { // == true
             let vc = MainViewController()
             let nav = UINavigationController(rootViewController: vc)
+            
+            vc.navigationController?.navigationBar.tintColor = UIColor(NewtroColor.mainBackgroundColor)
+            vc.navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.black]
+            vc.navigationItem.titleView?.tintColor = .white
+            //viewController.navigationController?.navigationBar.scrollEdgeAppearance?.backgroundColor = UIColor(.mainBackgroundColor)
+            vc.navigationController?.navigationBar.shadowImage = UIImage()
+            
+            let backButton = BackBarButtonItem(title: "", style: .plain, target: nil, action: nil)
+            backButton.tintColor = .black
+            vc.navigationItem.backBarButtonItem = backButton
+            
+            if var textAttributes = vc.navigationController?.navigationBar.titleTextAttributes {
+                textAttributes[NSAttributedString.Key.foregroundColor] = UIColor.black
+                vc.navigationController?.navigationBar.titleTextAttributes = textAttributes
+            }
 
             window?.rootViewController = nav
-
         } else {
             let vc = PageViewController()
 

@@ -51,6 +51,11 @@
 "todoStatus_Done" = "Complete";
 "todoStatus" = "Complete / Incomplete";
 
+//Check
+"main_todo_menu_text" = "clear / delay Todo";
+"main_todo_clear_text" = "clear";
+"main_todo_delay_text" = "delay";
+
 //Func_navigationSetting
 "navigationBar_Title" = "Main";
 
@@ -167,3 +172,33 @@ See all";
 // Calendar View
 "calendar_Month_Text" = "MMM YYYY";
 "calendar_Selected_Date_Text" = "EEE, MMM dd YYYY";
+
+"view_selected_date_text" = "Selected Date: ";
+"view_go_today_button_text" = "Today";
+
+"select_month_popup_year_text" = "yyyy";
+
+// Detail
+"detail_importance_text" = "Importance";
+"detail_favorite_text" = "Favorites";
+"detail_registered_date_text" = "Registerd Date";
+"detail_is_completed_text" = "Completed / Incomplete";
+
+"detail_delete_button_text" = "[ Delete ]";
+
+"popup_delete_title_text" = "Delete";
+"popup_delete_main_text" = "If you press the delete button, it will be deleted.";
+"popup_delete_button_delete_text" = "delete";
+"popup_delete_button_cancel_text" = "cancel";
+
+// Detail Text
+"detail_importance_high" = "High";
+"detail_importance_medium" = "Medium";
+"detail_importance_low" = "Low";
+
+"detail_favorite_true" = "Yes";
+"detail_favorite_false" = "No";
+
+"detail_completed_true" = "Completed";
+"detail_completed_false" = "InCompleted";
+

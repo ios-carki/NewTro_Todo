@@ -474,7 +474,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             todoStatus = "todoStatus_Done".localized()
         }
         
-        let complete = UIAction(title: todoStatus ?? "todoStatus".localized()) { action in
+        let complete = UIAction(title: "main_todo_clear_text".localized()) { action in
             if self.tasks[cell.completeTodoBtn.tag].isFinished == false {
                 try! self.localRealm.write {
                     self.tasks[cell.completeTodoBtn.tag].isFinished = true
@@ -490,7 +490,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         
         //미루기 여기서 문제
         //cell.isDelayed =
-        let postpone = UIAction(title: "다음날로 미루기") { action in
+        let postpone = UIAction(title: "main_todo_delay_text".localized()) { action in
             
             if self.tasks[cell.completeTodoBtn.tag].isFinished {
                 self.view.makeToast("already_completed_todo_toastMessage".localized(), duration: 1.0, position: .top, title: nil, image: nil, style: .init(), completion: nil)
@@ -504,7 +504,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         //미루기 보관함 -> 보관함 X -> 간단하게 다음날로 업데이트 시켜주기
-        cell.completeTodoBtn.menu = UIMenu(title: "투두 완료, 미루기", image: nil, identifier: nil, options: .displayInline, children: [complete, postpone])
+        cell.completeTodoBtn.menu = UIMenu(title: "main_todo_menu_text".localized(), image: nil, identifier: nil, options: .displayInline, children: [complete, postpone])
         
         cell.todoTextField.addTarget(self, action: #selector(makeToastMessageFunc), for: .editingChanged)
         

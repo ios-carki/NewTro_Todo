@@ -22,17 +22,17 @@ struct TodoDetailView: View {
                 }
                 
                 VStack(spacing: 16) {
-                    informationView(text: "중요도", contents: "\(viewModel.todo.importance)")
-                    informationView(text: "즐겨찾기", contents: "\(viewModel.todo.favorite)")
-                    informationView(text: "등록날짜", contents: "\(viewModel.todo.regDate.calendarTodayDateFormat())")
-                    informationView(text: "완료 / 미완료", contents: viewModel.todo.isFinished ? "완료" : "미완료")
+                    informationView(text: "detail_importance_text".localized(), contents: "\(viewModel.todo.importance)")
+                    informationView(text: "detail_favorite_text".localized(), contents: "\(viewModel.todo.favorite)")
+                    informationView(text: "detail_registered_date_text".localized(), contents: "\(viewModel.todo.regDate.calendarSelectedDateFormat())")
+                    informationView(text: "detail_is_completed_text".localized(), contents: viewModel.todo.isFinishedText)
                 }
                 
                 Spacer()
                 
                 Button(action: {
                     let vc = UIHostingController(
-                        rootView: DeleteTodoPopupView(mainTitleText: "삭제하기", subTitleText: "삭제 버튼을 누르면 삭제됩니다.", deleteAction: {
+                        rootView: DeleteTodoPopupView(mainTitleText: "popup_delete_title_text".localized(), subTitleText: "popup_delete_main_text".localized(), deleteAction: {
                             viewModel.deleteTodo()
                             self.navigation?.dismiss(animated: false)
                             self.navigation?.popViewController(animated: true)
@@ -45,7 +45,7 @@ struct TodoDetailView: View {
                     vc.modalPresentationStyle = .overCurrentContext
                     self.navigation?.present(vc, animated: false)
                 }, label: {
-                    Text("DeleteButton_SetTitle".localized())
+                    Text("detail_delete_button_text".localized())
                         .font(.galCondensed20())
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity, alignment: .center)
@@ -94,5 +94,17 @@ struct TodoDetailView: View {
 
 #Preview {
     TodoDetailView(
-        viewModel: TodoDetailViewModel(todo: TodoDomain(id: "", todo: "Todo Data 변함Todo Data 변함Todo Data 변함Todo Data 변함Todo Data 변함Todo Data 변함Todo Data 변함", favorite: false, importance: 0, regDate: Date(), selectedDate: Date(), isFinished: false)))
+        viewModel: TodoDetailViewModel(
+            todo: TodoDomain(
+                id: "",
+                todo: "Todo Data 변함Todo Data 변함Todo Data 변함Todo Data 변함Todo Data 변함Todo Data 변함Todo Data 변함",
+                favorite: "",
+                importance: "",
+                regDate: Date(),
+                selectedDate: Date(),
+                isFinishedText: "",
+                isFinishedColor: .red
+            )
+        )
+    )
 }

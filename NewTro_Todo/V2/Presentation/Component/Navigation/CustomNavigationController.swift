@@ -29,16 +29,17 @@ class CustomNavigationController: UINavigationController,UINavigationControllerD
             textAttributes[NSAttributedString.Key.foregroundColor] = UIColor.black
             viewController.navigationController?.navigationBar.titleTextAttributes = textAttributes
         }
-         // MARK: Navigation bar appearance
-         let navigationBarAppearance = UINavigationBarAppearance()
-         navigationBarAppearance.configureWithOpaqueBackground()
-         navigationBarAppearance.titleTextAttributes = [
-             NSAttributedString.Key.foregroundColor : UIColor.black
-         ]
+        
+        // MARK: Navigation bar appearance
+        let navigationBarAppearance = UINavigationBarAppearance()
+        navigationBarAppearance.configureWithOpaqueBackground()
+        navigationBarAppearance.titleTextAttributes = [
+            NSAttributedString.Key.foregroundColor : UIColor.black
+        ]
         navigationBarAppearance.backgroundColor = UIColor(NewtroColor.mainBackgroundColor)
-         UINavigationBar.appearance().standardAppearance = navigationBarAppearance
-         UINavigationBar.appearance().compactAppearance = navigationBarAppearance
-         UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
+        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
+        UINavigationBar.appearance().compactAppearance = navigationBarAppearance
+        UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
     }
     
 }

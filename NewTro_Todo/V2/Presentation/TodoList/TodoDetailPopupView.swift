@@ -36,7 +36,7 @@ struct TodoDetailPopupView: View {
                     informationView(text: "중요도", contents: "\(todo.importance)")
                     informationView(text: "즐겨찾기", contents: "\(todo.favorite)")
                     informationView(text: "등록날짜", contents: "\(todo.regDate.calendarTodayDateFormat())")
-                    informationView(text: "완료 / 미완료", contents: todo.isFinished ? "완료" : "미완료")
+                    informationView(text: "완료 / 미완료", contents: todo.isFinishedText)
                     
                     VStack(spacing: 4) {
                         HStack {
@@ -110,11 +110,12 @@ struct TodoDetailPopupView: View {
         todo: TodoDomain(
             id: "",
             todo: "밥먹기밥먹기밥먹기밥먹기밥먹기밥먹기밥먹기밥먹기밥먹기밥먹기밥먹기밥먹기",
-            favorite: false,
-            importance: 0,
+            favorite: "",
+            importance: "",
             regDate: Date(),
             selectedDate: Date(),
-            isFinished: false
+            isFinishedText: "",
+            isFinishedColor: .red
         )) {
             
         } deleteActon: {

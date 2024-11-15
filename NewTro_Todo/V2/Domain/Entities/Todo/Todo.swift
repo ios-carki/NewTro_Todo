@@ -5,14 +5,15 @@
 //  Created by OWEN on 10/15/24.
 //
 
-import Foundation
+import SwiftUI
 
 struct TodoDomain {
     let id: String?
     let todo: String?
-    let favorite: Bool
-    let importance: Int
+    let favorite: String
+    let importance: String
     let regDate: Date
     let selectedDate: Date
-    let isFinished: Bool
+    let isFinishedText: String
+    let isFinishedColor: Color
 }

@@ -35,14 +35,20 @@ class Todo: Object, ObjectKeyIdentifiable {
 
 extension Todo {
     func toTodoDomain() -> TodoDomain {
-        TodoDomain(
+        let importanceText = Info.Importance(id: self.importance)?.text ?? "Unknown"
+        let favoriteText = Info.Favorite(value: self.favorite).text
+        let completedText = Info.Completed(value: self.isFinished).text
+        let completedColor = Info.Completed(value: self.isFinished).color
+        
+        return TodoDomain(
             id: self.objectID.stringValue,
             todo: self.todo,
-            favorite: self.favorite,
-            importance: self.importance,
+            favorite: favoriteText,
+            importance: importanceText,
             regDate: self.regDate,
             selectedDate: self.selectedDate,
-            isFinished: self.isFinished
+            isFinishedText: completedText,
+            isFinishedColor: completedColor
         )
     }
 }

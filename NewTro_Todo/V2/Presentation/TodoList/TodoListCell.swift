@@ -19,7 +19,7 @@ struct TodoListCell: View {
                 .frame(width: 15, height: 15)
                 .overlay(
                     Circle()
-                        .foregroundColor(data.isFinished ? NewtroColor.success : NewtroColor.fail)
+                        .foregroundColor(data.isFinishedColor)
                         .frame(width: 10, height: 10)
                 )
             VStack(spacing: 8) {
@@ -64,11 +64,12 @@ struct TodoListCell: View {
             data: TodoDomain(
                 id: "",
                 todo: "afdsiasdfasdfasdfasdfasdfasdfasdfasdfjasdfijonasdfioasdfojasdfafdsiasdfasdfasdfasdfasdfasdfasdfasdfjasdfijonasdfioasdfojasdf",
-                favorite: false,
-                importance: 0,
+                favorite: "",
+                importance: "",
                 regDate: Date(),
                 selectedDate: Date(),
-                isFinished: true
+                isFinishedText: "",
+                isFinishedColor: .red
             )
         ) {
             
