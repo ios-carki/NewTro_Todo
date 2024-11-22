@@ -1,10 +1,11 @@
+<!--
 <p align="center">
     <img width="979" alt="스크린샷 2023-01-13 오후 11 02 34" src="https://user-images.githubusercontent.com/44957712/212338109-d176b9b1-b891-4211-b2a1-363042c1288b.png">
     
 </p>  
-
 ***
 
+-->
 <p align="center">
 <img width="1137" alt="스크린샷 2022-12-17 오후 1 15 34" src="https://user-images.githubusercontent.com/44957712/208224375-06213fc4-b612-4650-a4e6-f3f9843fbc51.png">
 </p>
@@ -27,7 +28,7 @@ Framework - SwiftUI / Foundation / UIKit / UserNotification / WidgetKit
 Library - Realm / Firebase / IQKeyboardManager / SnapKit / Toast / FSCalendar 
 
 
-
+<!--
 # 📲 App Image (v_ 1.2.4)
 <p align="center">
     <img width="886" alt="스크린샷 2022-12-17 오후 1 18 58" src="https://user-images.githubusercontent.com/44957712/208224482-16cbcdb1-1750-44fb-b9f1-1861dcfad3e6.png">
@@ -51,7 +52,7 @@ Library - Realm / Firebase / IQKeyboardManager / SnapKit / Toast / FSCalendar
 </p>
 
 ***
-
+-->
 # 🔴 Trouble Shooting
 ### 이슈
 
@@ -73,7 +74,7 @@ dateFormatter locale.current로 사용자가 선택한 디바이스 지역속성
     
 
 ---
-
+<!--
 # 🤔 프로젝트 회고
 
 앱 출시 고려사항 (HIG, 리젝사유)에 대한 경험과 학습 내용을 프로젝트에 구현하는 과정을 통해 러닝커브가 급격하게 상승했습니다.
@@ -217,3 +218,4 @@ MainViewController -> func tableView(_ tableView: UITableView, moveRowAt sourceI
 ### 2022 09 28
 
 <img width="855" alt="스크린샷 2022-09-28 오후 5 50 51" src="https://user-images.githubusercontent.com/44957712/192734630-ce719c0e-6e80-4f37-a768-c6ba46f6ad66.png">
+-->
