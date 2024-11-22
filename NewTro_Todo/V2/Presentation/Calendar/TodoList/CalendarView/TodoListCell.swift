@@ -23,23 +23,34 @@ struct TodoListCell: View {
                         .frame(width: 10, height: 10)
                 )
             VStack(spacing: 8) {
-                if let todoText = data.todo {
-                    if todoText == "" {
-                        Text("투두를 작성하지 않았습니다.")
-                            .font(.galCondensed15())
-                            .foregroundColor(NewtroColor.gray200)
-                    } else {
-                        Text(todoText)
-                            .font(.galCondensed15())
-                            .foregroundColor(NewtroColor.black)
-                            .lineLimit(1)
-                            .truncationMode(.tail)
-                    }
-                } else {
-                    Text("투두를 작성하지 않았습니다.")
+                if data.todo == "" {
+                    Text("calendar_no_todo_text".localized())
                         .font(.galCondensed15())
                         .foregroundColor(NewtroColor.gray200)
+                } else {
+                    Text(data.todo)
+                        .font(.galCondensed15())
+                        .foregroundColor(NewtroColor.black)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
+//                if let todoText = data.todo {
+//                    if todoText == "" {
+//                        Text("calendar_no_todo_text".localized())
+//                            .font(.galCondensed15())
+//                            .foregroundColor(NewtroColor.gray200)
+//                    } else {
+//                        Text(todoText)
+//                            .font(.galCondensed15())
+//                            .foregroundColor(NewtroColor.black)
+//                            .lineLimit(1)
+//                            .truncationMode(.tail)
+//                    }
+//                } else {
+//                    Text("calendar_no_todo_text".localized())
+//                        .font(.galCondensed15())
+//                        .foregroundColor(NewtroColor.gray200)
+//                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             

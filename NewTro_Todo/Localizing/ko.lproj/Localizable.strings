@@ -177,6 +177,8 @@
 
 "select_month_popup_year_text" = "yyyy년";
 
+"calendar_no_todo_text" = "투두를 작성하지 않았습니다.";
+
 // Detail
 "detail_importance_text" = "중요도";
 "detail_favorite_text" = "즐겨찾기";
@@ -184,11 +186,15 @@
 "detail_is_completed_text" = "완료 / 미완료";
 
 "detail_delete_button_text" = "[ 삭제 ]";
+"detail_edit_button_text" = "[ 편집 ]";
+"detail_edit_save_button_text" = "[ 저장 ]";
 
 "popup_delete_title_text" = "삭제하기";
 "popup_delete_main_text" = "삭제 버튼을 누르면 삭제됩니다.";
 "popup_delete_button_delete_text" = "삭제";
 "popup_delete_button_cancel_text" = "취소";
+
+"keyboard_toolbar_delete_button_text" = "지우기";
 
 // Detail Text
 "detail_importance_high" = "높음";

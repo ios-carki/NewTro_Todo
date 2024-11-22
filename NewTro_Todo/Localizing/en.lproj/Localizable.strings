@@ -178,6 +178,8 @@ See all";
 
 "select_month_popup_year_text" = "yyyy";
 
+"calendar_no_todo_text" = "Didn't write a todo.";
+
 // Detail
 "detail_importance_text" = "Importance";
 "detail_favorite_text" = "Favorites";
@@ -185,11 +187,15 @@ See all";
 "detail_is_completed_text" = "Completed / Incomplete";
 
 "detail_delete_button_text" = "[ Delete ]";
+"detail_edit_button_text" = "[ Edit ]";
+"detail_edit_save_button_text" = "[ Save ]";
 
 "popup_delete_title_text" = "Delete";
 "popup_delete_main_text" = "If you press the delete button, it will be deleted.";
 "popup_delete_button_delete_text" = "delete";
 "popup_delete_button_cancel_text" = "cancel";
+
+"keyboard_toolbar_delete_button_text" = "erase";
 
 // Detail Text
 "detail_importance_high" = "High";

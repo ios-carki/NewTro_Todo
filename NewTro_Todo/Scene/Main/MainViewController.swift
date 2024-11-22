@@ -328,6 +328,7 @@ final class MainViewController: BaseViewController {
     @objc func calendarButtonClicked() {
 //        let vc = CalendarViewController()
 //        let nav = UINavigationController(rootViewController: vc)
+        //self.navigationController?.pushViewController(UIHostingController(rootView: MainV2View(navigation: self.navigationController)), animated: true)
         self.navigationController?.pushViewController(UIHostingController(rootView: TodoListView(navigation: self.navigationController)), animated: true)
 //
 //        dateFormatter.dateFormat = "dateFormat".localized()

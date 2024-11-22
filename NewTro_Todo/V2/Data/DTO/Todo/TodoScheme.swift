@@ -42,7 +42,7 @@ extension Todo {
         
         return TodoDomain(
             id: self.objectID.stringValue,
-            todo: self.todo,
+            todo: self.todo ?? "",
             favorite: favoriteText,
             importance: importanceText,
             regDate: self.regDate,

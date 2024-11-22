@@ -9,9 +9,15 @@ import Foundation
 
 import Factory
 
+enum DetailViewMode {
+    case read
+    case edit
+}
+
 final class TodoDetailViewModel: ObservableObject {
     @Injected(\.deleteTodoUseCase) private var deleteTodoUseCase
-    let todo: TodoDomain
+    @Published var viewMode: DetailViewMode = .read
+    @Published var todo: TodoDomain
     
     init(todo: TodoDomain) {
         self.todo = todo

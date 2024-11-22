@@ -32,6 +32,11 @@
 		5A7307B22CE5EA9A008B820A /* TodoScheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3D6455428D3503600850505 /* TodoScheme.swift */; };
 		5A7307B32CE5EC9A008B820A /* NewtroColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE342CBE424700F59624 /* NewtroColor.swift */; };
 		5A7307B42CE5ECA2008B820A /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A46EE302CBE41D000F59624 /* Color+Extension.swift */; };
+		5A8CE55E2CEABE2A00EB8AD5 /* MainV2View.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8CE55D2CEABE2A00EB8AD5 /* MainV2View.swift */; };
+		5A8CE5602CEABE3200EB8AD5 /* MainV2ViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8CE55F2CEABE3200EB8AD5 /* MainV2ViewModel.swift */; };
+		5A8CE5622CEAC13A00EB8AD5 /* CustomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8CE5612CEAC13900EB8AD5 /* CustomTextView.swift */; };
+		5A8CE5642CEAC23900EB8AD5 /* UIApplication+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8CE5632CEAC23900EB8AD5 /* UIApplication+Extension.swift */; };
+		5A8CE5662CEAC27D00EB8AD5 /* TodoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A8CE5652CEAC27D00EB8AD5 /* TodoView.swift */; };
 		5AA26DD42CBF87250000D909 /* GetAllTodoDateUseCase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA26DD32CBF87250000D909 /* GetAllTodoDateUseCase.swift */; };
 		5AA26DE02CC5E86D0000D909 /* BounceButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA26DDF2CC5E86D0000D909 /* BounceButton.swift */; };
 		5AA26DE22CC5EC1E0000D909 /* TodoDetailPopupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA26DE12CC5EC1E0000D909 /* TodoDetailPopupView.swift */; };
@@ -167,6 +172,11 @@
 		5A7307A32CE5B6F7008B820A /* SelectCalendarMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCalendarMonthView.swift; sourceTree = "<group>"; };
 		5A7307A52CE5B719008B820A /* SelectCalendarMonthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectCalendarMonthViewModel.swift; sourceTree = "<group>"; };
 		5A7307AA2CE5E59A008B820A /* Importance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Importance.swift; sourceTree = "<group>"; };
+		5A8CE55D2CEABE2A00EB8AD5 /* MainV2View.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainV2View.swift; sourceTree = "<group>"; };
+		5A8CE55F2CEABE3200EB8AD5 /* MainV2ViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainV2ViewModel.swift; sourceTree = "<group>"; };
+		5A8CE5612CEAC13900EB8AD5 /* CustomTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTextView.swift; sourceTree = "<group>"; };
+		5A8CE5632CEAC23900EB8AD5 /* UIApplication+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIApplication+Extension.swift"; sourceTree = "<group>"; };
+		5A8CE5652CEAC27D00EB8AD5 /* TodoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoView.swift; sourceTree = "<group>"; };
 		5AA26DD32CBF87250000D909 /* GetAllTodoDateUseCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetAllTodoDateUseCase.swift; sourceTree = "<group>"; };
 		5AA26DDF2CC5E86D0000D909 /* BounceButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BounceButton.swift; sourceTree = "<group>"; };
 		5AA26DE12CC5EC1E0000D909 /* TodoDetailPopupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TodoDetailPopupView.swift; sourceTree = "<group>"; };
@@ -315,10 +325,11 @@
 		5A2254182CBE1E2C00E515D0 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				5A8CE55C2CEABE1500EB8AD5 /* Calendar */,
+				5A8CE55B2CEABE0F00EB8AD5 /* Main */,
 				5AA26DDD2CC5E8600000D909 /* Component */,
 				5A46EE332CBE422E00F59624 /* Color */,
 				5A46EE2E2CBE31BB00F59624 /* Extensions */,
-				5A46EE042CBE28FB00F59624 /* TodoList */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -326,17 +337,8 @@
 		5A46EE042CBE28FB00F59624 /* TodoList */ = {
 			isa = PBXGroup;
 			children = (
-				5A46EE052CBE290500F59624 /* TodoListView.swift */,
-				5A46EE072CBE296C00F59624 /* TodoListViewModel.swift */,
-				5A46EE2C2CBE2FBE00F59624 /* TodoListCell.swift */,
-				5A37E26F2CBE50B30046FFBD /* CustomCalendarView.swift */,
-				5A37E2712CBE51740046FFBD /* CalendarCell.swift */,
-				5AA26DE12CC5EC1E0000D909 /* TodoDetailPopupView.swift */,
-				5AA26DE52CC61F470000D909 /* TodoDetailView.swift */,
-				5AA26DE72CC620610000D909 /* TodoDetailViewModel.swift */,
-				5AA26DEC2CC797300000D909 /* DeleteTodoPopupView.swift */,
-				5A7307A32CE5B6F7008B820A /* SelectCalendarMonthView.swift */,
-				5A7307A52CE5B719008B820A /* SelectCalendarMonthViewModel.swift */,
+				5A8CE5682CEACD7E00EB8AD5 /* DetailView */,
+				5A8CE5672CEACD7000EB8AD5 /* CalendarView */,
 			);
 			path = TodoList;
 			sourceTree = "<group>";
@@ -453,6 +455,7 @@
 			isa = PBXGroup;
 			children = (
 				5A46EE302CBE41D000F59624 /* Color+Extension.swift */,
+				5A8CE5632CEAC23900EB8AD5 /* UIApplication+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -463,6 +466,50 @@
 				5A46EE342CBE424700F59624 /* NewtroColor.swift */,
 			);
 			path = Color;
+			sourceTree = "<group>";
+		};
+		5A8CE55B2CEABE0F00EB8AD5 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				5A8CE55D2CEABE2A00EB8AD5 /* MainV2View.swift */,
+				5A8CE55F2CEABE3200EB8AD5 /* MainV2ViewModel.swift */,
+				5A8CE5612CEAC13900EB8AD5 /* CustomTextView.swift */,
+				5A8CE5652CEAC27D00EB8AD5 /* TodoView.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		5A8CE55C2CEABE1500EB8AD5 /* Calendar */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE042CBE28FB00F59624 /* TodoList */,
+			);
+			path = Calendar;
+			sourceTree = "<group>";
+		};
+		5A8CE5672CEACD7000EB8AD5 /* CalendarView */ = {
+			isa = PBXGroup;
+			children = (
+				5A46EE052CBE290500F59624 /* TodoListView.swift */,
+				5A46EE072CBE296C00F59624 /* TodoListViewModel.swift */,
+				5A46EE2C2CBE2FBE00F59624 /* TodoListCell.swift */,
+				5A37E26F2CBE50B30046FFBD /* CustomCalendarView.swift */,
+				5A37E2712CBE51740046FFBD /* CalendarCell.swift */,
+				5A7307A32CE5B6F7008B820A /* SelectCalendarMonthView.swift */,
+				5A7307A52CE5B719008B820A /* SelectCalendarMonthViewModel.swift */,
+			);
+			path = CalendarView;
+			sourceTree = "<group>";
+		};
+		5A8CE5682CEACD7E00EB8AD5 /* DetailView */ = {
+			isa = PBXGroup;
+			children = (
+				5AA26DE12CC5EC1E0000D909 /* TodoDetailPopupView.swift */,
+				5AA26DE52CC61F470000D909 /* TodoDetailView.swift */,
+				5AA26DE72CC620610000D909 /* TodoDetailViewModel.swift */,
+				5AA26DEC2CC797300000D909 /* DeleteTodoPopupView.swift */,
+			);
+			path = DetailView;
 			sourceTree = "<group>";
 		};
 		5AA26DDD2CC5E8600000D909 /* Component */ = {
@@ -971,6 +1018,7 @@
 				C32FF07C28C719F100949E05 /* SecondViewController.swift in Sources */,
 				C34970262A18FDFE00112A7F /* OnboardingView.swift in Sources */,
 				C32FF05828C70C8800949E05 /* AppDelegate.swift in Sources */,
+				5A8CE5622CEAC13A00EB8AD5 /* CustomTextView.swift in Sources */,
 				5A46EE312CBE41D000F59624 /* Color+Extension.swift in Sources */,
 				C32FF09B28CAB71D00949E05 /* MainViewController.swift in Sources */,
 				5A46EE272CBE2D3A00F59624 /* LocalTodoDataSourceImpl.swift in Sources */,
@@ -979,12 +1027,14 @@
 				C32FF08228C7240900949E05 /* SecondView.swift in Sources */,
 				5AA26DE02CC5E86D0000D909 /* BounceButton.swift in Sources */,
 				5A46EE1C2CBE2AF900F59624 /* MemoTable.swift in Sources */,
+				5A8CE5602CEABE3200EB8AD5 /* MainV2ViewModel.swift in Sources */,
 				5A7307A62CE5B719008B820A /* SelectCalendarMonthViewModel.swift in Sources */,
 				5A46EE0B2CBE297E00F59624 /* GetPickedDateTodoUseCase.swift in Sources */,
 				C32FF0A528CF149600949E05 /* SettingView.swift in Sources */,
 				C30F7CA92940C6190050C045 /* SplashView.swift in Sources */,
 				C32FF07E28C719FA00949E05 /* ThirdViewController.swift in Sources */,
 				C306AFA628E9934300D4BB6B /* String+Extension.swift in Sources */,
+				5A8CE5662CEAC27D00EB8AD5 /* TodoView.swift in Sources */,
 				C349702A2A18FF1D00112A7F /* MainViewSU.swift in Sources */,
 				C32FF08428C7240F00949E05 /* ThirdView.swift in Sources */,
 				C34A89D428EC6B4600F8BA4B /* ImportanceViewCell.swift in Sources */,
@@ -996,10 +1046,12 @@
 				C34644E628E2F1200071EF13 /* CustomNotePopupView.swift in Sources */,
 				C319235929715BE200DB669D /* RealmManager.swift in Sources */,
 				C32FF08028C7240300949E05 /* FirstView.swift in Sources */,
+				5A8CE5642CEAC23900EB8AD5 /* UIApplication+Extension.swift in Sources */,
 				C34970532A190BE200112A7F /* Constant.swift in Sources */,
 				5A46EE082CBE296C00F59624 /* TodoListViewModel.swift in Sources */,
 				5AA26DE62CC61F470000D909 /* TodoDetailView.swift in Sources */,
 				5AA26DD42CBF87250000D909 /* GetAllTodoDateUseCase.swift in Sources */,
+				5A8CE55E2CEABE2A00EB8AD5 /* MainV2View.swift in Sources */,
 				C32FF05A28C70C8800949E05 /* SceneDelegate.swift in Sources */,
 				C3D6454D28D1D59200850505 /* UIView+Extension.swift in Sources */,
 				C34644E428E2F0EA0071EF13 /* CustomNotePopupViewController.swift in Sources */,

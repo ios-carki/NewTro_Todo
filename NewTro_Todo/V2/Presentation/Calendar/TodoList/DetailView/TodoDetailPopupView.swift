@@ -28,9 +28,7 @@ struct TodoDetailPopupView: View {
                     .frame(maxWidth: .infinity, alignment: .center)
                     .background(NewtroColor.retroBlue)
                 
-                if let todoText = todo.todo {
-                    todoView(text: todoText)
-                }
+                todoView(text: todo.todo)
                 
                 VStack(spacing: 16) {
                     informationView(text: "중요도", contents: "\(todo.importance)")

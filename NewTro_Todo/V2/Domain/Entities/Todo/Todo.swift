@@ -9,9 +9,9 @@ import SwiftUI
 
 struct TodoDomain {
     let id: String?
-    let todo: String?
-    let favorite: String
-    let importance: String
+    var todo: String
+    var favorite: String
+    var importance: String
     let regDate: Date
     let selectedDate: Date
     let isFinishedText: String
