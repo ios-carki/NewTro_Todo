@@ -455,7 +455,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.identifier, for: indexPath) as! MainTableViewCell
         
 
-        cell.todoTextField.text = tasks[indexPath.row].todo!
+        cell.todoTextField.text = tasks[indexPath.row].todo
         //셀 생성 시점에 id도 전달함
         cell.id = tasks[indexPath.row].objectID
         
@@ -514,7 +514,7 @@ extension MainViewController: UITableViewDelegate, UITableViewDataSource {
             cell.completeTodoLabel.isHidden = false
             cell.todoTextField.isHidden = true
             cell.importanceSelectBtn.isHidden = true
-            cell.completeTodoLabel.attributedText = tasks[indexPath.row].todo?.strikeThrough()
+            cell.completeTodoLabel.attributedText = tasks[indexPath.row].todo.strikeThrough()
             cell.completeTodoLabel.textColor = .lightGray
             
         } else {

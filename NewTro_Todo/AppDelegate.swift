@@ -18,26 +18,8 @@ import RealmSwift
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        //MARK: About Widget Realm
-        let defaultRealm = Realm.Configuration.defaultConfiguration.fileURL!
-        let container = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: "group.carki.NewTro_Todo")
-        let realmURL = container?.appendingPathComponent("default.realm")
-        var config: Realm.Configuration!
+        RealmConfiguration.setup()
 
-        // Checking the old realm config is exist
-        if FileManager.default.fileExists(atPath: defaultRealm.path) {
-            do {
-                _ = try FileManager.default.replaceItemAt(realmURL!, withItemAt: defaultRealm)
-               config = Realm.Configuration(fileURL: realmURL, schemaVersion: 1)
-            } catch {
-               print("Error info: \(error)")
-            }
-        } else {
-             config = Realm.Configuration(fileURL: realmURL, schemaVersion: 1)
-        }
-
-        Realm.Configuration.defaultConfiguration = config
-        
         // Override point for customization after application launch.
         // iq키보드 spm -> 메이저 버전에 6.5.0
         sleep(2)

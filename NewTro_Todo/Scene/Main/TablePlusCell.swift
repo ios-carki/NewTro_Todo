@@ -79,7 +79,7 @@ class TablePlusCell: UITableViewCell {
     func updateItem(item: Todo, todo: String?, importance: Int, regDate: Date) {
         do {
             try localRealm.write({
-                item.todo = todo
+                item.todo = todo ?? ""
                 item.importance = importance
                 item.regDate = regDate
             })
