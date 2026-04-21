@@ -16,12 +16,21 @@ final class AppCoordinator: CoordinatorProtocol {
     func start() {
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
+        showSplash()
+    }
 
-        if UserDefaults.standard.bool(forKey: "oldUser") {
-            showMain()
-        } else {
-            showOnboarding()
+    private func showSplash() {
+        let coordinator = SplashCoordinator(navigationController: navigationController)
+        coordinator.onFinished = { [weak self, weak coordinator] in
+            self?.childCoordinators.removeAll { $0 === coordinator }
+            if UserDefaults.standard.bool(forKey: "oldUser") {
+                self?.showMain()
+            } else {
+                self?.showOnboarding()
+            }
         }
+        childCoordinators.append(coordinator)
+        coordinator.start()
     }
 
     private func showOnboarding() {
