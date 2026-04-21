@@ -11,7 +11,9 @@ import UIKit
 import SnapKit
 
 class PageViewController: UIPageViewController {
-    
+
+    var onFinished: (() -> Void)?
+
     //네비게이션
     lazy var navigationView: UIView = {
         let view = UIView()
@@ -39,7 +41,11 @@ class PageViewController: UIPageViewController {
     func setupDelegate() {
         pageViewController.dataSource = self
         pageViewController.delegate = self
-        
+
+        if let thirdVC = pageViewControllerList.last as? ThirdViewController {
+            thirdVC.onFinished = { [weak self] in self?.onFinished?() }
+        }
+
         if let firstVC = pageViewControllerList.first {
             pageViewController.setViewControllers([firstVC], direction: .forward, animated: true, completion: nil)
         }

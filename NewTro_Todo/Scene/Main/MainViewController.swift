@@ -13,7 +13,9 @@ import RealmSwift
 import SnapKit
 
 final class MainViewController: BaseViewController {
-    
+
+    weak var coordinator: MainCoordinator?
+
     let mainView = MainView()
     let cellDetailCustomView = CustomMenuPopupView()
     let cellDetailCustomVC = CustomMenuPopupViewController()
