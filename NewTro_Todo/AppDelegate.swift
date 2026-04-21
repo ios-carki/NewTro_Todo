@@ -12,7 +12,6 @@ import IQKeyboardManagerSwift
 import FirebaseCore
 import FirebaseMessaging
 import RealmSwift
-import CustomTextField
 
 
 @main
@@ -88,20 +87,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         appearance.backgroundColor = UIColor.mainBackGroundColor
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        
-        //Custom TextField
-        let shared = EGTextFieldConfig.shared
-        shared.defaultTextColor = .white
-        shared.defaultTitleColor = .white
-        shared.titleFont = .galBold20()
-        shared.defaultPlaceHolderTextColor = .placeHolderC
-        shared.defaultBackgroundColor = .textFieldC
-        shared.defaultBorderColor = .clear
-        shared.defaultTrailingImageForegroundColor = .white
-//        shared.defaultErrorTextColor = .statusAlert
-//        shared.errorFont = .medium12()
-        shared.cornerRadius = 12
-        shared.textFieldHeight = 40
         
         return true
     }
