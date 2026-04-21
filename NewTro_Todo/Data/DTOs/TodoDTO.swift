@@ -9,7 +9,8 @@ extension Todo {
             importance: Importance(rawValue: importance) ?? .none,
             createdAt: regDate,
             targetDate: DateFormatter.stringToDate(stringDate) ?? regDate,
-            isCompleted: isFinished
+            isCompleted: isFinished,
+            postponeCount: postponeCount
         )
     }
 }
@@ -22,7 +23,8 @@ extension TodoEntity {
             importance: importance.rawValue,
             regDate: createdAt,
             stringDate: DateFormatter.dateToString(date: targetDate),
-            isFinished: isCompleted
+            isFinished: isCompleted,
+            postponeCount: postponeCount
         )
     }
 }

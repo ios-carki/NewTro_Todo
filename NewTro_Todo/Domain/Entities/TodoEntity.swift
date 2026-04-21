@@ -8,4 +8,5 @@ struct TodoEntity: Identifiable {
     var createdAt: Date
     var targetDate: Date
     var isCompleted: Bool
+    var postponeCount: Int
 }

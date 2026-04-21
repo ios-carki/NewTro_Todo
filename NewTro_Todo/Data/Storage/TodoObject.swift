@@ -8,6 +8,7 @@ final class Todo: Object, ObjectKeyIdentifiable {
     @Persisted var regDate: Date = Date()
     @Persisted var stringDate: String = ""
     @Persisted var isFinished: Bool = false
+    @Persisted var postponeCount: Int = 0
 
     @Persisted(primaryKey: true) var objectID: ObjectId
 
@@ -17,7 +18,8 @@ final class Todo: Object, ObjectKeyIdentifiable {
         importance: Int,
         regDate: Date,
         stringDate: String,
-        isFinished: Bool
+        isFinished: Bool,
+        postponeCount: Int = 0
     ) {
         self.init()
         self.todo = todo
@@ -26,5 +28,6 @@ final class Todo: Object, ObjectKeyIdentifiable {
         self.regDate = regDate
         self.stringDate = stringDate
         self.isFinished = isFinished
+        self.postponeCount = postponeCount
     }
 }
