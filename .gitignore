@@ -1,4 +1,27 @@
-Localizing/
+# Xcode
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.moved-aside
+DerivedData/
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
 
-TodoScheme.swift
+# Tuist (생성 파일 - Project.swift가 source of truth)
+*.xcodeproj
+*.xcworkspace
+!*.xcworkspace/contents.xcworkspacedata
+Derived/
+.build/
 
+# SPM
+.swiftpm/
+Tuist/.build/
+
+# macOS
+.DS_Store
+
+# Credentials (절대 커밋 금지)
+GoogleService-Info.plist
