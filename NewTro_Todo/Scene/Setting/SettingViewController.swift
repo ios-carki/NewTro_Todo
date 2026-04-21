@@ -13,7 +13,6 @@ import WidgetKit
 import AcknowList
 import RealmSwift
 import Toast
-import Zip
 
 
 final class SettingViewController: BaseViewController {

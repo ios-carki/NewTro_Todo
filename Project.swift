@@ -11,7 +11,7 @@ let project = Project(
         .remote(url: "https://github.com/hackiftekhar/IQKeyboardManager.git", requirement: .upToNextMajor(from: "6.5.10")),
         .remote(url: "https://github.com/vtourraine/AcknowList.git", requirement: .upToNextMajor(from: "3.0.0")),
         // 유지
-        .remote(url: "https://github.com/realm/realm-swift.git", requirement: .upToNextMajor(from: "10.30.0")),
+        .remote(url: "https://github.com/realm/realm-swift.git", requirement: .exact("10.30.0")),
         .remote(url: "https://github.com/firebase/firebase-ios-sdk", requirement: .upToNextMajor(from: "9.6.0")),
     ],
     targets: [

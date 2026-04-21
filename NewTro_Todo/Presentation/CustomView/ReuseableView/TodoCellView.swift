@@ -7,14 +7,12 @@
 
 import SwiftUI
 
-import CustomTextField
-
 struct TodoCellView: View {
-    
+
     var todoText: Binding<String>
     var clearButtonAction: (() -> ())?
     var moreButtonAction: (() -> ())?
-    
+
     var body: some View {
         RoundedRectangle(cornerRadius: 12)
             .foregroundColor(.textFieldC)
@@ -27,17 +25,18 @@ struct TodoCellView: View {
                             clearButtonAction?()
                         }
                         .padding(.horizontal, 8)
-                    
-                    EGTextField(text: todoText)
-                        .setPlaceHolderText("할일을 입력해주세요")
-                    
+
+                    TextField("할일을 입력해주세요", text: todoText)
+                        .foregroundColor(.white)
+                        .font(.galBold20())
+
                     Image(systemName: "ellipsis")
                         .onTapGesture {
                             moreButtonAction?()
                         }
                         .padding(.horizontal, 12)
                 })
-                
+
             )
             .frame(height: 50)
     }
