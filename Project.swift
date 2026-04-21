@@ -27,6 +27,7 @@ let project = Project(
                 "UIAppFonts": .array([
                     .string("Galmuri11-Bold.ttf"),
                     .string("Galmuri11-Condensed.ttf"),
+                    .string("PressStart2P-Regular.ttf"),
                 ]),
                 "UIApplicationSceneManifest": .dictionary([
                     "UIApplicationSupportsMultipleScenes": .boolean(false),
@@ -44,8 +45,9 @@ let project = Project(
             sources: ["NewTro_Todo/**/*.swift"],
             resources: [
                 "NewTro_Todo/Assets.xcassets",
-                "NewTro_Todo/Source/Extension/Font/Galmuri11-Bold.ttf",
-                "NewTro_Todo/Source/Extension/Font/Galmuri11-Condensed.ttf",
+                "NewTro_Todo/Source/Extension/Font/Galmuri11/Galmuri11-Bold.ttf",
+                "NewTro_Todo/Source/Extension/Font/Galmuri11/Galmuri11-Condensed.ttf",
+                "NewTro_Todo/Source/Extension/Font/PressStart2P/PressStart2P-Regular.ttf",
                 "NewTro_Todo/Localizing/**",
                 "NewTro_Todo/GoogleService-Info.plist",
             ],
@@ -75,7 +77,10 @@ let project = Project(
             bundleId: "com.jun.NewTro-Todo.NewtroWidget",
             deploymentTargets: .iOS("16.0"),
             infoPlist: .extendingDefault(with: [
-                "UIAppFonts": .array([.string("Galmuri11-Condensed.ttf")]),
+                "UIAppFonts": .array([
+                    .string("Galmuri11-Condensed.ttf"),
+                    .string("PressStart2P-Regular.ttf"),
+                ]),
                 "NSExtension": .dictionary([
                     "NSExtensionPointIdentifier": .string("com.apple.widgetkit-extension"),
                 ]),
@@ -91,7 +96,8 @@ let project = Project(
             ],
             resources: [
                 "NewtroWidget/Assets.xcassets",
-                "NewTro_Todo/Source/Extension/Font/Galmuri11-Condensed.ttf",
+                "NewTro_Todo/Source/Extension/Font/Galmuri11/Galmuri11-Condensed.ttf",
+                "NewTro_Todo/Source/Extension/Font/PressStart2P/PressStart2P-Regular.ttf",
                 "NewTro_Todo/Localizing/**",
             ],
             entitlements: .file(path: "NewtroWidgetExtension.entitlements"),

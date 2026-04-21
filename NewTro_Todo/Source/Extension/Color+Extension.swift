@@ -1,44 +1,103 @@
-//
-//  Color+Extension.swift
-//  NewTro_Todo
-//
-//  Created by Carki on 2022/09/06.
-//
-
 import SwiftUI
 import UIKit
 
+// MARK: - Design System Palette (Claude Design 확정)
+
 extension UIColor {
-    //    137 215 237
-    static let cellLabelBackGroundColor = UIColor(red: 122/255, green: 86/255, blue: 65/255, alpha: 1.0)
-    static let cellBackGroundColor = UIColor(red: 78/255, green: 201/255, blue: 234/255, alpha: 1.0)
-    static let pageViewBackGroundColor = UIColor(red: 137/255, green: 215/255, blue: 237/255, alpha: 1.0)
-    static let mainBackGroundColor = UIColor(red: 109/255, green: 218/255, blue: 242/255, alpha: 1.0)
-    static let mainBackGroundColorWithOpacity = UIColor(red: 73/255, green: 159/255, blue: 200/255, alpha: 1.0)
-    static let bottomViewBackGroundColor = UIColor(red: 157/255, green: 148/255, blue: 148/255, alpha: 1.0)
-    static let coinCountLabelColor = UIColor(red: 255/255, green: 231/255, blue: 114/255, alpha: 1.0)
-//    static let calendarDayColor = UIColor(red: 89/255, green: 6/255, blue: 150/255, alpha: 1.0)
-    static let calendarWeekendColor = UIColor(red: 199/255, green: 10/255, blue: 128/255, alpha: 1.0)
-    static let calendarWeekdayColor = UIColor(red: 61/255, green: 123/255, blue: 53/255, alpha: 1.0)
-    
+    // Sky
+    static let skyC          = UIColor(hex: "#7CC7F0")  // 메인 배경
+    static let skyDeepC      = UIColor(hex: "#4BA8D8")
+
+    // Ground
+    static let grassC        = UIColor(hex: "#6FC44F")
+    static let grassDkC      = UIColor(hex: "#3F8D37")
+    static let dirtC         = UIColor(hex: "#C88B5A")
+    static let dirtDkC       = UIColor(hex: "#8F5A33")
+
+    // Warm Accents
+    static let peachC        = UIColor(hex: "#FFB59E")  // 주 버튼 (FAB)
+    static let peachDkC      = UIColor(hex: "#E08264")
+    static let pinkC         = UIColor(hex: "#FFA3C7")
+    static let pinkDkC       = UIColor(hex: "#D46A95")
+    static let creamC        = UIColor(hex: "#FFE9B0")
+    static let sunC          = UIColor(hex: "#FFCF57")  // 코인, active nav
+
+    // UI
+    static let inkC          = UIColor(hex: "#1A1530")  // 텍스트, 테두리
+    static let shadeC        = UIColor(hex: "#3B3454")  // 서브 텍스트
+    static let panelC        = UIColor(hex: "#FFF7E8")  // 패널 배경
+    static let redC          = UIColor(hex: "#E5524E")
+    static let redDkC        = UIColor(hex: "#A12F2D")
+
+    // Status
+    static let doneC         = UIColor(hex: "#7FD37F")
+    static let doneDkC       = UIColor(hex: "#3E8C48")
+
+    // Legacy aliases (기존 UIKit 코드 호환)
+    static let mainBackGroundColor          = UIColor(hex: "#7CC7F0")
+    static let mainBackGroundColorWithOpacity = UIColor(hex: "#4BA8D8")
+    static let cellBackGroundColor          = UIColor(hex: "#4EC8EA")
+    static let pageViewBackGroundColor      = UIColor(hex: "#7CC7F0")
+    static let coinCountLabelColor          = UIColor(hex: "#FFCF57")
+    static let calendarWeekendColor         = UIColor(hex: "#D46A95")
+    static let calendarWeekdayColor         = UIColor(hex: "#3F8D37")
+    static let cellLabelBackGroundColor     = UIColor(hex: "#8F5A33")
+    static let bottomViewBackGroundColor    = UIColor(hex: "#3B3454")
+
+    convenience init(hex: String) {
+        var h = hex.trimmingCharacters(in: .alphanumerics.inverted)
+        var rgb: UInt64 = 0
+        Scanner(string: h).scanHexInt64(&rgb)
+        let r = CGFloat((rgb >> 16) & 0xFF) / 255
+        let g = CGFloat((rgb >>  8) & 0xFF) / 255
+        let b = CGFloat((rgb >>  0) & 0xFF) / 255
+        self.init(red: r, green: g, blue: b, alpha: 1)
+    }
 }
 
 extension Color {
-    
     init(hex: String) {
         let scanner = Scanner(string: hex)
         _ = scanner.scanString("#")
-        
         var rgb: UInt64 = 0
         scanner.scanHexInt64(&rgb)
-        
         let r = Double((rgb >> 16) & 0xFF) / 255.0
         let g = Double((rgb >>  8) & 0xFF) / 255.0
         let b = Double((rgb >>  0) & 0xFF) / 255.0
         self.init(red: r, green: g, blue: b)
     }
-    
-    static let placeHolderC = Color(hex: "#929292")
-    static let mainBackGroundC = Color(hex: "#6ddaf2")
-    static let textFieldC = Color(hex: "#4ec8ea")
+
+    // Sky
+    static let sky          = Color(hex: "#7CC7F0")
+    static let skyDeep      = Color(hex: "#4BA8D8")
+
+    // Ground
+    static let grass        = Color(hex: "#6FC44F")
+    static let grassDk      = Color(hex: "#3F8D37")
+    static let dirt         = Color(hex: "#C88B5A")
+    static let dirtDk       = Color(hex: "#8F5A33")
+
+    // Warm Accents
+    static let peach        = Color(hex: "#FFB59E")
+    static let peachDk      = Color(hex: "#E08264")
+    static let pixelPink    = Color(hex: "#FFA3C7")
+    static let pinkDk       = Color(hex: "#D46A95")
+    static let cream        = Color(hex: "#FFE9B0")
+    static let sun          = Color(hex: "#FFCF57")
+
+    // UI
+    static let ink          = Color(hex: "#1A1530")
+    static let shade        = Color(hex: "#3B3454")
+    static let panel        = Color(hex: "#FFF7E8")
+    static let pixelRed     = Color(hex: "#E5524E")
+    static let redDk        = Color(hex: "#A12F2D")
+
+    // Status
+    static let done         = Color(hex: "#7FD37F")
+    static let doneDk       = Color(hex: "#3E8C48")
+
+    // Legacy aliases
+    static let placeHolderC    = Color(hex: "#929292")
+    static let mainBackGroundC = Color(hex: "#7CC7F0")
+    static let textFieldC      = Color(hex: "#4EC8EA")
 }
