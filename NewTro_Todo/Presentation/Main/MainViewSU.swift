@@ -78,7 +78,7 @@ struct MainView: View {
         .padding(.horizontal, 10)
         .background(Color.cream)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-        .shadow(color: .ink, radius: 0, x: 3, y: 3)
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
     }
 
     // MARK: - Title Area
@@ -93,7 +93,6 @@ struct MainView: View {
                         Text("오늘의 할일")
                             .font(.galBold22())
                             .foregroundColor(.ink)
-                            .shadow(color: .cream, radius: 0, x: 1, y: 1)
                     }
 
                     Spacer()
@@ -149,16 +148,13 @@ struct MainView: View {
     // MARK: - FAB
     private var fab: some View {
         Button { viewModel.addTodo() } label: {
-            ZStack {
-                Rectangle()
-                    .fill(Color.peach)
-                    .frame(width: 48, height: 48)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
-                    .shadow(color: .ink, radius: 0, x: 4, y: 4)
-                Text("+")
-                    .font(.pressStart20())
-                    .foregroundColor(.ink)
-            }
+            Text("+")
+                .font(.pressStart20())
+                .foregroundColor(.ink)
+                .frame(width: 48, height: 48)
+                .background(Color.peach)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
+                .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
         }
     }
 
@@ -173,7 +169,6 @@ struct MainView: View {
         .frame(height: 60)
         .background(Color.panel)
         .overlay(alignment: .top) { Color.ink.frame(height: 3) }
-        .shadow(color: .ink.opacity(0.2), radius: 0, x: 0, y: -3)
     }
 
     private func navItem(label: String, icon: [String], palette: [Character: Color], isActive: Bool, action: @escaping () -> Void) -> some View {
@@ -234,6 +229,6 @@ private struct PixelIconButton: View {
             .padding(.vertical, 4)
             .background(bg)
             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-            .shadow(color: .ink, radius: 0, x: 2, y: 2)
+            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
     }
 }

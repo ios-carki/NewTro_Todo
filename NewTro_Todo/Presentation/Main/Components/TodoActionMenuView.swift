@@ -78,7 +78,7 @@ struct TodoActionMenuView: View {
             .frame(height: 44)
             .background(Color.cream)
             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-            .shadow(color: .ink, radius: 0, x: 2, y: 2)
+            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
         }
     }
 

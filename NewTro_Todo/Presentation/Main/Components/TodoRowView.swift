@@ -19,7 +19,7 @@ struct TodoRowView: View {
         }
         .background(Color.panel)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-        .shadow(color: .ink, radius: 0, x: 3, y: 3)
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
         .offset(x: offsetX)
         .opacity(offsetX == 0 ? 1 : Double(max(0, 1 - offsetX / 200)))
     }

@@ -59,7 +59,7 @@ struct QuickNoteSheetView: View {
                     .foregroundColor(.white)
                     .font(.galBold14())
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                    .shadow(color: .ink, radius: 0, x: 3, y: 3)
+                    .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
                 }
                 .padding(.horizontal, 20)
                 .padding(.top, 12)
