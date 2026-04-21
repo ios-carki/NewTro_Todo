@@ -1,4 +1,5 @@
 import UIKit
+import SwiftUI
 
 final class MainCoordinator: CoordinatorProtocol {
     var navigationController: UINavigationController
@@ -11,10 +12,16 @@ final class MainCoordinator: CoordinatorProtocol {
         self.diContainer = diContainer
     }
 
-    func start() {
-        let vc = MainViewController()
-        vc.coordinator = self
-        navigationController.setViewControllers([vc], animated: false)
+    @MainActor func start() {
+        let viewModel = diContainer.makeMainViewModel()
+        let view = MainView(
+            viewModel: viewModel,
+            onCalendarTapped: { [weak self] in self?.showCalendar() },
+            onSettingsTapped: { [weak self] in self?.showSettings() }
+        )
+        let hostingVC = UIHostingController(rootView: view)
+        hostingVC.navigationItem.largeTitleDisplayMode = .never
+        navigationController.setViewControllers([hostingVC], animated: false)
     }
 
     func showCalendar() {

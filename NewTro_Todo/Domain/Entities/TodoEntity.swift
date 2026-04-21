@@ -1,6 +1,6 @@
 import Foundation
 
-struct TodoEntity {
+struct TodoEntity: Identifiable {
     let id: String
     var text: String
     var isFavorite: Bool

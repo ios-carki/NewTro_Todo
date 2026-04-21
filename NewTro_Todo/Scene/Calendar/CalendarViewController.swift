@@ -14,7 +14,6 @@ import RealmSwift
 final class CalendarViewController: BaseViewController {
     
     let mainView = CalendarView()
-    let mainVC = MainViewController()
     
     var selectedDate = Date()
     let dateFormatter: DateFormatter = {

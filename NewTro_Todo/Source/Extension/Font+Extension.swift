@@ -43,8 +43,17 @@ extension Font {
     static func galBold20() -> Font {
         return .custom(Galmuri.galmuriBold.value, size: 20)
     }
-    
-    //MARK: Condensend
+    static func galBold17() -> Font {
+        return .custom(Galmuri.galmuriBold.value, size: 17)
+    }
+    static func galBold16() -> Font {
+        return .custom(Galmuri.galmuriBold.value, size: 16)
+    }
+
+    //MARK: Condensed
+    static func mainFont16() -> Font {
+        return .custom(Galmuri.galmuriCondensed.value, size: 16)
+    }
     static func galCondensed20() -> Font {
         return .custom(Galmuri.galmuriCondensed.value, size: 20)
     }
