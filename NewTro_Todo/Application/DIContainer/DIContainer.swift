@@ -40,6 +40,22 @@ final class DIContainer {
         UpdateQuickNoteUseCase(repository: quickNoteRepository)
     }
 
+    // MARK: - ViewModels
+    @MainActor func makeMainViewModel() -> MainViewModel {
+        MainViewModel(
+            fetchTodosUseCase: makeFetchTodosUseCase(),
+            addTodoUseCase: makeAddTodoUseCase(),
+            updateTodoTextUseCase: makeUpdateTodoTextUseCase(),
+            toggleCompleteUseCase: makeToggleTodoCompleteUseCase(),
+            postponeTodoUseCase: makePostponeTodoUseCase(),
+            updateImportanceUseCase: makeUpdateTodoImportanceUseCase(),
+            toggleFavoriteUseCase: makeToggleTodoFavoriteUseCase(),
+            deleteTodoUseCase: makeDeleteTodoUseCase(),
+            fetchOrCreateNoteUseCase: makeFetchOrCreateQuickNoteUseCase(),
+            updateNoteUseCase: makeUpdateQuickNoteUseCase()
+        )
+    }
+
     // MARK: - UseCases: Settings
     func makeClearAllDataUseCase() -> ClearAllDataUseCase {
         ClearAllDataUseCase(todoRepository: todoRepository, quickNoteRepository: quickNoteRepository)
