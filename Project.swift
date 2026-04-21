@@ -83,7 +83,8 @@ let project = Project(
             sources: [
                 "NewtroWidget/**/*.swift",
                 // App과 공유하는 파일
-                "NewTro_Todo/Utility/TodoScheme.swift",
+                "NewTro_Todo/Data/Storage/TodoObject.swift",
+                "NewTro_Todo/Data/Storage/QuickNoteObject.swift",
                 "NewTro_Todo/Source/Extension/DateFormat+Extension.swift",
                 "NewTro_Todo/Source/Extension/Date+Extension.swift",
                 "NewTro_Todo/Source/Extension/Color+Extension.swift",

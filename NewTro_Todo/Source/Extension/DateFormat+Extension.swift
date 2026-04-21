@@ -20,14 +20,21 @@ extension UILabel {
 }
 
 extension DateFormatter {
-    
+
     static func dateToString(date: Date) -> String {
         let format = DateFormatter()
         format.locale = Locale.current
         format.timeZone = TimeZone.current
         format.dateFormat = "yyyy년 MM월 dd일"
-        let result = format.string(from: date)
-        return result
+        return format.string(from: date)
     }
-    
+
+    static func stringToDate(_ string: String) -> Date? {
+        let format = DateFormatter()
+        format.locale = Locale.current
+        format.timeZone = TimeZone.current
+        format.dateFormat = "yyyy년 MM월 dd일"
+        return format.date(from: string)
+    }
+
 }
