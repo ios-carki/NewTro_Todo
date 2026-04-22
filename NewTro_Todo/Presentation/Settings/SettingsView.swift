@@ -1,8 +1,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @StateObject var viewModel: SettingsViewModel
-    var onBack: (() -> Void)?
+    @ObservedObject var viewModel: SettingsViewModel
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -21,14 +20,10 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal, 14)
                     .padding(.top, 10)
-                    .padding(.bottom, 160)
+                    .padding(.bottom, 120)
                 }
             }
-
-            bottomNavWithGround
         }
-        .ignoresSafeArea(edges: .bottom)
-        .navigationBarHidden(true)
         .alert("데이터 초기화", isPresented: $viewModel.showResetConfirm) {
             Button("취소", role: .cancel) {}
             Button("초기화", role: .destructive) { viewModel.resetAllData() }
@@ -40,19 +35,9 @@ struct SettingsView: View {
     // MARK: - Header
     private var header: some View {
         HStack {
-            Button { onBack?() } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.ink)
-                    .frame(width: 32, height: 32)
-                    .background(Color.cream)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                    .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
-            }
             Text("설정")
                 .font(.galBold22())
                 .foregroundColor(.ink)
-                .padding(.leading, 8)
             Spacer()
         }
         .padding(.vertical, 6)
@@ -154,39 +139,6 @@ struct SettingsView: View {
                 .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
         }
     }
-
-    // MARK: - Bottom Nav
-    private var bottomNavWithGround: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                navItem(label: "할일",  sfIcon: "list.bullet",    isActive: false) { onBack?() }
-                navItem(label: "달력",  sfIcon: "calendar",       isActive: false) { }
-                navItem(label: "메모",  sfIcon: "pencil",         isActive: false) { }
-                navItem(label: "통계",  sfIcon: "chart.bar.fill", isActive: false) { }
-                navItem(label: "설정",  sfIcon: "gearshape.fill", isActive: true)  { }
-            }
-            .frame(height: 60)
-            .background(Color.panel)
-            .overlay(alignment: .top) { Color.ink.frame(height: 2) }
-            GroundStripView()
-        }
-    }
-
-    private func navItem(label: String, sfIcon: String, isActive: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(spacing: 3) {
-                Image(systemName: sfIcon)
-                    .font(.system(size: 15))
-                    .foregroundColor(isActive ? .ink : .shade)
-                Text(label)
-                    .font(.pressStart7())
-                    .foregroundColor(isActive ? .ink : .shade)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .background(isActive ? Color.sun.opacity(0.35) : Color.clear)
-        }
-    }
 }
 
 // MARK: - MascotBobView
@@ -197,8 +149,10 @@ private struct MascotBobView: View {
         PixelArtView(grid: PixelArtAssets.mascotGrid, palette: PixelArtAssets.mascotPalette, scale: 3)
             .offset(y: bobY)
             .onAppear {
-                withAnimation(.easeInOut(duration: 0.45).repeatForever(autoreverses: true)) {
-                    bobY = -4
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    withAnimation(.easeInOut(duration: 0.45).repeatForever(autoreverses: true)) {
+                        bobY = -4
+                    }
                 }
             }
     }

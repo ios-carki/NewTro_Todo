@@ -1,9 +1,8 @@
 import SwiftUI
 
 struct MainView: View {
-    @StateObject var viewModel: MainViewModel
+    @ObservedObject var viewModel: MainViewModel
     var onCalendarTapped: (() -> Void)?
-    var onSettingsTapped: (() -> Void)?
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -26,12 +25,6 @@ struct MainView: View {
                 .padding(.bottom, 96)
                 .padding(.trailing, 18)
                 .frame(maxWidth: .infinity, alignment: .trailing)
-
-            bottomNavWithGround
-        }
-        .ignoresSafeArea(edges: .bottom)
-        .sheet(isPresented: $viewModel.isQuickNotePresented) {
-            QuickNoteSheetView(viewModel: viewModel)
         }
         .sheet(item: $viewModel.actionTarget) { todo in
             TodoActionMenuView(todo: todo, viewModel: viewModel)
@@ -50,7 +43,7 @@ struct MainView: View {
         .onAppear { viewModel.loadTodos() }
     }
 
-    // MARK: - Top HUD (테두리 없이 sky 위에 플로팅)
+    // MARK: - Top HUD
     private var topHUD: some View {
         HStack {
             HStack(spacing: 4) {
@@ -78,7 +71,7 @@ struct MainView: View {
         .padding(.vertical, 6)
     }
 
-    // MARK: - Title Area (패널 없이 sky 위에)
+    // MARK: - Title Area
     private var titleArea: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .bottom, spacing: 8) {
@@ -160,40 +153,6 @@ struct MainView: View {
                 .background(Color.peach)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
                 .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
-        }
-    }
-
-    // MARK: - Bottom Nav + Ground Strip
-    private var bottomNavWithGround: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                navItem(label: "할일",  sfIcon: "list.bullet",      isActive: true)  { }
-                navItem(label: "달력",  sfIcon: "calendar",          isActive: false) { onCalendarTapped?() }
-                navItem(label: "메모",  sfIcon: "pencil",            isActive: false) { viewModel.openQuickNote() }
-                navItem(label: "통계",  sfIcon: "chart.bar.fill",    isActive: false) { }
-                navItem(label: "설정",  sfIcon: "gearshape.fill",    isActive: false) { onSettingsTapped?() }
-            }
-            .frame(height: 60)
-            .background(Color.panel)
-            .overlay(alignment: .top) { Color.ink.frame(height: 2) }
-
-            GroundStripView()
-        }
-    }
-
-    private func navItem(label: String, sfIcon: String, isActive: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(spacing: 3) {
-                Image(systemName: sfIcon)
-                    .font(.system(size: 15))
-                    .foregroundColor(isActive ? .ink : .shade)
-                Text(label)
-                    .font(.pressStart7())
-                    .foregroundColor(isActive ? .ink : .shade)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .background(isActive ? Color.sun.opacity(0.35) : Color.clear)
         }
     }
 }
