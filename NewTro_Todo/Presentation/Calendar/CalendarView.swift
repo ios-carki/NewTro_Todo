@@ -32,6 +32,7 @@ struct CalendarView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.bottom, 113)
         .task { await viewModel.loadMonth() }
     }
 

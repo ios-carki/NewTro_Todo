@@ -53,8 +53,26 @@ struct RootTabContainerView: View {
     }
 
     // MARK: - Bottom Nav
+    // 구조: ink 경계 → 잔디 스트립 → 탭 아이템(흙 배경) → 흙 채움(홈 인디케이터 영역)
     private var bottomNavWithGround: some View {
         VStack(spacing: 0) {
+            // 상단 ink 경계
+            Color.ink.frame(height: 3)
+
+            // 잔디 타일 스트립
+            Canvas { ctx, size in
+                let tileW: CGFloat = 10
+                var x: CGFloat = 0
+                while x < size.width {
+                    let c: Color = Int(x / tileW) % 2 == 0 ? .grass : .grassDk
+                    ctx.fill(Path(CGRect(x: x, y: 0, width: tileW, height: size.height)), with: .color(c))
+                    x += tileW
+                }
+            }
+            .frame(height: 10)
+            .frame(maxWidth: .infinity)
+
+            // 탭 아이템 (흙 텍스처 배경)
             HStack(spacing: 0) {
                 navItem(label: "할일",  sfIcon: "list.bullet",    isActive: selectedTab == .todo)     { selectedTab = .todo }
                 navItem(label: "달력",  sfIcon: "calendar",        isActive: selectedTab == .calendar) { selectedTab = .calendar }
@@ -63,9 +81,23 @@ struct RootTabContainerView: View {
                 navItem(label: "설정",  sfIcon: "gearshape.fill",  isActive: selectedTab == .settings) { selectedTab = .settings }
             }
             .frame(height: 60)
-            .background(Color.panel)
-            .overlay(alignment: .top) { Color.ink.frame(height: 2) }
-            GroundStripView()
+            .background(dirtTile)
+
+            // 홈 인디케이터 영역 흙 채움
+            dirtTile.frame(height: 40).frame(maxWidth: .infinity)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private var dirtTile: some View {
+        Canvas { ctx, size in
+            let tileW: CGFloat = 14
+            var x: CGFloat = 0
+            while x < size.width {
+                let c: Color = Int(x / tileW) % 2 == 0 ? .dirt : .dirtDk
+                ctx.fill(Path(CGRect(x: x, y: 0, width: tileW, height: size.height)), with: .color(c))
+                x += tileW
+            }
         }
     }
 
@@ -74,17 +106,20 @@ struct RootTabContainerView: View {
             VStack(spacing: 3) {
                 Image(systemName: sfIcon)
                     .font(.system(size: 15))
-                    .foregroundColor(isActive ? .ink : .shade)
+                    .foregroundColor(isActive ? .ink : .cream)
                 Text(label)
                     .font(.pressStart7())
-                    .foregroundColor(isActive ? .ink : .shade)
+                    .foregroundColor(isActive ? .ink : .cream)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 56)
-            .background(isActive ? Color.sun.opacity(0.35) : Color.clear)
+            .background(isActive ? Color.cream : Color.clear)
         }
     }
 }
+
+// 탭바 전체 높이: 3 + 10 + 60 + 40 = 113pt
+private let tabBarTotalHeight: CGFloat = 113
 
 // MARK: - Placeholder
 private struct PlaceholderTabView: View {
@@ -102,6 +137,6 @@ private struct PlaceholderTabView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .padding(.bottom, 108)
+        .padding(.bottom, tabBarTotalHeight)
     }
 }

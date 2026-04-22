@@ -22,7 +22,7 @@ struct MainView: View {
             }
 
             fab
-                .padding(.bottom, 96)
+                .padding(.bottom, 128)
                 .padding(.trailing, 18)
                 .frame(maxWidth: .infinity, alignment: .trailing)
         }
