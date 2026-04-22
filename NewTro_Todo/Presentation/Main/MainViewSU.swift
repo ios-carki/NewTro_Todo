@@ -11,7 +11,7 @@ struct MainView: View {
 
             VStack(spacing: 0) {
                 topHUD
-                    .padding(.horizontal, 12)
+                    .padding(.horizontal, 16)
                     .padding(.top, 8)
 
                 titleArea
@@ -22,12 +22,12 @@ struct MainView: View {
                     .padding(.top, 8)
             }
 
-            bottomNav
-
             fab
-                .padding(.bottom, 72)
+                .padding(.bottom, 96)
                 .padding(.trailing, 18)
                 .frame(maxWidth: .infinity, alignment: .trailing)
+
+            bottomNavWithGround
         }
         .ignoresSafeArea(edges: .bottom)
         .sheet(isPresented: $viewModel.isQuickNotePresented) {
@@ -50,12 +50,12 @@ struct MainView: View {
         .onAppear { viewModel.loadTodos() }
     }
 
-    // MARK: - Top HUD
+    // MARK: - Top HUD (테두리 없이 sky 위에 플로팅)
     private var topHUD: some View {
-        HStack(spacing: 0) {
+        HStack {
             HStack(spacing: 4) {
                 PixelArtView(grid: PixelArtAssets.coinGrid, palette: PixelArtAssets.coinPalette, scale: 2.5)
-                Text(String(format: "%02d", viewModel.completedCount))
+                Text("×\(String(format: "%02d", viewModel.completedCount))")
                     .font(.pressStart10())
                     .foregroundColor(.sun)
             }
@@ -68,50 +68,56 @@ struct MainView: View {
 
             Spacer()
 
-            HStack(spacing: 2) {
-                ForEach(0..<viewModel.heartCount, id: \.self) { _ in
-                    PixelArtView(grid: PixelArtAssets.heartGrid, palette: PixelArtAssets.heartPalette, scale: 2)
-                }
+            HStack(spacing: 4) {
+                PixelArtView(grid: PixelArtAssets.heartGrid, palette: PixelArtAssets.heartPalette, scale: 2)
+                Text("×\(viewModel.heartCount)")
+                    .font(.pressStart10())
+                    .foregroundColor(.pixelRed)
             }
         }
         .padding(.vertical, 6)
-        .padding(.horizontal, 10)
-        .background(Color.cream)
-        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
     }
 
-    // MARK: - Title Area
+    // MARK: - Title Area (패널 없이 sky 위에)
     private var titleArea: some View {
-        PixelPanel(bg: .panel, padding: 12) {
-            VStack(spacing: 8) {
-                HStack {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(viewModel.worldDate)
-                            .font(.pressStart9())
-                            .foregroundColor(.pinkDk)
-                        Text("오늘의 할일")
-                            .font(.galBold22())
-                            .foregroundColor(.ink)
-                    }
-
-                    Spacer()
-
-                    HStack(spacing: 8) {
-                        Button { onCalendarTapped?() } label: {
-                            PixelIconButton(label: "CAL", bg: .cream)
-                        }
-                        Button { viewModel.openQuickNote() } label: {
-                            PixelIconButton(label: "MEMO", bg: Color.pixelPink.opacity(0.7))
-                        }
-                    }
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .bottom, spacing: 8) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(viewModel.displayDate)
+                        .font(.pressStart12())
+                        .foregroundColor(.pinkDk)
+                    Text("오늘의 할 일")
+                        .font(.galBold22())
+                        .foregroundColor(.ink)
                 }
 
-                PixelProgressBar(
-                    done: viewModel.completedCount,
-                    total: viewModel.todos.count
-                )
+                Spacer()
+
+                HStack(spacing: 8) {
+                    Button { onCalendarTapped?() } label: {
+                        Image(systemName: "calendar")
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.ink)
+                            .frame(width: 34, height: 34)
+                            .background(Color.cream)
+                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                    }
+
+                    Button { viewModel.openQuickNote() } label: {
+                        Text("MEMO")
+                            .font(.pressStart9())
+                            .foregroundColor(.ink)
+                            .padding(.horizontal, 8)
+                            .frame(height: 34)
+                            .background(Color.pixelPink)
+                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                    }
+                }
             }
+
+            PixelProgressBar(done: viewModel.completedCount, total: viewModel.todos.count)
         }
     }
 
@@ -124,12 +130,11 @@ struct MainView: View {
                 }
 
                 if viewModel.todos.isEmpty {
-                    emptyState
-                        .padding(.top, 40)
+                    emptyState.padding(.top, 40)
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.bottom, 160)
+            .padding(.bottom, 180)
         }
     }
 
@@ -158,30 +163,37 @@ struct MainView: View {
         }
     }
 
-    // MARK: - Bottom Nav
-    private var bottomNav: some View {
-        HStack(spacing: 0) {
-            navItem(label: "TODO", icon: PixelArtAssets.checkGrid, palette: PixelArtAssets.checkPalette, isActive: true) {}
-            navItem(label: "CAL", icon: PixelArtAssets.starGrid, palette: PixelArtAssets.starPalette, isActive: false) { onCalendarTapped?() }
-            navItem(label: "MEMO", icon: PixelArtAssets.coinGrid, palette: PixelArtAssets.coinPalette, isActive: false) { viewModel.openQuickNote() }
-            navItem(label: "SET", icon: PixelArtAssets.starGrid, palette: PixelArtAssets.starPalette, isActive: false) { onSettingsTapped?() }
+    // MARK: - Bottom Nav + Ground Strip
+    private var bottomNavWithGround: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
+                navItem(label: "할일",  sfIcon: "list.bullet",      isActive: true)  { }
+                navItem(label: "달력",  sfIcon: "calendar",          isActive: false) { onCalendarTapped?() }
+                navItem(label: "메모",  sfIcon: "pencil",            isActive: false) { viewModel.openQuickNote() }
+                navItem(label: "통계",  sfIcon: "chart.bar.fill",    isActive: false) { }
+                navItem(label: "설정",  sfIcon: "gearshape.fill",    isActive: false) { onSettingsTapped?() }
+            }
+            .frame(height: 60)
+            .background(Color.panel)
+            .overlay(alignment: .top) { Color.ink.frame(height: 2) }
+
+            GroundStripView()
         }
-        .frame(height: 60)
-        .background(Color.panel)
-        .overlay(alignment: .top) { Color.ink.frame(height: 3) }
     }
 
-    private func navItem(label: String, icon: [String], palette: [Character: Color], isActive: Bool, action: @escaping () -> Void) -> some View {
+    private func navItem(label: String, sfIcon: String, isActive: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            VStack(spacing: 2) {
-                PixelArtView(grid: icon, palette: palette, scale: 1.5)
+            VStack(spacing: 3) {
+                Image(systemName: sfIcon)
+                    .font(.system(size: 15))
+                    .foregroundColor(isActive ? .ink : .shade)
                 Text(label)
                     .font(.pressStart7())
                     .foregroundColor(isActive ? .ink : .shade)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 56)
-            .background(isActive ? Color.sun.opacity(0.3) : Color.clear)
+            .background(isActive ? Color.sun.opacity(0.35) : Color.clear)
         }
     }
 }
@@ -198,37 +210,18 @@ private struct PixelProgressBar: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
-                Rectangle().fill(Color.ink.opacity(0.1))
+                Rectangle().fill(Color.panel)
                 Rectangle()
                     .fill(Color.grass)
                     .frame(width: geo.size.width * ratio)
                     .animation(.easeInOut(duration: 0.3), value: ratio)
+                Text("\(done)/\(total)")
+                    .font(.pressStart9())
+                    .foregroundColor(.ink)
+                    .frame(maxWidth: .infinity)
             }
         }
-        .frame(height: 10)
+        .frame(height: 18)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-        .overlay(alignment: .trailing) {
-            Text("\(done)/\(total)")
-                .font(.pressStart7())
-                .foregroundColor(.ink)
-                .padding(.trailing, 4)
-        }
-    }
-}
-
-// MARK: - PixelIconButton
-private struct PixelIconButton: View {
-    let label: String
-    let bg: Color
-
-    var body: some View {
-        Text(label)
-            .font(.pressStart7())
-            .foregroundColor(.ink)
-            .padding(.horizontal, 6)
-            .padding(.vertical, 4)
-            .background(bg)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
     }
 }
