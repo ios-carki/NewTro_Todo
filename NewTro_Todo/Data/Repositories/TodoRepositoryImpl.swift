@@ -59,6 +59,7 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             else { throw RepositoryError.notFound }
             try realm.write {
                 todo.stringDate = DateFormatter.dateToString(date: toDate)
+                todo.postponeCount += 1
             }
         }
     }

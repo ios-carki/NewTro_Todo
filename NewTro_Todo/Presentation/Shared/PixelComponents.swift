@@ -38,11 +38,8 @@ struct PixelPanel<Content: View>: View {
         content()
             .padding(padding)
             .background(bg)
-            .overlay(
-                Rectangle()
-                    .stroke(Color.ink, lineWidth: 3)
-            )
-            .shadow(color: Color.ink.opacity(0.18), radius: 0, x: 4, y: 4)
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
+            .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
     }
 }
 

@@ -36,20 +36,15 @@ extension Font {
     }
     
     //MARK: Bold
-    static func galBold40() -> Font {
-        return .custom(Galmuri.galmuriBold.value, size: 40)
-    }
-    static func galBold20() -> Font {
-        return .custom(Galmuri.galmuriBold.value, size: 20)
-    }
-    static func galBold17() -> Font {
-        return .custom(Galmuri.galmuriBold.value, size: 17)
-    }
-    static func galBold16() -> Font {
-        return .custom(Galmuri.galmuriBold.value, size: 16)
-    }
+    static func galBold40() -> Font { .custom(Galmuri.galmuriBold.value, size: 40) }
+    static func galBold22() -> Font { .custom(Galmuri.galmuriBold.value, size: 22) }
+    static func galBold20() -> Font { .custom(Galmuri.galmuriBold.value, size: 20) }
+    static func galBold17() -> Font { .custom(Galmuri.galmuriBold.value, size: 17) }
+    static func galBold16() -> Font { .custom(Galmuri.galmuriBold.value, size: 16) }
+    static func galBold14() -> Font { .custom(Galmuri.galmuriBold.value, size: 14) }
 
     //MARK: Press Start 2P
+    static func pressStart7() -> Font  { .custom(Galmuri.pressStart2P.value, size: 7) }
     static func pressStart9() -> Font  { .custom(Galmuri.pressStart2P.value, size: 9) }
     static func pressStart10() -> Font { .custom(Galmuri.pressStart2P.value, size: 10) }
     static func pressStart12() -> Font { .custom(Galmuri.pressStart2P.value, size: 12) }

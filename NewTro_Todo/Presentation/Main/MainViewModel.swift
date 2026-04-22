@@ -11,9 +11,20 @@ final class MainViewModel: ObservableObject {
     @Published var quickNote: QuickNoteEntity? = nil
     @Published var isQuickNotePresented: Bool = false
     @Published var actionTarget: TodoEntity? = nil
+    @Published var postponeTarget: TodoEntity? = nil
     @Published var errorMessage: String? = nil
 
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
+
+    var completedCount: Int { todos.filter(\.isCompleted).count }
+    var heartCount: Int { max(0, min(3, 3 - todos.filter { !$0.isCompleted }.count / 3)) }
+
+    var worldDate: String {
+        let cal = Calendar.current
+        let m = cal.component(.month, from: selectedDate)
+        let d = cal.component(.day, from: selectedDate)
+        return String(format: "%02d-%02d", m, d)
+    }
 
     // MARK: - Use Cases
     private let fetchTodosUseCase: any FetchTodosUseCaseProtocol
@@ -113,10 +124,14 @@ final class MainViewModel: ObservableObject {
     }
 
     func postpone(id: String) {
+        let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
+        postpone(id: id, toDate: nextDay)
+    }
+
+    func postpone(id: String, toDate: Date) {
         Task {
             do {
-                let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
-                try await postponeTodoUseCase.execute(id: id, toDate: nextDay)
+                try await postponeTodoUseCase.execute(id: id, toDate: toDate)
                 todos.removeAll { $0.id == id }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
