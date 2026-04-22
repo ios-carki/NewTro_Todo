@@ -233,11 +233,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
                 
                 let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
                 let sceneDelegate = windowScene?.delegate as? SceneDelegate
-                let vc = PageViewController()
-                let nav = UINavigationController(rootViewController: vc)
-                
-                sceneDelegate?.window?.rootViewController = nav
-                sceneDelegate?.window?.makeKeyAndVisible()
+                sceneDelegate?.restartApp()
                 
                 
             }
@@ -310,11 +306,7 @@ extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     func switchToFirstView() {
         let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
         let sceneDelegate = windowScene?.delegate as? SceneDelegate
-        let vc = PageViewController()
-        let nav = UINavigationController(rootViewController: vc)
-        
-        sceneDelegate?.window?.rootViewController = nav
-        sceneDelegate?.window?.makeKeyAndVisible()
+        sceneDelegate?.restartApp()
     }
 }
 

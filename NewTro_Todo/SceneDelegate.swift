@@ -22,6 +22,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         coordinator.start()
     }
 
+    func restartApp() {
+        guard let window else { return }
+        let coordinator = AppCoordinator(window: window, diContainer: DIContainer())
+        appCoordinator = coordinator
+        coordinator.start()
+    }
+
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
         // This occurs shortly after the scene enters the background, or when its session is discarded.
