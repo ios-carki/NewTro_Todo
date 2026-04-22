@@ -63,4 +63,12 @@ final class DIContainer {
     func makeClearAllDataUseCase() -> ClearAllDataUseCase {
         ClearAllDataUseCase(todoRepository: todoRepository, quickNoteRepository: quickNoteRepository)
     }
+
+    @MainActor func makeCalendarViewModel() -> CalendarViewModel {
+        CalendarViewModel(fetchByMonthUseCase: makeFetchTodosByMonthUseCase())
+    }
+
+    @MainActor func makeSettingsViewModel() -> SettingsViewModel {
+        SettingsViewModel(clearAllDataUseCase: makeClearAllDataUseCase())
+    }
 }

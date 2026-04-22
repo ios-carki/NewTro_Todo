@@ -3,56 +3,45 @@ import SwiftUI
 private let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
 
 struct CalendarView: View {
-    @StateObject var viewModel: CalendarViewModel
-    var onBack: (() -> Void)?
+    @ObservedObject var viewModel: CalendarViewModel
+    var onDateSelected: ((Date) -> Void)?
+
+    init(viewModel: CalendarViewModel, onDateSelected: ((Date) -> Void)? = nil) {
+        self.viewModel = viewModel
+        self.onDateSelected = onDateSelected
+        viewModel.onDateSelected = onDateSelected
+    }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Color.sky.ignoresSafeArea()
+        VStack(spacing: 0) {
+            header
+                .padding(.horizontal, 14)
+                .padding(.top, 8)
 
-            VStack(spacing: 0) {
-                header
-                    .padding(.horizontal, 14)
-                    .padding(.top, 8)
+            monthNavPanel
+                .padding(.horizontal, 14)
+                .padding(.top, 10)
 
-                monthNavPanel
-                    .padding(.horizontal, 14)
-                    .padding(.top, 10)
+            calendarGrid
+                .padding(.horizontal, 14)
+                .padding(.top, 10)
 
-                calendarGrid
-                    .padding(.horizontal, 14)
-                    .padding(.top, 10)
+            legend
+                .padding(.top, 10)
 
-                legend
-                    .padding(.top, 10)
-
-                Spacer()
-            }
-
-            bottomNavWithGround
+            Spacer()
         }
-        .ignoresSafeArea(edges: .bottom)
-        .navigationBarHidden(true)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.bottom, 113)
         .task { await viewModel.loadMonth() }
     }
 
     // MARK: - Header
     private var header: some View {
         HStack {
-            Button { onBack?() } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(.ink)
-                    .frame(width: 32, height: 32)
-                    .background(Color.cream)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                    .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
-            }
-
             Text("캘린더")
                 .font(.galBold22())
                 .foregroundColor(.ink)
-                .padding(.leading, 8)
 
             Spacer()
 
@@ -131,7 +120,6 @@ struct CalendarView: View {
                         weekday: viewModel.weekday(day: d)
                     ) {
                         viewModel.selectDay(d)
-                        onBack?()
                     }
                 } else {
                     Color.clear.frame(height: 46)
@@ -146,39 +134,6 @@ struct CalendarView: View {
             LegendDot(color: .peachDk, label: "할 일")
             LegendDot(color: .grassDk, label: "완료")
             LegendDot(color: .cream,   label: "오늘", hasFrame: true)
-        }
-    }
-
-    // MARK: - Bottom Nav
-    private var bottomNavWithGround: some View {
-        VStack(spacing: 0) {
-            HStack(spacing: 0) {
-                navItem(label: "할일",  sfIcon: "list.bullet",    isActive: false) { onBack?() }
-                navItem(label: "달력",  sfIcon: "calendar",       isActive: true)  { }
-                navItem(label: "메모",  sfIcon: "pencil",         isActive: false) { }
-                navItem(label: "통계",  sfIcon: "chart.bar.fill", isActive: false) { }
-                navItem(label: "설정",  sfIcon: "gearshape.fill", isActive: false) { }
-            }
-            .frame(height: 60)
-            .background(Color.panel)
-            .overlay(alignment: .top) { Color.ink.frame(height: 2) }
-            GroundStripView()
-        }
-    }
-
-    private func navItem(label: String, sfIcon: String, isActive: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            VStack(spacing: 3) {
-                Image(systemName: sfIcon)
-                    .font(.system(size: 15))
-                    .foregroundColor(isActive ? .ink : .shade)
-                Text(label)
-                    .font(.pressStart7())
-                    .foregroundColor(isActive ? .ink : .shade)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .background(isActive ? Color.sun.opacity(0.35) : Color.clear)
         }
     }
 }

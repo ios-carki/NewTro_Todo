@@ -6,7 +6,9 @@ final class MainCoordinator: CoordinatorProtocol {
     var childCoordinators: [any CoordinatorProtocol] = []
 
     private let diContainer: DIContainer
-    private var mainViewModel: MainViewModel?
+    private var mainVM: MainViewModel?
+    private var calendarVM: CalendarViewModel?
+    private var settingsVM: SettingsViewModel?
 
     init(navigationController: UINavigationController, diContainer: DIContainer) {
         self.navigationController = navigationController
@@ -14,35 +16,28 @@ final class MainCoordinator: CoordinatorProtocol {
     }
 
     @MainActor func start() {
-        let viewModel = diContainer.makeMainViewModel()
-        mainViewModel = viewModel
+        let mainVM = diContainer.makeMainViewModel()
+        let calendarVM = diContainer.makeCalendarViewModel()
+        let settingsVM = diContainer.makeSettingsViewModel()
 
-        let view = MainView(
-            viewModel: viewModel,
-            onCalendarTapped: { [weak self] in self?.showCalendar() },
-            onSettingsTapped: { [weak self] in self?.showSettings() }
+        settingsVM.onResetComplete = { [weak self] in self?.restartApp() }
+
+        self.mainVM = mainVM
+        self.calendarVM = calendarVM
+        self.settingsVM = settingsVM
+
+        let container = RootTabContainerView(
+            mainVM: mainVM,
+            calendarVM: calendarVM,
+            settingsVM: settingsVM
         )
-        let hostingVC = UIHostingController(rootView: view)
-        hostingVC.navigationItem.largeTitleDisplayMode = .never
+        let hostingVC = UIHostingController(rootView: container)
         navigationController.setViewControllers([hostingVC], animated: false)
     }
 
-    @MainActor func showCalendar() {
-        let coordinator = CalendarCoordinator(
-            navigationController: navigationController,
-            diContainer: diContainer,
-            initialDate: mainViewModel?.selectedDate ?? Date()
-        )
-        coordinator.onDateSelected = { [weak self] date in
-            self?.mainViewModel?.selectedDate = date
-            self?.mainViewModel?.loadTodos()
-        }
-        childCoordinators.append(coordinator)
-        coordinator.start()
-    }
-
-    func showSettings() {
-        let vc = SettingViewController()
-        navigationController.pushViewController(vc, animated: true)
+    private func restartApp() {
+        let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene
+        let sceneDelegate = windowScene?.delegate as? SceneDelegate
+        sceneDelegate?.restartApp()
     }
 }
