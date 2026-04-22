@@ -6,6 +6,7 @@ final class MainCoordinator: CoordinatorProtocol {
     var childCoordinators: [any CoordinatorProtocol] = []
 
     private let diContainer: DIContainer
+    private var mainViewModel: MainViewModel?
 
     init(navigationController: UINavigationController, diContainer: DIContainer) {
         self.navigationController = navigationController
@@ -14,6 +15,8 @@ final class MainCoordinator: CoordinatorProtocol {
 
     @MainActor func start() {
         let viewModel = diContainer.makeMainViewModel()
+        mainViewModel = viewModel
+
         let view = MainView(
             viewModel: viewModel,
             onCalendarTapped: { [weak self] in self?.showCalendar() },
@@ -24,9 +27,18 @@ final class MainCoordinator: CoordinatorProtocol {
         navigationController.setViewControllers([hostingVC], animated: false)
     }
 
-    func showCalendar() {
-        let vc = CalendarViewController()
-        navigationController.pushViewController(vc, animated: true)
+    @MainActor func showCalendar() {
+        let coordinator = CalendarCoordinator(
+            navigationController: navigationController,
+            diContainer: diContainer,
+            initialDate: mainViewModel?.selectedDate ?? Date()
+        )
+        coordinator.onDateSelected = { [weak self] date in
+            self?.mainViewModel?.selectedDate = date
+            self?.mainViewModel?.loadTodos()
+        }
+        childCoordinators.append(coordinator)
+        coordinator.start()
     }
 
     func showSettings() {

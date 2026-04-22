@@ -3,6 +3,18 @@ import RealmSwift
 
 final class TodoRepositoryImpl: TodoRepositoryProtocol {
 
+    func fetchTodos(year: Int, month: Int) async throws -> [TodoEntity] {
+        try await MainActor.run {
+            let realm = try Realm()
+            // stringDate format: "yyyy년 MM월 dd일"
+            let prefix = String(format: "%d년 %02d월", year, month)
+            return realm.objects(Todo.self)
+                .filter("stringDate BEGINSWITH %@", prefix)
+                .toArray()
+                .map { $0.toDomain() }
+        }
+    }
+
     func fetchTodos(targetDate: Date) async throws -> [TodoEntity] {
         try await MainActor.run {
             let realm = try Realm()

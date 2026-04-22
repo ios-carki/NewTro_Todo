@@ -2,6 +2,7 @@ import Foundation
 
 protocol TodoRepositoryProtocol {
     func fetchTodos(targetDate: Date) async throws -> [TodoEntity]
+    func fetchTodos(year: Int, month: Int) async throws -> [TodoEntity]
     func addTodo(targetDate: Date) async throws -> TodoEntity
     func updateText(id: String, text: String) async throws
     func toggleComplete(id: String) async throws
