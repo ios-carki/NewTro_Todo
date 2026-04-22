@@ -41,8 +41,12 @@ final class MainCoordinator: CoordinatorProtocol {
         coordinator.start()
     }
 
-    func showSettings() {
-        let vc = SettingViewController()
-        navigationController.pushViewController(vc, animated: true)
+    @MainActor func showSettings() {
+        let coordinator = SettingsCoordinator(
+            navigationController: navigationController,
+            diContainer: diContainer
+        )
+        childCoordinators.append(coordinator)
+        coordinator.start()
     }
 }
