@@ -31,6 +31,9 @@ final class DIContainer {
     func makeDeleteTodoUseCase() -> DeleteTodoUseCase {
         DeleteTodoUseCase(repository: todoRepository)
     }
+    func makeFetchTodosByMonthUseCase() -> FetchTodosByMonthUseCase {
+        FetchTodosByMonthUseCase(repository: todoRepository)
+    }
 
     // MARK: - UseCases: QuickNote
     func makeFetchOrCreateQuickNoteUseCase() -> FetchOrCreateQuickNoteUseCase {
