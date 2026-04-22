@@ -17,13 +17,25 @@ final class MainViewModel: ObservableObject {
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
 
     var completedCount: Int { todos.filter(\.isCompleted).count }
-    var heartCount: Int { max(0, min(3, 3 - todos.filter { !$0.isCompleted }.count / 3)) }
 
+    // 미완료 1개당 하트 1개 감산, 최소 0
+    var heartCount: Int { max(0, 3 - todos.filter { !$0.isCompleted }.count) }
+
+    // HUD용 "MM-DD"
     var worldDate: String {
         let cal = Calendar.current
         let m = cal.component(.month, from: selectedDate)
         let d = cal.component(.day, from: selectedDate)
         return String(format: "%02d-%02d", m, d)
+    }
+
+    // 타이틀용 "YYYY.MM.DD"
+    var displayDate: String {
+        let cal = Calendar.current
+        let y = cal.component(.year, from: selectedDate)
+        let m = cal.component(.month, from: selectedDate)
+        let d = cal.component(.day, from: selectedDate)
+        return String(format: "%04d.%02d.%02d", y, m, d)
     }
 
     // MARK: - Use Cases
