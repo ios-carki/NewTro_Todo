@@ -3,6 +3,7 @@ import SwiftUI
 struct MainView: View {
     @ObservedObject var viewModel: MainViewModel
     var onCalendarTapped: (() -> Void)?
+    var onMemoTapped: (() -> Void)?
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -97,7 +98,7 @@ struct MainView: View {
                             .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
                     }
 
-                    Button { viewModel.openQuickNote() } label: {
+                    Button { onMemoTapped?() } label: {
                         Text("MEMO")
                             .font(.pressStart9())
                             .foregroundColor(.ink)

@@ -2,33 +2,38 @@ import SwiftUI
 
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
+    @ObservedObject var statsVM: StatsViewModel
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Color.sky.ignoresSafeArea()
+        NavigationStack {
+            ZStack(alignment: .bottom) {
+                Color.sky.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                header
-                    .padding(.horizontal, 14)
-                    .padding(.top, 8)
+                VStack(spacing: 0) {
+                    header
+                        .padding(.horizontal, 14)
+                        .padding(.top, 8)
 
-                ScrollView {
-                    VStack(spacing: 10) {
-                        settingsPanel
-                        aboutPanel
-                        resetButton
+                    ScrollView {
+                        VStack(spacing: 10) {
+                            mascotPanel
+                            achievementPanel
+                            settingsPanel
+                            aboutPanel
+                            resetButton
+                        }
+                        .padding(.horizontal, 14)
+                        .padding(.top, 10)
+                        .padding(.bottom, 120)
                     }
-                    .padding(.horizontal, 14)
-                    .padding(.top, 10)
-                    .padding(.bottom, 120)
                 }
             }
-        }
-        .alert("데이터 초기화", isPresented: $viewModel.showResetConfirm) {
-            Button("취소", role: .cancel) {}
-            Button("초기화", role: .destructive) { viewModel.resetAllData() }
-        } message: {
-            Text("모든 할일과 메모가 삭제됩니다. 계속하시겠어요?")
+            .alert("데이터 초기화", isPresented: $viewModel.showResetConfirm) {
+                Button("취소", role: .cancel) {}
+                Button("초기화", role: .destructive) { viewModel.resetAllData() }
+            } message: {
+                Text("모든 할일과 메모가 삭제됩니다. 계속하시겠어요?")
+            }
         }
     }
 
@@ -41,6 +46,70 @@ struct SettingsView: View {
             Spacer()
         }
         .padding(.vertical, 6)
+    }
+
+    // MARK: - Mascot Panel
+    private var mascotPanel: some View {
+        PixelPanel(bg: .cream, padding: 0) {
+            VStack(spacing: 0) {
+                HStack(spacing: 12) {
+                    currentMascotPreview
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("내 마스코트")
+                            .font(.pressStart9())
+                            .foregroundColor(.shade)
+                        Text(currentCharInfo?.name ?? "핑코")
+                            .font(.galBold16())
+                            .foregroundColor(.ink)
+                        Text("LV.\(statsVM.stats.level) · \(statsVM.levelTitle)")
+                            .font(.pressStart7())
+                            .foregroundColor(.sun)
+                    }
+                    Spacer()
+                }
+                .padding(14)
+
+                Divider().background(Color.ink.opacity(0.2)).padding(.horizontal, 14)
+
+                NavigationLink {
+                    MascotPickerView(settingsVM: viewModel, statsVM: statsVM)
+                } label: {
+                    settingRowNavigation(label: "마스코트 변경", icon: "person.fill")
+                }
+            }
+        }
+    }
+
+    private var currentMascotPreview: some View {
+        ZStack {
+            Color.panel
+                .frame(width: 56, height: 56)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            if let info = currentCharInfo {
+                PixelArtView(
+                    grid: PixelArtAssets.characterGrid(type: info.gridType),
+                    palette: info.palette,
+                    scale: 4.5
+                )
+            }
+        }
+    }
+
+    private var currentCharInfo: FriendCharInfo? {
+        CharacterData.all.first { $0.id == viewModel.selectedCharacterId }
+    }
+
+    // MARK: - Achievement Panel
+    private var achievementPanel: some View {
+        PixelPanel(bg: .white, padding: 0) {
+            VStack(spacing: 0) {
+                NavigationLink {
+                    AchievementView(statsVM: statsVM)
+                } label: {
+                    settingRowNavigation(label: "업적 & 도전과제", icon: "trophy.fill")
+                }
+            }
+        }
     }
 
     // MARK: - Settings Panel
@@ -87,6 +156,24 @@ struct SettingsView: View {
         .padding(.vertical, 12)
     }
 
+    private func settingRowNavigation(label: String, icon: String) -> some View {
+        HStack {
+            Image(systemName: icon)
+                .font(.system(size: 14))
+                .foregroundColor(.shade)
+                .frame(width: 20)
+            Text(label)
+                .font(.galBold14())
+                .foregroundColor(.ink)
+            Spacer()
+            Image(systemName: "chevron.right")
+                .font(.system(size: 12))
+                .foregroundColor(.shade.opacity(0.5))
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+    }
+
     // MARK: - About Panel
     private var aboutPanel: some View {
         PixelPanel(bg: .cream, padding: 14) {
@@ -106,7 +193,7 @@ struct SettingsView: View {
                 }
 
                 HStack(spacing: 14) {
-                    MascotBobView()
+                    MascotBobView(info: currentCharInfo ?? CharacterData.all[0])
 
                     VStack(alignment: .leading, spacing: 4) {
                         Text("레트로 감성 할 일 관리")
@@ -143,18 +230,23 @@ struct SettingsView: View {
 
 // MARK: - MascotBobView
 private struct MascotBobView: View {
+    let info: FriendCharInfo
     @State private var bobY: CGFloat = 0
 
     var body: some View {
-        PixelArtView(grid: PixelArtAssets.mascotGrid, palette: PixelArtAssets.mascotPalette, scale: 3)
-            .offset(y: bobY)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                    withAnimation(.easeInOut(duration: 0.45).repeatForever(autoreverses: true)) {
-                        bobY = -4
-                    }
+        PixelArtView(
+            grid: PixelArtAssets.characterGrid(type: info.gridType),
+            palette: info.palette,
+            scale: 4
+        )
+        .offset(y: bobY)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                withAnimation(.easeInOut(duration: 0.45).repeatForever(autoreverses: true)) {
+                    bobY = -4
                 }
             }
+        }
     }
 }
 

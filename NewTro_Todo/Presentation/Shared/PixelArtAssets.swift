@@ -112,4 +112,116 @@ enum PixelArtAssets {
     static let checkPalette: [Character: Color] = [
         "1": .doneDk,
     ]
+
+    // MARK: - Tab Bar Icons (7×7, key "1" = foreground pixel)
+
+    // 할일 — 3 horizontal lines (list)
+    static let tabIconTodo: [String] = [
+        ".......",
+        "1111111",
+        ".......",
+        "1111111",
+        ".......",
+        "1111111",
+        ".......",
+    ]
+
+    // 달력 — calendar with ring binders at top
+    static let tabIconCalendar: [String] = [
+        "1..1..1",
+        "1111111",
+        "1.1.1.1",
+        "1111111",
+        "1.1.1.1",
+        "1111111",
+        ".......",
+    ]
+
+    // 메모 — diagonal pencil (tip bottom-left, eraser top-right)
+    static let tabIconMemo: [String] = [
+        ".....11",
+        "....1.1",
+        "...1..1",
+        "..1...1",
+        ".1....1",
+        "1..1111",
+        ".11....",
+    ]
+
+    // 통계 — ascending bar chart
+    static let tabIconStats: [String] = [
+        "......1",
+        "....1.1",
+        "....1.1",
+        "..1.1.1",
+        "..1.1.1",
+        "1111111",
+        ".......",
+    ]
+
+    // 설정 — gear / cog with 4 teeth
+    static let tabIconSettings: [String] = [
+        "..1.1..",
+        ".11111.",
+        "1.1.1.1",
+        "1..1..1",
+        "1.1.1.1",
+        ".11111.",
+        "..1.1..",
+    ]
+
+    // MARK: - Friend Character Grids (10×10)
+    // Palette keys: 1=outline, 2=face, 3=eye, 4=body, 5=blush
+
+    // Grid A: round head
+    static let charGridA: [String] = [
+        "...1111...",
+        "..122221..",
+        ".12522521.",
+        ".12232321.",
+        ".12222221.",
+        ".12222221.",
+        "..122221..",
+        "..144441..",
+        ".14444441.",
+        "...1..1...",
+    ]
+
+    // Grid B: cat ears
+    static let charGridB: [String] = [
+        ".11...11..",
+        "..11111...",
+        "..122221..",
+        ".12522521.",
+        ".12232321.",
+        ".12222221.",
+        "..122221..",
+        "..144441..",
+        ".14444441.",
+        "...1..1...",
+    ]
+
+    // Grid C: bunny ears
+    static let charGridC: [String] = [
+        "...11.11..",
+        "...12.21..",
+        "...12.21..",
+        "..122221..",
+        ".12522521.",
+        ".12232321.",
+        ".12222221.",
+        "..122221..",
+        ".14444441.",
+        "...1..1...",
+    ]
+
+    enum CharacterGridType { case a, b, c }
+
+    static func characterGrid(type: CharacterGridType) -> [String] {
+        switch type {
+        case .a: return charGridA
+        case .b: return charGridB
+        case .c: return charGridC
+        }
+    }
 }

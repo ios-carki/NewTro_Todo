@@ -16,6 +16,9 @@ final class SettingsViewModel: ObservableObject {
     @Published var welcomeOnLaunch: Bool {
         didSet { UserDefaults.standard.set(welcomeOnLaunch, forKey: "showWelcomeOnLaunch") }
     }
+    @Published var selectedCharacterId: String {
+        didSet { UserDefaults.standard.set(selectedCharacterId, forKey: "selectedCharacterId") }
+    }
     @Published var showResetConfirm = false
     @Published var isMascotBobbing = false
 
@@ -26,10 +29,11 @@ final class SettingsViewModel: ObservableObject {
 
     init(clearAllDataUseCase: any ClearAllDataUseCaseProtocol) {
         self.clearAllDataUseCase = clearAllDataUseCase
-        self.language       = UserDefaults.standard.string(forKey: "appLanguage")  ?? "ko"
-        self.theme          = UserDefaults.standard.string(forKey: "appTheme")     ?? "peach"
-        self.scanlineOn     = UserDefaults.standard.bool(forKey: "scanlineEnabled")
-        self.welcomeOnLaunch = UserDefaults.standard.bool(forKey: "showWelcomeOnLaunch")
+        self.language            = UserDefaults.standard.string(forKey: "appLanguage")       ?? "ko"
+        self.theme               = UserDefaults.standard.string(forKey: "appTheme")          ?? "peach"
+        self.scanlineOn          = UserDefaults.standard.bool(forKey: "scanlineEnabled")
+        self.welcomeOnLaunch     = UserDefaults.standard.bool(forKey: "showWelcomeOnLaunch")
+        self.selectedCharacterId = UserDefaults.standard.string(forKey: "selectedCharacterId") ?? "pinko"
     }
 
     // MARK: - Reset
