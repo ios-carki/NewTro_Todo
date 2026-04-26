@@ -6,6 +6,7 @@ final class QuickNote: Object {
     @Persisted var regDate: Date = Date()
     @Persisted var stringToRegDate: String = ""
     @Persisted var isWrited: Bool = false
+    @Persisted var colorName: String = ""
 
     @Persisted(primaryKey: true) var objectID: ObjectId
 
@@ -13,12 +14,14 @@ final class QuickNote: Object {
         note: String,
         regDate: Date,
         stringToRegDate: String,
-        isWrited: Bool
+        isWrited: Bool,
+        colorName: String = ""
     ) {
         self.init()
         self.note = note
         self.regDate = regDate
         self.stringToRegDate = stringToRegDate
         self.isWrited = isWrited
+        self.colorName = colorName
     }
 }

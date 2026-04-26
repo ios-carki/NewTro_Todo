@@ -8,20 +8,14 @@ final class MainViewModel: ObservableObject {
     // MARK: - State
     @Published var todos: [TodoEntity] = []
     @Published var selectedDate: Date = Date()
-    @Published var quickNote: QuickNoteEntity? = nil
-    @Published var isQuickNotePresented: Bool = false
     @Published var actionTarget: TodoEntity? = nil
     @Published var postponeTarget: TodoEntity? = nil
     @Published var errorMessage: String? = nil
 
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
-
     var completedCount: Int { todos.filter(\.isCompleted).count }
-
-    // 미완료 1개당 하트 1개 감산, 최소 0
     var heartCount: Int { max(0, 3 - todos.filter { !$0.isCompleted }.count) }
 
-    // HUD용 "MM-DD"
     var worldDate: String {
         let cal = Calendar.current
         let m = cal.component(.month, from: selectedDate)
@@ -29,7 +23,6 @@ final class MainViewModel: ObservableObject {
         return String(format: "%02d-%02d", m, d)
     }
 
-    // 타이틀용 "YYYY.MM.DD"
     var displayDate: String {
         let cal = Calendar.current
         let y = cal.component(.year, from: selectedDate)
@@ -47,8 +40,9 @@ final class MainViewModel: ObservableObject {
     private let updateImportanceUseCase: any UpdateTodoImportanceUseCaseProtocol
     private let toggleFavoriteUseCase: any ToggleTodoFavoriteUseCaseProtocol
     private let deleteTodoUseCase: any DeleteTodoUseCaseProtocol
-    private let fetchOrCreateNoteUseCase: any FetchOrCreateQuickNoteUseCaseProtocol
-    private let updateNoteUseCase: any UpdateQuickNoteUseCaseProtocol
+    private let recordCompleteUseCase: any RecordTodoCompleteUseCaseProtocol
+    private let recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol
+    private let recordPostponeUseCase: any RecordPostponeUseCaseProtocol
 
     init(
         fetchTodosUseCase: any FetchTodosUseCaseProtocol,
@@ -59,8 +53,9 @@ final class MainViewModel: ObservableObject {
         updateImportanceUseCase: any UpdateTodoImportanceUseCaseProtocol,
         toggleFavoriteUseCase: any ToggleTodoFavoriteUseCaseProtocol,
         deleteTodoUseCase: any DeleteTodoUseCaseProtocol,
-        fetchOrCreateNoteUseCase: any FetchOrCreateQuickNoteUseCaseProtocol,
-        updateNoteUseCase: any UpdateQuickNoteUseCaseProtocol
+        recordCompleteUseCase: any RecordTodoCompleteUseCaseProtocol,
+        recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol,
+        recordPostponeUseCase: any RecordPostponeUseCaseProtocol
     ) {
         self.fetchTodosUseCase = fetchTodosUseCase
         self.addTodoUseCase = addTodoUseCase
@@ -70,8 +65,9 @@ final class MainViewModel: ObservableObject {
         self.updateImportanceUseCase = updateImportanceUseCase
         self.toggleFavoriteUseCase = toggleFavoriteUseCase
         self.deleteTodoUseCase = deleteTodoUseCase
-        self.fetchOrCreateNoteUseCase = fetchOrCreateNoteUseCase
-        self.updateNoteUseCase = updateNoteUseCase
+        self.recordCompleteUseCase = recordCompleteUseCase
+        self.recordTodoAddedUseCase = recordTodoAddedUseCase
+        self.recordPostponeUseCase = recordPostponeUseCase
     }
 
     // MARK: - Date Navigation
@@ -101,6 +97,7 @@ final class MainViewModel: ObservableObject {
             do {
                 let newTodo = try await addTodoUseCase.execute(targetDate: selectedDate)
                 todos.append(newTodo)
+                await recordTodoAddedUseCase.execute()
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
@@ -127,6 +124,15 @@ final class MainViewModel: ObservableObject {
                 try await toggleCompleteUseCase.execute(id: id)
                 if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].isCompleted.toggle()
+                    if todos[idx].isCompleted {
+                        let wasPostponed = todos[idx].postponeCount > 0
+                        let isPerfect = !todos.isEmpty && todos.allSatisfy(\.isCompleted)
+                        await recordCompleteUseCase.execute(
+                            wasPostponed: wasPostponed,
+                            isPerfectDay: isPerfect,
+                            date: selectedDate
+                        )
+                    }
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
@@ -145,6 +151,7 @@ final class MainViewModel: ObservableObject {
             do {
                 try await postponeTodoUseCase.execute(id: id, toDate: toDate)
                 todos.removeAll { $0.id == id }
+                await recordPostponeUseCase.execute()
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
@@ -184,31 +191,6 @@ final class MainViewModel: ObservableObject {
                 try await deleteTodoUseCase.execute(id: id)
                 todos.removeAll { $0.id == id }
                 WidgetCenter.shared.reloadAllTimelines()
-            } catch {
-                errorMessage = error.localizedDescription
-            }
-        }
-    }
-
-    // MARK: - QuickNote Actions
-    func openQuickNote() {
-        Task {
-            do {
-                quickNote = try await fetchOrCreateNoteUseCase.execute(targetDate: selectedDate)
-                isQuickNotePresented = true
-            } catch {
-                errorMessage = error.localizedDescription
-            }
-        }
-    }
-
-    func saveQuickNote(text: String) {
-        guard let noteId = quickNote?.id else { return }
-        Task {
-            do {
-                try await updateNoteUseCase.execute(id: noteId, note: text)
-                quickNote?.note = text
-                quickNote?.isWritten = !text.isEmpty
             } catch {
                 errorMessage = error.localizedDescription
             }

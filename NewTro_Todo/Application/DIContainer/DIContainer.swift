@@ -2,9 +2,10 @@ import Foundation
 
 final class DIContainer {
 
-    // MARK: - Repositories (shared singletons within container)
+    // MARK: - Repositories
     private(set) lazy var todoRepository: any TodoRepositoryProtocol = TodoRepositoryImpl()
-    private(set) lazy var quickNoteRepository: any QuickNoteRepositoryProtocol = QuickNoteRepositoryImpl()
+    private(set) lazy var memoRepository: any MemoRepositoryProtocol = MemoRepositoryImpl()
+    private(set) lazy var statsRepository: any StatsRepositoryProtocol = StatsRepositoryImpl()
 
     // MARK: - UseCases: Todo
     func makeFetchTodosUseCase() -> FetchTodosUseCase {
@@ -35,12 +36,47 @@ final class DIContainer {
         FetchTodosByMonthUseCase(repository: todoRepository)
     }
 
-    // MARK: - UseCases: QuickNote
-    func makeFetchOrCreateQuickNoteUseCase() -> FetchOrCreateQuickNoteUseCase {
-        FetchOrCreateQuickNoteUseCase(repository: quickNoteRepository)
+    // MARK: - UseCases: Memo
+    func makeFetchMemosUseCase() -> FetchMemosUseCase {
+        FetchMemosUseCase(repository: memoRepository)
     }
-    func makeUpdateQuickNoteUseCase() -> UpdateQuickNoteUseCase {
-        UpdateQuickNoteUseCase(repository: quickNoteRepository)
+    func makeAddMemoUseCase() -> AddMemoUseCase {
+        AddMemoUseCase(repository: memoRepository)
+    }
+    func makeUpdateMemoUseCase() -> UpdateMemoUseCase {
+        UpdateMemoUseCase(repository: memoRepository)
+    }
+    func makeDeleteMemoUseCase() -> DeleteMemoUseCase {
+        DeleteMemoUseCase(repository: memoRepository)
+    }
+
+    // MARK: - UseCases: Stats
+    func makeFetchStatsUseCase() -> FetchStatsUseCase {
+        FetchStatsUseCase(repository: statsRepository)
+    }
+    func makeRecordTodoCompleteUseCase() -> RecordTodoCompleteUseCase {
+        RecordTodoCompleteUseCase(repository: statsRepository)
+    }
+    func makeFetchWeeklyCompletionsUseCase() -> FetchWeeklyCompletionsUseCase {
+        FetchWeeklyCompletionsUseCase(repository: todoRepository)
+    }
+    func makeClaimChallengeUseCase() -> ClaimChallengeUseCase {
+        ClaimChallengeUseCase(repository: statsRepository)
+    }
+    func makeRecordTodoAddedUseCase() -> RecordTodoAddedUseCase {
+        RecordTodoAddedUseCase(repository: statsRepository)
+    }
+    func makeRecordPostponeUseCase() -> RecordPostponeUseCase {
+        RecordPostponeUseCase(repository: statsRepository)
+    }
+
+    // MARK: - UseCases: Settings
+    func makeClearAllDataUseCase() -> ClearAllDataUseCase {
+        ClearAllDataUseCase(
+            todoRepository: todoRepository,
+            memoRepository: memoRepository,
+            statsRepository: statsRepository
+        )
     }
 
     // MARK: - ViewModels
@@ -54,14 +90,10 @@ final class DIContainer {
             updateImportanceUseCase: makeUpdateTodoImportanceUseCase(),
             toggleFavoriteUseCase: makeToggleTodoFavoriteUseCase(),
             deleteTodoUseCase: makeDeleteTodoUseCase(),
-            fetchOrCreateNoteUseCase: makeFetchOrCreateQuickNoteUseCase(),
-            updateNoteUseCase: makeUpdateQuickNoteUseCase()
+            recordCompleteUseCase: makeRecordTodoCompleteUseCase(),
+            recordTodoAddedUseCase: makeRecordTodoAddedUseCase(),
+            recordPostponeUseCase: makeRecordPostponeUseCase()
         )
-    }
-
-    // MARK: - UseCases: Settings
-    func makeClearAllDataUseCase() -> ClearAllDataUseCase {
-        ClearAllDataUseCase(todoRepository: todoRepository, quickNoteRepository: quickNoteRepository)
     }
 
     @MainActor func makeCalendarViewModel() -> CalendarViewModel {
@@ -70,5 +102,22 @@ final class DIContainer {
 
     @MainActor func makeSettingsViewModel() -> SettingsViewModel {
         SettingsViewModel(clearAllDataUseCase: makeClearAllDataUseCase())
+    }
+
+    @MainActor func makeMemoViewModel() -> MemoViewModel {
+        MemoViewModel(
+            fetchUseCase: makeFetchMemosUseCase(),
+            addUseCase: makeAddMemoUseCase(),
+            updateUseCase: makeUpdateMemoUseCase(),
+            deleteUseCase: makeDeleteMemoUseCase()
+        )
+    }
+
+    @MainActor func makeStatsViewModel() -> StatsViewModel {
+        StatsViewModel(
+            fetchStatsUseCase: makeFetchStatsUseCase(),
+            fetchWeeklyUseCase: makeFetchWeeklyCompletionsUseCase(),
+            claimChallengeUseCase: makeClaimChallengeUseCase()
+        )
     }
 }
