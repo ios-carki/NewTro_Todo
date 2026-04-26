@@ -85,31 +85,40 @@ struct RootTabContainerView: View {
     private func tabItem(_ tab: AppTab, label: String, icon: [String]) -> some View {
         let isActive = selectedTab == tab
         return Button { selectedTab = tab } label: {
-            VStack(spacing: 4) {
-                Spacer(minLength: 0)
+            VStack(spacing: 5) {
+                Spacer(minLength: 4)
 
-                // Icon in selected box or plain
-                ZStack {
-                    if isActive {
-                        Color.sun
+                if isActive {
+                    // Sun box with pixel drop shadow
+                    ZStack(alignment: .center) {
+                        // Drop shadow (ink, offset right+bottom)
+                        Rectangle()
+                            .fill(Color.ink)
+                            .frame(width: 38, height: 34)
+                            .offset(x: 2, y: 2)
+                        // Sun background
+                        Rectangle()
+                            .fill(Color.sun)
                             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .frame(width: 34, height: 28)
-                            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                            .frame(width: 38, height: 34)
+                        // Ink icon inside box
+                        PixelTabIcon(grid: icon, color: .ink)
                     }
-                    PixelTabIcon(grid: icon, isActive: isActive)
+                } else {
+                    // Plain icon in shade color
+                    PixelTabIcon(grid: icon, color: Color.shade)
                 }
 
-                // Label
                 Text(label)
                     .font(.pressStart7())
-                    .foregroundColor(.ink)
-                    .minimumScaleFactor(0.6)
+                    .foregroundColor(isActive ? .ink : .shade)
+                    .minimumScaleFactor(0.5)
                     .lineLimit(1)
 
-                Spacer(minLength: 0)
+                Spacer(minLength: 4)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 64)
+            .frame(height: 66)
         }
         .buttonStyle(.plain)
     }
@@ -119,7 +128,7 @@ struct RootTabContainerView: View {
 
 private struct PixelTabIcon: View {
     let grid: [String]
-    let isActive: Bool
+    let color: Color
 
     private let pixelSize: CGFloat = 3
 
@@ -137,7 +146,7 @@ private struct PixelTabIcon: View {
                         width: pixelSize,
                         height: pixelSize
                     )
-                    ctx.fill(Path(rect), with: .color(Color.ink))
+                    ctx.fill(Path(rect), with: .color(color))
                 }
             }
         }
