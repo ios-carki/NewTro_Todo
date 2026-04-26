@@ -13,15 +13,13 @@ struct RootTabContainerView: View {
     @ObservedObject var settingsVM: SettingsViewModel
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             Color.sky.ignoresSafeArea()
-
-            tabContent
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
+            tabContent.frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .safeAreaInset(edge: .bottom, spacing: 0) {
             tabBar
         }
-        .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
     }
 
@@ -61,52 +59,49 @@ struct RootTabContainerView: View {
             // Top border
             Color.ink.frame(height: 3)
 
-            // Tab buttons on cream background
+            // Tab buttons
             HStack(spacing: 0) {
-                tabItem(.todo,     label: "할일", icon: PixelArtAssets.tabIconTodo)
-                tabItem(.calendar, label: "달력", icon: PixelArtAssets.tabIconCalendar)
-                tabItem(.memo,     label: "메모", icon: PixelArtAssets.tabIconMemo)
-                tabItem(.stats,    label: "통계", icon: PixelArtAssets.tabIconStats)
-                tabItem(.settings, label: "설정", icon: PixelArtAssets.tabIconSettings)
+                tabItem(.todo,     label: "할일",   sfSymbol: "checkmark.square.fill")
+                tabItem(.calendar, label: "달력",   sfSymbol: "calendar")
+                tabItem(.memo,     label: "메모",   sfSymbol: "pencil")
+                tabItem(.stats,    label: "통계",   sfSymbol: "chart.bar.fill")
+                tabItem(.settings, label: "설정",   sfSymbol: "gearshape.fill")
             }
-            .frame(height: 66)
-            .background(Color.cream)
-
-            // Bottom safe area fill
-            Color.cream
-                .frame(height: 40)
-                .frame(maxWidth: .infinity)
+            .frame(height: 54)
         }
-        .frame(maxWidth: .infinity)
+        .background(Color.cream.ignoresSafeArea(edges: .bottom))
     }
 
     // MARK: - Tab Item
 
-    private func tabItem(_ tab: AppTab, label: String, icon: [String]) -> some View {
+    private func tabItem(_ tab: AppTab, label: String, sfSymbol: String) -> some View {
         let isActive = selectedTab == tab
         return Button { selectedTab = tab } label: {
-            VStack(spacing: 5) {
+            VStack(spacing: 4) {
                 Spacer(minLength: 4)
 
                 if isActive {
-                    // Sun box with pixel drop shadow
-                    ZStack(alignment: .center) {
-                        // Drop shadow (ink, offset right+bottom)
+                    ZStack {
+                        // Drop shadow
                         Rectangle()
                             .fill(Color.ink)
-                            .frame(width: 38, height: 34)
+                            .frame(width: 38, height: 32)
                             .offset(x: 2, y: 2)
-                        // Sun background
+                        // Sun box
                         Rectangle()
                             .fill(Color.sun)
                             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .frame(width: 38, height: 34)
-                        // Ink icon inside box
-                        PixelTabIcon(grid: icon, color: .ink)
+                            .frame(width: 38, height: 32)
+                        // Icon
+                        Image(systemName: sfSymbol)
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(.ink)
                     }
                 } else {
-                    // Plain icon in shade color
-                    PixelTabIcon(grid: icon, color: Color.shade)
+                    Image(systemName: sfSymbol)
+                        .font(.system(size: 16, weight: .regular))
+                        .foregroundColor(.shade)
+                        .frame(width: 38, height: 32)
                 }
 
                 Text(label)
@@ -118,41 +113,10 @@ struct RootTabContainerView: View {
                 Spacer(minLength: 4)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 66)
+            .frame(height: 54)
         }
         .buttonStyle(.plain)
     }
 }
 
-// MARK: - Pixel Tab Icon
-
-private struct PixelTabIcon: View {
-    let grid: [String]
-    let color: Color
-
-    private let pixelSize: CGFloat = 3
-
-    var body: some View {
-        let cols = CGFloat(grid.first?.count ?? 7)
-        let rows = CGFloat(grid.count)
-
-        return Canvas { ctx, _ in
-            for (r, row) in grid.enumerated() {
-                for (c, ch) in row.enumerated() {
-                    guard ch == "1" else { continue }
-                    let rect = CGRect(
-                        x: CGFloat(c) * pixelSize,
-                        y: CGFloat(r) * pixelSize,
-                        width: pixelSize,
-                        height: pixelSize
-                    )
-                    ctx.fill(Path(rect), with: .color(color))
-                }
-            }
-        }
-        .frame(width: cols * pixelSize, height: rows * pixelSize)
-    }
-}
-
-// Keep the constant for padding references elsewhere
-let tabBarTotalHeight: CGFloat = 115
+let tabBarTotalHeight: CGFloat = 57  // 3pt border + 54pt buttons
