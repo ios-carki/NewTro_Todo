@@ -9,6 +9,7 @@ final class MemoViewModel: ObservableObject {
     @Published var filterType: MemoFilter = .all
     @Published var sortType: MemoSortType = .newest
     @Published var isFormPresented: Bool = false
+    @Published var isCreatePresented: Bool = false
     @Published var editingMemo: MemoEntity? = nil
     @Published var isRangePickerPresented: Bool = false
     @Published var rangeFrom: Date = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
@@ -71,6 +72,26 @@ final class MemoViewModel: ObservableObject {
         filterType = .range(from: rangeFrom, to: rangeTo)
         isRangePickerPresented = false
         loadMemos()
+    }
+
+    func presentCreate() {
+        isCreatePresented = true
+    }
+
+    func createMemo(note: String, colorName: String) {
+        Task {
+            do {
+                let memo = try await addUseCase.execute(colorName: colorName)
+                try await updateUseCase.execute(id: memo.id, note: note, colorName: colorName)
+                var saved = memo
+                saved.note = note
+                saved.colorName = colorName
+                saved.isWritten = !note.isEmpty
+                memos.insert(saved, at: 0)
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
     }
 
     func addMemo(colorName: String = "yellow") {

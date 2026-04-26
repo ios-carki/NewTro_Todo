@@ -95,6 +95,27 @@ struct GroundStripView: View {
     }
 }
 
+// MARK: - BobbingCharView
+struct BobbingCharView: View {
+    let info: FriendCharInfo
+    var scale: CGFloat = 4
+    @State private var bobY: CGFloat = 0
+
+    var body: some View {
+        PixelArtView(
+            grid: PixelArtAssets.characterGrid(type: info.gridType),
+            palette: info.palette,
+            scale: scale
+        )
+        .offset(y: bobY)
+        .onAppear {
+            withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
+                bobY = -4
+            }
+        }
+    }
+}
+
 // MARK: - SkyBackgroundView
 // 시안 하늘 그라데이션 + 드리프트 구름
 struct SkyBackgroundView: View {

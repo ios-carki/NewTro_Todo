@@ -11,6 +11,7 @@ final class MainViewModel: ObservableObject {
     @Published var actionTarget: TodoEntity? = nil
     @Published var postponeTarget: TodoEntity? = nil
     @Published var errorMessage: String? = nil
+    @Published var isAddTodoPresented: Bool = false
 
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
     var completedCount: Int { todos.filter(\.isCompleted).count }
@@ -92,12 +93,21 @@ final class MainViewModel: ObservableObject {
         }
     }
 
-    func addTodo() {
+    func presentAddTodo() {
+        isAddTodoPresented = true
+    }
+
+    func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?) {
         Task {
             do {
-                let newTodo = try await addTodoUseCase.execute(targetDate: selectedDate)
+                let newTodo = try await addTodoUseCase.execute(
+                    text: text, emoji: emoji, importance: importance, dueTime: dueTime, targetDate: selectedDate
+                )
                 todos.append(newTodo)
                 await recordTodoAddedUseCase.execute()
+                if let dueTime {
+                    NotificationManager.shared.schedule(todoId: newTodo.id, text: text, emoji: emoji, at: dueTime)
+                }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
@@ -190,6 +200,7 @@ final class MainViewModel: ObservableObject {
             do {
                 try await deleteTodoUseCase.execute(id: id)
                 todos.removeAll { $0.id == id }
+                NotificationManager.shared.cancel(todoId: id)
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription

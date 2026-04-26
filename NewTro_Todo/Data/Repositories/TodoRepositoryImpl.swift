@@ -27,16 +27,18 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         }
     }
 
-    func addTodo(targetDate: Date) async throws -> TodoEntity {
+    func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?, targetDate: Date) async throws -> TodoEntity {
         try await MainActor.run {
             let realm = try Realm()
             let todo = Todo(
-                todo: "",
+                todo: text,
                 favorite: false,
-                importance: 0,
+                importance: importance.rawValue,
                 regDate: Date(),
                 stringDate: DateFormatter.dateToString(date: targetDate),
-                isFinished: false
+                isFinished: false,
+                emoji: emoji,
+                dueTime: dueTime
             )
             try realm.write { realm.add(todo) }
             return todo.toDomain()

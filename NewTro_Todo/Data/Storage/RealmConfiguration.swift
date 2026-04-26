@@ -6,7 +6,8 @@ enum RealmConfiguration {
     // v2: Todo.todo, QuickNote.note String? → String (required) 변경
     // v3: Todo.postponeCount Int 추가 (기본값 0)
     // v4: QuickNote.colorName String 추가 (기본값 "yellow")
-    private static let schemaVersion: UInt64 = 4
+    // v5: Todo.emoji String 추가 (기본값 ""), Todo.dueTime Date? 추가 (기본값 nil)
+    private static let schemaVersion: UInt64 = 5
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -53,6 +54,12 @@ enum RealmConfiguration {
         if oldVersion < 4 {
             migration.enumerateObjects(ofType: "QuickNote") { _, newObject in
                 newObject?["colorName"] = "yellow"
+            }
+        }
+        if oldVersion < 5 {
+            migration.enumerateObjects(ofType: "Todo") { _, newObject in
+                newObject?["emoji"] = ""
+                newObject?["dueTime"] = nil
             }
         }
     }

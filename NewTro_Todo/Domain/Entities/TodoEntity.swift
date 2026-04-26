@@ -9,4 +9,6 @@ struct TodoEntity: Identifiable {
     var targetDate: Date
     var isCompleted: Bool
     var postponeCount: Int
+    var emoji: String
+    var dueTime: Date?
 }

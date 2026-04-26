@@ -10,7 +10,9 @@ extension Todo {
             createdAt: regDate,
             targetDate: DateFormatter.stringToDate(stringDate) ?? regDate,
             isCompleted: isFinished,
-            postponeCount: postponeCount
+            postponeCount: postponeCount,
+            emoji: emoji,
+            dueTime: dueTime
         )
     }
 }
@@ -24,7 +26,9 @@ extension TodoEntity {
             regDate: createdAt,
             stringDate: DateFormatter.dateToString(date: targetDate),
             isFinished: isCompleted,
-            postponeCount: postponeCount
+            postponeCount: postponeCount,
+            emoji: emoji,
+            dueTime: dueTime
         )
     }
 }

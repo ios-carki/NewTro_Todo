@@ -2,8 +2,13 @@ import SwiftUI
 
 struct MainView: View {
     @ObservedObject var viewModel: MainViewModel
+    @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
     var onCalendarTapped: (() -> Void)?
     var onMemoTapped: (() -> Void)?
+
+    private var selectedCharInfo: FriendCharInfo {
+        CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -26,6 +31,9 @@ struct MainView: View {
                 .padding(.bottom, 128)
                 .padding(.trailing, 18)
                 .frame(maxWidth: .infinity, alignment: .trailing)
+        }
+        .sheet(isPresented: $viewModel.isAddTodoPresented) {
+            TodoAddView(viewModel: viewModel)
         }
         .sheet(item: $viewModel.actionTarget) { todo in
             TodoActionMenuView(todo: todo, viewModel: viewModel)
@@ -134,19 +142,25 @@ struct MainView: View {
 
     private var emptyState: some View {
         VStack(spacing: 12) {
-            PixelArtView(grid: PixelArtAssets.mascotGrid, palette: PixelArtAssets.mascotPalette, scale: 3)
-            Text("할일이 없어요!")
-                .font(.galBold16())
-                .foregroundColor(.shade)
-            Text("+ 버튼으로 추가해보세요")
-                .font(.pressStart9())
-                .foregroundColor(.shade.opacity(0.7))
+            PixelPanel(bg: .cream, padding: 16) {
+                VStack(spacing: 10) {
+                    BobbingCharView(info: selectedCharInfo)
+                    Text("오늘은 할 일이 없어요")
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                    Text("★ 버튼으로 추가해보세요!")
+                        .font(.pressStart7())
+                        .foregroundColor(.shade.opacity(0.7))
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .padding(.horizontal, 16)
         }
     }
 
     // MARK: - FAB
     private var fab: some View {
-        Button { viewModel.addTodo() } label: {
+        Button { viewModel.presentAddTodo() } label: {
             Text("+")
                 .font(.pressStart20())
                 .foregroundColor(.ink)

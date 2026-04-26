@@ -61,10 +61,7 @@ struct RootTabContainerView: View {
             // Top border
             Color.ink.frame(height: 3)
 
-            // Grass strip with blade tops
-            grassStrip
-
-            // Tab buttons on dirt
+            // Tab buttons on cream background
             HStack(spacing: 0) {
                 tabItem(.todo,     label: "할일", icon: PixelArtAssets.tabIconTodo)
                 tabItem(.calendar, label: "달력", icon: PixelArtAssets.tabIconCalendar)
@@ -72,57 +69,14 @@ struct RootTabContainerView: View {
                 tabItem(.stats,    label: "통계", icon: PixelArtAssets.tabIconStats)
                 tabItem(.settings, label: "설정", icon: PixelArtAssets.tabIconSettings)
             }
-            .frame(height: 60)
-            .background(dirtCanvas)
+            .frame(height: 66)
+            .background(Color.cream)
 
-            // Ground base
-            dirtCanvas
+            // Bottom safe area fill
+            Color.cream
                 .frame(height: 40)
                 .frame(maxWidth: .infinity)
         }
-        .frame(maxWidth: .infinity)
-    }
-
-    // MARK: - Grass Strip
-
-    private var grassStrip: some View {
-        Canvas { ctx, size in
-            let w = size.width
-            let h = size.height
-
-            // Grass base
-            ctx.fill(
-                Path(CGRect(x: 0, y: 3, width: w, height: h - 3)),
-                with: .color(.grass)
-            )
-
-            // Dark patches for depth (alternating 8pt blocks)
-            let patchW: CGFloat = 8
-            var px: CGFloat = 0
-            while px < w {
-                if Int(px / patchW) % 2 == 0 {
-                    ctx.fill(
-                        Path(CGRect(x: px, y: 5, width: patchW, height: h - 5)),
-                        with: .color(.grassDk)
-                    )
-                }
-                px += patchW
-            }
-
-            // Grass blade tops (staggered every 5pt)
-            var bx: CGFloat = 2
-            var toggle = false
-            while bx < w {
-                let bladeH: CGFloat = toggle ? 4 : 3
-                ctx.fill(
-                    Path(CGRect(x: bx, y: 0, width: 2, height: bladeH)),
-                    with: .color(toggle ? .grass : .grassDk)
-                )
-                bx += 5
-                toggle.toggle()
-            }
-        }
-        .frame(height: 12)
         .frame(maxWidth: .infinity)
     }
 
@@ -131,81 +85,33 @@ struct RootTabContainerView: View {
     private func tabItem(_ tab: AppTab, label: String, icon: [String]) -> some View {
         let isActive = selectedTab == tab
         return Button { selectedTab = tab } label: {
-            VStack(spacing: 0) {
-                Spacer(minLength: 4)
+            VStack(spacing: 4) {
+                Spacer(minLength: 0)
 
-                // Pixel art icon
-                PixelTabIcon(grid: icon, isActive: isActive)
-
-                Spacer(minLength: 3)
+                // Icon in selected box or plain
+                ZStack {
+                    if isActive {
+                        Color.sun
+                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                            .frame(width: 34, height: 28)
+                            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                    }
+                    PixelTabIcon(grid: icon, isActive: isActive)
+                }
 
                 // Label
                 Text(label)
                     .font(.pressStart7())
-                    .foregroundColor(isActive ? .ink : .cream)
+                    .foregroundColor(.ink)
                     .minimumScaleFactor(0.6)
                     .lineLimit(1)
 
-                Spacer(minLength: 4)
-
-                // 3-dot active indicator
-                HStack(spacing: 3) {
-                    ForEach(0..<3, id: \.self) { _ in
-                        Rectangle()
-                            .fill(isActive ? Color.sun : Color.clear)
-                            .frame(width: 3, height: 3)
-                    }
-                }
-
-                Spacer(minLength: 4)
+                Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 58)
-            .background(tabBackground(isActive: isActive))
+            .frame(height: 64)
         }
         .buttonStyle(.plain)
-    }
-
-    @ViewBuilder
-    private func tabBackground(isActive: Bool) -> some View {
-        if isActive {
-            ZStack {
-                // Pixel-art shadow (ink offset block)
-                Color.ink
-                    .padding(.top, 2)
-                    .padding(.leading, 2)
-
-                // Main cream block with ink border
-                Color.cream
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                    .padding(.bottom, 2)
-                    .padding(.trailing, 2)
-            }
-        } else {
-            Color.clear
-        }
-    }
-
-    // MARK: - Dirt Canvas
-
-    private var dirtCanvas: some View {
-        Canvas { ctx, size in
-            let tileW: CGFloat = 14
-            var x: CGFloat = 0
-            while x < size.width {
-                let c: Color = Int(x / tileW) % 2 == 0 ? .dirt : .dirtDk
-                ctx.fill(
-                    Path(CGRect(x: x, y: 0, width: tileW, height: size.height)),
-                    with: .color(c)
-                )
-                x += tileW
-            }
-            // Subtle top highlight line
-            ctx.fill(
-                Path(CGRect(x: 0, y: 0, width: size.width, height: 1)),
-                with: .color(.ink.opacity(0.15))
-            )
-        }
     }
 }
 
@@ -220,7 +126,6 @@ private struct PixelTabIcon: View {
     var body: some View {
         let cols = CGFloat(grid.first?.count ?? 7)
         let rows = CGFloat(grid.count)
-        let iconColor: Color = isActive ? .ink : .cream
 
         return Canvas { ctx, _ in
             for (r, row) in grid.enumerated() {
@@ -232,7 +137,7 @@ private struct PixelTabIcon: View {
                         width: pixelSize,
                         height: pixelSize
                     )
-                    ctx.fill(Path(rect), with: .color(iconColor))
+                    ctx.fill(Path(rect), with: .color(Color.ink))
                 }
             }
         }
