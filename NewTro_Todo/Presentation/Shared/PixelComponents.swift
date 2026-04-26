@@ -108,11 +108,8 @@ struct BobbingCharView: View {
             scale: scale
         )
         .offset(y: bobY)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true)) {
-                bobY = -4
-            }
-        }
+        .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: bobY)
+        .onAppear { bobY = -4 }
     }
 }
 
