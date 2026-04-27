@@ -15,6 +15,7 @@ final class MainViewModel: ObservableObject {
     @Published var isAddTodoPresented: Bool = false
     @Published var editTarget: TodoEntity? = nil
     @Published var toastMessage: String? = nil
+    @Published var isDatePickerPresented: Bool = false
 
     private var toastTask: Task<Void, Never>?
 
@@ -115,6 +116,15 @@ final class MainViewModel: ObservableObject {
 
     func presentAddTodo() {
         isAddTodoPresented = true
+    }
+
+    func presentDatePicker() {
+        isDatePickerPresented = true
+    }
+
+    func navigateToDate(_ date: Date) {
+        selectedDate = date
+        loadTodos()
     }
 
     func presentEditTodo(_ todo: TodoEntity) {

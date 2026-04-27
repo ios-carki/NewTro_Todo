@@ -254,7 +254,7 @@ struct TodoAddView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 44)
+            .frame(width: 46, height: 46)
             .background(isSelected ? Color.peach : Color.cream)
             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }

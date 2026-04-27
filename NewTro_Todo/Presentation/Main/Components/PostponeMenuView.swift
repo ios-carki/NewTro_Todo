@@ -15,54 +15,47 @@ struct PostponeMenuView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .top) {
+        ZStack {
             Color.panel.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                Capsule()
-                    .fill(Color.ink.opacity(0.25))
-                    .frame(width: 40, height: 4)
-                    .padding(.top, 12)
-
                 Text("언제로 미룰까요?")
                     .font(.galBold16())
                     .foregroundColor(.ink)
-                    .padding(.top, 18)
-                    .padding(.bottom, 12)
+                    .padding(.top, 16)
+                    .padding(.bottom, 14)
 
-                // Quick options
+                // ── 빠른 선택 ─────────────────────────────────────────
                 HStack(spacing: 8) {
-                    quickChip(label: "내일", days: 1)
-                    quickChip(label: "모레", days: 2)
+                    quickChip(label: "내일",  days: 1)
+                    quickChip(label: "모레",  days: 2)
                     quickChip(label: "+7일", days: 7)
                 }
                 .padding(.horizontal, 16)
 
-                Divider()
-                    .background(Color.ink.opacity(0.15))
+                Rectangle()
+                    .fill(Color.ink.opacity(0.12))
+                    .frame(height: 1)
                     .padding(.horizontal, 16)
                     .padding(.top, 14)
 
-                // Date picker
-                DatePicker(
-                    "",
-                    selection: $selectedDate,
-                    in: tomorrow...,
-                    displayedComponents: [.date]
+                // ── 달력 ──────────────────────────────────────────────
+                PixelCalendarPicker(
+                    initialDate: selectedDate,
+                    minimumDate: tomorrow,
+                    externalDate: selectedDate,
+                    onDateSelected: { selectedDate = $0 }
                 )
-                .datePickerStyle(.graphical)
-                .labelsHidden()
-                .tint(Color.grass)
-                .padding(.horizontal, 8)
+                .padding(.top, 12)
 
-                // Confirm
+                Spacer()
+
+                // ── 확인 버튼 ─────────────────────────────────────────
                 Button {
                     viewModel.postpone(id: todo.id, toDate: selectedDate)
                     dismiss()
                 } label: {
                     HStack(spacing: 6) {
-                        Text("🕐")
-                            .font(.system(size: 14))
                         Text(dateLabel(selectedDate))
                             .font(.pressStart9())
                         Text("로 미루기")
@@ -80,8 +73,10 @@ struct PostponeMenuView: View {
             }
         }
         .presentationDetents([.large])
-        .presentationDragIndicator(.hidden)
+        .presentationDragIndicator(.visible)
     }
+
+    // MARK: - Helpers
 
     private var tomorrow: Date {
         Calendar.current.date(byAdding: .day, value: 1, to: viewModel.selectedDate) ?? viewModel.selectedDate
@@ -104,7 +99,7 @@ struct PostponeMenuView: View {
     private func dateLabel(_ date: Date) -> String {
         let cal = Calendar.current
         let m = cal.component(.month, from: date)
-        let d = cal.component(.day, from: date)
+        let d = cal.component(.day,   from: date)
         return String(format: "%02d/%02d", m, d)
     }
 }

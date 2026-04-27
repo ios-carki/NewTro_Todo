@@ -118,9 +118,11 @@ struct TodoRowView: View {
             Button {
                 viewModel.postponeTarget = todo
             } label: {
-                Text("🕐")
-                    .font(.system(size: 16))
-                    .frame(width: 28, height: 28)
+                Text("미루기")
+                    .font(.galBold14())
+                    .foregroundColor(.ink)
+                    .padding(.horizontal, 6)
+                    .frame(height: 28)
                     .background(Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
             }

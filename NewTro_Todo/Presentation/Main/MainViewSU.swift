@@ -36,6 +36,11 @@ struct MainView: View {
         .sheet(item: $viewModel.postponeTarget) { todo in
             PostponeMenuView(todo: todo, viewModel: viewModel)
         }
+        .sheet(isPresented: $viewModel.isDatePickerPresented) {
+            DatePickerSheetView { date in
+                viewModel.navigateToDate(date)
+            }
+        }
         .alert("오류", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
@@ -114,6 +119,15 @@ struct MainView: View {
                 }
 
                 Spacer()
+
+                Button { viewModel.presentDatePicker() } label: {
+                    Text("📅")
+                        .font(.system(size: 16))
+                        .frame(width: 34, height: 34)
+                        .background(Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
 
                 Button { viewModel.presentAddTodo() } label: {
                     Text("+ Todo")
