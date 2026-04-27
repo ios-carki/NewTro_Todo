@@ -6,6 +6,10 @@ enum AppTab: Equatable {
 
 struct RootTabContainerView: View {
     @State private var selectedTab: AppTab = .todo
+    // UIHostingController가 UINavigationController에 직접 올라가므로
+    // ZStack은 safe area 없이 물리적 전체 화면을 채움 → safe area 값을 직접 읽어야 함
+    @State private var safeAreaBottom: CGFloat = 34
+
     @ObservedObject var mainVM: MainViewModel
     @ObservedObject var calendarVM: CalendarViewModel
     @ObservedObject var memoVM: MemoViewModel
@@ -14,21 +18,26 @@ struct RootTabContainerView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            // ZStack child로 사용 → ZStack 레이아웃은 safe area 경계 유지
-            Color.sky.ignoresSafeArea()
+            // GeometryReader로 실제 safe area 값 취득 + 하늘 배경 (전체 화면 덮음)
+            GeometryReader { geo in
+                Color.sky
+                    .onAppear { safeAreaBottom = geo.safeAreaInsets.bottom }
+            }
+            .ignoresSafeArea()
 
+            // 콘텐츠: 탭바 + safe area 영역 아래를 비워줌
             tabContent
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.bottom, 80)
+                .padding(.bottom, safeAreaBottom + 62 + 16)
 
-            // 잔디+흙: safe area zone까지 흙색이 이어지도록 background 확장
+            // 잔디+흙: ZStack이 물리적 전체화면이므로 자연스럽게 최하단에 위치
             GroundStripView(height: 64)
                 .frame(maxWidth: .infinity)
-                .background(Color.dirt.ignoresSafeArea(edges: .bottom))
 
-            // 탭바: alignment .bottom = safe area 상단 경계 → 패널이 safe area 침범 안 함
+            // 탭바: safeAreaBottom만큼 올려 home indicator zone 침범 방지
             floatingTabBar
                 .padding(.horizontal, 14)
+                .padding(.bottom, safeAreaBottom)
         }
         .navigationBarHidden(true)
     }
@@ -63,8 +72,6 @@ struct RootTabContainerView: View {
     }
 
     // MARK: - Floating Tab Bar Panel
-    // 레퍼런스 코드와 동일한 구조:
-    // HStack 버튼들 + 패널 배경 + padding(.horizontal) → 공중에 뜬 느낌
 
     private var floatingTabBar: some View {
         HStack(spacing: 0) {
@@ -75,7 +82,6 @@ struct RootTabContainerView: View {
             tabItem(.settings, label: "설정", sfSymbol: "gearshape.fill")
         }
         .frame(height: 62)
-        // 픽셀 아트 패널: 크림 배경 + ink 테두리 + 우하단 드롭섀도
         .background(Color.panel)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
         .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
@@ -90,7 +96,6 @@ struct RootTabContainerView: View {
                 Spacer(minLength: 0)
 
                 if isActive {
-                    // 선택: sun 박스 + 우하단 픽셀 드롭섀도
                     ZStack {
                         Rectangle()
                             .fill(Color.ink)
@@ -105,7 +110,6 @@ struct RootTabContainerView: View {
                             .foregroundColor(.ink)
                     }
                 } else {
-                    // 비선택: 아이콘만
                     Image(systemName: sfSymbol)
                         .font(.system(size: 14, weight: .regular))
                         .foregroundColor(.shade)
