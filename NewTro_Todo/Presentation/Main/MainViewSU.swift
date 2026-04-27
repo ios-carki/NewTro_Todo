@@ -44,7 +44,32 @@ struct MainView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
+        .overlay(alignment: .top) {
+            if let msg = viewModel.toastMessage {
+                toastBanner(msg)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
         .onAppear { viewModel.loadTodos() }
+    }
+
+    // MARK: - Toast Banner
+    private func toastBanner(_ message: String) -> some View {
+        HStack(spacing: 6) {
+            Text("!")
+                .font(.pressStart9())
+                .foregroundColor(.cream)
+            Text(message)
+                .font(.galBold14())
+                .foregroundColor(.cream)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(Color.shade)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+        .padding(.horizontal, 24)
+        .padding(.top, 8)
     }
 
     // MARK: - Top HUD

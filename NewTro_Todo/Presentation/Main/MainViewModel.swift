@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import SwiftUI
 import WidgetKit
 
 @MainActor
@@ -13,6 +14,9 @@ final class MainViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var isAddTodoPresented: Bool = false
     @Published var editTarget: TodoEntity? = nil
+    @Published var toastMessage: String? = nil
+
+    private var toastTask: Task<Void, Never>?
 
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
     var completedCount: Int { todos.filter(\.isCompleted).count }
@@ -73,6 +77,18 @@ final class MainViewModel: ObservableObject {
         self.recordTodoAddedUseCase = recordTodoAddedUseCase
         self.recordPostponeUseCase = recordPostponeUseCase
         self.editTodoUseCase = editTodoUseCase
+    }
+
+    // MARK: - Toast
+
+    func showToast(_ message: String) {
+        toastTask?.cancel()
+        withAnimation(.easeInOut(duration: 0.3)) { toastMessage = message }
+        toastTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeInOut(duration: 0.3)) { self.toastMessage = nil }
+        }
     }
 
     // MARK: - Date Navigation

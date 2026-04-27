@@ -140,7 +140,10 @@ struct TodoRowView: View {
 
     // MARK: - Helpers
     private func openEdit() {
-        guard !todo.isCompleted else { return }
+        guard !todo.isCompleted else {
+            viewModel.showToast("완료한 투두는 수정할 수 없습니다")
+            return
+        }
         viewModel.presentEditTodo(todo)
     }
 

@@ -105,7 +105,7 @@ struct TodoAddView: View {
     private func sectionLabel(_ title: String) -> some View {
         HStack {
             Text(title)
-                .font(.pressStart7())
+                .font(.pressStart9())
                 .foregroundColor(.shade)
             Spacer()
         }
@@ -247,15 +247,15 @@ struct TodoAddView: View {
             Group {
                 if emoji.isEmpty {
                     Text(label ?? "없음")
-                        .font(.pressStart7())
-                        .foregroundColor(isSelected ? .cream : .ink)
+                        .font(.galBold14())
+                        .foregroundColor(isSelected ? .ink : .shade)
                 } else {
                     Text(emoji).font(.system(size: 20))
                 }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 44)
-            .background(isSelected ? Color.ink : Color.cream)
+            .background(isSelected ? Color.peach : Color.cream)
             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }
     }
@@ -301,4 +301,10 @@ struct TodoAddView: View {
         }
         dismiss()
     }
+}
+
+
+#Preview { @MainActor in
+    let di = DIContainer()
+    return TodoAddView(viewModel: di.makeMainViewModel())
 }
