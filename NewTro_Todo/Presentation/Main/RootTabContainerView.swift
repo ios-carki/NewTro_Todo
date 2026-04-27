@@ -12,23 +12,26 @@ struct RootTabContainerView: View {
     @ObservedObject var statsVM: StatsViewModel
     @ObservedObject var settingsVM: SettingsViewModel
 
-    // 탭바 전체 높이: 잔디(13) + 버튼(60) = 73pt (safe area는 별도 처리)
-    private let tabBarVisibleHeight: CGFloat = 73
-
     var body: some View {
         ZStack(alignment: .bottom) {
             // SplashView와 동일한 하늘 배경
             Color.sky.ignoresSafeArea()
 
-            // 콘텐츠: 탭바 높이만큼 하단 여백
+            // 콘텐츠 — 탭바 영역 아래를 비워줌
             tabContent
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.bottom, tabBarVisibleHeight)
+                .padding(.bottom, 106) // 잔디(56) + 패널(62) + 여유(여백)
 
-            // 탭바 (하단 고정, safe area 위)
-            tabBar
+            // SplashView 하단 배경: 잔디+흙 지면 (항상 최하단)
+            GroundStripView(height: 56)
+                .frame(maxWidth: .infinity)
+                .background(Color.dirtDk.ignoresSafeArea(edges: .bottom))
+
+            // 공중에 뜬 탭바 패널
+            floatingTabBar
+                .padding(.horizontal, 14)
+                .padding(.bottom, 40) // 지면 위로 띄움
         }
-        .ignoresSafeArea(edges: .bottom)
         .navigationBarHidden(true)
     }
 
@@ -61,41 +64,23 @@ struct RootTabContainerView: View {
         }
     }
 
-    // MARK: - Tab Bar
-    // 구조: ink 선(3) + 잔디(10) + 버튼(60) = 73pt visible
-    // 흙 배경은 safe area까지 Color로 채움 (Canvas 팽창 방지)
+    // MARK: - Floating Tab Bar Panel
+    // 레퍼런스 코드와 동일한 구조:
+    // HStack 버튼들 + 패널 배경 + padding(.horizontal) → 공중에 뜬 느낌
 
-    private var tabBar: some View {
-        VStack(spacing: 0) {
-            // 상단 ink 선
-            Color.ink.frame(height: 3)
-
-            // 잔디 블레이드 (Canvas는 반드시 명시적 frame)
-            grassCanvas
-                .frame(height: 10)
-                .frame(maxWidth: .infinity)
-
-            // 탭 버튼 (흙 배경, Canvas에 명시적 frame)
-            HStack(spacing: 0) {
-                tabItem(.todo,     label: "할일", sfSymbol: "checkmark.square.fill")
-                tabItem(.calendar, label: "달력", sfSymbol: "calendar")
-                tabItem(.memo,     label: "메모", sfSymbol: "pencil")
-                tabItem(.stats,    label: "통계", sfSymbol: "chart.bar.fill")
-                tabItem(.settings, label: "설정", sfSymbol: "gearshape.fill")
-            }
-            .frame(height: 60)
-            .frame(maxWidth: .infinity)
-            .background(
-                // 명시적 frame으로 Canvas 팽창 차단
-                GeometryReader { geo in
-                    dirtCanvas.frame(width: geo.size.width, height: geo.size.height)
-                }
-            )
+    private var floatingTabBar: some View {
+        HStack(spacing: 0) {
+            tabItem(.todo,     label: "할일", sfSymbol: "checkmark.square.fill")
+            tabItem(.calendar, label: "달력", sfSymbol: "calendar")
+            tabItem(.memo,     label: "메모", sfSymbol: "pencil")
+            tabItem(.stats,    label: "통계", sfSymbol: "chart.bar.fill")
+            tabItem(.settings, label: "설정", sfSymbol: "gearshape.fill")
         }
-        // safe area 아래쪽은 Canvas 없이 단색으로 채움
-        .background(Color.dirtDk.ignoresSafeArea(edges: .bottom))
-        .frame(height: tabBarVisibleHeight)
-        .frame(maxWidth: .infinity)
+        .frame(height: 62)
+        // 픽셀 아트 패널: 크림 배경 + ink 테두리 + 우하단 드롭섀도
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
+        .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
     }
 
     // MARK: - Tab Item
@@ -107,85 +92,39 @@ struct RootTabContainerView: View {
                 Spacer(minLength: 0)
 
                 if isActive {
-                    // 공중에 뜬 느낌: sun 박스 + 우하단 픽셀 드롭섀도
+                    // 선택: sun 박스 + 우하단 픽셀 드롭섀도
                     ZStack {
                         Rectangle()
                             .fill(Color.ink)
-                            .frame(width: 40, height: 32)
+                            .frame(width: 38, height: 30)
                             .offset(x: 2, y: 2)
                         Rectangle()
                             .fill(Color.sun)
                             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .frame(width: 40, height: 32)
+                            .frame(width: 38, height: 30)
                         Image(systemName: sfSymbol)
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.ink)
                     }
                 } else {
+                    // 비선택: 아이콘만
                     Image(systemName: sfSymbol)
-                        .font(.system(size: 15, weight: .regular))
-                        .foregroundColor(.cream)
-                        .frame(width: 40, height: 32)
+                        .font(.system(size: 14, weight: .regular))
+                        .foregroundColor(.shade)
+                        .frame(width: 38, height: 30)
                 }
 
                 Text(label)
                     .font(.galBold14())
-                    .foregroundColor(isActive ? .sun : .cream)
+                    .foregroundColor(isActive ? .ink : .shade)
                     .lineLimit(1)
 
                 Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 60)
         }
         .buttonStyle(.plain)
     }
-
-    // MARK: - Ground Canvases (항상 명시적 frame과 함께 사용)
-
-    private var grassCanvas: some View {
-        Canvas { ctx, size in
-            // 잔디 바닥
-            ctx.fill(
-                Path(CGRect(x: 0, y: 3, width: size.width, height: size.height - 3)),
-                with: .color(.grass)
-            )
-            // 명암 패치
-            let pw: CGFloat = 8
-            var x: CGFloat = 0
-            while x < size.width {
-                if Int(x / pw) % 2 == 0 {
-                    ctx.fill(
-                        Path(CGRect(x: x, y: 4, width: pw, height: size.height - 4)),
-                        with: .color(.grassDk)
-                    )
-                }
-                x += pw
-            }
-            // 블레이드 tops
-            var bx: CGFloat = 2; var toggle = false
-            while bx < size.width {
-                let h: CGFloat = toggle ? 4 : 3
-                ctx.fill(
-                    Path(CGRect(x: bx, y: 0, width: 2, height: h)),
-                    with: .color(toggle ? .grass : .grassDk)
-                )
-                bx += 5; toggle.toggle()
-            }
-        }
-    }
-
-    private var dirtCanvas: some View {
-        Canvas { ctx, size in
-            let tw: CGFloat = 14
-            var x: CGFloat = 0
-            while x < size.width {
-                let c: Color = Int(x / tw) % 2 == 0 ? .dirt : .dirtDk
-                ctx.fill(Path(CGRect(x: x, y: 0, width: tw, height: size.height)), with: .color(c))
-                x += tw
-            }
-        }
-    }
 }
 
-let tabBarTotalHeight: CGFloat = 73
+let tabBarTotalHeight: CGFloat = 106
