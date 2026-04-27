@@ -77,35 +77,30 @@ struct TodoRowView: View {
     }
 
     private var textArea: some View {
-        HStack(spacing: 4) {
-            if !todo.emoji.isEmpty {
-                Text(todo.emoji)
-                    .font(.system(size: 14))
-            }
+        Button {
+            guard !todo.isCompleted else { return }
+            viewModel.presentEditTodo(todo)
+        } label: {
+            HStack(spacing: 4) {
+                if !todo.emoji.isEmpty {
+                    Text(todo.emoji)
+                        .font(.system(size: 14))
+                }
 
-            if todo.isCompleted {
                 let displayText = todo.text.isEmpty ? "..." : todo.text
                 Text(displayText)
-                    .strikethrough(color: .shade)
-                    .foregroundColor(.shade)
+                    .strikethrough(todo.isCompleted, color: .shade)
+                    .foregroundColor(todo.isCompleted ? .shade : .ink)
                     .font(.galBold14())
                     .lineLimit(1)
-            } else {
-                TextField("할일을 입력하세요", text: $editingText)
-                    .foregroundColor(.ink)
-                    .font(.galBold14())
-                    .onSubmit { viewModel.updateText(id: todo.id, text: editingText) }
-                    .onChange(of: editingText) { newValue in
-                        let capped = String(newValue.prefix(50))
-                        if capped != newValue { editingText = capped }
-                        viewModel.updateText(id: todo.id, text: capped)
-                    }
-            }
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
-            if todo.postponeCount > 0 {
-                postponeBadge
+                if todo.postponeCount > 0 {
+                    postponeBadge
+                }
             }
         }
+        .buttonStyle(.plain)
     }
 
     private var postponeBadge: some View {

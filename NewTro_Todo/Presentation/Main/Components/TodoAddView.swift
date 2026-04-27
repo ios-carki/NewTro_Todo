@@ -4,6 +4,9 @@ struct TodoAddView: View {
     @ObservedObject var viewModel: MainViewModel
     @Environment(\.dismiss) private var dismiss
 
+    // nil이면 신규 추가, non-nil이면 수정 모드
+    var editingTodo: TodoEntity? = nil
+
     @State private var text: String = ""
     @State private var selectedEmoji: String = ""
     @State private var importance: Importance = .none
@@ -15,6 +18,7 @@ struct TodoAddView: View {
     }()
 
     private let emojis = ["⭐", "🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️"]
+    private var isEditMode: Bool { editingTodo != nil }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -23,7 +27,7 @@ struct TodoAddView: View {
             VStack(spacing: 0) {
                 handleBar.padding(.top, 12)
 
-                Text("새 할 일")
+                Text(isEditMode ? "할 일 수정" : "새 할 일")
                     .font(.galBold16())
                     .foregroundColor(.ink)
                     .padding(.top, 16)
@@ -90,9 +94,7 @@ struct TodoAddView: View {
 
                 // Buttons
                 HStack(spacing: 10) {
-                    Button {
-                        dismiss()
-                    } label: {
+                    Button { dismiss() } label: {
                         Text("취소")
                             .font(.galBold14())
                             .foregroundColor(.shade)
@@ -102,13 +104,11 @@ struct TodoAddView: View {
                             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                     }
 
-                    Button {
-                        save()
-                    } label: {
+                    Button { save() } label: {
                         HStack(spacing: 4) {
-                            Text("★")
+                            Text(isEditMode ? "✎" : "★")
                                 .font(.pressStart12())
-                            Text("저장")
+                            Text(isEditMode ? "수정" : "저장")
                                 .font(.galBold14())
                         }
                         .foregroundColor(.ink)
@@ -127,7 +127,10 @@ struct TodoAddView: View {
         }
         .presentationDetents([.medium, .large])
         .presentationDragIndicator(.hidden)
+        .onAppear { populateIfEditing() }
     }
+
+    // MARK: - Helpers
 
     private var handleBar: some View {
         Capsule()
@@ -135,19 +138,27 @@ struct TodoAddView: View {
             .frame(width: 40, height: 4)
     }
 
+    private func populateIfEditing() {
+        guard let todo = editingTodo else { return }
+        text = todo.text
+        selectedEmoji = todo.emoji
+        importance = todo.importance
+        if let dt = todo.dueTime {
+            hasDueTime = true
+            dueTime = dt
+        }
+    }
+
     private func emojiChip(_ emoji: String, label: String? = nil) -> some View {
         let isSelected = selectedEmoji == emoji
-        return Button {
-            selectedEmoji = emoji
-        } label: {
+        return Button { selectedEmoji = emoji } label: {
             Group {
                 if emoji.isEmpty {
                     Text(label ?? "없음")
                         .font(.pressStart7())
                         .foregroundColor(isSelected ? .cream : .ink)
                 } else {
-                    Text(emoji)
-                        .font(.system(size: 18))
+                    Text(emoji).font(.system(size: 18))
                 }
             }
             .frame(width: 38, height: 38)
@@ -163,9 +174,7 @@ struct TodoAddView: View {
         case .medium: .sun
         case .high:   .pixelRed
         }
-        return Button {
-            importance = imp
-        } label: {
+        return Button { importance = imp } label: {
             Text(label)
                 .font(.pressStart9())
                 .foregroundColor(isSelected ? .cream : .ink)
@@ -192,7 +201,11 @@ struct TodoAddView: View {
             resolvedDueTime = nil
         }
 
-        viewModel.addTodo(text: trimmed, emoji: selectedEmoji, importance: importance, dueTime: resolvedDueTime)
+        if let todo = editingTodo {
+            viewModel.editTodo(id: todo.id, text: trimmed, emoji: selectedEmoji, importance: importance, dueTime: resolvedDueTime)
+        } else {
+            viewModel.addTodo(text: trimmed, emoji: selectedEmoji, importance: importance, dueTime: resolvedDueTime)
+        }
         dismiss()
     }
 }

@@ -27,6 +27,9 @@ struct MainView: View {
         .sheet(isPresented: $viewModel.isAddTodoPresented) {
             TodoAddView(viewModel: viewModel)
         }
+        .sheet(item: $viewModel.editTarget) { todo in
+            TodoAddView(viewModel: viewModel, editingTodo: todo)
+        }
         .sheet(item: $viewModel.actionTarget) { todo in
             TodoActionMenuView(todo: todo, viewModel: viewModel)
         }

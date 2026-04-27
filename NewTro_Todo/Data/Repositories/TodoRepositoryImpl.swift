@@ -45,6 +45,21 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         }
     }
 
+    func updateTodo(id: String, text: String, emoji: String, importance: Importance, dueTime: Date?) async throws {
+        try await MainActor.run {
+            let realm = try Realm()
+            guard let todo = realm.objects(Todo.self)
+                .filter("objectID == %@", try ObjectId(string: id)).first
+            else { throw RepositoryError.notFound }
+            try realm.write {
+                todo.todo = text
+                todo.emoji = emoji
+                todo.importance = importance.rawValue
+                todo.dueTime = dueTime
+            }
+        }
+    }
+
     func updateText(id: String, text: String) async throws {
         try await MainActor.run {
             let realm = try Realm()

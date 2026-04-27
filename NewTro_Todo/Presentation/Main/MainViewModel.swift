@@ -12,6 +12,7 @@ final class MainViewModel: ObservableObject {
     @Published var postponeTarget: TodoEntity? = nil
     @Published var errorMessage: String? = nil
     @Published var isAddTodoPresented: Bool = false
+    @Published var editTarget: TodoEntity? = nil
 
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
     var completedCount: Int { todos.filter(\.isCompleted).count }
@@ -44,6 +45,7 @@ final class MainViewModel: ObservableObject {
     private let recordCompleteUseCase: any RecordTodoCompleteUseCaseProtocol
     private let recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol
     private let recordPostponeUseCase: any RecordPostponeUseCaseProtocol
+    private let editTodoUseCase: any EditTodoUseCaseProtocol
 
     init(
         fetchTodosUseCase: any FetchTodosUseCaseProtocol,
@@ -56,7 +58,8 @@ final class MainViewModel: ObservableObject {
         deleteTodoUseCase: any DeleteTodoUseCaseProtocol,
         recordCompleteUseCase: any RecordTodoCompleteUseCaseProtocol,
         recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol,
-        recordPostponeUseCase: any RecordPostponeUseCaseProtocol
+        recordPostponeUseCase: any RecordPostponeUseCaseProtocol,
+        editTodoUseCase: any EditTodoUseCaseProtocol
     ) {
         self.fetchTodosUseCase = fetchTodosUseCase
         self.addTodoUseCase = addTodoUseCase
@@ -69,6 +72,7 @@ final class MainViewModel: ObservableObject {
         self.recordCompleteUseCase = recordCompleteUseCase
         self.recordTodoAddedUseCase = recordTodoAddedUseCase
         self.recordPostponeUseCase = recordPostponeUseCase
+        self.editTodoUseCase = editTodoUseCase
     }
 
     // MARK: - Date Navigation
@@ -95,6 +99,32 @@ final class MainViewModel: ObservableObject {
 
     func presentAddTodo() {
         isAddTodoPresented = true
+    }
+
+    func presentEditTodo(_ todo: TodoEntity) {
+        editTarget = todo
+    }
+
+    func editTodo(id: String, text: String, emoji: String, importance: Importance, dueTime: Date?) {
+        Task {
+            do {
+                try await editTodoUseCase.execute(id: id, text: text, emoji: emoji, importance: importance, dueTime: dueTime)
+                if let idx = todos.firstIndex(where: { $0.id == id }) {
+                    todos[idx].text = text
+                    todos[idx].emoji = emoji
+                    todos[idx].importance = importance
+                    todos[idx].dueTime = dueTime
+                }
+                // 알림 재설정: 기존 취소 후 새 시간 있으면 등록
+                NotificationManager.shared.cancel(todoId: id)
+                if let dueTime {
+                    NotificationManager.shared.schedule(todoId: id, text: text, emoji: emoji, at: dueTime)
+                }
+                WidgetCenter.shared.reloadAllTimelines()
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
     }
 
     func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?) {
