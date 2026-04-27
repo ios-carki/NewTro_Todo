@@ -58,20 +58,11 @@ struct GroundStripView: View {
                 let dirtY = grassH
 
                 // ─── 흙 레이어 ───────────────────────────────────────
-                // 베이스 타일 (16pt 격자)
-                let tw: CGFloat = 16
+                // 단색 흙 배경
                 var x: CGFloat = 0
-                while x < w {
-                    let c: Color = Int(x / tw) % 2 == 0 ? .dirt : .dirtDk
-                    ctx.fill(Path(CGRect(x: x, y: dirtY, width: tw, height: size.height - dirtY)), with: .color(c))
-                    x += tw
-                }
-                // 흙 상단 하이라이트 선 (밝은 느낌)
-                ctx.fill(Path(CGRect(x: 0, y: dirtY, width: w, height: 2)), with: .color(Color.dirt.opacity(0.85)))
+                ctx.fill(Path(CGRect(x: 0, y: dirtY, width: w, height: size.height - dirtY)), with: .color(.dirt))
                 // 중간 수평 음영 선
                 ctx.fill(Path(CGRect(x: 0, y: dirtY + (size.height - dirtY) * 0.45, width: w, height: 2)), with: .color(Color.dirtDk.opacity(0.5)))
-                // 하단 어두운 선 (깊이감)
-                ctx.fill(Path(CGRect(x: 0, y: size.height - 3, width: w, height: 3)), with: .color(Color.dirtDk))
                 // 자갈 (작은 2×2 어두운 사각형)
                 let pebbles: [(CGFloat, CGFloat)] = [
                     (18, dirtY+5), (52, dirtY+9), (88, dirtY+4),
@@ -91,7 +82,7 @@ struct GroundStripView: View {
                 // 잔디 베이스 (grassDk 바탕)
                 ctx.fill(Path(CGRect(x: 0, y: 5, width: w, height: grassH - 5)), with: .color(.grassDk))
                 // 밝은 잔디 패치 (격자 8pt)
-                let pw: CGFloat = 8
+                let pw: CGFloat = 12
                 x = 0
                 while x < w {
                     if Int(x / pw) % 3 != 2 {
@@ -116,16 +107,19 @@ struct GroundStripView: View {
                     (23, 1, 6,  .grassDk),
                 ]
                 let tileW: CGFloat = 26
+                let bladeRaise: CGFloat = 6  // 블레이드를 위로 띄우는 오프셋
                 x = 0
                 while x < w {
                     for (bx, bw, bh, bc) in blades {
                         let fx = x + bx
                         if fx < w {
+                            let topY = grassH - bh - bladeRaise
+                            let bodyH = bh + bladeRaise  // 아래는 흙에 묻히는 느낌
                             // 블레이드 본체
-                            ctx.fill(Path(CGRect(x: fx, y: grassH - bh, width: bw, height: bh)), with: .color(bc))
+                            ctx.fill(Path(CGRect(x: fx, y: topY, width: bw, height: bodyH)), with: .color(bc))
                             // 블레이드 상단 하이라이트 (1px 밝게)
                             if bh > 6 {
-                                ctx.fill(Path(CGRect(x: fx, y: grassH - bh, width: 1, height: 2)), with: .color(Color.grass.opacity(0.7)))
+                                ctx.fill(Path(CGRect(x: fx, y: topY, width: 1, height: 2)), with: .color(Color.grass.opacity(0.7)))
                             }
                         }
                     }
@@ -133,7 +127,7 @@ struct GroundStripView: View {
                 }
 
                 // ─── 상단 ink 경계선 ─────────────────────────────────
-                ctx.fill(Path(CGRect(x: 0, y: 0, width: w, height: 3)), with: .color(.ink))
+                //ctx.fill(Path(CGRect(x: 0, y: 0, width: w, height: 3)), with: .color(.ink))
             }
         }
         .frame(height: height)
@@ -200,5 +194,11 @@ struct SkyBackgroundView: View {
                 cloud3Offset = 480
             }
         }
+    }
+}
+
+struct GroundStripView_Preview: PreviewProvider {
+    static var previews: some View {
+        GroundStripView()
     }
 }
