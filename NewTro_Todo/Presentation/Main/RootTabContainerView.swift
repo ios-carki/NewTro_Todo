@@ -19,9 +19,10 @@ struct RootTabContainerView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding(.bottom, 80)
 
-            // SplashView 하단 배경: 잔디+흙 지면 (항상 최하단)
+            // SplashView 하단 배경: 잔디+흙 지면 — safe area까지 흙색으로 채움
             GroundStripView(height: 64)
                 .frame(maxWidth: .infinity)
+                .background(Color.dirt.ignoresSafeArea(edges: .bottom))
 
             // 공중에 뜬 탭바 패널
             floatingTabBar
