@@ -13,21 +13,13 @@ struct TodoRowView: View {
 
     var body: some View {
         ZStack {
-            // 전체 행을 편집 Button으로 감쌈
-            // 내부의 체크박스·미루기·액션 Button이 자신의 영역을 먼저 처리하므로 충돌 없음
-            Button {
-                guard !todo.isCompleted else { return }
-                viewModel.presentEditTodo(todo)
-            } label: {
-                HStack(spacing: 0) {
-                    priorityStrip
-                    rowContent
-                }
-                .background(Color.panel)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
+            HStack(spacing: 0) {
+                priorityStrip
+                rowContent
             }
-            .buttonStyle(.plain)
+            .background(Color.panel)
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
             .offset(x: offsetX)
             .opacity(offsetX == 0 ? 1 : Double(max(0, 1 - offsetX / 200)))
 
@@ -43,6 +35,8 @@ struct TodoRowView: View {
         Rectangle()
             .fill(importanceColor)
             .frame(width: 6)
+            .contentShape(Rectangle())
+            .onTapGesture { openEdit() }
     }
 
     // MARK: - Row content
@@ -101,6 +95,8 @@ struct TodoRowView: View {
                 postponeBadge
             }
         }
+        .contentShape(Rectangle())
+        .onTapGesture { openEdit() }
     }
 
     private var postponeBadge: some View {
@@ -143,6 +139,11 @@ struct TodoRowView: View {
     }
 
     // MARK: - Helpers
+    private func openEdit() {
+        guard !todo.isCompleted else { return }
+        viewModel.presentEditTodo(todo)
+    }
+
     private var importanceColor: Color {
         switch todo.importance {
         case .high:   return .pixelRed

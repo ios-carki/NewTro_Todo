@@ -14,8 +14,7 @@ struct TodoAddView: View {
         comps.hour = 9; comps.minute = 0
         return Calendar.current.date(from: comps) ?? Date()
     }()
-    // .height(固定) 사용 → 키보드 등장 시 sheet 자동 확장 방지
-    @State private var selectedDetent: PresentationDetent = .height(500)
+    @State private var selectedDetent: PresentationDetent = .height(380)
 
     private let emojis = ["⭐", "🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️"]
     private var isEditMode: Bool { editingTodo != nil }
@@ -26,158 +25,207 @@ struct TodoAddView: View {
         ZStack {
             Color.panel.ignoresSafeArea()
 
-            ScrollView {
-                VStack(spacing: 0) {
-                    Text(isEditMode ? "할 일 수정" : "새 할 일")
-                        .font(.galBold16())
-                        .foregroundColor(.ink)
-                        .padding(.top, 16)
-                        .padding(.bottom, 14)
+            VStack(spacing: 0) {
+                // ── 타이틀 (고정) ─────────────────────────────────────
+                Text(isEditMode ? "할 일 수정" : "새 할 일")
+                    .font(.galBold16())
+                    .foregroundColor(.ink)
+                    .padding(.top, 16)
+                    .padding(.bottom, 14)
 
-                    // ── 텍스트 입력 ──────────────────────────────────
-                    if isExpanded {
-                        // Large: 멀티라인 TextEditor
-                        ZStack(alignment: .topLeading) {
-                            if !selectedEmoji.isEmpty {
-                                Text(selectedEmoji)
-                                    .font(.system(size: 18))
-                                    .padding(.top, 10)
-                                    .padding(.leading, 10)
-                            }
-                            TextEditor(text: $text)
-                                .font(.galBold14())
-                                .foregroundColor(.ink)
-                                .scrollContentBackground(.hidden)
-                                .background(Color.clear)
-                                .frame(minHeight: 100)
-                                .padding(.leading, selectedEmoji.isEmpty ? 6 : 28)
-                                .padding(.vertical, 4)
-
-                            if text.isEmpty {
-                                Text("할 일을 입력하세요")
-                                    .font(.galBold14())
-                                    .foregroundColor(.shade.opacity(0.5))
-                                    .padding(.top, 12)
-                                    .padding(.leading, selectedEmoji.isEmpty ? 12 : 34)
-                                    .allowsHitTesting(false)
-                            }
-                        }
-                        .padding(.horizontal, 6)
-                        .background(Color.cream)
-                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                        .padding(.horizontal, 16)
-                    } else {
-                        // Medium: 단일 TextField
-                        HStack(spacing: 8) {
-                            if !selectedEmoji.isEmpty {
-                                Text(selectedEmoji).font(.system(size: 18))
-                            }
-                            TextField("할 일을 입력하세요", text: $text)
-                                .font(.galBold14())
-                                .foregroundColor(.ink)
-                        }
-                        .padding(.horizontal, 14)
-                        .frame(height: 46)
-                        .background(Color.cream)
-                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                        .padding(.horizontal, 16)
-                    }
-
-                    // ── 이모지 선택 ──────────────────────────────────
-                    if isExpanded {
-                        // Large: 4열 그리드
-                        let gridColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
-                        LazyVGrid(columns: gridColumns, spacing: 8) {
-                            emojiChip("", label: "없음")
-                            ForEach(emojis, id: \.self) { emoji in
-                                emojiChip(emoji)
-                            }
-                        }
-                        .padding(.horizontal, 16)
-                        .padding(.top, 14)
-                    } else {
-                        // Medium: 가로 스크롤
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                emojiChip("", label: "없음")
-                                ForEach(emojis, id: \.self) { emoji in
-                                    emojiChip(emoji)
-                                }
-                            }
+                // ── 스크롤 영역 ───────────────────────────────────────
+                ScrollView(showsIndicators: false) {
+                    VStack(spacing: 0) {
+                        // 텍스트 입력
+                        textInputSection
                             .padding(.horizontal, 16)
-                        }
-                        .padding(.top, 12)
+
+                        // 이모지
+                        sectionLabel("이모지 선택")
+                        emojiSection
+
+                        // 중요도
+                        sectionLabel("중요도")
+                        importanceSection
+                            .padding(.horizontal, 16)
+
+                        // 알림
+                        notificationSection
+
+                        Spacer().frame(height: 8)
                     }
+                    .animation(.easeInOut(duration: 0.25), value: isExpanded)
+                }
 
-                    // ── 중요도 ────────────────────────────────────────
-                    HStack(spacing: 0) {
-                        importanceChip(.none,   label: "낮음")
-                        importanceChip(.medium, label: "보통")
-                        importanceChip(.high,   label: "높음")
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
+                // ── 구분선 ────────────────────────────────────────────
+                Rectangle()
+                    .fill(Color.ink.opacity(0.12))
+                    .frame(height: 1)
 
-                    // ── 알림 시간 ─────────────────────────────────────
-                    VStack(spacing: 8) {
-                        HStack {
-                            Text("알림 시간")
-                                .font(.pressStart9())
-                                .foregroundColor(.shade)
-                            Spacer()
-                            Toggle("", isOn: $hasDueTime)
-                                .labelsHidden()
-                                .tint(.grass)
-                        }
-                        .padding(.horizontal, 16)
-
-                        if hasDueTime {
-                            DatePicker("", selection: $dueTime, displayedComponents: [.hourAndMinute])
-                                .datePickerStyle(.wheel)
-                                .labelsHidden()
-                                .frame(height: 100)
-                                .clipped()
-                        }
-                    }
-                    .padding(.top, 12)
-
-                    // ── 버튼 ──────────────────────────────────────────
-                    HStack(spacing: 10) {
-                        Button { dismiss() } label: {
-                            Text("취소")
-                                .font(.galBold14())
-                                .foregroundColor(.shade)
-                                .frame(maxWidth: .infinity)
-                                .frame(height: 46)
-                                .background(Color.cream)
-                                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                        }
-
-                        Button { save() } label: {
-                            HStack(spacing: 4) {
-                                Text(isEditMode ? "✎" : "★")
-                                    .font(.pressStart12())
-                                Text(isEditMode ? "수정" : "저장")
-                                    .font(.galBold14())
-                            }
-                            .foregroundColor(isEmpty ? Color.shade : Color.ink)
+                // ── 버튼 (고정) ───────────────────────────────────────
+                HStack(spacing: 10) {
+                    Button { dismiss() } label: {
+                        Text("취소")
+                            .font(.galBold14())
+                            .foregroundColor(.shade)
                             .frame(maxWidth: .infinity)
                             .frame(height: 46)
-                            .background(isEmpty ? Color.shade.opacity(0.1) : Color.peach)
-                            .overlay(Rectangle().stroke(isEmpty ? Color.shade.opacity(0.4) : Color.ink, lineWidth: 2))
-                            .background(Rectangle().fill(isEmpty ? Color.clear : Color.ink).offset(x: 2, y: 2))
-                        }
-                        .disabled(isEmpty)
+                            .background(Color.cream)
+                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
-                    .padding(.bottom, 32)
+
+                    Button { save() } label: {
+                        HStack(spacing: 4) {
+                            Text(isEditMode ? "✎" : "★")
+                                .font(.pressStart12())
+                            Text(isEditMode ? "수정" : "저장")
+                                .font(.galBold14())
+                        }
+                        .foregroundColor(isEmpty ? Color.shade : Color.ink)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 46)
+                        .background(isEmpty ? Color.shade.opacity(0.1) : Color.peach)
+                        .overlay(Rectangle().stroke(isEmpty ? Color.shade.opacity(0.4) : Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(isEmpty ? Color.clear : Color.ink).offset(x: 2, y: 2))
+                    }
+                    .disabled(isEmpty)
                 }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+                .padding(.bottom, 24)
             }
         }
-        .presentationDetents([.height(500), .large], selection: $selectedDetent)
-        .presentationDragIndicator(.visible)  // iOS 기본 핸들 (Sheet 최상단)
+        .presentationDetents([.height(380), .large], selection: $selectedDetent)
+        .presentationDragIndicator(.visible)
         .onAppear { populateIfEditing() }
+    }
+
+    // MARK: - Section Label
+
+    private func sectionLabel(_ title: String) -> some View {
+        HStack {
+            Text(title)
+                .font(.pressStart7())
+                .foregroundColor(.shade)
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 14)
+        .padding(.bottom, 6)
+    }
+
+    // MARK: - Text Input
+
+    @ViewBuilder
+    private var textInputSection: some View {
+        if isExpanded {
+            ZStack(alignment: .topLeading) {
+                if !selectedEmoji.isEmpty {
+                    Text(selectedEmoji)
+                        .font(.system(size: 18))
+                        .padding(.top, 10)
+                        .padding(.leading, 10)
+                }
+                TextEditor(text: $text)
+                    .font(.galBold14())
+                    .foregroundColor(.ink)
+                    .scrollContentBackground(.hidden)
+                    .background(Color.clear)
+                    .frame(minHeight: 80, maxHeight: 140)
+                    .padding(.leading, selectedEmoji.isEmpty ? 6 : 28)
+                    .padding(.vertical, 4)
+
+                if text.isEmpty {
+                    Text("할 일을 입력하세요")
+                        .font(.galBold14())
+                        .foregroundColor(.shade.opacity(0.5))
+                        .padding(.top, 12)
+                        .padding(.leading, selectedEmoji.isEmpty ? 12 : 34)
+                        .allowsHitTesting(false)
+                }
+            }
+            .background(Color.cream)
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            .transition(.opacity)
+        } else {
+            HStack(spacing: 8) {
+                if !selectedEmoji.isEmpty {
+                    Text(selectedEmoji).font(.system(size: 18))
+                }
+                TextField("할 일을 입력하세요", text: $text)
+                    .font(.galBold14())
+                    .foregroundColor(.ink)
+            }
+            .padding(.horizontal, 14)
+            .frame(height: 46)
+            .background(Color.cream)
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            .transition(.opacity)
+        }
+    }
+
+    // MARK: - Emoji Section
+
+    @ViewBuilder
+    private var emojiSection: some View {
+        if isExpanded {
+            let gridColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
+            LazyVGrid(columns: gridColumns, spacing: 8) {
+                emojiChip("", label: "없음")
+                ForEach(emojis, id: \.self) { emoji in
+                    emojiChip(emoji)
+                }
+            }
+            .padding(.horizontal, 16)
+            .transition(.opacity)
+        } else {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    emojiChip("", label: "없음")
+                    ForEach(emojis, id: \.self) { emoji in
+                        emojiChip(emoji)
+                    }
+                }
+                .padding(.horizontal, 16)
+            }
+            .transition(.opacity)
+        }
+    }
+
+    // MARK: - Importance Section
+
+    private var importanceSection: some View {
+        HStack(spacing: 0) {
+            importanceChip(.none,   label: "낮음")
+            importanceChip(.medium, label: "보통")
+            importanceChip(.high,   label: "높음")
+        }
+    }
+
+    // MARK: - Notification Section
+
+    private var notificationSection: some View {
+        VStack(spacing: 8) {
+            HStack {
+                Text("알림 시간")
+                    .font(.pressStart9())
+                    .foregroundColor(.shade)
+                Spacer()
+                Toggle("", isOn: $hasDueTime)
+                    .labelsHidden()
+                    .tint(.grass)
+            }
+            .padding(.horizontal, 16)
+
+            if hasDueTime {
+                DatePicker("", selection: $dueTime, displayedComponents: [.hourAndMinute])
+                    .datePickerStyle(.wheel)
+                    .labelsHidden()
+                    .frame(height: 100)
+                    .clipped()
+            }
+        }
+        .padding(.top, 14)
     }
 
     // MARK: - Helpers
@@ -202,11 +250,11 @@ struct TodoAddView: View {
                         .font(.pressStart7())
                         .foregroundColor(isSelected ? .cream : .ink)
                 } else {
-                    Text(emoji).font(.system(size: 18))
+                    Text(emoji).font(.system(size: 20))
                 }
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 38)
+            .frame(height: 44)
             .background(isSelected ? Color.ink : Color.cream)
             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }
