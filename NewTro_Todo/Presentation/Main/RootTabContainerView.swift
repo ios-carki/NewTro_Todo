@@ -20,17 +20,17 @@ struct RootTabContainerView: View {
             // 콘텐츠 — 탭바 영역 아래를 비워줌
             tabContent
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.bottom, 106) // 잔디(56) + 패널(62) + 여유(여백)
+                .padding(.bottom, 80) // 잔디(64) + 패널(62) - 오버랩
 
             // SplashView 하단 배경: 잔디+흙 지면 (항상 최하단)
-            GroundStripView(height: 56)
+            GroundStripView(height: 64)
                 .frame(maxWidth: .infinity)
                 .background(Color.dirtDk.ignoresSafeArea(edges: .bottom))
 
             // 공중에 뜬 탭바 패널
             floatingTabBar
                 .padding(.horizontal, 14)
-                .padding(.bottom, 40) // 지면 위로 띄움
+                .padding(.bottom, 8) // SafeArea 바로 위
         }
         .navigationBarHidden(true)
     }
