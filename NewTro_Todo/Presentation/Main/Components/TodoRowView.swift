@@ -3,25 +3,31 @@ import SwiftUI
 struct TodoRowView: View {
     let todo: TodoEntity
     @ObservedObject var viewModel: MainViewModel
-    @State private var editingText: String
     @State private var offsetX: CGFloat = 0
     @State private var showFireworks: Bool = false
 
     init(todo: TodoEntity, viewModel: MainViewModel) {
         self.todo = todo
         self.viewModel = viewModel
-        self._editingText = State(initialValue: todo.text)
     }
 
     var body: some View {
         ZStack {
-            HStack(spacing: 0) {
-                priorityStrip
-                rowContent
+            // 전체 행을 편집 Button으로 감쌈
+            // 내부의 체크박스·미루기·액션 Button이 자신의 영역을 먼저 처리하므로 충돌 없음
+            Button {
+                guard !todo.isCompleted else { return }
+                viewModel.presentEditTodo(todo)
+            } label: {
+                HStack(spacing: 0) {
+                    priorityStrip
+                    rowContent
+                }
+                .background(Color.panel)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
             }
-            .background(Color.panel)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
+            .buttonStyle(.plain)
             .offset(x: offsetX)
             .opacity(offsetX == 0 ? 1 : Double(max(0, 1 - offsetX / 200)))
 
@@ -77,30 +83,24 @@ struct TodoRowView: View {
     }
 
     private var textArea: some View {
-        Button {
-            guard !todo.isCompleted else { return }
-            viewModel.presentEditTodo(todo)
-        } label: {
-            HStack(spacing: 4) {
-                if !todo.emoji.isEmpty {
-                    Text(todo.emoji)
-                        .font(.system(size: 14))
-                }
+        HStack(spacing: 4) {
+            if !todo.emoji.isEmpty {
+                Text(todo.emoji)
+                    .font(.system(size: 14))
+            }
 
-                let displayText = todo.text.isEmpty ? "..." : todo.text
-                Text(displayText)
-                    .strikethrough(todo.isCompleted, color: .shade)
-                    .foregroundColor(todo.isCompleted ? .shade : .ink)
-                    .font(.galBold14())
-                    .lineLimit(1)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            let displayText = todo.text.isEmpty ? "..." : todo.text
+            Text(displayText)
+                .strikethrough(todo.isCompleted, color: .shade)
+                .foregroundColor(todo.isCompleted ? .shade : .ink)
+                .font(.galBold14())
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-                if todo.postponeCount > 0 {
-                    postponeBadge
-                }
+            if todo.postponeCount > 0 {
+                postponeBadge
             }
         }
-        .buttonStyle(.plain)
     }
 
     private var postponeBadge: some View {
