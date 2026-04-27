@@ -14,13 +14,10 @@ struct RootTabContainerView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            // SplashView와 동일한 하늘 배경
-            Color.sky.ignoresSafeArea()
-
             // 콘텐츠 — 탭바 영역 아래를 비워줌
             tabContent
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.bottom, 80) // 잔디(64) + 패널(62) - 오버랩
+                .padding(.bottom, 80)
 
             // SplashView 하단 배경: 잔디+흙 지면 (항상 최하단)
             GroundStripView(height: 64)
@@ -29,8 +26,10 @@ struct RootTabContainerView: View {
             // 공중에 뜬 탭바 패널
             floatingTabBar
                 .padding(.horizontal, 14)
-                .padding(.bottom, 0) // SafeArea 경계에 딱 맞춤
+                .padding(.bottom, 0)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.sky.ignoresSafeArea())  // NavigationView safe area까지 확실히 덮음
         .navigationBarHidden(true)
     }
 
@@ -125,5 +124,3 @@ struct RootTabContainerView: View {
         .buttonStyle(.plain)
     }
 }
-
-let tabBarTotalHeight: CGFloat = 106
