@@ -9,50 +9,68 @@ struct RootTabContainerView: View {
     // UIHostingController가 UINavigationController에 직접 올라가므로
     // ZStack은 safe area 없이 물리적 전체 화면을 채움 → safe area 값을 직접 읽어야 함
     @State private var safeAreaBottom: CGFloat = 34
-
+    
     @ObservedObject var mainVM: MainViewModel
     @ObservedObject var calendarVM: CalendarViewModel
     @ObservedObject var memoVM: MemoViewModel
     @ObservedObject var statsVM: StatsViewModel
     @ObservedObject var settingsVM: SettingsViewModel
-
+    
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             // GeometryReader로 실제 safe area 값 취득 + 하늘 배경 (전체 화면 덮음)
             GeometryReader { geo in
                 Color.sky
                     .onAppear { safeAreaBottom = geo.safeAreaInsets.bottom }
             }
             .ignoresSafeArea()
-
+            
             // 콘텐츠: 탭바 + safe area 영역 아래를 비워줌
             tabContent
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding(.bottom, safeAreaBottom + 62 + 16)
-
-            // 잔디+흙: ZStack이 물리적 전체화면이므로 자연스럽게 최하단에 위치
-            GroundStripView(height: 64)
-                .frame(maxWidth: .infinity)
-
-            // 탭바: safeAreaBottom만큼 올려 home indicator zone 침범 방지
-            floatingTabBar
-                .padding(.horizontal, 14)
-                .padding(.bottom, safeAreaBottom)
+            //                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ////                .padding(.bottom, safeAreaBottom + 62 + 16)
+            //
+            //            // 잔디+흙: ZStack이 물리적 전체화면이므로 자연스럽게 최하단에 위치
+            //            GroundStripView(height: 64)
+            //                .ignoresSafeArea(edges: .bottom)
+            ////                .frame(maxWidth: .infinity)
+            //
+            //            // 탭바: safeAreaBottom만큼 올려 home indicator zone 침범 방지
+            //            floatingTabBar
+            //                .padding(.horizontal, 14)
+            ////                .padding(.bottom, safeAreaBottom)
+            ///
+            
+            VStack {
+                Spacer()
+                GroundStripView(height: 64)
+            }
+            .ignoresSafeArea(edges: .bottom)
+            
+            VStack {
+                Spacer()
+                floatingTabBar
+                    .clipped()
+                    .padding(.horizontal, 14)
+                    .padding(.bottom, 16)
+            }
+            .ignoresSafeArea(edges: .bottom)
         }
+        //        .overlay(alignment: .bottom) {
+        //            floatingTabBar
+        //                .padding(.horizontal, 14)
+        //                .ignoresSafeArea(edges: .bottom)
+        //        }
         .navigationBarHidden(true)
     }
-
+    
     // MARK: - Tab Content
-
+    
     @ViewBuilder
     private var tabContent: some View {
         switch selectedTab {
         case .todo:
-            MainView(
-                viewModel: mainVM,
-                onCalendarTapped: { selectedTab = .calendar },
-                onMemoTapped: { selectedTab = .memo }
-            )
+            MainView(viewModel: mainVM)
         case .calendar:
             CalendarView(
                 viewModel: calendarVM,
@@ -70,9 +88,9 @@ struct RootTabContainerView: View {
             SettingsView(viewModel: settingsVM, statsVM: statsVM)
         }
     }
-
+    
     // MARK: - Floating Tab Bar Panel
-
+    
     private var floatingTabBar: some View {
         HStack(spacing: 0) {
             tabItem(.todo,     label: "할일", sfSymbol: "checkmark.square.fill")
@@ -86,15 +104,15 @@ struct RootTabContainerView: View {
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
         .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
     }
-
+    
     // MARK: - Tab Item
-
+    
     private func tabItem(_ tab: AppTab, label: String, sfSymbol: String) -> some View {
         let isActive = selectedTab == tab
         return Button { selectedTab = tab } label: {
             VStack(spacing: 5) {
                 Spacer(minLength: 0)
-
+                
                 if isActive {
                     ZStack {
                         Rectangle()
@@ -115,12 +133,12 @@ struct RootTabContainerView: View {
                         .foregroundColor(.shade)
                         .frame(width: 38, height: 30)
                 }
-
+                
                 Text(label)
                     .font(.galBold14())
                     .foregroundColor(isActive ? .ink : .shade)
                     .lineLimit(1)
-
+                
                 Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity)

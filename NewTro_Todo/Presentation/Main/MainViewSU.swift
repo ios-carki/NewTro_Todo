@@ -3,8 +3,6 @@ import SwiftUI
 struct MainView: View {
     @ObservedObject var viewModel: MainViewModel
     @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
-    var onCalendarTapped: (() -> Void)?
-    var onMemoTapped: (() -> Void)?
 
     private var selectedCharInfo: FriendCharInfo {
         CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
@@ -17,7 +15,6 @@ struct MainView: View {
             VStack(spacing: 0) {
                 topHUD
                     .padding(.horizontal, 16)
-                    .padding(.top, 8)
 
                 titleArea
                     .padding(.horizontal, 16)
@@ -26,11 +23,6 @@ struct MainView: View {
                 todoList
                     .padding(.top, 8)
             }
-
-            fab
-                .padding(.bottom, 128)
-                .padding(.trailing, 18)
-                .frame(maxWidth: .infinity, alignment: .trailing)
         }
         .sheet(isPresented: $viewModel.isAddTodoPresented) {
             TodoAddView(viewModel: viewModel)
@@ -95,27 +87,15 @@ struct MainView: View {
 
                 Spacer()
 
-                HStack(spacing: 8) {
-                    Button { onCalendarTapped?() } label: {
-                        Image(systemName: "calendar")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.ink)
-                            .frame(width: 34, height: 34)
-                            .background(Color.cream)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
-                    }
-
-                    Button { onMemoTapped?() } label: {
-                        Text("MEMO")
-                            .font(.pressStart9())
-                            .foregroundColor(.ink)
-                            .padding(.horizontal, 8)
-                            .frame(height: 34)
-                            .background(Color.pixelPink)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
-                    }
+                Button { viewModel.presentAddTodo() } label: {
+                    Text("+ Todo")
+                        .font(.pressStart9())
+                        .foregroundColor(.ink)
+                        .padding(.horizontal, 8)
+                        .frame(height: 34)
+                        .background(Color.pixelPink)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
                 }
             }
 
@@ -157,19 +137,6 @@ struct MainView: View {
             .padding(.horizontal, 16)
         }
     }
-
-    // MARK: - FAB
-    private var fab: some View {
-        Button { viewModel.presentAddTodo() } label: {
-            Text("+")
-                .font(.pressStart20())
-                .foregroundColor(.ink)
-                .frame(width: 48, height: 48)
-                .background(Color.peach)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
-                .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
-        }
-    }
 }
 
 // MARK: - PixelProgressBar
@@ -198,4 +165,9 @@ private struct PixelProgressBar: View {
         .frame(height: 18)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
     }
+}
+
+#Preview { @MainActor in
+    let di = DIContainer()
+    return MainView(viewModel: di.makeMainViewModel())
 }
