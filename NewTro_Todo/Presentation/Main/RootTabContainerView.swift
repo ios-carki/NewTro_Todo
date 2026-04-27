@@ -25,12 +25,11 @@ struct RootTabContainerView: View {
             // SplashView 하단 배경: 잔디+흙 지면 (항상 최하단)
             GroundStripView(height: 64)
                 .frame(maxWidth: .infinity)
-                .background(Color.dirtDk.ignoresSafeArea(edges: .bottom))
 
             // 공중에 뜬 탭바 패널
             floatingTabBar
                 .padding(.horizontal, 14)
-                .padding(.bottom, 8) // SafeArea 바로 위
+                .padding(.bottom, 0) // SafeArea 경계에 딱 맞춤
         }
         .navigationBarHidden(true)
     }
