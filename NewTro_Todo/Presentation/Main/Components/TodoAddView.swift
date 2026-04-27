@@ -3,8 +3,6 @@ import SwiftUI
 struct TodoAddView: View {
     @ObservedObject var viewModel: MainViewModel
     @Environment(\.dismiss) private var dismiss
-
-    // nil이면 신규 추가, non-nil이면 수정 모드
     var editingTodo: TodoEntity? = nil
 
     @State private var text: String = ""
@@ -16,127 +14,173 @@ struct TodoAddView: View {
         comps.hour = 9; comps.minute = 0
         return Calendar.current.date(from: comps) ?? Date()
     }()
+    // .height(固定) 사용 → 키보드 등장 시 sheet 자동 확장 방지
+    @State private var selectedDetent: PresentationDetent = .height(500)
 
     private let emojis = ["⭐", "🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️"]
     private var isEditMode: Bool { editingTodo != nil }
+    private var isExpanded: Bool { selectedDetent == .large }
+    private var isEmpty: Bool { text.trimmingCharacters(in: .whitespaces).isEmpty }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
+        ZStack {
             Color.panel.ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                handleBar.padding(.top, 12)
-
-                Text(isEditMode ? "할 일 수정" : "새 할 일")
-                    .font(.galBold16())
-                    .foregroundColor(.ink)
-                    .padding(.top, 16)
-                    .padding(.bottom, 14)
-
-                // Text field
-                HStack(spacing: 8) {
-                    if !selectedEmoji.isEmpty {
-                        Text(selectedEmoji).font(.system(size: 18))
-                    }
-                    TextField("할 일을 입력하세요", text: $text)
-                        .font(.galBold14())
+            ScrollView {
+                VStack(spacing: 0) {
+                    Text(isEditMode ? "할 일 수정" : "새 할 일")
+                        .font(.galBold16())
                         .foregroundColor(.ink)
-                }
-                .padding(.horizontal, 14)
-                .frame(height: 46)
-                .background(Color.cream)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                .padding(.horizontal, 16)
+                        .padding(.top, 16)
+                        .padding(.bottom, 14)
 
-                // Emoji picker
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
-                        emojiChip("", label: "없음")
-                        ForEach(emojis, id: \.self) { emoji in
-                            emojiChip(emoji)
+                    // ── 텍스트 입력 ──────────────────────────────────
+                    if isExpanded {
+                        // Large: 멀티라인 TextEditor
+                        ZStack(alignment: .topLeading) {
+                            if !selectedEmoji.isEmpty {
+                                Text(selectedEmoji)
+                                    .font(.system(size: 18))
+                                    .padding(.top, 10)
+                                    .padding(.leading, 10)
+                            }
+                            TextEditor(text: $text)
+                                .font(.galBold14())
+                                .foregroundColor(.ink)
+                                .scrollContentBackground(.hidden)
+                                .background(Color.clear)
+                                .frame(minHeight: 100)
+                                .padding(.leading, selectedEmoji.isEmpty ? 6 : 28)
+                                .padding(.vertical, 4)
+
+                            if text.isEmpty {
+                                Text("할 일을 입력하세요")
+                                    .font(.galBold14())
+                                    .foregroundColor(.shade.opacity(0.5))
+                                    .padding(.top, 12)
+                                    .padding(.leading, selectedEmoji.isEmpty ? 12 : 34)
+                                    .allowsHitTesting(false)
+                            }
+                        }
+                        .padding(.horizontal, 6)
+                        .background(Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .padding(.horizontal, 16)
+                    } else {
+                        // Medium: 단일 TextField
+                        HStack(spacing: 8) {
+                            if !selectedEmoji.isEmpty {
+                                Text(selectedEmoji).font(.system(size: 18))
+                            }
+                            TextField("할 일을 입력하세요", text: $text)
+                                .font(.galBold14())
+                                .foregroundColor(.ink)
+                        }
+                        .padding(.horizontal, 14)
+                        .frame(height: 46)
+                        .background(Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .padding(.horizontal, 16)
+                    }
+
+                    // ── 이모지 선택 ──────────────────────────────────
+                    if isExpanded {
+                        // Large: 4열 그리드
+                        let gridColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
+                        LazyVGrid(columns: gridColumns, spacing: 8) {
+                            emojiChip("", label: "없음")
+                            ForEach(emojis, id: \.self) { emoji in
+                                emojiChip(emoji)
+                            }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.top, 14)
+                    } else {
+                        // Medium: 가로 스크롤
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                emojiChip("", label: "없음")
+                                ForEach(emojis, id: \.self) { emoji in
+                                    emojiChip(emoji)
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                        }
+                        .padding(.top, 12)
+                    }
+
+                    // ── 중요도 ────────────────────────────────────────
+                    HStack(spacing: 0) {
+                        importanceChip(.none,   label: "낮음")
+                        importanceChip(.medium, label: "보통")
+                        importanceChip(.high,   label: "높음")
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+
+                    // ── 알림 시간 ─────────────────────────────────────
+                    VStack(spacing: 8) {
+                        HStack {
+                            Text("알림 시간")
+                                .font(.pressStart9())
+                                .foregroundColor(.shade)
+                            Spacer()
+                            Toggle("", isOn: $hasDueTime)
+                                .labelsHidden()
+                                .tint(.grass)
+                        }
+                        .padding(.horizontal, 16)
+
+                        if hasDueTime {
+                            DatePicker("", selection: $dueTime, displayedComponents: [.hourAndMinute])
+                                .datePickerStyle(.wheel)
+                                .labelsHidden()
+                                .frame(height: 100)
+                                .clipped()
                         }
                     }
-                    .padding(.horizontal, 16)
-                }
-                .padding(.top, 12)
+                    .padding(.top, 12)
 
-                // Importance
-                HStack(spacing: 0) {
-                    importanceChip(.none,   label: "낮음")
-                    importanceChip(.medium, label: "보통")
-                    importanceChip(.high,   label: "높음")
-                }
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
+                    // ── 버튼 ──────────────────────────────────────────
+                    HStack(spacing: 10) {
+                        Button { dismiss() } label: {
+                            Text("취소")
+                                .font(.galBold14())
+                                .foregroundColor(.shade)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 46)
+                                .background(Color.cream)
+                                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        }
 
-                // Due time toggle + picker
-                VStack(spacing: 8) {
-                    HStack {
-                        Text("알림 시간")
-                            .font(.pressStart9())
-                            .foregroundColor(.shade)
-                        Spacer()
-                        Toggle("", isOn: $hasDueTime)
-                            .labelsHidden()
-                            .tint(.grass)
-                    }
-                    .padding(.horizontal, 16)
-
-                    if hasDueTime {
-                        DatePicker("", selection: $dueTime, displayedComponents: [.hourAndMinute])
-                            .datePickerStyle(.wheel)
-                            .labelsHidden()
-                            .frame(height: 100)
-                            .clipped()
-                    }
-                }
-                .padding(.top, 12)
-
-                // Buttons
-                HStack(spacing: 10) {
-                    Button { dismiss() } label: {
-                        Text("취소")
-                            .font(.galBold14())
-                            .foregroundColor(.shade)
+                        Button { save() } label: {
+                            HStack(spacing: 4) {
+                                Text(isEditMode ? "✎" : "★")
+                                    .font(.pressStart12())
+                                Text(isEditMode ? "수정" : "저장")
+                                    .font(.galBold14())
+                            }
+                            .foregroundColor(isEmpty ? Color.shade : Color.ink)
                             .frame(maxWidth: .infinity)
                             .frame(height: 46)
-                            .background(Color.panel)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                    }
-
-                    Button { save() } label: {
-                        HStack(spacing: 4) {
-                            Text(isEditMode ? "✎" : "★")
-                                .font(.pressStart12())
-                            Text(isEditMode ? "수정" : "저장")
-                                .font(.galBold14())
+                            .background(isEmpty ? Color.shade.opacity(0.1) : Color.peach)
+                            .overlay(Rectangle().stroke(isEmpty ? Color.shade.opacity(0.4) : Color.ink, lineWidth: 2))
+                            .background(Rectangle().fill(isEmpty ? Color.clear : Color.ink).offset(x: 2, y: 2))
                         }
-                        .foregroundColor(.ink)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 46)
-                        .background(text.trimmingCharacters(in: .whitespaces).isEmpty ? Color.shade.opacity(0.2) : Color.peach)
-                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                        .disabled(isEmpty)
                     }
-                    .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 16)
+                    .padding(.bottom, 32)
                 }
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
-                .padding(.bottom, 32)
             }
         }
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.hidden)
+        .presentationDetents([.height(500), .large], selection: $selectedDetent)
+        .presentationDragIndicator(.visible)  // iOS 기본 핸들 (Sheet 최상단)
         .onAppear { populateIfEditing() }
     }
 
     // MARK: - Helpers
-
-    private var handleBar: some View {
-        Capsule()
-            .fill(Color.ink.opacity(0.25))
-            .frame(width: 40, height: 4)
-    }
 
     private func populateIfEditing() {
         guard let todo = editingTodo else { return }
@@ -161,7 +205,8 @@ struct TodoAddView: View {
                     Text(emoji).font(.system(size: 18))
                 }
             }
-            .frame(width: 38, height: 38)
+            .frame(maxWidth: .infinity)
+            .frame(height: 38)
             .background(isSelected ? Color.ink : Color.cream)
             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }
