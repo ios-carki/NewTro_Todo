@@ -13,28 +13,23 @@ struct RootTabContainerView: View {
     @ObservedObject var settingsVM: SettingsViewModel
 
     var body: some View {
-        // SplashView와 동일한 패턴: GeometryReader + ignoresSafeArea로 물리적 화면 전체 기준
-        GeometryReader { geo in
-            let safeBottom = geo.safeAreaInsets.bottom
-            ZStack(alignment: .bottom) {
-                Color.sky
+        ZStack(alignment: .bottom) {
+            // ZStack child로 사용 → ZStack 레이아웃은 safe area 경계 유지
+            Color.sky.ignoresSafeArea()
 
-                // 콘텐츠 — 탭바 + safe area 만큼 아래를 비워줌
-                tabContent
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .padding(.bottom, safeBottom + 62 + 16)
+            tabContent
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .padding(.bottom, 80)
 
-                // 잔디+흙: 물리적 최하단에 붙음 (canvas가 safe area zone까지 커버)
-                GroundStripView(height: 64)
-                    .frame(maxWidth: .infinity)
+            // 잔디+흙: safe area zone까지 흙색이 이어지도록 background 확장
+            GroundStripView(height: 64)
+                .frame(maxWidth: .infinity)
+                .background(Color.dirt.ignoresSafeArea(edges: .bottom))
 
-                // 탭바: safe area 바로 위에 위치 (패널이 safe area 침범 안 함)
-                floatingTabBar
-                    .padding(.horizontal, 14)
-                    .padding(.bottom, safeBottom)
-            }
+            // 탭바: alignment .bottom = safe area 상단 경계 → 패널이 safe area 침범 안 함
+            floatingTabBar
+                .padding(.horizontal, 14)
         }
-        .ignoresSafeArea()
         .navigationBarHidden(true)
     }
 
