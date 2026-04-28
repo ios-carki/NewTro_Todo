@@ -206,9 +206,7 @@ private struct TodoAddSheetWrapper: View {
         .presentationDragIndicator(.visible)
         .onPreferenceChange(TodoAddScrollHeightKey.self) { scrollH in
             guard scrollH > 0, selectedDetent != .large else { return }
-            // scroll content + title area (~50pt) + divider (1pt) + buttons (82pt) + bottom margin (16pt)
-            let total = scrollH + 50 + 1 + 82 + 16
-            let clamped = min(max(total, 320), 520)
+            let clamped = min(max(scrollH, 320), 520)
             if abs(clamped - compactHeight) > 4 {
                 compactHeight = clamped
                 selectedDetent = .height(clamped)

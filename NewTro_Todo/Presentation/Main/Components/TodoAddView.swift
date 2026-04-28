@@ -26,14 +26,14 @@ struct TodoAddView: View {
             Color.panel.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                // ── 타이틀 (고정) ─────────────────────────────────────
+                // ── 타이틀 (고정)
                 Text(isEditMode ? "할 일 수정" : "새 할 일")
                     .font(.galBold16())
                     .foregroundColor(.ink)
                     .padding(.top, 16)
                     .padding(.bottom, 14)
 
-                // ── 스크롤 영역 ───────────────────────────────────────
+                // ── 스크롤 영역
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         // 텍스트 입력
@@ -43,6 +43,10 @@ struct TodoAddView: View {
                         // 템플릿 (large 전용)
                         if isExpanded {
                             sectionLabel("템플릿")
+                                .transition(.asymmetric(
+                                    insertion: .opacity.combined(with: .move(edge: .bottom)),
+                                    removal: .opacity
+                                ))
                             NavigationLink(value: TemplateNavDest.templateList) {
                                 HStack {
                                     Text("저장된 템플릿")
@@ -59,7 +63,10 @@ struct TodoAddView: View {
                                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                             }
                             .padding(.horizontal, 16)
-                            .transition(.opacity)
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .move(edge: .bottom)),
+                                removal: .opacity
+                            ))
                         }
 
                         // 이모지
@@ -74,28 +81,23 @@ struct TodoAddView: View {
                         // 알림 (large 전용)
                         if isExpanded {
                             notificationSection
-                                .transition(.opacity)
+                                .transition(.asymmetric(
+                                    insertion: .opacity.combined(with: .move(edge: .bottom)),
+                                    removal: .opacity
+                                ))
                         }
 
                         Spacer().frame(height: 8)
                     }
                     .animation(.easeInOut(duration: 0.25), value: isExpanded)
-                    .background(
-                        GeometryReader { geo in
-                            Color.clear.preference(
-                                key: TodoAddScrollHeightKey.self,
-                                value: geo.size.height
-                            )
-                        }
-                    )
                 }
 
-                // ── 구분선 ────────────────────────────────────────────
+                // ── 구분선
                 Rectangle()
                     .fill(Color.ink.opacity(0.12))
                     .frame(height: 1)
 
-                // ── 버튼 (고정) ───────────────────────────────────────
+                // ── 버튼 (고정)
                 HStack(spacing: 10) {
                     Button { dismiss() } label: {
                         Text("취소")
@@ -127,6 +129,11 @@ struct TodoAddView: View {
                 .padding(.top, 12)
                 .padding(.bottom, 24)
             }
+
+            // 숨겨진 compact 높이 측정 뷰 — layout에 영향 없이 자연 높이만 보고
+            compactContentSizer
+                .frame(width: 0, height: 0)
+                .clipped()
         }
         .onAppear { populateIfEditing() }
         .onChange(of: viewModel.pendingTemplate) { template in
@@ -136,6 +143,50 @@ struct TodoAddView: View {
             importance = t.importance
             viewModel.pendingTemplate = nil
         }
+    }
+
+    // MARK: - Compact Content Sizer
+    // 실제 compact 콘텐츠와 동일한 구조를 unconstrained 높이로 렌더링해 자연 높이를 측정.
+    // sectionLabel()을 직접 호출하므로 폰트/패딩 변경 시 자동 반영.
+    private var compactContentSizer: some View {
+        VStack(spacing: 0) {
+            // Header (타이틀 영역)
+            Text(isEditMode ? "할 일 수정" : "새 할 일")
+                .font(.galBold16())
+                .padding(.top, 16)
+                .padding(.bottom, 14)
+
+            // 텍스트 입력 (compact: 고정 46pt)
+            Color.clear
+                .frame(height: 46)
+                .padding(.horizontal, 16)
+
+            // 이모지 섹션 라벨 + 칩 행
+            sectionLabel("이모지 선택")
+            Color.clear.frame(height: 46)   // 칩 높이
+
+            // 중요도 섹션 라벨 + 칩
+            sectionLabel("중요도")
+            Color.clear
+                .frame(height: 36)
+                .padding(.horizontal, 16)
+
+            // 하단 여백
+            Color.clear.frame(height: 8)
+
+            // 구분선
+            Color.clear.frame(height: 1)
+
+            // 버튼 영역 (padding.top 12 + height 46 + padding.bottom 24 = 82)
+            Color.clear.frame(height: 82)
+        }
+        .fixedSize(horizontal: false, vertical: true)
+        .hidden()
+        .background(
+            GeometryReader { geo in
+                Color.clear.preference(key: TodoAddScrollHeightKey.self, value: geo.size.height)
+            }
+        )
     }
 
     // MARK: - Section Label
@@ -153,53 +204,53 @@ struct TodoAddView: View {
     }
 
     // MARK: - Text Input
+    // ZStack 컨테이너의 frame 높이가 애니메이션되고, 내부 컨텐츠는 opacity 전환.
 
-    @ViewBuilder
     private var textInputSection: some View {
-        if isExpanded {
-            ZStack(alignment: .topLeading) {
-                if !selectedEmoji.isEmpty {
-                    Text(selectedEmoji)
-                        .font(.system(size: 18))
-                        .padding(.top, 10)
-                        .padding(.leading, 10)
-                }
-                TextEditor(text: $text)
-                    .font(.galBold14())
-                    .foregroundColor(.ink)
-                    .scrollContentBackground(.hidden)
-                    .background(Color.clear)
-                    .frame(minHeight: 80, maxHeight: 140)
-                    .padding(.leading, selectedEmoji.isEmpty ? 6 : 28)
-                    .padding(.vertical, 4)
-
-                if text.isEmpty {
-                    Text("할 일을 입력하세요")
+        ZStack(alignment: isExpanded ? .topLeading : .leading) {
+            if isExpanded {
+                ZStack(alignment: .topLeading) {
+                    if !selectedEmoji.isEmpty {
+                        Text(selectedEmoji)
+                            .font(.system(size: 18))
+                            .padding(.top, 10)
+                            .padding(.leading, 10)
+                    }
+                    TextEditor(text: $text)
                         .font(.galBold14())
-                        .foregroundColor(.shade.opacity(0.5))
-                        .padding(.top, 12)
-                        .padding(.leading, selectedEmoji.isEmpty ? 12 : 34)
-                        .allowsHitTesting(false)
+                        .foregroundColor(.ink)
+                        .scrollContentBackground(.hidden)
+                        .background(Color.clear)
+                        .padding(.leading, selectedEmoji.isEmpty ? 6 : 28)
+                        .padding(.vertical, 4)
+
+                    if text.isEmpty {
+                        Text("할 일을 입력하세요")
+                            .font(.galBold14())
+                            .foregroundColor(.shade.opacity(0.5))
+                            .padding(.top, 12)
+                            .padding(.leading, selectedEmoji.isEmpty ? 12 : 34)
+                            .allowsHitTesting(false)
+                    }
                 }
-            }
-            .background(Color.cream)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-            .transition(.opacity)
-        } else {
-            HStack(spacing: 8) {
-                if !selectedEmoji.isEmpty {
-                    Text(selectedEmoji).font(.system(size: 18))
+                .transition(.opacity)
+            } else {
+                HStack(spacing: 8) {
+                    if !selectedEmoji.isEmpty {
+                        Text(selectedEmoji).font(.system(size: 18))
+                    }
+                    TextField("할 일을 입력하세요", text: $text)
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
                 }
-                TextField("할 일을 입력하세요", text: $text)
-                    .font(.galBold14())
-                    .foregroundColor(.ink)
+                .padding(.horizontal, 14)
+                .transition(.opacity)
             }
-            .padding(.horizontal, 14)
-            .frame(height: 46)
-            .background(Color.cream)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-            .transition(.opacity)
         }
+        .frame(minHeight: isExpanded ? 80 : 46, maxHeight: isExpanded ? 140 : 46)
+        .background(Color.cream)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .clipped()
     }
 
     // MARK: - Emoji Section
@@ -210,23 +261,25 @@ struct TodoAddView: View {
             let gridColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
             LazyVGrid(columns: gridColumns, spacing: 8) {
                 emojiChip("", label: "없음")
-                ForEach(emojis, id: \.self) { emoji in
-                    emojiChip(emoji)
-                }
+                ForEach(emojis, id: \.self) { emojiChip($0) }
             }
             .padding(.horizontal, 16)
-            .transition(.opacity)
+            .transition(.asymmetric(
+                insertion: .opacity.combined(with: .scale(scale: 0.97, anchor: .top)),
+                removal: .opacity.combined(with: .scale(scale: 0.97, anchor: .top))
+            ))
         } else {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     emojiChip("", label: "없음")
-                    ForEach(emojis, id: \.self) { emoji in
-                        emojiChip(emoji)
-                    }
+                    ForEach(emojis, id: \.self) { emojiChip($0) }
                 }
                 .padding(.horizontal, 16)
             }
-            .transition(.opacity)
+            .transition(.asymmetric(
+                insertion: .opacity.combined(with: .scale(scale: 0.97, anchor: .top)),
+                removal: .opacity.combined(with: .scale(scale: 0.97, anchor: .top))
+            ))
         }
     }
 
@@ -341,6 +394,7 @@ struct TodoAddView: View {
     }
 }
 
+// MARK: - PreferenceKey
 
 struct TodoAddScrollHeightKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
