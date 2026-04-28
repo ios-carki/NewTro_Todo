@@ -92,6 +92,7 @@ final class MainViewModel: ObservableObject {
         self.addTemplateUseCase = addTemplateUseCase
         self.updateTemplateUseCase = updateTemplateUseCase
         self.deleteTemplateUseCase = deleteTemplateUseCase
+        loadTodos()
     }
 
     // MARK: - Toast
