@@ -40,6 +40,28 @@ struct TodoAddView: View {
                         textInputSection
                             .padding(.horizontal, 16)
 
+                        // 템플릿 (large 전용)
+                        if isExpanded {
+                            sectionLabel("템플릿")
+                            NavigationLink(value: TemplateNavDest.templateList) {
+                                HStack {
+                                    Text("저장된 템플릿")
+                                        .font(.galBold14())
+                                        .foregroundColor(.ink)
+                                    Spacer()
+                                    Text("목록 보기 >")
+                                        .font(.pressStart7())
+                                        .foregroundColor(.shade)
+                                }
+                                .padding(.horizontal, 14)
+                                .frame(height: 44)
+                                .background(Color.cream)
+                                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                            }
+                            .padding(.horizontal, 16)
+                            .transition(.opacity)
+                        }
+
                         // 이모지
                         sectionLabel("이모지 선택")
                         emojiSection
@@ -98,6 +120,13 @@ struct TodoAddView: View {
         .presentationDetents([.height(380), .large], selection: $selectedDetent)
         .presentationDragIndicator(.visible)
         .onAppear { populateIfEditing() }
+        .onChange(of: viewModel.pendingTemplate) { template in
+            guard let t = template else { return }
+            text = t.text
+            selectedEmoji = t.emoji
+            importance = t.importance
+            viewModel.pendingTemplate = nil
+        }
     }
 
     // MARK: - Section Label
@@ -105,7 +134,7 @@ struct TodoAddView: View {
     private func sectionLabel(_ title: String) -> some View {
         HStack {
             Text(title)
-                .font(.pressStart9())
+                .font(.galCondensed16())
                 .foregroundColor(.shade)
             Spacer()
         }
@@ -208,7 +237,7 @@ struct TodoAddView: View {
         VStack(spacing: 8) {
             HStack {
                 Text("알림 시간")
-                    .font(.pressStart9())
+                    .font(.galCondensed16())
                     .foregroundColor(.shade)
                 Spacer()
                 Toggle("", isOn: $hasDueTime)
@@ -269,7 +298,7 @@ struct TodoAddView: View {
         }
         return Button { importance = imp } label: {
             Text(label)
-                .font(.pressStart9())
+                .font(.galCondensed16())
                 .foregroundColor(isSelected ? .cream : .ink)
                 .frame(maxWidth: .infinity)
                 .frame(height: 36)

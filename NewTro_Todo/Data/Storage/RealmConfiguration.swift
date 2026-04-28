@@ -7,7 +7,8 @@ enum RealmConfiguration {
     // v3: Todo.postponeCount Int 추가 (기본값 0)
     // v4: QuickNote.colorName String 추가 (기본값 "yellow")
     // v5: Todo.emoji String 추가 (기본값 ""), Todo.dueTime Date? 추가 (기본값 nil)
-    private static let schemaVersion: UInt64 = 5
+    // v6: TemplateObject 신규 테이블 추가
+    private static let schemaVersion: UInt64 = 6
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -62,5 +63,6 @@ enum RealmConfiguration {
                 newObject?["dueTime"] = nil
             }
         }
+        // v6: TemplateObject is a new table — no existing data to migrate
     }
 }

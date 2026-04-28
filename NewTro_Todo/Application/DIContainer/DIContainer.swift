@@ -6,6 +6,7 @@ final class DIContainer {
     private(set) lazy var todoRepository: any TodoRepositoryProtocol = TodoRepositoryImpl()
     private(set) lazy var memoRepository: any MemoRepositoryProtocol = MemoRepositoryImpl()
     private(set) lazy var statsRepository: any StatsRepositoryProtocol = StatsRepositoryImpl()
+    private(set) lazy var templateRepository: any TemplateRepositoryProtocol = TemplateRepositoryImpl()
 
     // MARK: - UseCases: Todo
     func makeFetchTodosUseCase() -> FetchTodosUseCase {
@@ -73,6 +74,20 @@ final class DIContainer {
         RecordPostponeUseCase(repository: statsRepository)
     }
 
+    // MARK: - UseCases: Template
+    func makeFetchTemplatesUseCase() -> FetchTemplatesUseCase {
+        FetchTemplatesUseCase(repository: templateRepository)
+    }
+    func makeAddTemplateUseCase() -> AddTemplateUseCase {
+        AddTemplateUseCase(repository: templateRepository)
+    }
+    func makeUpdateTemplateUseCase() -> UpdateTemplateUseCase {
+        UpdateTemplateUseCase(repository: templateRepository)
+    }
+    func makeDeleteTemplateUseCase() -> DeleteTemplateUseCase {
+        DeleteTemplateUseCase(repository: templateRepository)
+    }
+
     // MARK: - UseCases: Settings
     func makeClearAllDataUseCase() -> ClearAllDataUseCase {
         ClearAllDataUseCase(
@@ -96,7 +111,11 @@ final class DIContainer {
             recordCompleteUseCase: makeRecordTodoCompleteUseCase(),
             recordTodoAddedUseCase: makeRecordTodoAddedUseCase(),
             recordPostponeUseCase: makeRecordPostponeUseCase(),
-            editTodoUseCase: makeEditTodoUseCase()
+            editTodoUseCase: makeEditTodoUseCase(),
+            fetchTemplatesUseCase: makeFetchTemplatesUseCase(),
+            addTemplateUseCase: makeAddTemplateUseCase(),
+            updateTemplateUseCase: makeUpdateTemplateUseCase(),
+            deleteTemplateUseCase: makeDeleteTemplateUseCase()
         )
     }
 

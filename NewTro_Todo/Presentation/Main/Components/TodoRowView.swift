@@ -130,11 +130,11 @@ struct TodoRowView: View {
             Button {
                 viewModel.actionTarget = todo
             } label: {
-                Text("×")
-                    .font(.pressStart12())
-                    .foregroundColor(.white)
+                Text("...")
+                    .font(.pressStart9())
+                    .foregroundColor(.ink)
                     .frame(width: 28, height: 28)
-                    .background(Color.pixelRed)
+                    .background(Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
             }
         }

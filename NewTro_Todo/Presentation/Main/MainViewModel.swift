@@ -16,6 +16,8 @@ final class MainViewModel: ObservableObject {
     @Published var editTarget: TodoEntity? = nil
     @Published var toastMessage: String? = nil
     @Published var isDatePickerPresented: Bool = false
+    @Published var templates: [TemplateEntity] = []
+    @Published var pendingTemplate: TemplateEntity? = nil
 
     private var toastTask: Task<Void, Never>?
 
@@ -51,6 +53,10 @@ final class MainViewModel: ObservableObject {
     private let recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol
     private let recordPostponeUseCase: any RecordPostponeUseCaseProtocol
     private let editTodoUseCase: any EditTodoUseCaseProtocol
+    private let fetchTemplatesUseCase: any FetchTemplatesUseCaseProtocol
+    private let addTemplateUseCase: any AddTemplateUseCaseProtocol
+    private let updateTemplateUseCase: any UpdateTemplateUseCaseProtocol
+    private let deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
 
     init(
         fetchTodosUseCase: any FetchTodosUseCaseProtocol,
@@ -64,7 +70,11 @@ final class MainViewModel: ObservableObject {
         recordCompleteUseCase: any RecordTodoCompleteUseCaseProtocol,
         recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol,
         recordPostponeUseCase: any RecordPostponeUseCaseProtocol,
-        editTodoUseCase: any EditTodoUseCaseProtocol
+        editTodoUseCase: any EditTodoUseCaseProtocol,
+        fetchTemplatesUseCase: any FetchTemplatesUseCaseProtocol,
+        addTemplateUseCase: any AddTemplateUseCaseProtocol,
+        updateTemplateUseCase: any UpdateTemplateUseCaseProtocol,
+        deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
     ) {
         self.fetchTodosUseCase = fetchTodosUseCase
         self.addTodoUseCase = addTodoUseCase
@@ -78,6 +88,10 @@ final class MainViewModel: ObservableObject {
         self.recordTodoAddedUseCase = recordTodoAddedUseCase
         self.recordPostponeUseCase = recordPostponeUseCase
         self.editTodoUseCase = editTodoUseCase
+        self.fetchTemplatesUseCase = fetchTemplatesUseCase
+        self.addTemplateUseCase = addTemplateUseCase
+        self.updateTemplateUseCase = updateTemplateUseCase
+        self.deleteTemplateUseCase = deleteTemplateUseCase
     }
 
     // MARK: - Toast
@@ -125,6 +139,47 @@ final class MainViewModel: ObservableObject {
     func navigateToDate(_ date: Date) {
         selectedDate = date
         loadTodos()
+    }
+
+    // MARK: - Templates
+
+    func loadTemplates() {
+        Task {
+            do { templates = try await fetchTemplatesUseCase.execute() }
+            catch { errorMessage = error.localizedDescription }
+        }
+    }
+
+    func saveTemplate(text: String, emoji: String, importance: Importance) {
+        Task {
+            do {
+                _ = try await addTemplateUseCase.execute(text: text, emoji: emoji, importance: importance)
+                templates = try await fetchTemplatesUseCase.execute()
+                showToast("템플릿 저장 완료")
+            } catch { errorMessage = error.localizedDescription }
+        }
+    }
+
+    func updateTemplate(id: String, text: String, emoji: String, importance: Importance) {
+        Task {
+            do {
+                try await updateTemplateUseCase.execute(id: id, text: text, emoji: emoji, importance: importance)
+                templates = try await fetchTemplatesUseCase.execute()
+            } catch { errorMessage = error.localizedDescription }
+        }
+    }
+
+    func deleteTemplate(id: String) {
+        Task {
+            do {
+                try await deleteTemplateUseCase.execute(id: id)
+                templates.removeAll { $0.id == id }
+            } catch { errorMessage = error.localizedDescription }
+        }
+    }
+
+    func applyTemplate(_ template: TemplateEntity) {
+        pendingTemplate = template
     }
 
     func presentEditTodo(_ todo: TodoEntity) {

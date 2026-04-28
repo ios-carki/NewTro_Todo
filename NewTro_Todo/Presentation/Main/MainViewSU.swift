@@ -25,10 +25,34 @@ struct MainView: View {
             }
         }
         .sheet(isPresented: $viewModel.isAddTodoPresented) {
-            TodoAddView(viewModel: viewModel)
+            NavigationStack {
+                TodoAddView(viewModel: viewModel)
+                    .navigationDestination(for: TemplateNavDest.self) { dest in
+                        switch dest {
+                        case .templateList:
+                            TemplateListView(viewModel: viewModel)
+                        case .newTemplate:
+                            TemplateFormView(viewModel: viewModel, editingTemplate: nil)
+                        case .editTemplate(let t):
+                            TemplateFormView(viewModel: viewModel, editingTemplate: t)
+                        }
+                    }
+            }
         }
         .sheet(item: $viewModel.editTarget) { todo in
-            TodoAddView(viewModel: viewModel, editingTodo: todo)
+            NavigationStack {
+                TodoAddView(viewModel: viewModel, editingTodo: todo)
+                    .navigationDestination(for: TemplateNavDest.self) { dest in
+                        switch dest {
+                        case .templateList:
+                            TemplateListView(viewModel: viewModel)
+                        case .newTemplate:
+                            TemplateFormView(viewModel: viewModel, editingTemplate: nil)
+                        case .editTemplate(let t):
+                            TemplateFormView(viewModel: viewModel, editingTemplate: t)
+                        }
+                    }
+            }
         }
         .sheet(item: $viewModel.actionTarget) { todo in
             TodoActionMenuView(todo: todo, viewModel: viewModel)
