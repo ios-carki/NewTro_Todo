@@ -4,6 +4,7 @@ struct TodoAddView: View {
     @ObservedObject var viewModel: MainViewModel
     @Environment(\.dismiss) private var dismiss
     var editingTodo: TodoEntity? = nil
+    @Binding var selectedDetent: PresentationDetent
 
     @State private var text: String = ""
     @State private var selectedEmoji: String = ""
@@ -14,7 +15,6 @@ struct TodoAddView: View {
         comps.hour = 9; comps.minute = 0
         return Calendar.current.date(from: comps) ?? Date()
     }()
-    @State private var selectedDetent: PresentationDetent = .height(380)
 
     private let emojis = ["⭐", "🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️"]
     private var isEditMode: Bool { editingTodo != nil }
@@ -117,8 +117,6 @@ struct TodoAddView: View {
                 .padding(.bottom, 24)
             }
         }
-        .presentationDetents([.height(380), .large], selection: $selectedDetent)
-        .presentationDragIndicator(.visible)
         .onAppear { populateIfEditing() }
         .onChange(of: viewModel.pendingTemplate) { template in
             guard let t = template else { return }
@@ -335,5 +333,5 @@ struct TodoAddView: View {
 
 #Preview { @MainActor in
     let di = DIContainer()
-    return TodoAddView(viewModel: di.makeMainViewModel())
+    return TodoAddView(viewModel: di.makeMainViewModel(), selectedDetent: .constant(.height(380)))
 }

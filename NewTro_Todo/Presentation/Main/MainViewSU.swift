@@ -25,34 +25,10 @@ struct MainView: View {
             }
         }
         .sheet(isPresented: $viewModel.isAddTodoPresented) {
-            NavigationStack {
-                TodoAddView(viewModel: viewModel)
-                    .navigationDestination(for: TemplateNavDest.self) { dest in
-                        switch dest {
-                        case .templateList:
-                            TemplateListView(viewModel: viewModel)
-                        case .newTemplate:
-                            TemplateFormView(viewModel: viewModel, editingTemplate: nil)
-                        case .editTemplate(let t):
-                            TemplateFormView(viewModel: viewModel, editingTemplate: t)
-                        }
-                    }
-            }
+            TodoAddSheetWrapper(viewModel: viewModel)
         }
         .sheet(item: $viewModel.editTarget) { todo in
-            NavigationStack {
-                TodoAddView(viewModel: viewModel, editingTodo: todo)
-                    .navigationDestination(for: TemplateNavDest.self) { dest in
-                        switch dest {
-                        case .templateList:
-                            TemplateListView(viewModel: viewModel)
-                        case .newTemplate:
-                            TemplateFormView(viewModel: viewModel, editingTemplate: nil)
-                        case .editTemplate(let t):
-                            TemplateFormView(viewModel: viewModel, editingTemplate: t)
-                        }
-                    }
-            }
+            TodoAddSheetWrapper(viewModel: viewModel, editingTodo: todo)
         }
         .sheet(item: $viewModel.actionTarget) { todo in
             TodoActionMenuView(todo: todo, viewModel: viewModel)
@@ -202,6 +178,31 @@ struct MainView: View {
             }
             .padding(.horizontal, 16)
         }
+    }
+}
+
+// MARK: - TodoAdd Sheet Wrapper
+
+private struct TodoAddSheetWrapper: View {
+    @ObservedObject var viewModel: MainViewModel
+    var editingTodo: TodoEntity? = nil
+    @State private var selectedDetent: PresentationDetent = .height(380)
+
+    private func templateNav(_ dest: TemplateNavDest) -> some View {
+        switch dest {
+        case .templateList:      AnyView(TemplateListView(viewModel: viewModel))
+        case .newTemplate:       AnyView(TemplateFormView(viewModel: viewModel, editingTemplate: nil))
+        case .editTemplate(let t): AnyView(TemplateFormView(viewModel: viewModel, editingTemplate: t))
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            TodoAddView(viewModel: viewModel, editingTodo: editingTodo, selectedDetent: $selectedDetent)
+                .navigationDestination(for: TemplateNavDest.self) { templateNav($0) }
+        }
+        .presentationDetents([.height(380), .large], selection: $selectedDetent)
+        .presentationDragIndicator(.visible)
     }
 }
 
