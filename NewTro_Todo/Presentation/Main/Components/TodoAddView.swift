@@ -71,12 +71,23 @@ struct TodoAddView: View {
                         importanceSection
                             .padding(.horizontal, 16)
 
-                        // 알림
-                        notificationSection
+                        // 알림 (large 전용)
+                        if isExpanded {
+                            notificationSection
+                                .transition(.opacity)
+                        }
 
                         Spacer().frame(height: 8)
                     }
                     .animation(.easeInOut(duration: 0.25), value: isExpanded)
+                    .background(
+                        GeometryReader { geo in
+                            Color.clear.preference(
+                                key: TodoAddScrollHeightKey.self,
+                                value: geo.size.height
+                            )
+                        }
+                    )
                 }
 
                 // ── 구분선 ────────────────────────────────────────────
@@ -330,6 +341,13 @@ struct TodoAddView: View {
     }
 }
 
+
+struct TodoAddScrollHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
 
 #Preview { @MainActor in
     let di = DIContainer()

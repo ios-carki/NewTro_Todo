@@ -120,12 +120,10 @@ final class MainViewModel: ObservableObject {
 
     // MARK: - Todo Actions
     func loadTodos() {
-        Task {
-            do {
-                todos = try await fetchTodosUseCase.execute(targetDate: selectedDate)
-            } catch {
-                errorMessage = error.localizedDescription
-            }
+        do {
+            todos = try fetchTodosUseCase.execute(targetDate: selectedDate)
+        } catch {
+            errorMessage = error.localizedDescription
         }
     }
 

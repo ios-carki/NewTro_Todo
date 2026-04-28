@@ -1,7 +1,7 @@
 import Foundation
 
 protocol FetchTodosUseCaseProtocol {
-    func execute(targetDate: Date) async throws -> [TodoEntity]
+    @MainActor func execute(targetDate: Date) throws -> [TodoEntity]
 }
 
 final class FetchTodosUseCase: FetchTodosUseCaseProtocol {
@@ -11,7 +11,7 @@ final class FetchTodosUseCase: FetchTodosUseCaseProtocol {
         self.repository = repository
     }
 
-    func execute(targetDate: Date) async throws -> [TodoEntity] {
-        return try await repository.fetchTodos(targetDate: targetDate)
+    @MainActor func execute(targetDate: Date) throws -> [TodoEntity] {
+        return try repository.fetchTodos(targetDate: targetDate)
     }
 }

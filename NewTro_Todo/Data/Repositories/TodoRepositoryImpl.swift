@@ -15,16 +15,14 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         }
     }
 
-    func fetchTodos(targetDate: Date) async throws -> [TodoEntity] {
-        try await MainActor.run {
-            let realm = try Realm()
-            let dateStr = DateFormatter.dateToString(date: targetDate)
-            return realm.objects(Todo.self)
-                .filter("stringDate == %@", dateStr)
-                .sorted(byKeyPath: "regDate", ascending: true)
-                .toArray()
-                .map { $0.toDomain() }
-        }
+    @MainActor func fetchTodos(targetDate: Date) throws -> [TodoEntity] {
+        let realm = try Realm()
+        let dateStr = DateFormatter.dateToString(date: targetDate)
+        return realm.objects(Todo.self)
+            .filter("stringDate == %@", dateStr)
+            .sorted(byKeyPath: "regDate", ascending: true)
+            .toArray()
+            .map { $0.toDomain() }
     }
 
     func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?, targetDate: Date) async throws -> TodoEntity {
