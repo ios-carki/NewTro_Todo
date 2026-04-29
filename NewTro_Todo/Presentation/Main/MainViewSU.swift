@@ -34,6 +34,9 @@ struct MainView: View {
         .sheet(item: $viewModel.actionTarget) { todo in
             TodoActionMenuView(todo: todo, viewModel: viewModel)
         }
+        .onChange(of: viewModel.actionTarget?.id) { id in
+            if id == nil { viewModel.onActionMenuDismissed() }
+        }
         .sheet(item: $viewModel.postponeTarget) { todo in
             PostponeMenuView(todo: todo, viewModel: viewModel)
         }

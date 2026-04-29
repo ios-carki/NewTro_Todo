@@ -138,6 +138,7 @@ struct TodoRowView: View {
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
             }
         }
+        .allowsHitTesting(!viewModel.actionMenuRecentlyDismissed)
     }
 
     // MARK: - Helpers

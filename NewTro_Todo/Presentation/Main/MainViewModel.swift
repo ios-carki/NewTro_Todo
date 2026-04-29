@@ -19,7 +19,10 @@ final class MainViewModel: ObservableObject {
     @Published var templates: [TemplateEntity] = []
     @Published var pendingTemplate: TemplateEntity? = nil
 
+    @Published var actionMenuRecentlyDismissed: Bool = false
+
     private var toastTask: Task<Void, Never>?
+    private var actionMenuDismissTask: Task<Void, Never>?
 
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
     var completedCount: Int { todos.filter(\.isCompleted).count }
@@ -96,6 +99,18 @@ final class MainViewModel: ObservableObject {
         self.updateTemplateUseCase = updateTemplateUseCase
         self.deleteTemplateUseCase = deleteTemplateUseCase
         loadTodos()
+    }
+
+    // MARK: - Action Menu Dismiss Guard
+
+    func onActionMenuDismissed() {
+        actionMenuDismissTask?.cancel()
+        actionMenuRecentlyDismissed = true
+        actionMenuDismissTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 400_000_000)
+            guard !Task.isCancelled else { return }
+            actionMenuRecentlyDismissed = false
+        }
     }
 
     // MARK: - Toast
