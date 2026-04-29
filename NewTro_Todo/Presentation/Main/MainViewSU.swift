@@ -3,6 +3,7 @@ import SwiftUI
 struct MainView: View {
     @ObservedObject var viewModel: MainViewModel
     @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
+    @State private var editMode: EditMode = .inactive
 
     private var selectedCharInfo: FriendCharInfo {
         CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
@@ -129,6 +130,21 @@ struct MainView: View {
                         .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
                 }
 
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        editMode = editMode == .active ? .inactive : .active
+                    }
+                } label: {
+                    Text(editMode == .active ? "완료" : "순서")
+                        .font(.pressStart7())
+                        .foregroundColor(.ink)
+                        .padding(.horizontal, 6)
+                        .frame(height: 34)
+                        .background(editMode == .active ? Color.grass.opacity(0.4) : Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+
                 Button { viewModel.presentAddTodo() } label: {
                     Text("+ Todo")
                         .font(.pressStart9())
@@ -146,20 +162,46 @@ struct MainView: View {
     }
 
     // MARK: - Todo List
-    private var todoList: some View {
-        ScrollView {
-            LazyVStack(spacing: 10) {
-                ForEach(viewModel.todos, id: \.id) { todo in
-                    TodoRowView(todo: todo, viewModel: viewModel)
-                }
 
-                if viewModel.todos.isEmpty {
-                    emptyState.padding(.top, 40)
+    private var incompleteTodos: [TodoEntity] { viewModel.todos.filter { !$0.isCompleted } }
+    private var completedTodos: [TodoEntity] { viewModel.todos.filter { $0.isCompleted } }
+
+    private var todoList: some View {
+        Group {
+            if viewModel.todos.isEmpty {
+                ScrollView {
+                    emptyState.padding(.top, 40).padding(.horizontal, 16)
                 }
+            } else {
+                List {
+                    ForEach(incompleteTodos, id: \.id) { todo in
+                        TodoRowView(todo: todo, viewModel: viewModel)
+                            .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
+                    .onMove { from, to in
+                        viewModel.reorderTodos(from: from, to: to)
+                    }
+
+                    ForEach(completedTodos, id: \.id) { todo in
+                        TodoRowView(todo: todo, viewModel: viewModel)
+                            .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
+
+                    Color.clear.frame(height: 160)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets())
+                }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .environment(\.editMode, $editMode)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 180)
         }
+        .padding(.top, 8)
     }
 
     private var emptyState: some View {

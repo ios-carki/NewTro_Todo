@@ -18,25 +18,34 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
     @MainActor func fetchTodos(targetDate: Date) throws -> [TodoEntity] {
         let realm = try Realm()
         let dateStr = DateFormatter.dateToString(date: targetDate)
-        return realm.objects(Todo.self)
+        let entities = realm.objects(Todo.self)
             .filter("stringDate == %@", dateStr)
-            .sorted(byKeyPath: "regDate", ascending: true)
             .toArray()
             .map { $0.toDomain() }
+        return entities.sorted { a, b in
+            if a.isCompleted != b.isCompleted { return !a.isCompleted }
+            if !a.isCompleted { return a.sortOrder < b.sortOrder }
+            return (a.completedAt ?? .distantPast) < (b.completedAt ?? .distantPast)
+        }
     }
 
     func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?, targetDate: Date) async throws -> TodoEntity {
         try await MainActor.run {
             let realm = try Realm()
+            let dateStr = DateFormatter.dateToString(date: targetDate)
+            let minSortOrder: Int = realm.objects(Todo.self)
+                .filter("stringDate == %@", dateStr)
+                .min(ofProperty: "sortOrder") ?? 1
             let todo = Todo(
                 todo: text,
                 favorite: false,
                 importance: importance.rawValue,
                 regDate: Date(),
-                stringDate: DateFormatter.dateToString(date: targetDate),
+                stringDate: dateStr,
                 isFinished: false,
                 emoji: emoji,
-                dueTime: dueTime
+                dueTime: dueTime,
+                sortOrder: minSortOrder - 1
             )
             try realm.write { realm.add(todo) }
             return todo.toDomain()
@@ -74,7 +83,10 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             guard let todo = realm.objects(Todo.self)
                 .filter("objectID == %@", try ObjectId(string: id)).first
             else { throw RepositoryError.notFound }
-            try realm.write { todo.isFinished.toggle() }
+            try realm.write {
+                todo.isFinished.toggle()
+                todo.completedAt = todo.isFinished ? Date() : nil
+            }
         }
     }
 
@@ -126,6 +138,20 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             let realm = try Realm()
             try realm.write {
                 realm.delete(realm.objects(Todo.self))
+            }
+        }
+    }
+
+    func updateSortOrders(updates: [(id: String, sortOrder: Int)]) async throws {
+        try await MainActor.run {
+            let realm = try Realm()
+            let pairs = try updates.map { (try ObjectId(string: $0.id), $0.sortOrder) }
+            try realm.write {
+                for (oid, order) in pairs {
+                    if let todo = realm.objects(Todo.self).filter("objectID == %@", oid).first {
+                        todo.sortOrder = order
+                    }
+                }
             }
         }
     }

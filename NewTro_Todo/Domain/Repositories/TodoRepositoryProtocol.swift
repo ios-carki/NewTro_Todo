@@ -12,4 +12,5 @@ protocol TodoRepositoryProtocol {
     func toggleFavorite(id: String) async throws
     func delete(id: String) async throws
     func deleteAll() async throws
+    func updateSortOrders(updates: [(id: String, sortOrder: Int)]) async throws
 }

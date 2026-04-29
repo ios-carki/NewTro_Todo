@@ -11,4 +11,6 @@ struct TodoEntity: Identifiable {
     var postponeCount: Int
     var emoji: String
     var dueTime: Date?
+    var sortOrder: Int
+    var completedAt: Date?
 }

@@ -36,6 +36,9 @@ final class DIContainer {
     func makeEditTodoUseCase() -> EditTodoUseCase {
         EditTodoUseCase(repository: todoRepository)
     }
+    func makeUpdateTodoSortOrdersUseCase() -> UpdateTodoSortOrdersUseCase {
+        UpdateTodoSortOrdersUseCase(repository: todoRepository)
+    }
     func makeFetchTodosByMonthUseCase() -> FetchTodosByMonthUseCase {
         FetchTodosByMonthUseCase(repository: todoRepository)
     }
@@ -112,6 +115,7 @@ final class DIContainer {
             recordTodoAddedUseCase: makeRecordTodoAddedUseCase(),
             recordPostponeUseCase: makeRecordPostponeUseCase(),
             editTodoUseCase: makeEditTodoUseCase(),
+            updateTodoSortOrdersUseCase: makeUpdateTodoSortOrdersUseCase(),
             fetchTemplatesUseCase: makeFetchTemplatesUseCase(),
             addTemplateUseCase: makeAddTemplateUseCase(),
             updateTemplateUseCase: makeUpdateTemplateUseCase(),

@@ -53,6 +53,7 @@ final class MainViewModel: ObservableObject {
     private let recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol
     private let recordPostponeUseCase: any RecordPostponeUseCaseProtocol
     private let editTodoUseCase: any EditTodoUseCaseProtocol
+    private let updateTodoSortOrdersUseCase: any UpdateTodoSortOrdersUseCaseProtocol
     private let fetchTemplatesUseCase: any FetchTemplatesUseCaseProtocol
     private let addTemplateUseCase: any AddTemplateUseCaseProtocol
     private let updateTemplateUseCase: any UpdateTemplateUseCaseProtocol
@@ -71,6 +72,7 @@ final class MainViewModel: ObservableObject {
         recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol,
         recordPostponeUseCase: any RecordPostponeUseCaseProtocol,
         editTodoUseCase: any EditTodoUseCaseProtocol,
+        updateTodoSortOrdersUseCase: any UpdateTodoSortOrdersUseCaseProtocol,
         fetchTemplatesUseCase: any FetchTemplatesUseCaseProtocol,
         addTemplateUseCase: any AddTemplateUseCaseProtocol,
         updateTemplateUseCase: any UpdateTemplateUseCaseProtocol,
@@ -88,6 +90,7 @@ final class MainViewModel: ObservableObject {
         self.recordTodoAddedUseCase = recordTodoAddedUseCase
         self.recordPostponeUseCase = recordPostponeUseCase
         self.editTodoUseCase = editTodoUseCase
+        self.updateTodoSortOrdersUseCase = updateTodoSortOrdersUseCase
         self.fetchTemplatesUseCase = fetchTemplatesUseCase
         self.addTemplateUseCase = addTemplateUseCase
         self.updateTemplateUseCase = updateTemplateUseCase
@@ -244,6 +247,7 @@ final class MainViewModel: ObservableObject {
                 try await toggleCompleteUseCase.execute(id: id)
                 if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].isCompleted.toggle()
+                    todos[idx].completedAt = todos[idx].isCompleted ? Date() : nil
                     if todos[idx].isCompleted {
                         let wasPostponed = todos[idx].postponeCount > 0
                         let isPerfect = !todos.isEmpty && todos.allSatisfy(\.isCompleted)
@@ -253,11 +257,37 @@ final class MainViewModel: ObservableObject {
                             date: selectedDate
                         )
                     }
+                    todos = Self.sorted(todos)
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
             }
+        }
+    }
+
+    func reorderTodos(from source: IndexSet, to destination: Int) {
+        var incomplete = todos.filter { !$0.isCompleted }
+        let completed = todos.filter { $0.isCompleted }
+        incomplete.move(fromOffsets: source, toOffset: destination)
+        todos = incomplete + completed
+
+        let updates = incomplete.enumerated().map { (idx, todo) in (id: todo.id, sortOrder: idx) }
+        Task {
+            do {
+                try await updateTodoSortOrdersUseCase.execute(updates: updates)
+            } catch {
+                errorMessage = error.localizedDescription
+                loadTodos()
+            }
+        }
+    }
+
+    private static func sorted(_ input: [TodoEntity]) -> [TodoEntity] {
+        input.sorted { a, b in
+            if a.isCompleted != b.isCompleted { return !a.isCompleted }
+            if !a.isCompleted { return a.sortOrder < b.sortOrder }
+            return (a.completedAt ?? .distantPast) < (b.completedAt ?? .distantPast)
         }
     }
 

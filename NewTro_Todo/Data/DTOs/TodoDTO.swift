@@ -12,7 +12,9 @@ extension Todo {
             isCompleted: isFinished,
             postponeCount: postponeCount,
             emoji: emoji,
-            dueTime: dueTime
+            dueTime: dueTime,
+            sortOrder: sortOrder,
+            completedAt: completedAt
         )
     }
 }

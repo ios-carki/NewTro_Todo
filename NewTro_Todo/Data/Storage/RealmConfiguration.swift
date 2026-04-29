@@ -8,7 +8,8 @@ enum RealmConfiguration {
     // v4: QuickNote.colorName String 추가 (기본값 "yellow")
     // v5: Todo.emoji String 추가 (기본값 ""), Todo.dueTime Date? 추가 (기본값 nil)
     // v6: TemplateObject 신규 테이블 추가
-    private static let schemaVersion: UInt64 = 6
+    // v7: Todo.sortOrder Int 추가 (regDate 기반 역순 초기값), Todo.completedAt Date? 추가
+    private static let schemaVersion: UInt64 = 7
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -64,5 +65,16 @@ enum RealmConfiguration {
             }
         }
         // v6: TemplateObject is a new table — no existing data to migrate
+        if oldVersion < 7 {
+            migration.enumerateObjects(ofType: "Todo") { oldObject, newObject in
+                // sortOrder: 기존 Todo를 newest-first로 정렬하기 위해 regDate의 음수 timestamp 사용
+                if let regDate = oldObject?["regDate"] as? Date {
+                    newObject?["sortOrder"] = -Int(regDate.timeIntervalSince1970)
+                } else {
+                    newObject?["sortOrder"] = 0
+                }
+                newObject?["completedAt"] = nil
+            }
+        }
     }
 }
