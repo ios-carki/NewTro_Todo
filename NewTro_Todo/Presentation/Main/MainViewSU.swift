@@ -184,7 +184,9 @@ struct MainView: View {
                 List {
                     ForEach(incompleteTodos, id: \.id) { todo in
                         TodoRowView(todo: todo, viewModel: viewModel)
-                            .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 5)
+                            .listRowInsets(EdgeInsets())
                             .listRowBackground(Color.clear)
                             .listRowSeparator(.hidden)
                     }
@@ -194,7 +196,9 @@ struct MainView: View {
 
                     ForEach(completedTodos, id: \.id) { todo in
                         TodoRowView(todo: todo, viewModel: viewModel)
-                            .listRowInsets(EdgeInsets(top: 5, leading: 16, bottom: 5, trailing: 16))
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 5)
+                            .listRowInsets(EdgeInsets())
                             .listRowBackground(Color.clear)
                             .listRowSeparator(.hidden)
                     }
