@@ -116,7 +116,7 @@ struct TodoRowView: View {
     private var trailingButtons: some View {
         HStack(spacing: 4) {
             Button {
-                viewModel.postponeTarget = todo
+                viewModel.activeSheet = .postpone(todo)
             } label: {
                 Text("미루기")
                     .font(.galBold14())
@@ -128,7 +128,7 @@ struct TodoRowView: View {
             }
 
             Button {
-                viewModel.actionTarget = todo
+                viewModel.activeSheet = .actionMenu(todo)
             } label: {
                 Text("...")
                     .font(.pressStart9())

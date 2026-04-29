@@ -4,6 +4,7 @@ struct MainView: View {
     @ObservedObject var viewModel: MainViewModel
     @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
     @State private var editMode: EditMode = .inactive
+    @State private var previousSheetId: String? = nil
 
     private var selectedCharInfo: FriendCharInfo {
         CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
@@ -25,24 +26,28 @@ struct MainView: View {
                     .padding(.top, 8)
             }
         }
-        .sheet(isPresented: $viewModel.isAddTodoPresented) {
-            TodoAddSheetWrapper(viewModel: viewModel)
+        .sheet(item: $viewModel.activeSheet) { sheet in
+            switch sheet {
+            case .addTodo:
+                TodoAddSheetWrapper(viewModel: viewModel)
+            case .editTodo(let todo):
+                TodoAddSheetWrapper(viewModel: viewModel, editingTodo: todo)
+            case .actionMenu(let todo):
+                TodoActionMenuView(todo: todo, viewModel: viewModel)
+                    .interactiveDismissDisabled(true)
+                    .presentationDragIndicator(.hidden)
+            case .postpone(let todo):
+                PostponeMenuView(todo: todo, viewModel: viewModel)
+            case .datePicker:
+                DatePickerSheetView { date in
+                    viewModel.navigateToDate(date)
+                }
+            }
         }
-        .sheet(item: $viewModel.editTarget) { todo in
-            TodoAddSheetWrapper(viewModel: viewModel, editingTodo: todo)
-        }
-        .sheet(item: $viewModel.actionTarget) { todo in
-            TodoActionMenuView(todo: todo, viewModel: viewModel)
-        }
-        .onChange(of: viewModel.actionTarget?.id) { id in
-            if id == nil { viewModel.onActionMenuDismissed() }
-        }
-        .sheet(item: $viewModel.postponeTarget) { todo in
-            PostponeMenuView(todo: todo, viewModel: viewModel)
-        }
-        .sheet(isPresented: $viewModel.isDatePickerPresented) {
-            DatePickerSheetView { date in
-                viewModel.navigateToDate(date)
+        .onChange(of: viewModel.activeSheet?.id) { newId in
+            defer { previousSheetId = newId }
+            if newId == nil && previousSheetId?.hasPrefix("actionMenu") == true {
+                viewModel.onActionMenuDismissed()
             }
         }
         .alert("오류", isPresented: Binding(

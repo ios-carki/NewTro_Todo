@@ -3,22 +3,35 @@ import Combine
 import SwiftUI
 import WidgetKit
 
+enum MainActiveSheet: Identifiable {
+    case addTodo
+    case editTodo(TodoEntity)
+    case actionMenu(TodoEntity)
+    case postpone(TodoEntity)
+    case datePicker
+
+    var id: String {
+        switch self {
+        case .addTodo:           return "addTodo"
+        case .editTodo(let t):   return "editTodo_\(t.id)"
+        case .actionMenu(let t): return "actionMenu_\(t.id)"
+        case .postpone(let t):   return "postpone_\(t.id)"
+        case .datePicker:        return "datePicker"
+        }
+    }
+}
+
 @MainActor
 final class MainViewModel: ObservableObject {
 
     // MARK: - State
     @Published var todos: [TodoEntity] = []
     @Published var selectedDate: Date = Date()
-    @Published var actionTarget: TodoEntity? = nil
-    @Published var postponeTarget: TodoEntity? = nil
+    @Published var activeSheet: MainActiveSheet? = nil
     @Published var errorMessage: String? = nil
-    @Published var isAddTodoPresented: Bool = false
-    @Published var editTarget: TodoEntity? = nil
     @Published var toastMessage: String? = nil
-    @Published var isDatePickerPresented: Bool = false
     @Published var templates: [TemplateEntity] = []
     @Published var pendingTemplate: TemplateEntity? = nil
-
     @Published var actionMenuRecentlyDismissed: Bool = false
 
     private var toastTask: Task<Void, Never>?
@@ -146,11 +159,11 @@ final class MainViewModel: ObservableObject {
     }
 
     func presentAddTodo() {
-        isAddTodoPresented = true
+        activeSheet = .addTodo
     }
 
     func presentDatePicker() {
-        isDatePickerPresented = true
+        activeSheet = .datePicker
     }
 
     func navigateToDate(_ date: Date) {
@@ -200,7 +213,7 @@ final class MainViewModel: ObservableObject {
     }
 
     func presentEditTodo(_ todo: TodoEntity) {
-        editTarget = todo
+        activeSheet = .editTodo(todo)
     }
 
     func editTodo(id: String, text: String, emoji: String, importance: Importance, dueTime: Date?) {
