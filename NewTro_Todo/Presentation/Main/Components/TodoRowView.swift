@@ -140,8 +140,8 @@ struct TodoRowView: View {
                     viewModel.activeSheet = .postpone(todo)
                 }
             } label: {
-                Text("미루기")
-                    .font(.galBold14())
+                Text("ZZZ")
+                    .font(.pressStart7())
                     .foregroundColor(.ink)
                     .padding(.horizontal, 6)
                     .frame(height: 28)
@@ -154,10 +154,11 @@ struct TodoRowView: View {
             Button {
                 viewModel.activeSheet = .actionMenu(todo)
             } label: {
-                Text("...")
-                    .font(.pressStart9())
+                Text("MENU")
+                    .font(.pressStart7())
                     .foregroundColor(.ink)
-                    .frame(width: 28, height: 28)
+                    .padding(.horizontal, 6)
+                    .frame(height: 28)
                     .background(Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
             }

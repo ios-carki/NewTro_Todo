@@ -130,9 +130,11 @@ struct MainView: View {
                 Spacer()
 
                 Button { viewModel.presentDatePicker() } label: {
-                    Text("📅")
-                        .font(.system(size: 16))
-                        .frame(width: 34, height: 34)
+                    Text("WARP")
+                        .font(.pressStart7())
+                        .foregroundColor(.ink)
+                        .padding(.horizontal, 6)
+                        .frame(height: 34)
                         .background(Color.cream)
                         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                         .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
@@ -143,14 +145,32 @@ struct MainView: View {
                         editMode = editMode == .active ? .inactive : .active
                     }
                 } label: {
-                    Text(editMode == .active ? "완료" : "순서")
-                        .font(.pressStart7())
-                        .foregroundColor(.ink)
-                        .padding(.horizontal, 6)
-                        .frame(height: 34)
-                        .background(editMode == .active ? Color.grass.opacity(0.4) : Color.cream)
-                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                    HStack(spacing: 4) {
+                        if editMode == .active {
+                            PixelArtView(
+                                grid: PixelArtAssets.smallCheckGrid,
+                                palette: PixelArtAssets.smallCheckPalette,
+                                scale: 2
+                            )
+                            Text("DONE")
+                                .font(.pressStart7())
+                                .foregroundColor(.ink)
+                        } else {
+                            PixelArtView(
+                                grid: PixelArtAssets.arrowUpDownGrid,
+                                palette: PixelArtAssets.arrowUpDownPalette,
+                                scale: 2
+                            )
+                            Text("SORT")
+                                .font(.pressStart7())
+                                .foregroundColor(.ink)
+                        }
+                    }
+                    .padding(.horizontal, 6)
+                    .frame(height: 34)
+                    .background(editMode == .active ? Color.grass.opacity(0.4) : Color.cream)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                    .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
                 }
 
                 Button { viewModel.presentAddTodo() } label: {
