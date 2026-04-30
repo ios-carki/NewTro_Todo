@@ -10,26 +10,27 @@ struct TodoActionMenuView: View {
             Color.panel.ignoresSafeArea()
 
             VStack(spacing: 0) {
-                Capsule()
-                    .fill(Color.ink.opacity(0.25))
-                    .frame(width: 40, height: 4)
-                    .padding(.top, 12)
-
                 Text(todo.text.isEmpty ? "할일" : todo.text)
                     .font(.galBold14())
                     .foregroundColor(.shade)
                     .lineLimit(1)
-                    .padding(.top, 16)
+                    .padding(.top, 20)
                     .padding(.horizontal, 20)
 
                 VStack(spacing: 8) {
-                    actionRow(title: importanceTitle, icon: "star.fill", color: .sun) {
-                        viewModel.updateImportance(id: todo.id, importance: nextImportance)
-                        dismiss()
-                    }
-                    actionRow(title: favoriteTitle, icon: "heart.fill", color: .pixelPink) {
-                        viewModel.toggleFavorite(id: todo.id)
-                        dismiss()
+                    if !viewModel.isViewingPastDate {
+                        actionRow(title: importanceTitle, icon: "star.fill", color: .sun) {
+                            viewModel.updateImportance(id: todo.id, importance: nextImportance)
+                            dismiss()
+                        }
+                        actionRow(title: favoriteTitle, icon: "heart.fill", color: .pixelPink) {
+                            viewModel.toggleFavorite(id: todo.id)
+                            dismiss()
+                        }
+                        actionRow(title: "템플릿으로 저장", icon: "square.and.arrow.down", color: .grass) {
+                            viewModel.saveTemplate(text: todo.text, emoji: todo.emoji, importance: todo.importance)
+                            dismiss()
+                        }
                     }
                     actionRow(title: "삭제", icon: "trash", color: .pixelRed, isDestructive: true) {
                         viewModel.deleteTodo(id: todo.id)
@@ -39,22 +40,23 @@ struct TodoActionMenuView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
 
+                Spacer()
+
                 Button { dismiss() } label: {
                     Text("취소")
                         .font(.galBold14())
-                        .foregroundColor(.shade)
+                        .foregroundColor(.cream)
                         .frame(maxWidth: .infinity)
                         .frame(height: 44)
-                        .background(Color.ink.opacity(0.08))
+                        .background(Color.pixelRed)
                         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 8)
-                .padding(.bottom, 20)
+                .padding(.bottom, 24)
             }
         }
-        .presentationDetents([.fraction(0.42)])
-        .presentationDragIndicator(.hidden)
+        .presentationDetents([.height(viewModel.isViewingPastDate ? 220 : 360)])
+        .presentationDragIndicator(.visible)
     }
 
     private func actionRow(

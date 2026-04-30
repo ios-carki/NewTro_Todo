@@ -57,32 +57,33 @@ struct CalendarView: View {
 
     // MARK: - Month Navigation Panel
     private var monthNavPanel: some View {
-        HStack {
+        HStack(spacing: 0) {
             Button { viewModel.prevMonth() } label: {
                 Text("◀")
-                    .font(.pressStart12())
+                    .font(.pressStart14())
                     .foregroundColor(.ink)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .frame(width: 50, height: 46)
+                    .background(Color.cream)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
             }
-
-            Spacer()
 
             Text(viewModel.monthTitle)
                 .font(.pressStart14())
                 .foregroundColor(.ink)
-
-            Spacer()
+                .frame(maxWidth: .infinity)
+                .frame(height: 46)
+                .background(Color.panel)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
 
             Button { viewModel.nextMonth() } label: {
                 Text("▶")
-                    .font(.pressStart12())
+                    .font(.pressStart14())
                     .foregroundColor(.ink)
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 8)
+                    .frame(width: 50, height: 46)
+                    .background(Color.cream)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
             }
         }
-        .background(Color.cream)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
     }
 
@@ -133,7 +134,7 @@ struct CalendarView: View {
         HStack(spacing: 16) {
             LegendDot(color: .peachDk, label: "할 일")
             LegendDot(color: .grassDk, label: "완료")
-            LegendDot(color: .cream,   label: "오늘", hasFrame: true)
+            LegendDot(color: Color(hex: "#FFD6E0").opacity(0.5), label: "오늘", hasFrame: true, frameColor: .pixelPink)
         }
     }
 }
@@ -147,13 +148,13 @@ private struct DayCellView: View {
     let onTap: () -> Void
 
     private var bg: Color {
-        isToday ? .cream : .white
+        isToday ? Color(hex: "#FFD6E0").opacity(0.5) : .white
     }
 
     private var dayColor: Color {
         switch weekday {
         case 0: return .redDk
-        case 6: return .sky
+        case 6: return Color(hex: "#3A7FC1")
         default: return .ink
         }
     }
@@ -175,7 +176,7 @@ private struct DayCellView: View {
             .frame(height: 46)
             .padding(.vertical, 4)
             .background(bg)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            .overlay(Rectangle().stroke(isToday ? Color.pixelPink : Color.ink, lineWidth: isToday ? 2.5 : 2))
         }
         .buttonStyle(.plain)
     }
@@ -197,13 +198,14 @@ private struct LegendDot: View {
     let color: Color
     let label: String
     var hasFrame: Bool = false
+    var frameColor: Color = .ink
 
     var body: some View {
         HStack(spacing: 4) {
             Rectangle()
                 .fill(color)
                 .frame(width: 10, height: 10)
-                .overlay(hasFrame ? Rectangle().stroke(Color.ink, lineWidth: 1.5) : nil)
+                .overlay(hasFrame ? Rectangle().stroke(frameColor, lineWidth: 1.5) : nil)
             Text(label)
                 .font(.pressStart9())
                 .foregroundColor(.shade)

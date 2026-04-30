@@ -1,6 +1,25 @@
 import Foundation
 import Combine
+import SwiftUI
 import WidgetKit
+
+enum MainActiveSheet: Identifiable {
+    case addTodo
+    case editTodo(TodoEntity)
+    case actionMenu(TodoEntity)
+    case postpone(TodoEntity)
+    case datePicker
+
+    var id: String {
+        switch self {
+        case .addTodo:           return "addTodo"
+        case .editTodo(let t):   return "editTodo_\(t.id)"
+        case .actionMenu(let t): return "actionMenu_\(t.id)"
+        case .postpone(let t):   return "postpone_\(t.id)"
+        case .datePicker:        return "datePicker"
+        }
+    }
+}
 
 @MainActor
 final class MainViewModel: ObservableObject {
@@ -8,9 +27,15 @@ final class MainViewModel: ObservableObject {
     // MARK: - State
     @Published var todos: [TodoEntity] = []
     @Published var selectedDate: Date = Date()
-    @Published var actionTarget: TodoEntity? = nil
-    @Published var postponeTarget: TodoEntity? = nil
+    @Published var activeSheet: MainActiveSheet? = nil
     @Published var errorMessage: String? = nil
+    @Published var toastMessage: String? = nil
+    @Published var templates: [TemplateEntity] = []
+    @Published var pendingTemplate: TemplateEntity? = nil
+    @Published var actionMenuRecentlyDismissed: Bool = false
+
+    private var toastTask: Task<Void, Never>?
+    private var actionMenuDismissTask: Task<Void, Never>?
 
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
     var completedCount: Int { todos.filter(\.isCompleted).count }
@@ -31,6 +56,15 @@ final class MainViewModel: ObservableObject {
         return String(format: "%04d.%02d.%02d", y, m, d)
     }
 
+    /// 오늘보다 이전 날짜를 보고 있으면 true
+    /// → 완료 토글/미루기/편집은 잠그고, 삭제만 허용
+    var isViewingPastDate: Bool {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let viewing = cal.startOfDay(for: selectedDate)
+        return viewing < today
+    }
+
     // MARK: - Use Cases
     private let fetchTodosUseCase: any FetchTodosUseCaseProtocol
     private let addTodoUseCase: any AddTodoUseCaseProtocol
@@ -43,6 +77,12 @@ final class MainViewModel: ObservableObject {
     private let recordCompleteUseCase: any RecordTodoCompleteUseCaseProtocol
     private let recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol
     private let recordPostponeUseCase: any RecordPostponeUseCaseProtocol
+    private let editTodoUseCase: any EditTodoUseCaseProtocol
+    private let updateTodoSortOrdersUseCase: any UpdateTodoSortOrdersUseCaseProtocol
+    private let fetchTemplatesUseCase: any FetchTemplatesUseCaseProtocol
+    private let addTemplateUseCase: any AddTemplateUseCaseProtocol
+    private let updateTemplateUseCase: any UpdateTemplateUseCaseProtocol
+    private let deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
 
     init(
         fetchTodosUseCase: any FetchTodosUseCaseProtocol,
@@ -55,7 +95,13 @@ final class MainViewModel: ObservableObject {
         deleteTodoUseCase: any DeleteTodoUseCaseProtocol,
         recordCompleteUseCase: any RecordTodoCompleteUseCaseProtocol,
         recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol,
-        recordPostponeUseCase: any RecordPostponeUseCaseProtocol
+        recordPostponeUseCase: any RecordPostponeUseCaseProtocol,
+        editTodoUseCase: any EditTodoUseCaseProtocol,
+        updateTodoSortOrdersUseCase: any UpdateTodoSortOrdersUseCaseProtocol,
+        fetchTemplatesUseCase: any FetchTemplatesUseCaseProtocol,
+        addTemplateUseCase: any AddTemplateUseCaseProtocol,
+        updateTemplateUseCase: any UpdateTemplateUseCaseProtocol,
+        deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
     ) {
         self.fetchTodosUseCase = fetchTodosUseCase
         self.addTodoUseCase = addTodoUseCase
@@ -68,6 +114,37 @@ final class MainViewModel: ObservableObject {
         self.recordCompleteUseCase = recordCompleteUseCase
         self.recordTodoAddedUseCase = recordTodoAddedUseCase
         self.recordPostponeUseCase = recordPostponeUseCase
+        self.editTodoUseCase = editTodoUseCase
+        self.updateTodoSortOrdersUseCase = updateTodoSortOrdersUseCase
+        self.fetchTemplatesUseCase = fetchTemplatesUseCase
+        self.addTemplateUseCase = addTemplateUseCase
+        self.updateTemplateUseCase = updateTemplateUseCase
+        self.deleteTemplateUseCase = deleteTemplateUseCase
+        loadTodos()
+    }
+
+    // MARK: - Action Menu Dismiss Guard
+
+    func onActionMenuDismissed() {
+        actionMenuDismissTask?.cancel()
+        actionMenuRecentlyDismissed = true
+        actionMenuDismissTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 400_000_000)
+            guard !Task.isCancelled else { return }
+            actionMenuRecentlyDismissed = false
+        }
+    }
+
+    // MARK: - Toast
+
+    func showToast(_ message: String) {
+        toastTask?.cancel()
+        withAnimation(.easeInOut(duration: 0.3)) { toastMessage = message }
+        toastTask = Task { @MainActor in
+            try? await Task.sleep(nanoseconds: 2_000_000_000)
+            guard !Task.isCancelled else { return }
+            withAnimation(.easeInOut(duration: 0.3)) { self.toastMessage = nil }
+        }
     }
 
     // MARK: - Date Navigation
@@ -83,21 +160,104 @@ final class MainViewModel: ObservableObject {
 
     // MARK: - Todo Actions
     func loadTodos() {
+        do {
+            todos = try fetchTodosUseCase.execute(targetDate: selectedDate)
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+
+    func presentAddTodo() {
+        activeSheet = .addTodo
+    }
+
+    func presentDatePicker() {
+        activeSheet = .datePicker
+    }
+
+    func navigateToDate(_ date: Date) {
+        selectedDate = date
+        loadTodos()
+    }
+
+    // MARK: - Templates
+
+    func loadTemplates() {
+        Task {
+            do { templates = try await fetchTemplatesUseCase.execute() }
+            catch { errorMessage = error.localizedDescription }
+        }
+    }
+
+    func saveTemplate(text: String, emoji: String, importance: Importance) {
         Task {
             do {
-                todos = try await fetchTodosUseCase.execute(targetDate: selectedDate)
+                _ = try await addTemplateUseCase.execute(text: text, emoji: emoji, importance: importance)
+                templates = try await fetchTemplatesUseCase.execute()
+                showToast("템플릿 저장 완료")
+            } catch { errorMessage = error.localizedDescription }
+        }
+    }
+
+    func updateTemplate(id: String, text: String, emoji: String, importance: Importance) {
+        Task {
+            do {
+                try await updateTemplateUseCase.execute(id: id, text: text, emoji: emoji, importance: importance)
+                templates = try await fetchTemplatesUseCase.execute()
+            } catch { errorMessage = error.localizedDescription }
+        }
+    }
+
+    func deleteTemplate(id: String) {
+        Task {
+            do {
+                try await deleteTemplateUseCase.execute(id: id)
+                templates.removeAll { $0.id == id }
+            } catch { errorMessage = error.localizedDescription }
+        }
+    }
+
+    func applyTemplate(_ template: TemplateEntity) {
+        pendingTemplate = template
+    }
+
+    func presentEditTodo(_ todo: TodoEntity) {
+        activeSheet = .editTodo(todo)
+    }
+
+    func editTodo(id: String, text: String, emoji: String, importance: Importance, dueTime: Date?) {
+        Task {
+            do {
+                try await editTodoUseCase.execute(id: id, text: text, emoji: emoji, importance: importance, dueTime: dueTime)
+                if let idx = todos.firstIndex(where: { $0.id == id }) {
+                    todos[idx].text = text
+                    todos[idx].emoji = emoji
+                    todos[idx].importance = importance
+                    todos[idx].dueTime = dueTime
+                }
+                // 알림 재설정: 기존 취소 후 새 시간 있으면 등록
+                NotificationManager.shared.cancel(todoId: id)
+                if let dueTime {
+                    NotificationManager.shared.schedule(todoId: id, text: text, emoji: emoji, at: dueTime)
+                }
+                WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
             }
         }
     }
 
-    func addTodo() {
+    func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?) {
         Task {
             do {
-                let newTodo = try await addTodoUseCase.execute(targetDate: selectedDate)
+                let newTodo = try await addTodoUseCase.execute(
+                    text: text, emoji: emoji, importance: importance, dueTime: dueTime, targetDate: selectedDate
+                )
                 todos.append(newTodo)
                 await recordTodoAddedUseCase.execute()
+                if let dueTime {
+                    NotificationManager.shared.schedule(todoId: newTodo.id, text: text, emoji: emoji, at: dueTime)
+                }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
@@ -124,6 +284,7 @@ final class MainViewModel: ObservableObject {
                 try await toggleCompleteUseCase.execute(id: id)
                 if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].isCompleted.toggle()
+                    todos[idx].completedAt = todos[idx].isCompleted ? Date() : nil
                     if todos[idx].isCompleted {
                         let wasPostponed = todos[idx].postponeCount > 0
                         let isPerfect = !todos.isEmpty && todos.allSatisfy(\.isCompleted)
@@ -133,11 +294,37 @@ final class MainViewModel: ObservableObject {
                             date: selectedDate
                         )
                     }
+                    todos = Self.sorted(todos)
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
             }
+        }
+    }
+
+    func reorderTodos(from source: IndexSet, to destination: Int) {
+        var incomplete = todos.filter { !$0.isCompleted }
+        let completed = todos.filter { $0.isCompleted }
+        incomplete.move(fromOffsets: source, toOffset: destination)
+        todos = incomplete + completed
+
+        let updates = incomplete.enumerated().map { (idx, todo) in (id: todo.id, sortOrder: idx) }
+        Task {
+            do {
+                try await updateTodoSortOrdersUseCase.execute(updates: updates)
+            } catch {
+                errorMessage = error.localizedDescription
+                loadTodos()
+            }
+        }
+    }
+
+    private static func sorted(_ input: [TodoEntity]) -> [TodoEntity] {
+        input.sorted { a, b in
+            if a.isCompleted != b.isCompleted { return !a.isCompleted }
+            if !a.isCompleted { return a.sortOrder < b.sortOrder }
+            return (a.completedAt ?? .distantPast) < (b.completedAt ?? .distantPast)
         }
     }
 
@@ -190,6 +377,7 @@ final class MainViewModel: ObservableObject {
             do {
                 try await deleteTodoUseCase.execute(id: id)
                 todos.removeAll { $0.id == id }
+                NotificationManager.shared.cancel(todoId: id)
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription

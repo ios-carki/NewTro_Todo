@@ -3,25 +3,39 @@ import SwiftUI
 struct TodoRowView: View {
     let todo: TodoEntity
     @ObservedObject var viewModel: MainViewModel
-    @State private var editingText: String
     @State private var offsetX: CGFloat = 0
+    @State private var showFireworks: Bool = false
 
     init(todo: TodoEntity, viewModel: MainViewModel) {
         self.todo = todo
         self.viewModel = viewModel
-        self._editingText = State(initialValue: todo.text)
     }
 
+    private var isLocked: Bool { viewModel.isViewingPastDate }
+
     var body: some View {
-        HStack(spacing: 0) {
-            priorityStrip
-            rowContent
+        ZStack {
+            HStack(spacing: 0) {
+                priorityStrip
+                rowContent
+            }
+            .background(Color.panel)
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
+            .offset(x: offsetX)
+            .opacity(offsetX == 0 ? 1 : Double(max(0, 1 - offsetX / 200)))
+            .grayscale(isLocked ? 0.7 : 0)
+            .opacity(isLocked ? 0.65 : 1)
+
+            if showFireworks {
+                FireworksView()
+                    .allowsHitTesting(false)
+            }
         }
-        .background(Color.panel)
-        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
-        .offset(x: offsetX)
-        .opacity(offsetX == 0 ? 1 : Double(max(0, 1 - offsetX / 200)))
+    }
+
+    private func showLockedToast() {
+        viewModel.showToast("지난 날의 Todo는 수정할 수 없습니다")
     }
 
     // MARK: - Priority strip (left 6px)
@@ -29,6 +43,10 @@ struct TodoRowView: View {
         Rectangle()
             .fill(importanceColor)
             .frame(width: 6)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if isLocked { showLockedToast() } else { openEdit() }
+            }
     }
 
     // MARK: - Row content
@@ -45,6 +63,14 @@ struct TodoRowView: View {
 
     private var checkboxButton: some View {
         Button {
+            if isLocked {
+                showLockedToast()
+                return
+            }
+            if !todo.isCompleted {
+                showFireworks = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { showFireworks = false }
+            }
             viewModel.toggleComplete(id: todo.id)
         } label: {
             ZStack {
@@ -62,31 +88,32 @@ struct TodoRowView: View {
                 }
             }
         }
+        .buttonStyle(.borderless)
+        .accessibilityIdentifier("checkbox_\(todo.id)")
     }
 
     private var textArea: some View {
         HStack(spacing: 4) {
-            if todo.isCompleted {
-                Text(todo.text.isEmpty ? "..." : todo.text)
-                    .strikethrough(color: .shade)
-                    .foregroundColor(.shade)
-                    .font(.galBold14())
-                    .lineLimit(1)
-            } else {
-                TextField("할일을 입력하세요", text: $editingText)
-                    .foregroundColor(.ink)
-                    .font(.galBold14())
-                    .onSubmit { viewModel.updateText(id: todo.id, text: editingText) }
-                    .onChange(of: editingText) { newValue in
-                        let capped = String(newValue.prefix(50))
-                        if capped != newValue { editingText = capped }
-                        viewModel.updateText(id: todo.id, text: capped)
-                    }
+            if !todo.emoji.isEmpty {
+                Text(todo.emoji)
+                    .font(.system(size: 14))
             }
+
+            let displayText = todo.text.isEmpty ? "..." : todo.text
+            Text(displayText)
+                .strikethrough(todo.isCompleted, color: .shade)
+                .foregroundColor(todo.isCompleted ? .shade : .ink)
+                .font(.galBold14())
+                .lineLimit(1)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             if todo.postponeCount > 0 {
                 postponeBadge
             }
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if isLocked { showLockedToast() } else { openEdit() }
         }
     }
 
@@ -107,34 +134,95 @@ struct TodoRowView: View {
     private var trailingButtons: some View {
         HStack(spacing: 4) {
             Button {
-                viewModel.postponeTarget = todo
+                if isLocked {
+                    showLockedToast()
+                } else {
+                    viewModel.activeSheet = .postpone(todo)
+                }
             } label: {
-                Text("🕐")
-                    .font(.system(size: 16))
-                    .frame(width: 28, height: 28)
+                Text("ZZZ")
+                    .font(.pressStart7())
+                    .foregroundColor(.ink)
+                    .padding(.horizontal, 6)
+                    .frame(height: 28)
                     .background(Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
             }
+            .buttonStyle(.borderless)
+            .accessibilityIdentifier("postpone_\(todo.id)")
 
             Button {
-                viewModel.actionTarget = todo
+                viewModel.activeSheet = .actionMenu(todo)
             } label: {
-                Text("×")
-                    .font(.pressStart12())
-                    .foregroundColor(.white)
-                    .frame(width: 28, height: 28)
-                    .background(Color.pixelRed)
+                Text("MENU")
+                    .font(.pressStart7())
+                    .foregroundColor(.ink)
+                    .padding(.horizontal, 6)
+                    .frame(height: 28)
+                    .background(Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
             }
+            .buttonStyle(.borderless)
+            .accessibilityIdentifier("action_\(todo.id)")
         }
+        .allowsHitTesting(!viewModel.actionMenuRecentlyDismissed)
     }
 
     // MARK: - Helpers
+    private func openEdit() {
+        guard !todo.isCompleted else {
+            viewModel.showToast("완료한 투두는 수정할 수 없습니다")
+            return
+        }
+        viewModel.presentEditTodo(todo)
+    }
+
     private var importanceColor: Color {
         switch todo.importance {
         case .high:   return .pixelRed
         case .medium: return .sun
         case .none:   return .grass
         }
+    }
+}
+
+// MARK: - Fireworks
+private struct FireworksView: View {
+    private let particles: [FireParticle] = (0..<12).map { _ in FireParticle() }
+    @State private var animate = false
+
+    var body: some View {
+        ZStack {
+            ForEach(particles.indices, id: \.self) { i in
+                let p = particles[i]
+                Circle()
+                    .fill(p.color)
+                    .frame(width: p.size, height: p.size)
+                    .offset(
+                        x: animate ? p.endX : 0,
+                        y: animate ? p.endY : 0
+                    )
+                    .opacity(animate ? 0 : 1)
+            }
+        }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.7)) { animate = true }
+        }
+    }
+}
+
+private struct FireParticle {
+    let color: Color
+    let size: CGFloat
+    let endX: CGFloat
+    let endY: CGFloat
+
+    init() {
+        let angle = Double.random(in: 0..<360) * .pi / 180
+        let dist = CGFloat.random(in: 24...48)
+        color = [Color.sun, .pixelRed, .grass, .pixelPink, .done].randomElement() ?? .sun
+        size = CGFloat.random(in: 3...6)
+        endX = cos(angle) * dist
+        endY = sin(angle) * dist
     }
 }

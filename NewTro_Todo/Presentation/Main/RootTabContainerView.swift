@@ -6,36 +6,71 @@ enum AppTab: Equatable {
 
 struct RootTabContainerView: View {
     @State private var selectedTab: AppTab = .todo
+    // UIHostingController가 UINavigationController에 직접 올라가므로
+    // ZStack은 safe area 없이 물리적 전체 화면을 채움 → safe area 값을 직접 읽어야 함
+    @State private var safeAreaBottom: CGFloat = 34
+    
     @ObservedObject var mainVM: MainViewModel
     @ObservedObject var calendarVM: CalendarViewModel
     @ObservedObject var memoVM: MemoViewModel
     @ObservedObject var statsVM: StatsViewModel
     @ObservedObject var settingsVM: SettingsViewModel
-
+    
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Color.sky.ignoresSafeArea()
-
+        ZStack {
+            // GeometryReader로 실제 safe area 값 취득 + 하늘 배경 (전체 화면 덮음)
+            GeometryReader { geo in
+                Color.sky
+                    .onAppear { safeAreaBottom = geo.safeAreaInsets.bottom }
+            }
+            .ignoresSafeArea()
+            
+            // 콘텐츠: 탭바 + safe area 영역 아래를 비워줌
             tabContent
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-            tabBar
+            //                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            ////                .padding(.bottom, safeAreaBottom + 62 + 16)
+            //
+            //            // 잔디+흙: ZStack이 물리적 전체화면이므로 자연스럽게 최하단에 위치
+            //            GroundStripView(height: 64)
+            //                .ignoresSafeArea(edges: .bottom)
+            ////                .frame(maxWidth: .infinity)
+            //
+            //            // 탭바: safeAreaBottom만큼 올려 home indicator zone 침범 방지
+            //            floatingTabBar
+            //                .padding(.horizontal, 14)
+            ////                .padding(.bottom, safeAreaBottom)
+            ///
+            
+            VStack {
+                Spacer()
+                GroundStripView(height: 64)
+            }
+            .ignoresSafeArea(edges: .bottom)
+            
+            VStack {
+                Spacer()
+                floatingTabBar
+                    .clipped()
+                    .padding(.horizontal, 14)
+                    .padding(.bottom, 16)
+            }
+            .ignoresSafeArea(edges: .bottom)
         }
-        .ignoresSafeArea(edges: .bottom)
+        //        .overlay(alignment: .bottom) {
+        //            floatingTabBar
+        //                .padding(.horizontal, 14)
+        //                .ignoresSafeArea(edges: .bottom)
+        //        }
         .navigationBarHidden(true)
     }
-
+    
     // MARK: - Tab Content
-
+    
     @ViewBuilder
     private var tabContent: some View {
         switch selectedTab {
         case .todo:
-            MainView(
-                viewModel: mainVM,
-                onCalendarTapped: { selectedTab = .calendar },
-                onMemoTapped: { selectedTab = .memo }
-            )
+            MainView(viewModel: mainVM)
         case .calendar:
             CalendarView(
                 viewModel: calendarVM,
@@ -53,192 +88,72 @@ struct RootTabContainerView: View {
             SettingsView(viewModel: settingsVM, statsVM: statsVM)
         }
     }
-
-    // MARK: - Tab Bar
-
-    private var tabBar: some View {
-        VStack(spacing: 0) {
-            // Top border
-            Color.ink.frame(height: 3)
-
-            // Grass strip with blade tops
-            grassStrip
-
-            // Tab buttons on dirt
-            HStack(spacing: 0) {
-                tabItem(.todo,     label: "할일", icon: PixelArtAssets.tabIconTodo)
-                tabItem(.calendar, label: "달력", icon: PixelArtAssets.tabIconCalendar)
-                tabItem(.memo,     label: "메모", icon: PixelArtAssets.tabIconMemo)
-                tabItem(.stats,    label: "통계", icon: PixelArtAssets.tabIconStats)
-                tabItem(.settings, label: "설정", icon: PixelArtAssets.tabIconSettings)
-            }
-            .frame(height: 60)
-            .background(dirtCanvas)
-
-            // Ground base
-            dirtCanvas
-                .frame(height: 40)
-                .frame(maxWidth: .infinity)
+    
+    // MARK: - Floating Tab Bar Panel
+    
+    private var floatingTabBar: some View {
+        HStack(spacing: 0) {
+            tabItem(.todo,     label: "할일", sfSymbol: "checkmark.square.fill")
+            tabItem(.calendar, label: "달력", sfSymbol: "calendar")
+            tabItem(.memo,     label: "메모", sfSymbol: "pencil")
+            tabItem(.stats,    label: "통계", sfSymbol: "chart.bar.fill")
+            tabItem(.settings, label: "설정", sfSymbol: "gearshape.fill")
         }
-        .frame(maxWidth: .infinity)
+        .frame(height: 62)
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
+        .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
     }
-
-    // MARK: - Grass Strip
-
-    private var grassStrip: some View {
-        Canvas { ctx, size in
-            let w = size.width
-            let h = size.height
-
-            // Grass base
-            ctx.fill(
-                Path(CGRect(x: 0, y: 3, width: w, height: h - 3)),
-                with: .color(.grass)
-            )
-
-            // Dark patches for depth (alternating 8pt blocks)
-            let patchW: CGFloat = 8
-            var px: CGFloat = 0
-            while px < w {
-                if Int(px / patchW) % 2 == 0 {
-                    ctx.fill(
-                        Path(CGRect(x: px, y: 5, width: patchW, height: h - 5)),
-                        with: .color(.grassDk)
-                    )
-                }
-                px += patchW
-            }
-
-            // Grass blade tops (staggered every 5pt)
-            var bx: CGFloat = 2
-            var toggle = false
-            while bx < w {
-                let bladeH: CGFloat = toggle ? 4 : 3
-                ctx.fill(
-                    Path(CGRect(x: bx, y: 0, width: 2, height: bladeH)),
-                    with: .color(toggle ? .grass : .grassDk)
-                )
-                bx += 5
-                toggle.toggle()
-            }
-        }
-        .frame(height: 12)
-        .frame(maxWidth: .infinity)
-    }
-
+    
     // MARK: - Tab Item
-
-    private func tabItem(_ tab: AppTab, label: String, icon: [String]) -> some View {
+    
+    private func tabItem(_ tab: AppTab, label: String, sfSymbol: String) -> some View {
         let isActive = selectedTab == tab
         return Button { selectedTab = tab } label: {
-            VStack(spacing: 0) {
-                Spacer(minLength: 4)
-
-                // Pixel art icon
-                PixelTabIcon(grid: icon, isActive: isActive)
-
-                Spacer(minLength: 3)
-
-                // Label
-                Text(label)
-                    .font(.pressStart7())
-                    .foregroundColor(isActive ? .ink : .cream)
-                    .minimumScaleFactor(0.6)
-                    .lineLimit(1)
-
-                Spacer(minLength: 4)
-
-                // 3-dot active indicator
-                HStack(spacing: 3) {
-                    ForEach(0..<3, id: \.self) { _ in
+            VStack(spacing: 5) {
+                Spacer(minLength: 0)
+                
+                if isActive {
+                    ZStack {
                         Rectangle()
-                            .fill(isActive ? Color.sun : Color.clear)
-                            .frame(width: 3, height: 3)
+                            .fill(Color.ink)
+                            .frame(width: 38, height: 30)
+                            .offset(x: 2, y: 2)
+                        Rectangle()
+                            .fill(Color.sun)
+                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                            .frame(width: 38, height: 30)
+                        Image(systemName: sfSymbol)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.ink)
                     }
+                } else {
+                    Image(systemName: sfSymbol)
+                        .font(.system(size: 14, weight: .regular))
+                        .foregroundColor(.shade)
+                        .frame(width: 38, height: 30)
                 }
-
-                Spacer(minLength: 4)
+                
+                Text(label)
+                    .font(.galBold14())
+                    .foregroundColor(isActive ? .ink : .shade)
+                    .lineLimit(1)
+                
+                Spacer(minLength: 0)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 58)
-            .background(tabBackground(isActive: isActive))
         }
         .buttonStyle(.plain)
     }
-
-    @ViewBuilder
-    private func tabBackground(isActive: Bool) -> some View {
-        if isActive {
-            ZStack {
-                // Pixel-art shadow (ink offset block)
-                Color.ink
-                    .padding(.top, 2)
-                    .padding(.leading, 2)
-
-                // Main cream block with ink border
-                Color.cream
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                    .padding(.bottom, 2)
-                    .padding(.trailing, 2)
-            }
-        } else {
-            Color.clear
-        }
-    }
-
-    // MARK: - Dirt Canvas
-
-    private var dirtCanvas: some View {
-        Canvas { ctx, size in
-            let tileW: CGFloat = 14
-            var x: CGFloat = 0
-            while x < size.width {
-                let c: Color = Int(x / tileW) % 2 == 0 ? .dirt : .dirtDk
-                ctx.fill(
-                    Path(CGRect(x: x, y: 0, width: tileW, height: size.height)),
-                    with: .color(c)
-                )
-                x += tileW
-            }
-            // Subtle top highlight line
-            ctx.fill(
-                Path(CGRect(x: 0, y: 0, width: size.width, height: 1)),
-                with: .color(.ink.opacity(0.15))
-            )
-        }
-    }
 }
 
-// MARK: - Pixel Tab Icon
-
-private struct PixelTabIcon: View {
-    let grid: [String]
-    let isActive: Bool
-
-    private let pixelSize: CGFloat = 3
-
-    var body: some View {
-        let cols = CGFloat(grid.first?.count ?? 7)
-        let rows = CGFloat(grid.count)
-        let iconColor: Color = isActive ? .ink : .cream
-
-        return Canvas { ctx, _ in
-            for (r, row) in grid.enumerated() {
-                for (c, ch) in row.enumerated() {
-                    guard ch == "1" else { continue }
-                    let rect = CGRect(
-                        x: CGFloat(c) * pixelSize,
-                        y: CGFloat(r) * pixelSize,
-                        width: pixelSize,
-                        height: pixelSize
-                    )
-                    ctx.fill(Path(rect), with: .color(iconColor))
-                }
-            }
-        }
-        .frame(width: cols * pixelSize, height: rows * pixelSize)
-    }
+#Preview { @MainActor in
+    let di = DIContainer()
+    return RootTabContainerView(
+        mainVM: di.makeMainViewModel(),
+        calendarVM: di.makeCalendarViewModel(),
+        memoVM: di.makeMemoViewModel(),
+        statsVM: di.makeStatsViewModel(),
+        settingsVM: di.makeSettingsViewModel()
+    )
 }
-
-// Keep the constant for padding references elsewhere
-let tabBarTotalHeight: CGFloat = 115

@@ -2,8 +2,13 @@ import SwiftUI
 
 struct MainView: View {
     @ObservedObject var viewModel: MainViewModel
-    var onCalendarTapped: (() -> Void)?
-    var onMemoTapped: (() -> Void)?
+    @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
+    @State private var editMode: EditMode = .inactive
+    @State private var previousSheetId: String? = nil
+
+    private var selectedCharInfo: FriendCharInfo {
+        CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
+    }
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -12,7 +17,6 @@ struct MainView: View {
             VStack(spacing: 0) {
                 topHUD
                     .padding(.horizontal, 16)
-                    .padding(.top, 8)
 
                 titleArea
                     .padding(.horizontal, 16)
@@ -21,17 +25,30 @@ struct MainView: View {
                 todoList
                     .padding(.top, 8)
             }
-
-            fab
-                .padding(.bottom, 128)
-                .padding(.trailing, 18)
-                .frame(maxWidth: .infinity, alignment: .trailing)
         }
-        .sheet(item: $viewModel.actionTarget) { todo in
-            TodoActionMenuView(todo: todo, viewModel: viewModel)
+        .sheet(item: $viewModel.activeSheet) { sheet in
+            switch sheet {
+            case .addTodo:
+                TodoAddSheetWrapper(viewModel: viewModel)
+            case .editTodo(let todo):
+                TodoAddSheetWrapper(viewModel: viewModel, editingTodo: todo)
+            case .actionMenu(let todo):
+                TodoActionMenuView(todo: todo, viewModel: viewModel)
+                    .interactiveDismissDisabled(true)
+                    .presentationDragIndicator(.hidden)
+            case .postpone(let todo):
+                PostponeMenuView(todo: todo, viewModel: viewModel)
+            case .datePicker:
+                DatePickerSheetView { date in
+                    viewModel.navigateToDate(date)
+                }
+            }
         }
-        .sheet(item: $viewModel.postponeTarget) { todo in
-            PostponeMenuView(todo: todo, viewModel: viewModel)
+        .onChange(of: viewModel.activeSheet?.id) { newId in
+            defer { previousSheetId = newId }
+            if newId == nil && previousSheetId?.hasPrefix("actionMenu") == true {
+                viewModel.onActionMenuDismissed()
+            }
         }
         .alert("오류", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
@@ -41,7 +58,32 @@ struct MainView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
+        .overlay(alignment: .top) {
+            if let msg = viewModel.toastMessage {
+                toastBanner(msg)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
         .onAppear { viewModel.loadTodos() }
+    }
+
+    // MARK: - Toast Banner
+    private func toastBanner(_ message: String) -> some View {
+        HStack(spacing: 6) {
+            Text("!")
+                .font(.pressStart9())
+                .foregroundColor(.cream)
+            Text(message)
+                .font(.galBold14())
+                .foregroundColor(.cream)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 10)
+        .background(Color.shade)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+        .padding(.horizontal, 24)
+        .padding(.top, 8)
     }
 
     // MARK: - Top HUD
@@ -87,28 +129,61 @@ struct MainView: View {
 
                 Spacer()
 
-                HStack(spacing: 8) {
-                    Button { onCalendarTapped?() } label: {
-                        Image(systemName: "calendar")
-                            .font(.system(size: 14, weight: .bold))
-                            .foregroundColor(.ink)
-                            .frame(width: 34, height: 34)
-                            .background(Color.cream)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
-                    }
-
-                    Button { onMemoTapped?() } label: {
-                        Text("MEMO")
-                            .font(.pressStart9())
-                            .foregroundColor(.ink)
-                            .padding(.horizontal, 8)
-                            .frame(height: 34)
-                            .background(Color.pixelPink)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
-                    }
+                Button { viewModel.presentDatePicker() } label: {
+                    Text("WARP")
+                        .font(.pressStart7())
+                        .foregroundColor(.ink)
+                        .padding(.horizontal, 6)
+                        .frame(height: 34)
+                        .background(Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
                 }
+
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        editMode = editMode == .active ? .inactive : .active
+                    }
+                } label: {
+                    HStack(spacing: 4) {
+                        if editMode == .active {
+                            PixelArtView(
+                                grid: PixelArtAssets.smallCheckGrid,
+                                palette: PixelArtAssets.smallCheckPalette,
+                                scale: 2
+                            )
+                            Text("DONE")
+                                .font(.pressStart7())
+                                .foregroundColor(.ink)
+                        } else {
+                            PixelArtView(
+                                grid: PixelArtAssets.arrowUpDownGrid,
+                                palette: PixelArtAssets.arrowUpDownPalette,
+                                scale: 2
+                            )
+                            Text("SORT")
+                                .font(.pressStart7())
+                                .foregroundColor(.ink)
+                        }
+                    }
+                    .padding(.horizontal, 6)
+                    .frame(height: 34)
+                    .background(editMode == .active ? Color.grass.opacity(0.4) : Color.cream)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                    .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+
+                Button { viewModel.presentAddTodo() } label: {
+                    Text("+ Todo")
+                        .font(.pressStart9())
+                        .foregroundColor(.ink)
+                        .padding(.horizontal, 8)
+                        .frame(height: 34)
+                        .background(Color.pixelPink)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .accessibilityIdentifier("addTodoButton")
             }
 
             PixelProgressBar(done: viewModel.completedCount, total: viewModel.todos.count)
@@ -116,44 +191,115 @@ struct MainView: View {
     }
 
     // MARK: - Todo List
-    private var todoList: some View {
-        ScrollView {
-            LazyVStack(spacing: 10) {
-                ForEach(viewModel.todos, id: \.id) { todo in
-                    TodoRowView(todo: todo, viewModel: viewModel)
-                }
 
-                if viewModel.todos.isEmpty {
-                    emptyState.padding(.top, 40)
+    private var incompleteTodos: [TodoEntity] { viewModel.todos.filter { !$0.isCompleted } }
+    private var completedTodos: [TodoEntity] { viewModel.todos.filter { $0.isCompleted } }
+
+    private var todoList: some View {
+        Group {
+            if viewModel.todos.isEmpty {
+                ScrollView {
+                    emptyState.padding(.top, 40).padding(.horizontal, 16)
                 }
+            } else {
+                List {
+                    ForEach(incompleteTodos, id: \.id) { todo in
+                        TodoRowView(todo: todo, viewModel: viewModel)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 5)
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
+                    .onMove { from, to in
+                        viewModel.reorderTodos(from: from, to: to)
+                    }
+
+                    ForEach(completedTodos, id: \.id) { todo in
+                        TodoRowView(todo: todo, viewModel: viewModel)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 5)
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
+
+                    Color.clear.frame(height: 160)
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                        .listRowInsets(EdgeInsets())
+                }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden)
+                .environment(\.editMode, $editMode)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 180)
         }
+        .padding(.top, 8)
     }
 
     private var emptyState: some View {
         VStack(spacing: 12) {
-            PixelArtView(grid: PixelArtAssets.mascotGrid, palette: PixelArtAssets.mascotPalette, scale: 3)
-            Text("할일이 없어요!")
-                .font(.galBold16())
-                .foregroundColor(.shade)
-            Text("+ 버튼으로 추가해보세요")
-                .font(.pressStart9())
-                .foregroundColor(.shade.opacity(0.7))
+            PixelPanel(bg: .cream, padding: 16) {
+                VStack(spacing: 10) {
+                    BobbingCharView(info: selectedCharInfo)
+                    Text("오늘은 할 일이 없어요")
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                    Text("★ 버튼으로 추가해보세요!")
+                        .font(.pressStart7())
+                        .foregroundColor(.shade.opacity(0.7))
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .padding(.horizontal, 16)
+        }
+    }
+}
+
+// MARK: - TodoAdd Sheet Wrapper
+
+private struct TodoAddSheetWrapper: View {
+    @ObservedObject var viewModel: MainViewModel
+    var editingTodo: TodoEntity? = nil
+    @State private var selectedDetent: PresentationDetent = .height(400)
+    @State private var compactHeight: CGFloat = 400
+    @State private var keyboardActiveInCompact: Bool = false
+
+    private func templateNav(_ dest: TemplateNavDest) -> some View {
+        switch dest {
+        case .templateList:      AnyView(TemplateListView(viewModel: viewModel))
+        case .newTemplate:       AnyView(TemplateFormView(viewModel: viewModel, editingTemplate: nil))
+        case .editTemplate(let t): AnyView(TemplateFormView(viewModel: viewModel, editingTemplate: t))
         }
     }
 
-    // MARK: - FAB
-    private var fab: some View {
-        Button { viewModel.addTodo() } label: {
-            Text("+")
-                .font(.pressStart20())
-                .foregroundColor(.ink)
-                .frame(width: 48, height: 48)
-                .background(Color.peach)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
-                .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
+    private var availableDetents: Set<PresentationDetent> {
+        // 키보드가 compact 상태에서 올라오면 .large 옵션 제거 → iOS 자동 승격 방지
+        keyboardActiveInCompact ? [.height(compactHeight)] : [.height(compactHeight), .large]
+    }
+
+    var body: some View {
+        NavigationStack {
+            TodoAddView(viewModel: viewModel, editingTodo: editingTodo, selectedDetent: $selectedDetent)
+                .navigationDestination(for: TemplateNavDest.self) { templateNav($0) }
+        }
+        .presentationDetents(availableDetents, selection: $selectedDetent)
+        .presentationDragIndicator(.visible)
+        .onPreferenceChange(TodoAddScrollHeightKey.self) { scrollH in
+            guard scrollH > 0, selectedDetent != .large else { return }
+            let clamped = min(max(scrollH, 320), 520)
+            if abs(clamped - compactHeight) > 4 {
+                compactHeight = clamped
+                selectedDetent = .height(clamped)
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            if selectedDetent != .large {
+                keyboardActiveInCompact = true
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            keyboardActiveInCompact = false
         }
     }
 }
@@ -184,4 +330,9 @@ private struct PixelProgressBar: View {
         .frame(height: 18)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
     }
+}
+
+#Preview { @MainActor in
+    let di = DIContainer()
+    return MainView(viewModel: di.makeMainViewModel())
 }

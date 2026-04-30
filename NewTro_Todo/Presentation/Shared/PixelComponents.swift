@@ -44,54 +44,112 @@ struct PixelPanel<Content: View>: View {
 }
 
 // MARK: - GroundStripView
-// 화면 하단 잔디 + 흙 스트립
+// 고급 픽셀 아트 잔디 + 흙 지면
 struct GroundStripView: View {
-    var height: CGFloat = 48
+    var height: CGFloat = 64
+
+    // 잔디 섹션 고정 높이 (나머지는 흙)
+    private let grassH: CGFloat = 22
 
     var body: some View {
-        VStack(spacing: 0) {
-            // 잔디
-            grassStrip
-            // 흙
-            dirtStrip
+        GeometryReader { geo in
+            Canvas { ctx, size in
+                let w = size.width
+                let dirtY = grassH
+
+                // ─── 흙 레이어 ───────────────────────────────────────
+                // 단색 흙 배경
+                var x: CGFloat = 0
+                ctx.fill(Path(CGRect(x: 0, y: dirtY, width: w, height: size.height - dirtY)), with: .color(.dirt))
+                // 중간 수평 음영 선
+                ctx.fill(Path(CGRect(x: 0, y: dirtY + (size.height - dirtY) * 0.45, width: w, height: 2)), with: .color(Color.dirtDk.opacity(0.5)))
+                // 자갈 (작은 2×2 어두운 사각형)
+                let pebbles: [(CGFloat, CGFloat)] = [
+                    (18, dirtY+5), (52, dirtY+9), (88, dirtY+4),
+                    (130, dirtY+8), (170, dirtY+5), (210, dirtY+10),
+                    (248, dirtY+4), (290, dirtY+7), (330, dirtY+9),
+                    (36, dirtY+13), (108, dirtY+12), (195, dirtY+13),
+                    (270, dirtY+11), (315, dirtY+6),
+                ]
+                for (px, py) in pebbles {
+                    if px < w {
+                        ctx.fill(Path(CGRect(x: px, y: py, width: 3, height: 2)), with: .color(.dirtDk))
+                        ctx.fill(Path(CGRect(x: px+1, y: py-1, width: 2, height: 1)), with: .color(Color.dirt.opacity(0.4)))
+                    }
+                }
+
+                // ─── 잔디 레이어 ─────────────────────────────────────
+                // 잔디 베이스 (grassDk 바탕)
+                ctx.fill(Path(CGRect(x: 0, y: 5, width: w, height: grassH - 5)), with: .color(.grassDk))
+                // 밝은 잔디 패치 (격자 8pt)
+                let pw: CGFloat = 12
+                x = 0
+                while x < w {
+                    if Int(x / pw) % 3 != 2 {
+                        ctx.fill(Path(CGRect(x: x, y: 7, width: pw, height: grassH - 7)), with: .color(.grass))
+                    }
+                    x += pw
+                }
+
+                // 블레이드 패턴 (24pt 반복 타일, 다양한 높이)
+                // (xOffset, width, height, color)
+                typealias Blade = (CGFloat, CGFloat, CGFloat, Color)
+                let blades: [Blade] = [
+                    (0,  2, 9,  .grassDk),
+                    (3,  1, 6,  .grass),
+                    (5,  2, 11, .grass),
+                    (8,  1, 7,  .grassDk),
+                    (10, 2, 8,  .grass),
+                    (13, 1, 5,  .grass),
+                    (15, 2, 12, .grassDk),
+                    (18, 1, 7,  .grass),
+                    (20, 2, 9,  .grass),
+                    (23, 1, 6,  .grassDk),
+                ]
+                let tileW: CGFloat = 26
+                let bladeRaise: CGFloat = 6  // 블레이드를 위로 띄우는 오프셋
+                x = 0
+                while x < w {
+                    for (bx, bw, bh, bc) in blades {
+                        let fx = x + bx
+                        if fx < w {
+                            let topY = grassH - bh - bladeRaise
+                            let bodyH = bh + bladeRaise  // 아래는 흙에 묻히는 느낌
+                            // 블레이드 본체
+                            ctx.fill(Path(CGRect(x: fx, y: topY, width: bw, height: bodyH)), with: .color(bc))
+                            // 블레이드 상단 하이라이트 (1px 밝게)
+                            if bh > 6 {
+                                ctx.fill(Path(CGRect(x: fx, y: topY, width: 1, height: 2)), with: .color(Color.grass.opacity(0.7)))
+                            }
+                        }
+                    }
+                    x += tileW
+                }
+
+                // ─── 상단 ink 경계선 ─────────────────────────────────
+                //ctx.fill(Path(CGRect(x: 0, y: 0, width: w, height: 3)), with: .color(.ink))
+            }
         }
         .frame(height: height)
         .frame(maxWidth: .infinity)
-        .overlay(alignment: .top) {
-            Color.ink.frame(height: 3)
-        }
     }
+}
 
-    private var grassStrip: some View {
-        GeometryReader { geo in
-            Canvas { ctx, size in
-                let tileW: CGFloat = 10
-                var x: CGFloat = 0
-                while x < size.width {
-                    let color: Color = Int(x / tileW) % 2 == 0 ? .grass : .grassDk
-                    ctx.fill(Path(CGRect(x: x, y: 0, width: tileW, height: size.height)), with: .color(color))
-                    x += tileW
-                }
-            }
-        }
-        .frame(height: 10)
-    }
+// MARK: - BobbingCharView
+struct BobbingCharView: View {
+    let info: FriendCharInfo
+    var scale: CGFloat = 4
+    @State private var bobY: CGFloat = 0
 
-    private var dirtStrip: some View {
-        GeometryReader { geo in
-            Canvas { ctx, size in
-                let tileW: CGFloat = 14
-                var x: CGFloat = 0
-                while x < size.width {
-                    let color: Color = Int(x / tileW) % 2 == 0 ? .dirt : .dirtDk
-                    ctx.fill(Path(CGRect(x: x, y: 0, width: tileW, height: size.height)), with: .color(color))
-                    x += tileW
-                }
-                // 수평 흙 라인
-                let lineRect = CGRect(x: 0, y: size.height * 0.6, width: size.width, height: 2)
-                ctx.fill(Path(lineRect), with: .color(Color.dirtDk.opacity(0.6)))
-            }
-        }
+    var body: some View {
+        PixelArtView(
+            grid: PixelArtAssets.characterGrid(type: info.gridType),
+            palette: info.palette,
+            scale: scale
+        )
+        .offset(y: bobY)
+        .animation(.easeInOut(duration: 1.0).repeatForever(autoreverses: true), value: bobY)
+        .onAppear { bobY = -4 }
     }
 }
 
@@ -136,5 +194,11 @@ struct SkyBackgroundView: View {
                 cloud3Offset = 480
             }
         }
+    }
+}
+
+struct GroundStripView_Preview: PreviewProvider {
+    static var previews: some View {
+        GroundStripView()
     }
 }

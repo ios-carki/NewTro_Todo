@@ -110,5 +110,18 @@ let project = Project(
                 ]
             )
         ),
+
+        // MARK: - UI Test Target
+        .target(
+            name: "NewTro_TodoUITests",
+            destinations: .iOS,
+            product: .uiTests,
+            bundleId: "com.jun.NewTro-Todo.UITests",
+            deploymentTargets: .iOS("16.0"),
+            sources: ["NewTro_TodoUITests/**/*.swift"],
+            dependencies: [
+                .target(name: "NewTro_Todo"),
+            ]
+        ),
     ]
 )

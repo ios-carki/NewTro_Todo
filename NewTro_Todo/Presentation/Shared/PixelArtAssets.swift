@@ -113,6 +113,32 @@ enum PixelArtAssets {
         "1": .doneDk,
     ]
 
+    // MARK: - Small Check (5×5) — used for DONE button label
+    static let smallCheckGrid: [String] = [
+        "....1",
+        "...11",
+        "1.11.",
+        "111..",
+        ".1...",
+    ]
+    static let smallCheckPalette: [Character: Color] = [
+        "1": .ink,
+    ]
+
+    // MARK: - Arrow Up-Down (5×7) — used for SORT button label
+    static let arrowUpDownGrid: [String] = [
+        "..1..",
+        ".111.",
+        "11111",
+        ".....",
+        "11111",
+        ".111.",
+        "..1..",
+    ]
+    static let arrowUpDownPalette: [Character: Color] = [
+        "1": .ink,
+    ]
+
     // MARK: - Tab Bar Icons (7×7, key "1" = foreground pixel)
 
     // 할일 — 3 horizontal lines (list)

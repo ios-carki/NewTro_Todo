@@ -9,6 +9,10 @@ final class Todo: Object, ObjectKeyIdentifiable {
     @Persisted var stringDate: String = ""
     @Persisted var isFinished: Bool = false
     @Persisted var postponeCount: Int = 0
+    @Persisted var emoji: String = ""
+    @Persisted var dueTime: Date? = nil
+    @Persisted var sortOrder: Int = 0
+    @Persisted var completedAt: Date? = nil
 
     @Persisted(primaryKey: true) var objectID: ObjectId
 
@@ -19,7 +23,11 @@ final class Todo: Object, ObjectKeyIdentifiable {
         regDate: Date,
         stringDate: String,
         isFinished: Bool,
-        postponeCount: Int = 0
+        postponeCount: Int = 0,
+        emoji: String = "",
+        dueTime: Date? = nil,
+        sortOrder: Int = 0,
+        completedAt: Date? = nil
     ) {
         self.init()
         self.todo = todo
@@ -29,5 +37,9 @@ final class Todo: Object, ObjectKeyIdentifiable {
         self.stringDate = stringDate
         self.isFinished = isFinished
         self.postponeCount = postponeCount
+        self.emoji = emoji
+        self.dueTime = dueTime
+        self.sortOrder = sortOrder
+        self.completedAt = completedAt
     }
 }
