@@ -1,4 +1,5 @@
 import UIKit
+import RealmSwift
 
 final class AppCoordinator: CoordinatorProtocol {
     var navigationController: UINavigationController
@@ -16,7 +17,27 @@ final class AppCoordinator: CoordinatorProtocol {
     func start() {
         window.rootViewController = navigationController
         window.makeKeyAndVisible()
-        showSplash()
+        if CommandLine.arguments.contains("-UITesting") {
+            if CommandLine.arguments.contains("-ResetRealm") {
+                resetRealmFile()
+            }
+            showMain()
+        } else {
+            showSplash()
+        }
+    }
+
+    private func resetRealmFile() {
+        guard let url = Realm.Configuration.defaultConfiguration.fileURL else { return }
+        let urls = [
+            url,
+            url.appendingPathExtension("lock"),
+            url.appendingPathExtension("note"),
+            url.appendingPathExtension("management"),
+        ]
+        for u in urls {
+            try? FileManager.default.removeItem(at: u)
+        }
     }
 
     // MARK: - Splash (심플 로딩, 1.5s)

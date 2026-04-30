@@ -124,6 +124,7 @@ struct TodoAddView: View {
                         .background(Rectangle().fill(isEmpty ? Color.clear : Color.ink).offset(x: 2, y: 2))
                     }
                     .disabled(isEmpty)
+                    .accessibilityIdentifier("saveButton")
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 12)
@@ -242,6 +243,7 @@ struct TodoAddView: View {
                     TextField("할 일을 입력하세요", text: $text)
                         .font(.galBold14())
                         .foregroundColor(.ink)
+                        .accessibilityIdentifier("todoTextField")
                 }
                 .padding(.horizontal, 14)
                 .transition(.opacity)

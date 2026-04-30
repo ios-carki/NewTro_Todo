@@ -19,8 +19,9 @@ enum RealmConfiguration {
     }
 
     static var configuration: Realm.Configuration {
-        Realm.Configuration(
-            fileURL: appGroupURL,
+        let fileURL = appGroupURL ?? Realm.Configuration.defaultConfiguration.fileURL
+        return Realm.Configuration(
+            fileURL: fileURL,
             schemaVersion: schemaVersion,
             migrationBlock: migrate
         )
