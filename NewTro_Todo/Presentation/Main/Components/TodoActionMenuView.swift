@@ -18,17 +18,19 @@ struct TodoActionMenuView: View {
                     .padding(.horizontal, 20)
 
                 VStack(spacing: 8) {
-                    actionRow(title: importanceTitle, icon: "star.fill", color: .sun) {
-                        viewModel.updateImportance(id: todo.id, importance: nextImportance)
-                        dismiss()
-                    }
-                    actionRow(title: favoriteTitle, icon: "heart.fill", color: .pixelPink) {
-                        viewModel.toggleFavorite(id: todo.id)
-                        dismiss()
-                    }
-                    actionRow(title: "템플릿으로 저장", icon: "square.and.arrow.down", color: .grass) {
-                        viewModel.saveTemplate(text: todo.text, emoji: todo.emoji, importance: todo.importance)
-                        dismiss()
+                    if !viewModel.isViewingPastDate {
+                        actionRow(title: importanceTitle, icon: "star.fill", color: .sun) {
+                            viewModel.updateImportance(id: todo.id, importance: nextImportance)
+                            dismiss()
+                        }
+                        actionRow(title: favoriteTitle, icon: "heart.fill", color: .pixelPink) {
+                            viewModel.toggleFavorite(id: todo.id)
+                            dismiss()
+                        }
+                        actionRow(title: "템플릿으로 저장", icon: "square.and.arrow.down", color: .grass) {
+                            viewModel.saveTemplate(text: todo.text, emoji: todo.emoji, importance: todo.importance)
+                            dismiss()
+                        }
                     }
                     actionRow(title: "삭제", icon: "trash", color: .pixelRed, isDestructive: true) {
                         viewModel.deleteTodo(id: todo.id)
@@ -53,7 +55,7 @@ struct TodoActionMenuView: View {
                 .padding(.bottom, 24)
             }
         }
-        .presentationDetents([.height(360)])
+        .presentationDetents([.height(viewModel.isViewingPastDate ? 220 : 360)])
         .presentationDragIndicator(.visible)
     }
 

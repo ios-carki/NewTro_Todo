@@ -11,6 +11,8 @@ struct TodoRowView: View {
         self.viewModel = viewModel
     }
 
+    private var isLocked: Bool { viewModel.isViewingPastDate }
+
     var body: some View {
         ZStack {
             HStack(spacing: 0) {
@@ -22,6 +24,8 @@ struct TodoRowView: View {
             .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
             .offset(x: offsetX)
             .opacity(offsetX == 0 ? 1 : Double(max(0, 1 - offsetX / 200)))
+            .grayscale(isLocked ? 0.7 : 0)
+            .opacity(isLocked ? 0.65 : 1)
 
             if showFireworks {
                 FireworksView()
@@ -30,13 +34,19 @@ struct TodoRowView: View {
         }
     }
 
+    private func showLockedToast() {
+        viewModel.showToast("지난 날의 Todo는 수정할 수 없습니다")
+    }
+
     // MARK: - Priority strip (left 6px)
     private var priorityStrip: some View {
         Rectangle()
             .fill(importanceColor)
             .frame(width: 6)
             .contentShape(Rectangle())
-            .onTapGesture { openEdit() }
+            .onTapGesture {
+                if isLocked { showLockedToast() } else { openEdit() }
+            }
     }
 
     // MARK: - Row content
@@ -53,6 +63,10 @@ struct TodoRowView: View {
 
     private var checkboxButton: some View {
         Button {
+            if isLocked {
+                showLockedToast()
+                return
+            }
             if !todo.isCompleted {
                 showFireworks = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { showFireworks = false }
@@ -74,6 +88,8 @@ struct TodoRowView: View {
                 }
             }
         }
+        .buttonStyle(.borderless)
+        .accessibilityIdentifier("checkbox_\(todo.id)")
     }
 
     private var textArea: some View {
@@ -96,7 +112,9 @@ struct TodoRowView: View {
             }
         }
         .contentShape(Rectangle())
-        .onTapGesture { openEdit() }
+        .onTapGesture {
+            if isLocked { showLockedToast() } else { openEdit() }
+        }
     }
 
     private var postponeBadge: some View {
@@ -116,7 +134,11 @@ struct TodoRowView: View {
     private var trailingButtons: some View {
         HStack(spacing: 4) {
             Button {
-                viewModel.activeSheet = .postpone(todo)
+                if isLocked {
+                    showLockedToast()
+                } else {
+                    viewModel.activeSheet = .postpone(todo)
+                }
             } label: {
                 Text("미루기")
                     .font(.galBold14())
@@ -126,6 +148,8 @@ struct TodoRowView: View {
                     .background(Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
             }
+            .buttonStyle(.borderless)
+            .accessibilityIdentifier("postpone_\(todo.id)")
 
             Button {
                 viewModel.activeSheet = .actionMenu(todo)
@@ -137,6 +161,8 @@ struct TodoRowView: View {
                     .background(Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
             }
+            .buttonStyle(.borderless)
+            .accessibilityIdentifier("action_\(todo.id)")
         }
         .allowsHitTesting(!viewModel.actionMenuRecentlyDismissed)
     }

@@ -56,6 +56,15 @@ final class MainViewModel: ObservableObject {
         return String(format: "%04d.%02d.%02d", y, m, d)
     }
 
+    /// 오늘보다 이전 날짜를 보고 있으면 true
+    /// → 완료 토글/미루기/편집은 잠그고, 삭제만 허용
+    var isViewingPastDate: Bool {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let viewing = cal.startOfDay(for: selectedDate)
+        return viewing < today
+    }
+
     // MARK: - Use Cases
     private let fetchTodosUseCase: any FetchTodosUseCaseProtocol
     private let addTodoUseCase: any AddTodoUseCaseProtocol

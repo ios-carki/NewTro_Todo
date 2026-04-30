@@ -163,6 +163,7 @@ struct MainView: View {
                         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                         .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
                 }
+                .accessibilityIdentifier("addTodoButton")
             }
 
             PixelProgressBar(done: viewModel.completedCount, total: viewModel.todos.count)
@@ -242,6 +243,7 @@ private struct TodoAddSheetWrapper: View {
     var editingTodo: TodoEntity? = nil
     @State private var selectedDetent: PresentationDetent = .height(400)
     @State private var compactHeight: CGFloat = 400
+    @State private var keyboardActiveInCompact: Bool = false
 
     private func templateNav(_ dest: TemplateNavDest) -> some View {
         switch dest {
@@ -251,12 +253,17 @@ private struct TodoAddSheetWrapper: View {
         }
     }
 
+    private var availableDetents: Set<PresentationDetent> {
+        // 키보드가 compact 상태에서 올라오면 .large 옵션 제거 → iOS 자동 승격 방지
+        keyboardActiveInCompact ? [.height(compactHeight)] : [.height(compactHeight), .large]
+    }
+
     var body: some View {
         NavigationStack {
             TodoAddView(viewModel: viewModel, editingTodo: editingTodo, selectedDetent: $selectedDetent)
                 .navigationDestination(for: TemplateNavDest.self) { templateNav($0) }
         }
-        .presentationDetents([.height(compactHeight), .large], selection: $selectedDetent)
+        .presentationDetents(availableDetents, selection: $selectedDetent)
         .presentationDragIndicator(.visible)
         .onPreferenceChange(TodoAddScrollHeightKey.self) { scrollH in
             guard scrollH > 0, selectedDetent != .large else { return }
@@ -265,6 +272,14 @@ private struct TodoAddSheetWrapper: View {
                 compactHeight = clamped
                 selectedDetent = .height(clamped)
             }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            if selectedDetent != .large {
+                keyboardActiveInCompact = true
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            keyboardActiveInCompact = false
         }
     }
 }
