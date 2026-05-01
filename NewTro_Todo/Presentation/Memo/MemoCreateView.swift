@@ -1,83 +1,235 @@
 import SwiftUI
+import UIKit
 
 struct MemoCreateView: View {
     @ObservedObject var viewModel: MemoViewModel
-    @Environment(\.dismiss) private var dismiss
 
     @State private var noteText: String = ""
     @State private var selectedColor: String = "yellow"
+    @State private var requestFocus: Bool = false
+
+    private let editorHeight: CGFloat = 180
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            MemoColorPalette.color(for: selectedColor).ignoresSafeArea()
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture { dismiss() }
 
-            VStack(spacing: 0) {
-                topBar
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-
-                TextEditor(text: $noteText)
-                    .font(.galBold16())
-                    .foregroundColor(.ink)
-                    .scrollContentBackground(.hidden)
-                    .background(Color.clear)
-                    .padding(.horizontal, 12)
-
-                bottomBar
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 32)
+            popupCard
+                .padding(.horizontal, 24)
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                requestFocus = true
             }
         }
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
     }
 
-    private var topBar: some View {
+    // MARK: - Popup Card
+    private var popupCard: some View {
+        VStack(spacing: 0) {
+            titleBar
+            editorBody
+            colorRow
+            actionButtons
+        }
+        .background(MemoColorPalette.color(for: selectedColor))
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
+    }
+
+    // MARK: - Title Bar
+    private var titleBar: some View {
         HStack {
-            Button("취소") { dismiss() }
-                .font(.pressStart9())
-                .foregroundColor(.shade)
-
+            Text("메모 작성")
+                .font(.galBold13())
+                .foregroundColor(.ink)
             Spacer()
+            Button { dismiss() } label: {
+                Text("×")
+                    .font(.pressStart10())
+                    .foregroundColor(.ink)
+                    .frame(width: 22, height: 22)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.ink.opacity(0.12))
+        .overlay(
+            Rectangle()
+                .fill(Color.ink)
+                .frame(height: 2),
+            alignment: .bottom
+        )
+    }
 
-            Text("새 메모")
-                .font(.galBold14())
+    // MARK: - Editor
+    private var editorBody: some View {
+        ZStack(alignment: .topLeading) {
+            UITextEditorWithToolbar(
+                text: $noteText,
+                requestFocus: $requestFocus,
+                backgroundColor: UIColor(MemoColorPalette.color(for: selectedColor))
+            )
+            .frame(height: editorHeight)
+
+            if noteText.isEmpty {
+                Text("오늘의 생각을 기록해보세요...")
+                    .font(.galBold13())
+                    .foregroundColor(.shade.opacity(0.6))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 14)
+                    .allowsHitTesting(false)
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.top, 10)
+    }
+
+    // MARK: - Color Row
+    private var colorRow: some View {
+        HStack(spacing: 8) {
+            Text("색:")
+                .font(.galBold10())
                 .foregroundColor(.ink)
 
-            Spacer()
-
-            Button {
-                viewModel.createMemo(note: noteText, colorName: selectedColor)
-                dismiss()
-            } label: {
-                Text("저장")
-                    .font(.pressStart9())
-                    .foregroundColor(.ink)
-                    .padding(.horizontal, 12)
-                    .frame(height: 30)
-                    .background(Color.ink.opacity(0.1))
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
-            }
-        }
-    }
-
-    private var bottomBar: some View {
-        HStack(spacing: 8) {
             ForEach(MemoColorPalette.all, id: \.name) { item in
                 Button {
                     selectedColor = item.name
                 } label: {
                     item.color
-                        .frame(width: 34, height: 34)
+                        .frame(width: 22, height: 22)
                         .overlay(
                             Rectangle().stroke(
                                 selectedColor == item.name ? Color.ink : Color.ink.opacity(0.3),
-                                lineWidth: selectedColor == item.name ? 3 : 1.5
+                                lineWidth: selectedColor == item.name ? 2.5 : 1.5
                             )
                         )
                 }
             }
             Spacer()
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+    }
+
+    // MARK: - Action Buttons
+    private var actionButtons: some View {
+        HStack(spacing: 8) {
+            Button { dismiss() } label: {
+                Text("취소")
+                    .font(.galBold11())
+                    .foregroundColor(.ink)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 38)
+                    .background(Color.panel)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            }
+
+            Button {
+                viewModel.createMemo(note: noteText, colorName: selectedColor)
+                dismiss()
+            } label: {
+                HStack(spacing: 4) {
+                    Text("★")
+                        .font(.pressStart10())
+                    Text("저장")
+                        .font(.galBold11())
+                }
+                .foregroundColor(.ink)
+                .frame(maxWidth: .infinity)
+                .frame(height: 38)
+                .background(Color.ink.opacity(0.12))
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            }
+            .disabled(noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+            .opacity(noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.5 : 1)
+        }
+        .padding(.horizontal, 12)
+        .padding(.bottom, 12)
+    }
+
+    private func dismiss() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil, from: nil, for: nil
+        )
+        viewModel.isCreatePresented = false
+    }
+}
+
+// MARK: - UITextView wrapper with keyboard inputAccessoryView
+private struct UITextEditorWithToolbar: UIViewRepresentable {
+    @Binding var text: String
+    @Binding var requestFocus: Bool
+    let backgroundColor: UIColor
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.delegate = context.coordinator
+        textView.font = UIFont(name: "Galmuri11-Bold", size: 13) ?? .systemFont(ofSize: 13)
+        textView.backgroundColor = backgroundColor
+        textView.textColor = UIColor(Color.ink)
+        textView.textContainerInset = UIEdgeInsets(top: 6, left: 4, bottom: 6, right: 4)
+        textView.inputAccessoryView = makeAccessoryToolbar(coordinator: context.coordinator)
+        return textView
+    }
+
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        if uiView.text != text {
+            uiView.text = text
+        }
+        uiView.backgroundColor = backgroundColor
+
+        if requestFocus && !uiView.isFirstResponder {
+            uiView.becomeFirstResponder()
+            DispatchQueue.main.async { self.requestFocus = false }
+        }
+    }
+
+    private func makeAccessoryToolbar(coordinator: Coordinator) -> UIToolbar {
+        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 1000, height: 40))
+
+        let appearance = UIToolbarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemGray5
+        appearance.shadowColor = UIColor.separator
+        toolbar.standardAppearance = appearance
+        toolbar.scrollEdgeAppearance = appearance
+        toolbar.compactAppearance = appearance
+        toolbar.tintColor = UIColor.white
+        toolbar.isTranslucent = false
+
+        let flex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let dismissButton = UIBarButtonItem(
+            image: UIImage(systemName: "keyboard.chevron.compact.down"),
+            style: .plain,
+            target: coordinator,
+            action: #selector(Coordinator.dismissKeyboard)
+        )
+        dismissButton.tintColor = UIColor(Color.ink)
+
+        toolbar.items = [flex, dismissButton]
+        toolbar.sizeToFit()
+        return toolbar
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    final class Coordinator: NSObject, UITextViewDelegate {
+        var parent: UITextEditorWithToolbar
+        init(_ parent: UITextEditorWithToolbar) { self.parent = parent }
+
+        func textViewDidChange(_ textView: UITextView) {
+            parent.text = textView.text
+        }
+
+        @objc func dismissKeyboard() {
+            UIApplication.shared.sendAction(
+                #selector(UIResponder.resignFirstResponder),
+                to: nil, from: nil, for: nil
+            )
         }
     }
 }

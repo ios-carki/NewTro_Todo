@@ -1,13 +1,16 @@
 import SwiftUI
+import UIKit
 
 struct MemoFormView: View {
     @State private var noteText: String
     @State private var selectedColor: String
-    @State private var isDeleted = false
+    @State private var requestFocus: Bool = false
+    @State private var showDeleteConfirm: Bool = false
 
     let memo: MemoEntity
     @ObservedObject var viewModel: MemoViewModel
-    @Environment(\.dismiss) private var dismiss
+
+    private let editorHeight: CGFloat = 180
 
     init(memo: MemoEntity, viewModel: MemoViewModel) {
         self.memo = memo
@@ -21,103 +24,292 @@ struct MemoFormView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .bottom) {
-            MemoColorPalette.color(for: selectedColor).ignoresSafeArea()
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture { closeWithoutSaving() }
 
-            VStack(spacing: 0) {
-                topBar
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-
-                if !isEditable {
-                    readOnlyBanner
-                        .padding(.horizontal, 16)
-                        .padding(.bottom, 8)
-                }
-
-                TextEditor(text: $noteText)
-                    .font(.galBold16())
-                    .foregroundColor(.ink)
-                    .scrollContentBackground(.hidden)
-                    .background(Color.clear)
-                    .padding(.horizontal, 12)
-                    .disabled(!isEditable)
-
-                colorPicker
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 32)
+            popupCard
+                .padding(.horizontal, 24)
+        }
+        .onAppear {
+            guard isEditable else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                requestFocus = true
             }
         }
-        .onDisappear {
-            guard !isDeleted else { return }
-            viewModel.saveMemo(id: memo.id, note: noteText, colorName: selectedColor)
+        .alert("메모 삭제", isPresented: $showDeleteConfirm) {
+            Button("취소", role: .cancel) {}
+            Button("삭제", role: .destructive) {
+                viewModel.deleteMemo(id: memo.id)
+                viewModel.isFormPresented = false
+            }
+        } message: {
+            Text("이 메모를 삭제할까요?\n삭제하면 되돌릴 수 없어요.")
         }
     }
 
-    // MARK: - Top Bar
-    private var topBar: some View {
-        HStack {
-            Button("닫기") { dismiss() }
-                .font(.pressStart9())
+    // MARK: - Popup Card
+    private var popupCard: some View {
+        VStack(spacing: 0) {
+            titleBar
+            editorBody
+            if isEditable {
+                colorRow
+                actionButtons
+            } else {
+                readOnlyFooter
+            }
+        }
+        .background(MemoColorPalette.color(for: selectedColor))
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
+    }
+
+    // MARK: - Title Bar
+    private var titleBar: some View {
+        HStack(spacing: 8) {
+            Text("메모 수정")
+                .font(.galBold13())
+                .foregroundColor(.ink)
+            Spacer()
+            Button { closeWithoutSaving() } label: {
+                Text("×")
+                    .font(.pressStart10())
+                    .foregroundColor(.ink)
+                    .frame(width: 22, height: 22)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.ink.opacity(0.12))
+        .overlay(
+            Rectangle()
+                .fill(Color.ink)
+                .frame(height: 2),
+            alignment: .bottom
+        )
+    }
+
+    // MARK: - Editor
+    private var editorBody: some View {
+        ZStack(alignment: .topLeading) {
+            UIMemoEditor(
+                text: $noteText,
+                requestFocus: $requestFocus,
+                backgroundColor: UIColor(MemoColorPalette.color(for: selectedColor)),
+                isEditable: isEditable
+            )
+            .frame(height: editorHeight)
+
+            if noteText.isEmpty && isEditable {
+                Text("오늘의 생각을 기록해보세요...")
+                    .font(.galBold13())
+                    .foregroundColor(.shade.opacity(0.6))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 14)
+                    .allowsHitTesting(false)
+            }
+        }
+        .padding(.horizontal, 10)
+        .padding(.top, 10)
+    }
+
+    // MARK: - Color Row
+    private var colorRow: some View {
+        HStack(spacing: 8) {
+            Text("색:")
+                .font(.galBold10())
                 .foregroundColor(.ink)
 
-            Spacer()
-
-            Text(dateLabel)
-                .font(.pressStart7())
-                .foregroundColor(.shade)
-
-            Spacer()
-
-            Button {
-                isDeleted = true
-                viewModel.deleteMemo(id: memo.id)
-                dismiss()
-            } label: {
-                Image(systemName: "trash")
-                    .font(.system(size: 15))
-                    .foregroundColor(.pixelRed)
-            }
-        }
-    }
-
-    private var readOnlyBanner: some View {
-        Text("오늘 날짜에만 작성 가능")
-            .font(.pressStart7())
-            .foregroundColor(.shade)
-            .padding(6)
-            .background(Color.panel.opacity(0.85))
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
-    }
-
-    // MARK: - Color Picker
-    private var colorPicker: some View {
-        HStack(spacing: 8) {
             ForEach(MemoColorPalette.all, id: \.name) { item in
                 Button {
-                    guard isEditable else { return }
                     selectedColor = item.name
                 } label: {
                     item.color
-                        .frame(width: 34, height: 34)
+                        .frame(width: 22, height: 22)
                         .overlay(
                             Rectangle().stroke(
                                 selectedColor == item.name ? Color.ink : Color.ink.opacity(0.3),
-                                lineWidth: selectedColor == item.name ? 3 : 1.5
+                                lineWidth: selectedColor == item.name ? 2.5 : 1.5
                             )
                         )
                 }
             }
             Spacer()
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
     }
 
-    // MARK: - Helpers
-    private var dateLabel: String {
-        let cal = Calendar.current
-        let y = cal.component(.year, from: memo.targetDate)
-        let m = cal.component(.month, from: memo.targetDate)
-        let d = cal.component(.day, from: memo.targetDate)
-        return String(format: "%04d.%02d.%02d", y, m, d)
+    // MARK: - Action Buttons (editable)
+    private var actionButtons: some View {
+        HStack(spacing: 8) {
+            Button { showDeleteConfirm = true } label: {
+                Text("삭제")
+                    .font(.galBold11())
+                    .foregroundColor(.cream)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 38)
+                    .background(Color.pixelRed)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            }
+
+            Button { closeWithoutSaving() } label: {
+                Text("취소")
+                    .font(.galBold11())
+                    .foregroundColor(.ink)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 38)
+                    .background(Color.panel)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            }
+
+            Button {
+                viewModel.saveMemo(id: memo.id, note: noteText, colorName: selectedColor)
+                resignKeyboard()
+                viewModel.isFormPresented = false
+            } label: {
+                HStack(spacing: 4) {
+                    Text("★")
+                        .font(.pressStart10())
+                    Text("저장")
+                        .font(.galBold11())
+                }
+                .foregroundColor(.ink)
+                .frame(maxWidth: .infinity)
+                .frame(height: 38)
+                .background(Color.ink.opacity(0.12))
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.bottom, 12)
+    }
+
+    // MARK: - Read-only Footer
+    private var readOnlyFooter: some View {
+        VStack(spacing: 8) {
+            Text("오늘 날짜에만 수정 가능")
+                .font(.galBold10())
+                .foregroundColor(.shade)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 8)
+                .background(Color.panel.opacity(0.85))
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+
+            HStack(spacing: 8) {
+                Button { showDeleteConfirm = true } label: {
+                    Text("삭제")
+                        .font(.galBold11())
+                        .foregroundColor(.cream)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 38)
+                        .background(Color.pixelRed)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                }
+                Button { closeWithoutSaving() } label: {
+                    Text("닫기")
+                        .font(.galBold11())
+                        .foregroundColor(.ink)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 38)
+                        .background(Color.ink.opacity(0.12))
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                }
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
+    }
+
+    // MARK: - Dismiss Helpers
+    private func closeWithoutSaving() {
+        resignKeyboard()
+        viewModel.isFormPresented = false
+    }
+
+    private func resignKeyboard() {
+        UIApplication.shared.sendAction(
+            #selector(UIResponder.resignFirstResponder),
+            to: nil, from: nil, for: nil
+        )
+    }
+}
+
+// MARK: - UIKit TextEditor wrapper (shared style with create popup)
+private struct UIMemoEditor: UIViewRepresentable {
+    @Binding var text: String
+    @Binding var requestFocus: Bool
+    let backgroundColor: UIColor
+    var isEditable: Bool = true
+
+    func makeUIView(context: Context) -> UITextView {
+        let textView = UITextView()
+        textView.delegate = context.coordinator
+        textView.font = UIFont(name: "Galmuri11-Bold", size: 13) ?? .systemFont(ofSize: 13)
+        textView.backgroundColor = backgroundColor
+        textView.textColor = UIColor(Color.ink)
+        textView.textContainerInset = UIEdgeInsets(top: 6, left: 4, bottom: 6, right: 4)
+        textView.isEditable = isEditable
+        textView.inputAccessoryView = makeAccessoryToolbar(coordinator: context.coordinator)
+        return textView
+    }
+
+    func updateUIView(_ uiView: UITextView, context: Context) {
+        if uiView.text != text {
+            uiView.text = text
+        }
+        uiView.backgroundColor = backgroundColor
+        uiView.isEditable = isEditable
+
+        if requestFocus && !uiView.isFirstResponder {
+            uiView.becomeFirstResponder()
+            DispatchQueue.main.async { self.requestFocus = false }
+        }
+    }
+
+    private func makeAccessoryToolbar(coordinator: Coordinator) -> UIToolbar {
+        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: 1000, height: 40))
+
+        let appearance = UIToolbarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemGray5
+        appearance.shadowColor = UIColor.separator
+        toolbar.standardAppearance = appearance
+        toolbar.scrollEdgeAppearance = appearance
+        toolbar.compactAppearance = appearance
+        toolbar.tintColor = UIColor.label
+        toolbar.isTranslucent = false
+
+        let flex = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+        let dismissButton = UIBarButtonItem(
+            image: UIImage(systemName: "keyboard.chevron.compact.down"),
+            style: .plain,
+            target: coordinator,
+            action: #selector(Coordinator.dismissKeyboard)
+        )
+
+        toolbar.items = [flex, dismissButton]
+        toolbar.sizeToFit()
+        return toolbar
+    }
+
+    func makeCoordinator() -> Coordinator { Coordinator(self) }
+
+    final class Coordinator: NSObject, UITextViewDelegate {
+        var parent: UIMemoEditor
+        init(_ parent: UIMemoEditor) { self.parent = parent }
+
+        func textViewDidChange(_ textView: UITextView) {
+            parent.text = textView.text
+        }
+
+        @objc func dismissKeyboard() {
+            UIApplication.shared.sendAction(
+                #selector(UIResponder.resignFirstResponder),
+                to: nil, from: nil, for: nil
+            )
+        }
     }
 }
