@@ -6,12 +6,11 @@ final class MemoViewModel: ObservableObject {
 
     // MARK: - State
     @Published var memos: [MemoEntity] = []
-    @Published var filterType: MemoFilter = .all
+    @Published var filterType: MemoFilter = .today
     @Published var sortType: MemoSortType = .newest
     @Published var isFormPresented: Bool = false
     @Published var isCreatePresented: Bool = false
     @Published var editingMemo: MemoEntity? = nil
-    @Published var isRangePickerPresented: Bool = false
     @Published var rangeFrom: Date = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
     @Published var rangeTo: Date = Date()
     @Published var errorMessage: String? = nil
@@ -60,18 +59,20 @@ final class MemoViewModel: ObservableObject {
     }
 
     func selectFilter(_ filter: MemoFilter) {
-        if case .range = filter {
-            isRangePickerPresented = true
-        } else {
-            filterType = filter
-            loadMemos()
-        }
+        filterType = filter
+        loadMemos()
     }
 
     func applyRangeFilter() {
         filterType = .range(from: rangeFrom, to: rangeTo)
-        isRangePickerPresented = false
         loadMemos()
+    }
+
+    func cycleSortType() {
+        let cases = MemoSortType.allCases
+        if let idx = cases.firstIndex(of: sortType) {
+            sortType = cases[(idx + 1) % cases.count]
+        }
     }
 
     func presentCreate() {

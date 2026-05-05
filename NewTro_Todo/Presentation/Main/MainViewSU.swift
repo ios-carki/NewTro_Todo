@@ -245,8 +245,8 @@ struct MainView: View {
                     Text("오늘은 할 일이 없어요")
                         .font(.galBold14())
                         .foregroundColor(.ink)
-                    Text("★ 버튼으로 추가해보세요!")
-                        .font(.pressStart7())
+                    Text("Todo 작성 버튼으로 추가해보세요!")
+                        .font(.galBold11())
                         .foregroundColor(.shade.opacity(0.7))
                 }
                 .frame(maxWidth: .infinity)

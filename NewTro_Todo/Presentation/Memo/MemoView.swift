@@ -2,7 +2,13 @@ import SwiftUI
 
 struct MemoView: View {
     @ObservedObject var viewModel: MemoViewModel
+    @State private var isRangeExpanded: Bool = false
+    @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
     private let tabBarHeight: CGFloat = 113
+
+    private var selectedCharInfo: FriendCharInfo {
+        CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -10,27 +16,19 @@ struct MemoView: View {
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
 
-            filterBar
+            controlPanel
                 .padding(.horizontal, 16)
                 .padding(.top, 8)
-
-            sortBar
-                .padding(.horizontal, 16)
-                .padding(.top, 6)
 
             memoGrid
                 .padding(.top, 8)
         }
-        .sheet(isPresented: $viewModel.isCreatePresented) {
-            MemoCreateView(viewModel: viewModel)
-        }
-        .sheet(isPresented: $viewModel.isFormPresented) {
-            if let memo = viewModel.editingMemo {
+        .overlay {
+            if viewModel.isCreatePresented {
+                MemoCreateView(viewModel: viewModel)
+            } else if viewModel.isFormPresented, let memo = viewModel.editingMemo {
                 MemoFormView(memo: memo, viewModel: viewModel)
             }
-        }
-        .sheet(isPresented: $viewModel.isRangePickerPresented) {
-            MemoRangePickerView(viewModel: viewModel)
         }
         .alert("오류", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
@@ -53,39 +51,57 @@ struct MemoView: View {
             Button {
                 viewModel.presentCreate()
             } label: {
-                HStack(spacing: 4) {
-                    Text("+")
-                        .font(.pressStart12())
-                    Text("메모 작성")
-                        .font(.galBold14())
-                }
-                .foregroundColor(.cream)
-                .padding(.horizontal, 12)
-                .frame(height: 34)
-                .background(Color.peachDk)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                Text("+ 작성")
+                    .font(.galBold11())
+                    .foregroundColor(.cream)
+                    .padding(.horizontal, 12)
+                    .frame(height: 34)
+                    .background(Color.peachDk)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                    .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
             }
         }
         .padding(.vertical, 6)
     }
 
-    // MARK: - Filter Bar
-    private var filterBar: some View {
+    // MARK: - Control Panel (filter + sort + range)
+    private var controlPanel: some View {
+        VStack(spacing: 8) {
+            filterRow
+            sortRow
+            if isRangeExpanded {
+                rangeRow
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+        }
+        .padding(10)
+        .background(Color.cream)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
+    }
+
+    // MARK: - Filter Row
+    private var filterRow: some View {
         HStack(spacing: 6) {
             filterChip(.all)
             filterChip(.today)
             filterChip(.days(7))
             filterChip(.days(30))
             rangeChip
+            Spacer()
         }
     }
 
     private func filterChip(_ filter: MemoFilter) -> some View {
         let isActive = viewModel.filterType == filter
-        return Button { viewModel.selectFilter(filter) } label: {
+        return Button {
+            viewModel.selectFilter(filter)
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isRangeExpanded = false
+            }
+        } label: {
             Text(filter.label)
-                .font(.pressStart7())
+                .font(.galBold10())
                 .foregroundColor(isActive ? .cream : .ink)
                 .padding(.horizontal, 8)
                 .frame(height: 26)
@@ -96,33 +112,87 @@ struct MemoView: View {
 
     private var rangeChip: some View {
         let isActive = viewModel.isRangeFilterActive
-        return Button { viewModel.selectFilter(.range(from: viewModel.rangeFrom, to: viewModel.rangeTo)) } label: {
-            Text("기간")
-                .font(.pressStart7())
-                .foregroundColor(isActive ? .cream : .ink)
-                .padding(.horizontal, 8)
-                .frame(height: 26)
-                .background(isActive ? Color.ink : Color.panel)
+        return Button {
+            withAnimation(.easeInOut(duration: 0.2)) {
+                isRangeExpanded.toggle()
+            }
+        } label: {
+            HStack(spacing: 3) {
+                Text("기간")
+                Text(isRangeExpanded ? "▲" : "▼")
+                    .font(.system(size: 8))
+            }
+            .font(.galBold10())
+            .foregroundColor(isActive ? .cream : .ink)
+            .padding(.horizontal, 8)
+            .frame(height: 26)
+            .background(isActive ? Color.ink : Color.panel)
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+        }
+    }
+
+    // MARK: - Sort Row
+    private var sortRow: some View {
+        HStack(spacing: 6) {
+            Text("정렬")
+                .font(.galBold9())
+                .foregroundColor(.shade)
+
+            ForEach(MemoSortType.allCases, id: \.self) { type in
+                sortButton(type)
+            }
+
+            Spacer()
+
+            Text("\(viewModel.memos.count)")
+                .font(.pressStart9())
+                .foregroundColor(.ink)
+        }
+    }
+
+    private func sortButton(_ type: MemoSortType) -> some View {
+        let isActive = viewModel.sortType == type
+        return Button {
+            viewModel.sortType = type
+        } label: {
+            Text(type.rawValue)
+                .font(.galBold9())
+                .foregroundColor(.ink)
+                .padding(.horizontal, 6)
+                .frame(height: 22)
+                .background(isActive ? Color.sun : Color.panel)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
         }
     }
 
-    // MARK: - Sort Bar
-    private var sortBar: some View {
-        HStack {
-            Text("\(viewModel.memos.count)개")
-                .font(.pressStart7())
-                .foregroundColor(.shade)
+    // MARK: - Range Row (inline fold-out)
+    private var rangeRow: some View {
+        HStack(spacing: 6) {
+            DatePicker("", selection: $viewModel.rangeFrom, displayedComponents: .date)
+                .labelsHidden()
+                .tint(.ink)
+
+            Text("~")
+                .font(.galBold11())
+                .foregroundColor(.ink)
+
+            DatePicker("", selection: $viewModel.rangeTo, displayedComponents: .date)
+                .labelsHidden()
+                .tint(.ink)
+
             Spacer()
-            HStack(spacing: 10) {
-                ForEach(MemoSortType.allCases, id: \.self) { sort in
-                    Button { viewModel.sortType = sort } label: {
-                        Text(sort.rawValue)
-                            .font(.pressStart7())
-                            .foregroundColor(viewModel.sortType == sort ? .ink : .shade.opacity(0.6))
-                            .underline(viewModel.sortType == sort)
-                    }
-                }
+
+            Button {
+                viewModel.applyRangeFilter()
+            } label: {
+                Text("APPLY")
+                    .font(.galBold11())
+                    .foregroundColor(.cream)
+                    .padding(.horizontal, 8)
+                    .frame(height: 26)
+                    .background(Color.grass)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+                    .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
             }
         }
     }
@@ -163,13 +233,19 @@ struct MemoView: View {
 
     private var emptyState: some View {
         VStack(spacing: 12) {
-            PixelArtView(grid: PixelArtAssets.mascotGrid, palette: PixelArtAssets.mascotPalette, scale: 3)
-            Text("메모가 없어요!")
-                .font(.galBold16())
-                .foregroundColor(.shade)
-            Text("+ 메모 작성으로 추가해보세요")
-                .font(.pressStart7())
-                .foregroundColor(.shade.opacity(0.7))
+            PixelPanel(bg: .cream, padding: 16) {
+                VStack(spacing: 10) {
+                    BobbingCharView(info: selectedCharInfo)
+                    Text("오늘은 메모가 없어요")
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                    Text("+ 작성 버튼으로 추가해보세요!")
+                        .font(.galBold11())
+                        .foregroundColor(.shade.opacity(0.7))
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .padding(.horizontal, 16)
         }
     }
 }
@@ -181,31 +257,15 @@ private struct MemoCardView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            // Card body
             VStack(alignment: .leading, spacing: 0) {
                 Text(memo.isWritten ? memo.note : "...")
-                    .font(.galBold14())
+                    .font(.galCondensed13())
                     .foregroundColor(.ink)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
 
-                // Dot separator + date
-                HStack(spacing: 4) {
-                    Circle()
-                        .fill(Color.ink.opacity(0.3))
-                        .frame(width: 3, height: 3)
-                    Circle()
-                        .fill(Color.ink.opacity(0.3))
-                        .frame(width: 3, height: 3)
-                    Circle()
-                        .fill(Color.ink.opacity(0.3))
-                        .frame(width: 3, height: 3)
-                    Spacer()
-                    Text(memoDateLabel)
-                        .font(.pressStart7())
-                        .foregroundColor(.shade)
-                }
-                .padding(.top, 8)
+                timestampStamp
+                    .padding(.top, 8)
             }
             .padding(10)
             .padding(.trailing, cornerSize - 4)
@@ -213,18 +273,44 @@ private struct MemoCardView: View {
             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
             .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
 
-            // Dog-ear triangle (top-right)
             DogEarShape(size: cornerSize)
                 .fill(Color.ink.opacity(0.25))
                 .frame(width: cornerSize, height: cornerSize)
         }
     }
 
-    private var memoDateLabel: String {
+    // MARK: - Timestamp Stamp
+    private var timestampStamp: some View {
+        HStack {
+            Spacer()
+            VStack(alignment: .trailing, spacing: 1) {
+                Text(dateLabel)
+                    .font(.pressStart8())
+                Text(timeLabel)
+                    .font(.pressStart8())
+            }
+            .foregroundColor(.ink.opacity(0.7))
+            .padding(.horizontal, 5)
+            .padding(.vertical, 3)
+            .background(Color.ink.opacity(0.06))
+            .overlay(Rectangle().stroke(Color.ink.opacity(0.4), lineWidth: 1))
+            .fixedSize()
+        }
+    }
+
+    private var dateLabel: String {
         let cal = Calendar.current
-        let m = cal.component(.month, from: memo.targetDate)
-        let d = cal.component(.day, from: memo.targetDate)
-        return String(format: "%02d/%02d", m, d)
+        let y = cal.component(.year, from: memo.createdAt)
+        let m = cal.component(.month, from: memo.createdAt)
+        let d = cal.component(.day, from: memo.createdAt)
+        return String(format: "%04d.%02d.%02d", y, m, d)
+    }
+
+    private var timeLabel: String {
+        let cal = Calendar.current
+        let h = cal.component(.hour, from: memo.createdAt)
+        let mn = cal.component(.minute, from: memo.createdAt)
+        return String(format: "%02d:%02d", h, mn)
     }
 }
 

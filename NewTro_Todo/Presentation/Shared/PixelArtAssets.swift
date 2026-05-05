@@ -139,6 +139,44 @@ enum PixelArtAssets {
         "1": .ink,
     ]
 
+    // MARK: - Arrow Down (5×5) — sort: NEW (latest first)
+    static let arrowDownGrid: [String] = [
+        "..1..",
+        "..1..",
+        "11111",
+        ".111.",
+        "..1..",
+    ]
+    static let arrowDownPalette: [Character: Color] = [
+        "1": .ink,
+    ]
+
+    // MARK: - Arrow Up (5×5) — sort: OLD (earliest first)
+    static let arrowUpGrid: [String] = [
+        "..1..",
+        ".111.",
+        "11111",
+        "..1..",
+        "..1..",
+    ]
+    static let arrowUpPalette: [Character: Color] = [
+        "1": .ink,
+    ]
+
+    // MARK: - Palette (6×5) — sort: HUE (color sort)
+    static let palette3Grid: [String] = [
+        "112233",
+        "112233",
+        "112233",
+        "112233",
+        "112233",
+    ]
+    static let palette3Palette: [Character: Color] = [
+        "1": .pixelRed,
+        "2": .sun,
+        "3": .grass,
+    ]
+
     // MARK: - Tab Bar Icons (7×7, key "1" = foreground pixel)
 
     // 할일 — 3 horizontal lines (list)
