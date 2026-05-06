@@ -39,9 +39,17 @@ struct MainView: View {
             case .postpone(let todo):
                 PostponeMenuView(todo: todo, viewModel: viewModel)
             case .datePicker:
-                DatePickerSheetView { date in
-                    viewModel.navigateToDate(date)
-                }
+                DatePickerSheetView(
+                    monthOverviewProvider: { y, m in
+                        await viewModel.fetchMonthOverview(year: y, month: m)
+                    },
+                    dayStatsProvider: { date in
+                        await viewModel.fetchDayPreviewStats(for: date)
+                    },
+                    onDateConfirmed: { date in
+                        viewModel.navigateToDate(date)
+                    }
+                )
             }
         }
         .onChange(of: viewModel.activeSheet?.id) { newId in

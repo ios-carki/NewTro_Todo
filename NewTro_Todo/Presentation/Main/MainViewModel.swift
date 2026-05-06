@@ -3,6 +3,14 @@ import Combine
 import SwiftUI
 import WidgetKit
 
+struct DayPreviewStats: Equatable {
+    let totalTodos: Int
+    let completedTodos: Int
+    let memoCount: Int
+
+    var incompleteTodos: Int { max(0, totalTodos - completedTodos) }
+}
+
 enum MainActiveSheet: Identifiable {
     case addTodo
     case editTodo(TodoEntity)
@@ -67,6 +75,8 @@ final class MainViewModel: ObservableObject {
 
     // MARK: - Use Cases
     private let fetchTodosUseCase: any FetchTodosUseCaseProtocol
+    private let fetchMemosUseCase: any FetchMemosUseCaseProtocol
+    private let fetchMonthOverviewUseCase: any FetchMonthOverviewUseCaseProtocol
     private let addTodoUseCase: any AddTodoUseCaseProtocol
     private let updateTodoTextUseCase: any UpdateTodoTextUseCaseProtocol
     private let toggleCompleteUseCase: any ToggleTodoCompleteUseCaseProtocol
@@ -86,6 +96,8 @@ final class MainViewModel: ObservableObject {
 
     init(
         fetchTodosUseCase: any FetchTodosUseCaseProtocol,
+        fetchMemosUseCase: any FetchMemosUseCaseProtocol,
+        fetchMonthOverviewUseCase: any FetchMonthOverviewUseCaseProtocol,
         addTodoUseCase: any AddTodoUseCaseProtocol,
         updateTodoTextUseCase: any UpdateTodoTextUseCaseProtocol,
         toggleCompleteUseCase: any ToggleTodoCompleteUseCaseProtocol,
@@ -104,6 +116,8 @@ final class MainViewModel: ObservableObject {
         deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
     ) {
         self.fetchTodosUseCase = fetchTodosUseCase
+        self.fetchMemosUseCase = fetchMemosUseCase
+        self.fetchMonthOverviewUseCase = fetchMonthOverviewUseCase
         self.addTodoUseCase = addTodoUseCase
         self.updateTodoTextUseCase = updateTodoTextUseCase
         self.toggleCompleteUseCase = toggleCompleteUseCase
@@ -178,6 +192,29 @@ final class MainViewModel: ObservableObject {
     func navigateToDate(_ date: Date) {
         selectedDate = date
         loadTodos()
+    }
+
+    // MARK: - Date Picker Sheet 보조 조회
+    func fetchMonthOverview(year: Int, month: Int) async -> [Int: DayContent] {
+        do {
+            let overview = try await fetchMonthOverviewUseCase.execute(year: year, month: month)
+            return overview.dayContent
+        } catch {
+            return [:]
+        }
+    }
+
+    func fetchDayPreviewStats(for date: Date) async -> DayPreviewStats {
+        let todos: [TodoEntity] = (try? fetchTodosUseCase.execute(targetDate: date)) ?? []
+        let cal = Calendar.current
+        let start = cal.startOfDay(for: date)
+        let end = cal.date(byAdding: .day, value: 1, to: start) ?? start
+        let memos: [MemoEntity] = (try? await fetchMemosUseCase.execute(filter: .range(from: start, to: end))) ?? []
+        return DayPreviewStats(
+            totalTodos: todos.count,
+            completedTodos: todos.filter(\.isCompleted).count,
+            memoCount: memos.count
+        )
     }
 
     // MARK: - Templates

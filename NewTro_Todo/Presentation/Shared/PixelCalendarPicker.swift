@@ -6,14 +6,17 @@ struct PixelCalendarPicker: View {
     let onDateSelected: (Date) -> Void
     var minimumDate: Date? = nil
     var externalDate: Date? = nil
+    var monthOverviewProvider: ((Int, Int) async -> [Int: DayContent])? = nil
 
     @State private var viewYear: Int
     @State private var viewMonth: Int
+    @State private var dayContent: [Int: DayContent] = [:]
 
     init(
         initialDate: Date = Date(),
         minimumDate: Date? = nil,
         externalDate: Date? = nil,
+        monthOverviewProvider: ((Int, Int) async -> [Int: DayContent])? = nil,
         onDateSelected: @escaping (Date) -> Void
     ) {
         let cal = Calendar.current
@@ -22,6 +25,7 @@ struct PixelCalendarPicker: View {
         _viewMonth = State(initialValue: cal.component(.month, from: base))
         self.minimumDate   = minimumDate
         self.externalDate  = externalDate
+        self.monthOverviewProvider = monthOverviewProvider
         self.onDateSelected = onDateSelected
     }
 
@@ -34,6 +38,9 @@ struct PixelCalendarPicker: View {
                 .padding(.horizontal, 14)
                 .padding(.top, 10)
         }
+        .onAppear { reloadOverview() }
+        .onChange(of: viewYear) { _ in reloadOverview() }
+        .onChange(of: viewMonth) { _ in reloadOverview() }
         .onChange(of: externalDate) { newDate in
             guard let d = newDate else { return }
             let cal = Calendar.current
@@ -109,10 +116,11 @@ struct PixelCalendarPicker: View {
                         isHighlighted: isHighlighted(day: d),
                         isDisabled:  isDisabled(day: d),
                         weekday:     weekdayOf(day: d),
+                        marker:      dayContent[d] ?? [],
                         onTap:       { selectDay(d) }
                     )
                 } else {
-                    Color.clear.frame(height: 46)
+                    Color.clear.frame(height: 50)
                 }
             }
         }
@@ -176,6 +184,18 @@ struct PixelCalendarPicker: View {
     private func nextMonth() {
         if viewMonth == 12 { viewYear += 1; viewMonth = 1 } else { viewMonth += 1 }
     }
+
+    private func reloadOverview() {
+        guard let provider = monthOverviewProvider else { return }
+        let y = viewYear, m = viewMonth
+        Task {
+            let map = await provider(y, m)
+            await MainActor.run {
+                guard y == self.viewYear, m == self.viewMonth else { return }
+                self.dayContent = map
+            }
+        }
+    }
 }
 
 // MARK: - Day Cell
@@ -186,6 +206,7 @@ private struct PickerDayCell: View {
     let isHighlighted: Bool
     let isDisabled: Bool
     let weekday: Int
+    let marker: DayContent
     let onTap: () -> Void
 
     private var bgColor: Color {
@@ -214,15 +235,38 @@ private struct PickerDayCell: View {
 
     var body: some View {
         Button(action: onTap) {
-            Text(String(format: "%02d", day))
-                .font(.pressStart10())
-                .foregroundColor(dayColor)
-                .frame(maxWidth: .infinity)
-                .frame(height: 46)
-                .background(isDisabled ? Color.shade.opacity(0.04) : bgColor)
-                .overlay(Rectangle().stroke(borderColor, lineWidth: borderWidth))
+            VStack(spacing: 3) {
+                Text(String(format: "%02d", day))
+                    .font(.pressStart10())
+                    .foregroundColor(dayColor)
+                markerRow
+                    .frame(height: 6)
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 50)
+            .background(isDisabled ? Color.shade.opacity(0.04) : bgColor)
+            .overlay(Rectangle().stroke(borderColor, lineWidth: borderWidth))
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
+    }
+
+    private var markerRow: some View {
+        HStack(spacing: 3) {
+            if marker.contains(.todo) {
+                markerDot(color: .pixelPink)
+            }
+            if marker.contains(.memo) {
+                markerDot(color: .peachDk)
+            }
+        }
+        .opacity(isDisabled ? 0.35 : 1)
+    }
+
+    private func markerDot(color: Color) -> some View {
+        Rectangle()
+            .fill(color)
+            .frame(width: 5, height: 5)
+            .overlay(Rectangle().stroke(Color.ink.opacity(0.55), lineWidth: 1))
     }
 }
