@@ -40,6 +40,7 @@ struct MainView: View {
                 PostponeMenuView(todo: todo, viewModel: viewModel)
             case .datePicker:
                 DatePickerSheetView(
+                    initialDate: viewModel.selectedDate,
                     monthOverviewProvider: { y, m in
                         await viewModel.fetchMonthOverview(year: y, month: m)
                     },

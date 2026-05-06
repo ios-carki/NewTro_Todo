@@ -1,14 +1,28 @@
 import SwiftUI
 
 struct DatePickerSheetView: View {
+    let initialDate: Date
     let monthOverviewProvider: (Int, Int) async -> [Int: DayContent]
     let dayStatsProvider: (Date) async -> DayPreviewStats
     let onDateConfirmed: (Date) -> Void
 
     @Environment(\.dismiss) private var dismiss
-    @State private var selectedDate: Date? = nil
+    @State private var selectedDate: Date
     @State private var dayStats: DayPreviewStats? = nil
     @State private var statsLoadId: UUID = UUID()
+
+    init(
+        initialDate: Date,
+        monthOverviewProvider: @escaping (Int, Int) async -> [Int: DayContent],
+        dayStatsProvider: @escaping (Date) async -> DayPreviewStats,
+        onDateConfirmed: @escaping (Date) -> Void
+    ) {
+        self.initialDate = initialDate
+        self.monthOverviewProvider = monthOverviewProvider
+        self.dayStatsProvider = dayStatsProvider
+        self.onDateConfirmed = onDateConfirmed
+        _selectedDate = State(initialValue: initialDate)
+    }
 
     var body: some View {
         ZStack {
@@ -22,6 +36,7 @@ struct DatePickerSheetView: View {
                     .padding(.bottom, 14)
 
                 PixelCalendarPicker(
+                    initialDate: initialDate,
                     externalDate: selectedDate,
                     monthOverviewProvider: monthOverviewProvider,
                     onDateSelected: { date in
@@ -31,7 +46,7 @@ struct DatePickerSheetView: View {
                 )
                 .padding(.top, 4)
 
-                previewArea
+                previewCard(date: selectedDate)
                     .padding(.horizontal, 14)
                     .padding(.top, 16)
 
@@ -44,18 +59,10 @@ struct DatePickerSheetView: View {
         }
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
+        .onAppear { loadStats(for: selectedDate) }
     }
 
     // MARK: - Preview Card
-
-    @ViewBuilder
-    private var previewArea: some View {
-        if let date = selectedDate {
-            previewCard(date: date)
-        } else {
-            placeholderCard
-        }
-    }
 
     private func previewCard(date: Date) -> some View {
         PixelPanel(bg: .cream, padding: 14) {
@@ -100,42 +107,29 @@ struct DatePickerSheetView: View {
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
     }
 
-    private var placeholderCard: some View {
-        PixelPanel(bg: .cream, padding: 14) {
-            Text("이동할 날짜를 선택해주세요")
-                .font(.galBold11())
-                .foregroundColor(.shade.opacity(0.7))
-                .frame(maxWidth: .infinity)
-                .frame(height: 50)
-        }
-    }
-
     // MARK: - Navigate Button
 
     private var navigateButton: some View {
         Button {
-            guard let date = selectedDate else { return }
-            onDateConfirmed(date)
+            onDateConfirmed(selectedDate)
             dismiss()
         } label: {
             Text(navigateLabel)
                 .font(.galBold14())
-                .foregroundColor(selectedDate == nil ? .shade.opacity(0.6) : .cream)
+                .foregroundColor(.cream)
                 .frame(maxWidth: .infinity)
                 .frame(height: 48)
-                .background(selectedDate == nil ? Color.panel : Color.peachDk)
+                .background(Color.peachDk)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                 .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
         }
-        .disabled(selectedDate == nil)
     }
 
     private var navigateLabel: String {
-        guard let d = selectedDate else { return "날짜를 선택해주세요" }
         let cal = Calendar.current
-        let y = cal.component(.year, from: d)
-        let m = cal.component(.month, from: d)
-        let day = cal.component(.day, from: d)
+        let y = cal.component(.year, from: selectedDate)
+        let m = cal.component(.month, from: selectedDate)
+        let day = cal.component(.day, from: selectedDate)
         return "\(y)년 \(m)월 \(day)일로 이동"
     }
 
