@@ -7,6 +7,8 @@ final class DIContainer {
     private(set) lazy var memoRepository: any MemoRepositoryProtocol = MemoRepositoryImpl()
     private(set) lazy var statsRepository: any StatsRepositoryProtocol = StatsRepositoryImpl()
     private(set) lazy var templateRepository: any TemplateRepositoryProtocol = TemplateRepositoryImpl()
+    private(set) lazy var postponeEventRepository: any PostponeEventRepositoryProtocol = PostponeEventRepositoryImpl()
+    private(set) lazy var walletRepository: any WalletRepositoryProtocol = WalletRepositoryImpl()
 
     // MARK: - UseCases: Todo
     func makeFetchTodosUseCase() -> FetchTodosUseCase {
@@ -91,6 +93,22 @@ final class DIContainer {
         DeleteTemplateUseCase(repository: templateRepository)
     }
 
+    // MARK: - UseCases: Wallet
+    func makeEarnCoinsUseCase() -> EarnCoinsUseCase {
+        EarnCoinsUseCase(repository: walletRepository)
+    }
+    func makeFetchWalletUseCase() -> FetchWalletUseCase {
+        FetchWalletUseCase(repository: walletRepository)
+    }
+
+    // MARK: - UseCases: PostponeEvent
+    func makeRecordPostponeEventUseCase() -> RecordPostponeEventUseCase {
+        RecordPostponeEventUseCase(repository: postponeEventRepository)
+    }
+    func makeFetchPostponeEventsForDateUseCase() -> FetchPostponeEventsForDateUseCase {
+        FetchPostponeEventsForDateUseCase(repository: postponeEventRepository)
+    }
+
     // MARK: - UseCases: Settings
     func makeClearAllDataUseCase() -> ClearAllDataUseCase {
         ClearAllDataUseCase(
@@ -121,7 +139,9 @@ final class DIContainer {
             fetchTemplatesUseCase: makeFetchTemplatesUseCase(),
             addTemplateUseCase: makeAddTemplateUseCase(),
             updateTemplateUseCase: makeUpdateTemplateUseCase(),
-            deleteTemplateUseCase: makeDeleteTemplateUseCase()
+            deleteTemplateUseCase: makeDeleteTemplateUseCase(),
+            earnCoinsUseCase: makeEarnCoinsUseCase(),
+            recordPostponeEventUseCase: makeRecordPostponeEventUseCase()
         )
     }
 
@@ -134,7 +154,8 @@ final class DIContainer {
             fetchUseCase: makeFetchMemosUseCase(),
             addUseCase: makeAddMemoUseCase(),
             updateUseCase: makeUpdateMemoUseCase(),
-            deleteUseCase: makeDeleteMemoUseCase()
+            deleteUseCase: makeDeleteMemoUseCase(),
+            earnCoinsUseCase: makeEarnCoinsUseCase()
         )
     }
 

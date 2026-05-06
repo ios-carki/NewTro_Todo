@@ -87,9 +87,13 @@ let project = Project(
             ]),
             sources: [
                 "NewtroWidget/**/*.swift",
-                // App과 공유하는 파일
+                // App과 공유하는 파일 — Realm 스키마 일치 보장 (마이그레이션 충돌 방지)
                 "NewTro_Todo/Data/Storage/TodoObject.swift",
                 "NewTro_Todo/Data/Storage/QuickNoteObject.swift",
+                "NewTro_Todo/Data/Storage/TemplateObject.swift",
+                "NewTro_Todo/Data/Storage/PostponeEventObject.swift",
+                "NewTro_Todo/Data/Storage/WalletObject.swift",
+                "NewTro_Todo/Data/Storage/RealmConfiguration.swift",
                 "NewTro_Todo/Source/Extension/DateFormat+Extension.swift",
                 "NewTro_Todo/Source/Extension/Date+Extension.swift",
                 "NewTro_Todo/Source/Extension/Color+Extension.swift",

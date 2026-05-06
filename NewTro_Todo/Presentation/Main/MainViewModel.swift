@@ -93,6 +93,8 @@ final class MainViewModel: ObservableObject {
     private let addTemplateUseCase: any AddTemplateUseCaseProtocol
     private let updateTemplateUseCase: any UpdateTemplateUseCaseProtocol
     private let deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
+    private let earnCoinsUseCase: any EarnCoinsUseCaseProtocol
+    private let recordPostponeEventUseCase: any RecordPostponeEventUseCaseProtocol
 
     init(
         fetchTodosUseCase: any FetchTodosUseCaseProtocol,
@@ -113,7 +115,9 @@ final class MainViewModel: ObservableObject {
         fetchTemplatesUseCase: any FetchTemplatesUseCaseProtocol,
         addTemplateUseCase: any AddTemplateUseCaseProtocol,
         updateTemplateUseCase: any UpdateTemplateUseCaseProtocol,
-        deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
+        deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol,
+        earnCoinsUseCase: any EarnCoinsUseCaseProtocol,
+        recordPostponeEventUseCase: any RecordPostponeEventUseCaseProtocol
     ) {
         self.fetchTodosUseCase = fetchTodosUseCase
         self.fetchMemosUseCase = fetchMemosUseCase
@@ -134,6 +138,8 @@ final class MainViewModel: ObservableObject {
         self.addTemplateUseCase = addTemplateUseCase
         self.updateTemplateUseCase = updateTemplateUseCase
         self.deleteTemplateUseCase = deleteTemplateUseCase
+        self.earnCoinsUseCase = earnCoinsUseCase
+        self.recordPostponeEventUseCase = recordPostponeEventUseCase
         loadTodos()
     }
 
@@ -330,6 +336,10 @@ final class MainViewModel: ObservableObject {
                             isPerfectDay: isPerfect,
                             date: selectedDate
                         )
+                        try? await earnCoinsUseCase.execute(reason: .todoCompleted(
+                            importance: todos[idx].importance,
+                            isFavorite: todos[idx].isFavorite
+                        ))
                     }
                     todos = Self.sorted(todos)
                 }
@@ -373,9 +383,16 @@ final class MainViewModel: ObservableObject {
     func postpone(id: String, toDate: Date) {
         Task {
             do {
+                let oldOrdinal = todos.first(where: { $0.id == id })?.postponeCount ?? 0
+                let eventDate = Calendar.current.startOfDay(for: selectedDate)
                 try await postponeTodoUseCase.execute(id: id, toDate: toDate)
                 todos.removeAll { $0.id == id }
                 await recordPostponeUseCase.execute()
+                try? await recordPostponeEventUseCase.execute(
+                    todoId: id,
+                    eventDate: eventDate,
+                    ordinalAtTime: oldOrdinal + 1
+                )
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription

@@ -9,7 +9,8 @@ enum RealmConfiguration {
     // v5: Todo.emoji String 추가 (기본값 ""), Todo.dueTime Date? 추가 (기본값 nil)
     // v6: TemplateObject 신규 테이블 추가
     // v7: Todo.sortOrder Int 추가 (regDate 기반 역순 초기값), Todo.completedAt Date? 추가
-    private static let schemaVersion: UInt64 = 7
+    // v8: PostponeEventObject 신규 테이블, WalletObject 싱글톤 추가 (기존 완료 Todo+메모 가중치 합산 백필)
+    static let schemaVersion: UInt64 = 8
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -37,7 +38,21 @@ enum RealmConfiguration {
             try? FileManager.default.replaceItemAt(targetURL, withItemAt: legacyURL)
         }
 
+        // 새 schemaVersion 첫 실행 시 마이그레이션 직전 백업 (사용자 데이터 보존 안전망).
+        // 백업 파일이 이미 있으면 건너뛰어 한 번만 실행됨.
+        backupIfNeeded()
+
         Realm.Configuration.defaultConfiguration = configuration
+    }
+
+    private static func backupIfNeeded() {
+        guard let realmURL = appGroupURL,
+              FileManager.default.fileExists(atPath: realmURL.path) else { return }
+        let backupURL = realmURL
+            .deletingLastPathComponent()
+            .appendingPathComponent("default.realm.backup-v\(schemaVersion)")
+        guard !FileManager.default.fileExists(atPath: backupURL.path) else { return }
+        try? FileManager.default.copyItem(at: realmURL, to: backupURL)
     }
 
     private static let migrate: MigrationBlock = { migration, oldVersion in
@@ -76,6 +91,25 @@ enum RealmConfiguration {
                 }
                 newObject?["completedAt"] = nil
             }
+        }
+        // v8: WalletObject 싱글톤 생성 — 기존 완료 Todo + 작성된 QuickNote 가중치 합산해 백필
+        if oldVersion < 8 {
+            var totalEarned = 0
+            migration.enumerateObjects(ofType: "Todo") { _, newObject in
+                guard let isFinished = newObject?["isFinished"] as? Bool, isFinished else { return }
+                let importance = (newObject?["importance"] as? Int) ?? 0
+                let favorite = (newObject?["favorite"] as? Bool) ?? false
+                totalEarned += (importance != 0 || favorite) ? 2 : 1
+            }
+            migration.enumerateObjects(ofType: "QuickNote") { _, newObject in
+                guard let isWrited = newObject?["isWrited"] as? Bool, isWrited else { return }
+                totalEarned += 1
+            }
+            migration.create("WalletObject", value: [
+                "id": "wallet",
+                "balance": totalEarned,
+                "totalEarned": totalEarned
+            ])
         }
     }
 }
