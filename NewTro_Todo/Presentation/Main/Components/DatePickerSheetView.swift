@@ -85,7 +85,7 @@ struct DatePickerSheetView: View {
 
     private func statsGrid(stats: DayPreviewStats) -> some View {
         HStack(spacing: 8) {
-            statChip(label: "총", value: stats.totalTodos, accent: .ink)
+            statChip(label: "할 일", value: stats.totalTodos, accent: .ink)
             statChip(label: "완료", value: stats.completedTodos, accent: .grassDk)
             statChip(label: "미완료", value: stats.incompleteTodos, accent: .pinkDk)
             statChip(label: "메모", value: stats.memoCount, accent: .peachDk)
