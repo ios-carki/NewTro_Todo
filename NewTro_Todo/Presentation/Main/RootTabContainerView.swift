@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum AppTab: Equatable {
-    case todo, calendar, memo, stats, settings
+    case todo, memo, stats, settings
 }
 
 struct RootTabContainerView: View {
@@ -9,9 +9,8 @@ struct RootTabContainerView: View {
     // UIHostingController가 UINavigationController에 직접 올라가므로
     // ZStack은 safe area 없이 물리적 전체 화면을 채움 → safe area 값을 직접 읽어야 함
     @State private var safeAreaBottom: CGFloat = 34
-    
+
     @ObservedObject var mainVM: MainViewModel
-    @ObservedObject var calendarVM: CalendarViewModel
     @ObservedObject var memoVM: MemoViewModel
     @ObservedObject var statsVM: StatsViewModel
     @ObservedObject var settingsVM: SettingsViewModel
@@ -71,15 +70,6 @@ struct RootTabContainerView: View {
         switch selectedTab {
         case .todo:
             MainView(viewModel: mainVM)
-        case .calendar:
-            CalendarView(
-                viewModel: calendarVM,
-                onDateSelected: { date in
-                    mainVM.selectedDate = date
-                    mainVM.loadTodos()
-                    selectedTab = .todo
-                }
-            )
         case .memo:
             MemoView(viewModel: memoVM)
         case .stats:
@@ -94,7 +84,6 @@ struct RootTabContainerView: View {
     private var floatingTabBar: some View {
         HStack(spacing: 0) {
             tabItem(.todo,     label: "할일", sfSymbol: "checkmark.square.fill")
-            tabItem(.calendar, label: "달력", sfSymbol: "calendar")
             tabItem(.memo,     label: "메모", sfSymbol: "pencil")
             tabItem(.stats,    label: "통계", sfSymbol: "chart.bar.fill")
             tabItem(.settings, label: "설정", sfSymbol: "gearshape.fill")
@@ -151,7 +140,6 @@ struct RootTabContainerView: View {
     let di = DIContainer()
     return RootTabContainerView(
         mainVM: di.makeMainViewModel(),
-        calendarVM: di.makeCalendarViewModel(),
         memoVM: di.makeMemoViewModel(),
         statsVM: di.makeStatsViewModel(),
         settingsVM: di.makeSettingsViewModel()

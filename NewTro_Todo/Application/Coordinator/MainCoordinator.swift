@@ -7,7 +7,6 @@ final class MainCoordinator: CoordinatorProtocol {
 
     private let diContainer: DIContainer
     private var mainVM: MainViewModel?
-    private var calendarVM: CalendarViewModel?
     private var memoVM: MemoViewModel?
     private var statsVM: StatsViewModel?
     private var settingsVM: SettingsViewModel?
@@ -19,7 +18,6 @@ final class MainCoordinator: CoordinatorProtocol {
 
     @MainActor func start() {
         let mainVM     = diContainer.makeMainViewModel()
-        let calendarVM = diContainer.makeCalendarViewModel()
         let memoVM     = diContainer.makeMemoViewModel()
         let statsVM    = diContainer.makeStatsViewModel()
         let settingsVM = diContainer.makeSettingsViewModel()
@@ -27,14 +25,12 @@ final class MainCoordinator: CoordinatorProtocol {
         settingsVM.onResetComplete = { [weak self] in self?.restartApp() }
 
         self.mainVM     = mainVM
-        self.calendarVM = calendarVM
         self.memoVM     = memoVM
         self.statsVM    = statsVM
         self.settingsVM = settingsVM
 
         let container = RootTabContainerView(
             mainVM: mainVM,
-            calendarVM: calendarVM,
             memoVM: memoVM,
             statsVM: statsVM,
             settingsVM: settingsVM

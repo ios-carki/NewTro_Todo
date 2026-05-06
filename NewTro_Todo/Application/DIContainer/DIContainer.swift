@@ -39,8 +39,8 @@ final class DIContainer {
     func makeUpdateTodoSortOrdersUseCase() -> UpdateTodoSortOrdersUseCase {
         UpdateTodoSortOrdersUseCase(repository: todoRepository)
     }
-    func makeFetchTodosByMonthUseCase() -> FetchTodosByMonthUseCase {
-        FetchTodosByMonthUseCase(repository: todoRepository)
+    func makeFetchMonthOverviewUseCase() -> FetchMonthOverviewUseCase {
+        FetchMonthOverviewUseCase(todoRepository: todoRepository, memoRepository: memoRepository)
     }
 
     // MARK: - UseCases: Memo
@@ -104,6 +104,8 @@ final class DIContainer {
     @MainActor func makeMainViewModel() -> MainViewModel {
         MainViewModel(
             fetchTodosUseCase: makeFetchTodosUseCase(),
+            fetchMemosUseCase: makeFetchMemosUseCase(),
+            fetchMonthOverviewUseCase: makeFetchMonthOverviewUseCase(),
             addTodoUseCase: makeAddTodoUseCase(),
             updateTodoTextUseCase: makeUpdateTodoTextUseCase(),
             toggleCompleteUseCase: makeToggleTodoCompleteUseCase(),
@@ -121,10 +123,6 @@ final class DIContainer {
             updateTemplateUseCase: makeUpdateTemplateUseCase(),
             deleteTemplateUseCase: makeDeleteTemplateUseCase()
         )
-    }
-
-    @MainActor func makeCalendarViewModel() -> CalendarViewModel {
-        CalendarViewModel(fetchByMonthUseCase: makeFetchTodosByMonthUseCase())
     }
 
     @MainActor func makeSettingsViewModel() -> SettingsViewModel {

@@ -39,9 +39,18 @@ struct MainView: View {
             case .postpone(let todo):
                 PostponeMenuView(todo: todo, viewModel: viewModel)
             case .datePicker:
-                DatePickerSheetView { date in
-                    viewModel.navigateToDate(date)
-                }
+                DatePickerSheetView(
+                    initialDate: viewModel.selectedDate,
+                    monthOverviewProvider: { y, m in
+                        await viewModel.fetchMonthOverview(year: y, month: m)
+                    },
+                    dayStatsProvider: { date in
+                        await viewModel.fetchDayPreviewStats(for: date)
+                    },
+                    onDateConfirmed: { date in
+                        viewModel.navigateToDate(date)
+                    }
+                )
             }
         }
         .onChange(of: viewModel.activeSheet?.id) { newId in
@@ -176,13 +185,14 @@ struct MainView: View {
                 Button { viewModel.presentAddTodo() } label: {
                     Text("+ Todo")
                         .font(.pressStart9())
-                        .foregroundColor(.ink)
+                        .foregroundColor(viewModel.isViewingPastDate ? .shade.opacity(0.5) : .ink)
                         .padding(.horizontal, 8)
                         .frame(height: 34)
-                        .background(Color.pixelPink)
-                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                        .background(viewModel.isViewingPastDate ? Color.panel : Color.pixelPink)
+                        .overlay(Rectangle().stroke(viewModel.isViewingPastDate ? Color.ink.opacity(0.3) : Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink.opacity(viewModel.isViewingPastDate ? 0.3 : 1)).offset(x: 2, y: 2))
                 }
+                .disabled(viewModel.isViewingPastDate)
                 .accessibilityIdentifier("addTodoButton")
             }
 
@@ -242,10 +252,10 @@ struct MainView: View {
             PixelPanel(bg: .cream, padding: 16) {
                 VStack(spacing: 10) {
                     BobbingCharView(info: selectedCharInfo)
-                    Text("오늘은 할 일이 없어요")
+                    Text(viewModel.isViewingPastDate ? "기록이 남아있지 않아요" : "오늘은 할 일이 없어요")
                         .font(.galBold14())
                         .foregroundColor(.ink)
-                    Text("Todo 작성 버튼으로 추가해보세요!")
+                    Text(viewModel.isViewingPastDate ? "조용히 지나간 하루였나봐요" : "Todo 작성 버튼으로 추가해보세요!")
                         .font(.galBold11())
                         .foregroundColor(.shade.opacity(0.7))
                 }
