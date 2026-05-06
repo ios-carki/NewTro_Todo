@@ -184,13 +184,14 @@ struct MainView: View {
                 Button { viewModel.presentAddTodo() } label: {
                     Text("+ Todo")
                         .font(.pressStart9())
-                        .foregroundColor(.ink)
+                        .foregroundColor(viewModel.isViewingPastDate ? .shade.opacity(0.5) : .ink)
                         .padding(.horizontal, 8)
                         .frame(height: 34)
-                        .background(Color.pixelPink)
-                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                        .background(viewModel.isViewingPastDate ? Color.panel : Color.pixelPink)
+                        .overlay(Rectangle().stroke(viewModel.isViewingPastDate ? Color.ink.opacity(0.3) : Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink.opacity(viewModel.isViewingPastDate ? 0.3 : 1)).offset(x: 2, y: 2))
                 }
+                .disabled(viewModel.isViewingPastDate)
                 .accessibilityIdentifier("addTodoButton")
             }
 
