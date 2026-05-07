@@ -246,10 +246,8 @@ final class MainViewModel: ObservableObject {
 
     func fetchDayPreviewStats(for date: Date) async -> DayPreviewStats {
         let todos: [TodoEntity] = (try? fetchTodosUseCase.execute(targetDate: date)) ?? []
-        let cal = Calendar.current
-        let start = cal.startOfDay(for: date)
-        let end = cal.date(byAdding: .day, value: 1, to: start) ?? start
-        let memos: [MemoEntity] = (try? await fetchMemosUseCase.execute(filter: .range(from: start, to: end))) ?? []
+        // FetchMemosUseCase의 .range는 to에 +1일 정규화를 적용하므로 같은 날짜를 양쪽에 넘긴다.
+        let memos: [MemoEntity] = (try? await fetchMemosUseCase.execute(filter: .range(from: date, to: date))) ?? []
         return DayPreviewStats(
             totalTodos: todos.count,
             completedTodos: todos.filter(\.isCompleted).count,
