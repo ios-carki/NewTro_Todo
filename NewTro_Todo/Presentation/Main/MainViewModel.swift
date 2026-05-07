@@ -60,8 +60,11 @@ final class MainViewModel: ObservableObject {
     }
 
     /// HUD 하트 — 그 날 작성수 - 미루기 누적 페널티(회차당 1/2/3 캡)
+    /// writeCount는 "그 날 한때라도 stringDate가 selectedDate였던 todo 개수":
+    ///   현재 보이는 todos.count + 그 날 미루기로 떠난 이벤트 수
+    /// (이렇게 안 하면 미루기 시 writeCount −1 + 페널티 −1 = 하트 −2 잘못 깎임)
     var heartCount: Int {
-        let writeCount = todos.count
+        let writeCount = todos.count + dayPostponeEvents.count
         let penalty = dayPostponeEvents
             .map { min($0.ordinalAtTime, 3) }
             .reduce(0, +)
@@ -211,11 +214,10 @@ final class MainViewModel: ObservableObject {
     }
 
     /// HUD 동전·하트 계산용 일일 데이터 (메모, 미루기 이벤트) 로드
+    /// 메모 쿼리: FetchMemosUseCase의 `.range`가 from/to에 startOfDay·+1일 정규화를 자동 적용하므로
+    /// 같은 날짜를 양쪽에 넘긴다(같은 날 boundary 보정 → [start, start+1) 1일 윈도우).
     private func loadDayMetrics() async {
-        let cal = Calendar.current
-        let start = cal.startOfDay(for: selectedDate)
-        let end = cal.date(byAdding: .day, value: 1, to: start) ?? start
-        dayMemos = (try? await fetchMemosUseCase.execute(filter: .range(from: start, to: end))) ?? []
+        dayMemos = (try? await fetchMemosUseCase.execute(filter: .range(from: selectedDate, to: selectedDate))) ?? []
         dayPostponeEvents = (try? await fetchPostponeEventsForDateUseCase.execute(date: selectedDate)) ?? []
     }
 
