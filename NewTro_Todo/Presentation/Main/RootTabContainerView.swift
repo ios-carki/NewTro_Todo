@@ -10,6 +10,9 @@ struct RootTabContainerView: View {
     // ZStack은 safe area 없이 물리적 전체 화면을 채움 → safe area 값을 직접 읽어야 함
     @State private var safeAreaBottom: CGFloat = 34
 
+    @AppStorage("hasSeenTodoOnboarding") private var hasSeenOnboarding: Bool = false
+    @State private var showCoachmark: Bool = false
+
     @ObservedObject var mainVM: MainViewModel
     @ObservedObject var memoVM: MemoViewModel
     @ObservedObject var statsVM: StatsViewModel
@@ -60,9 +63,38 @@ struct RootTabContainerView: View {
         //                .padding(.horizontal, 14)
         //                .ignoresSafeArea(edges: .bottom)
         //        }
+        .overlayPreferenceValue(CoachmarkAnchorKey.self) { anchors in
+            GeometryReader { geom in
+                if showCoachmark {
+                    CoachmarkOverlay(
+                        isActive: $showCoachmark,
+                        steps: CoachmarkSteps.main,
+                        anchors: anchors,
+                        geom: geom
+                    )
+                }
+            }
+            .ignoresSafeArea()
+        }
         .navigationBarHidden(true)
+        .onAppear {
+            if !hasSeenOnboarding {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                    showCoachmark = true
+                }
+            }
+        }
+        .onChange(of: showCoachmark) { newValue in
+            if !newValue { hasSeenOnboarding = true }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .replayTodoCoachmark)) { _ in
+            selectedTab = .todo
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                showCoachmark = true
+            }
+        }
     }
-    
+
     // MARK: - Tab Content
     
     @ViewBuilder

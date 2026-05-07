@@ -73,7 +73,9 @@ struct MainView: View {
                     .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
-        .onAppear { viewModel.loadTodos() }
+        .onAppear {
+            viewModel.loadTodos()
+        }
     }
 
     // MARK: - Toast Banner
@@ -104,6 +106,7 @@ struct MainView: View {
                     .font(.pressStart10())
                     .foregroundColor(.sun)
             }
+            .coachmarkAnchor("hud_coin")
 
             Spacer()
 
@@ -119,6 +122,7 @@ struct MainView: View {
                     .font(.pressStart10())
                     .foregroundColor(.pixelRed)
             }
+            .coachmarkAnchor("hud_heart")
         }
         .padding(.vertical, 6)
     }
@@ -148,6 +152,7 @@ struct MainView: View {
                         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                         .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
                 }
+                .coachmarkAnchor("warp")
 
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) {
@@ -181,6 +186,7 @@ struct MainView: View {
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                     .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
                 }
+                .coachmarkAnchor("sort")
 
                 Button { viewModel.presentAddTodo() } label: {
                     Text("+ Todo")
@@ -194,6 +200,7 @@ struct MainView: View {
                 }
                 .disabled(viewModel.isViewingPastDate)
                 .accessibilityIdentifier("addTodoButton")
+                .coachmarkAnchor("add_todo")
             }
 
             PixelProgressBar(done: viewModel.completedCount, total: viewModel.todos.count)
