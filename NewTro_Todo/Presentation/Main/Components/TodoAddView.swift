@@ -16,7 +16,7 @@ struct TodoAddView: View {
         return Calendar.current.date(from: comps) ?? Date()
     }()
 
-    private let emojis = ["⭐", "🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️"]
+    private let emojis = ["🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️", "☕"]
     private var isEditMode: Bool { editingTodo != nil }
     private var isExpanded: Bool { selectedDetent == .large }
     private var isEmpty: Bool { text.trimmingCharacters(in: .whitespaces).isEmpty }
