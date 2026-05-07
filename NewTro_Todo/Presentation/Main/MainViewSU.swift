@@ -100,7 +100,7 @@ struct MainView: View {
         HStack {
             HStack(spacing: 4) {
                 PixelArtView(grid: PixelArtAssets.coinGrid, palette: PixelArtAssets.coinPalette, scale: 2.5)
-                Text("×\(String(format: "%02d", viewModel.completedCount))")
+                Text("×\(String(format: "%02d", viewModel.dayCoinCount))")
                     .font(.pressStart10())
                     .foregroundColor(.sun)
             }

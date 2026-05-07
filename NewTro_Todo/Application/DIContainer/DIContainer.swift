@@ -141,7 +141,8 @@ final class DIContainer {
             updateTemplateUseCase: makeUpdateTemplateUseCase(),
             deleteTemplateUseCase: makeDeleteTemplateUseCase(),
             earnCoinsUseCase: makeEarnCoinsUseCase(),
-            recordPostponeEventUseCase: makeRecordPostponeEventUseCase()
+            recordPostponeEventUseCase: makeRecordPostponeEventUseCase(),
+            fetchPostponeEventsForDateUseCase: makeFetchPostponeEventsForDateUseCase()
         )
     }
 

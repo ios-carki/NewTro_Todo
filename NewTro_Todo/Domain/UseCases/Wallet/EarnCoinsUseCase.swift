@@ -6,14 +6,8 @@ enum CoinEarnReason {
 
     var amount: Int {
         switch self {
-        case .todoCompleted(let importance):
-            switch importance {
-            case .none:   return 1
-            case .medium: return 2
-            case .high:   return 3
-            }
-        case .memoCreated:
-            return 1
+        case .todoCompleted(let importance): return importance.coinValue
+        case .memoCreated:                    return 1
         }
     }
 }
