@@ -41,13 +41,32 @@ final class MainViewModel: ObservableObject {
     @Published var templates: [TemplateEntity] = []
     @Published var pendingTemplate: TemplateEntity? = nil
     @Published var actionMenuRecentlyDismissed: Bool = false
+    @Published private(set) var dayMemos: [MemoEntity] = []
+    @Published private(set) var dayPostponeEvents: [PostponeEventEntity] = []
 
     private var toastTask: Task<Void, Never>?
     private var actionMenuDismissTask: Task<Void, Never>?
 
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
     var completedCount: Int { todos.filter(\.isCompleted).count }
-    var heartCount: Int { max(0, 3 - todos.filter { !$0.isCompleted }.count) }
+
+    /// HUD 동전 — 그 날 번 동전 (완료 Todo 가중치 + 작성된 메모 수)
+    var dayCoinCount: Int {
+        let todoCoins = todos.filter(\.isCompleted)
+            .map(\.importance.coinValue)
+            .reduce(0, +)
+        let memoCoins = dayMemos.filter(\.isWritten).count
+        return todoCoins + memoCoins
+    }
+
+    /// HUD 하트 — 그 날 작성수 - 미루기 누적 페널티(회차당 1/2/3 캡)
+    var heartCount: Int {
+        let writeCount = todos.count
+        let penalty = dayPostponeEvents
+            .map { min($0.ordinalAtTime, 3) }
+            .reduce(0, +)
+        return max(0, writeCount - penalty)
+    }
 
     var worldDate: String {
         let cal = Calendar.current
@@ -95,6 +114,7 @@ final class MainViewModel: ObservableObject {
     private let deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
     private let earnCoinsUseCase: any EarnCoinsUseCaseProtocol
     private let recordPostponeEventUseCase: any RecordPostponeEventUseCaseProtocol
+    private let fetchPostponeEventsForDateUseCase: any FetchPostponeEventsForDateUseCaseProtocol
 
     init(
         fetchTodosUseCase: any FetchTodosUseCaseProtocol,
@@ -117,7 +137,8 @@ final class MainViewModel: ObservableObject {
         updateTemplateUseCase: any UpdateTemplateUseCaseProtocol,
         deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol,
         earnCoinsUseCase: any EarnCoinsUseCaseProtocol,
-        recordPostponeEventUseCase: any RecordPostponeEventUseCaseProtocol
+        recordPostponeEventUseCase: any RecordPostponeEventUseCaseProtocol,
+        fetchPostponeEventsForDateUseCase: any FetchPostponeEventsForDateUseCaseProtocol
     ) {
         self.fetchTodosUseCase = fetchTodosUseCase
         self.fetchMemosUseCase = fetchMemosUseCase
@@ -140,6 +161,7 @@ final class MainViewModel: ObservableObject {
         self.deleteTemplateUseCase = deleteTemplateUseCase
         self.earnCoinsUseCase = earnCoinsUseCase
         self.recordPostponeEventUseCase = recordPostponeEventUseCase
+        self.fetchPostponeEventsForDateUseCase = fetchPostponeEventsForDateUseCase
         loadTodos()
     }
 
@@ -185,6 +207,16 @@ final class MainViewModel: ObservableObject {
         } catch {
             errorMessage = error.localizedDescription
         }
+        Task { await loadDayMetrics() }
+    }
+
+    /// HUD 동전·하트 계산용 일일 데이터 (메모, 미루기 이벤트) 로드
+    private func loadDayMetrics() async {
+        let cal = Calendar.current
+        let start = cal.startOfDay(for: selectedDate)
+        let end = cal.date(byAdding: .day, value: 1, to: start) ?? start
+        dayMemos = (try? await fetchMemosUseCase.execute(filter: .range(from: start, to: end))) ?? []
+        dayPostponeEvents = (try? await fetchPostponeEventsForDateUseCase.execute(date: selectedDate)) ?? []
     }
 
     func presentAddTodo() {
@@ -392,6 +424,7 @@ final class MainViewModel: ObservableObject {
                     eventDate: eventDate,
                     ordinalAtTime: oldOrdinal + 1
                 )
+                await loadDayMetrics()
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
