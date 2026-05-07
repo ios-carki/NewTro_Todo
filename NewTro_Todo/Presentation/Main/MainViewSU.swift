@@ -202,8 +202,15 @@ struct MainView: View {
 
     // MARK: - Todo List
 
-    private var incompleteTodos: [TodoEntity] { viewModel.todos.filter { !$0.isCompleted } }
-    private var completedTodos: [TodoEntity] { viewModel.todos.filter { $0.isCompleted } }
+    private var favoriteIncompleteTodos: [TodoEntity] {
+        viewModel.todos.filter { !$0.isCompleted && $0.isFavorite }
+    }
+    private var nonFavoriteIncompleteTodos: [TodoEntity] {
+        viewModel.todos.filter { !$0.isCompleted && !$0.isFavorite }
+    }
+    private var completedTodos: [TodoEntity] {
+        viewModel.todos.filter { $0.isCompleted }
+    }
 
     private var todoList: some View {
         Group {
@@ -213,7 +220,7 @@ struct MainView: View {
                 }
             } else {
                 List {
-                    ForEach(incompleteTodos, id: \.id) { todo in
+                    ForEach(favoriteIncompleteTodos, id: \.id) { todo in
                         TodoRowView(todo: todo, viewModel: viewModel)
                             .padding(.horizontal, 16)
                             .padding(.vertical, 5)
@@ -222,7 +229,19 @@ struct MainView: View {
                             .listRowSeparator(.hidden)
                     }
                     .onMove { from, to in
-                        viewModel.reorderTodos(from: from, to: to)
+                        viewModel.reorderFavorites(from: from, to: to)
+                    }
+
+                    ForEach(nonFavoriteIncompleteTodos, id: \.id) { todo in
+                        TodoRowView(todo: todo, viewModel: viewModel)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 5)
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                    }
+                    .onMove { from, to in
+                        viewModel.reorderNonFavorites(from: from, to: to)
                     }
 
                     ForEach(completedTodos, id: \.id) { todo in

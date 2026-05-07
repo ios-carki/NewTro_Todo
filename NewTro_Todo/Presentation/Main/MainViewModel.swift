@@ -381,13 +381,29 @@ final class MainViewModel: ObservableObject {
         }
     }
 
-    func reorderTodos(from source: IndexSet, to destination: Int) {
-        var incomplete = todos.filter { !$0.isCompleted }
-        let completed = todos.filter { $0.isCompleted }
-        incomplete.move(fromOffsets: source, toOffset: destination)
-        todos = incomplete + completed
+    /// 즐겨찾기 그룹 내에서만 순서 재배치
+    func reorderFavorites(from source: IndexSet, to destination: Int) {
+        var favorites = todos.filter { !$0.isCompleted && $0.isFavorite }
+        favorites.move(fromOffsets: source, toOffset: destination)
+        applyIncompleteReorder(favorites: favorites, nonFavorites: nil)
+    }
 
-        let updates = incomplete.enumerated().map { (idx, todo) in (id: todo.id, sortOrder: idx) }
+    /// 일반(즐겨찾기 아님) 그룹 내에서만 순서 재배치
+    func reorderNonFavorites(from source: IndexSet, to destination: Int) {
+        var nonFavorites = todos.filter { !$0.isCompleted && !$0.isFavorite }
+        nonFavorites.move(fromOffsets: source, toOffset: destination)
+        applyIncompleteReorder(favorites: nil, nonFavorites: nonFavorites)
+    }
+
+    /// 한쪽 그룹의 새 배열을 받아 todos 전체 순서 + sortOrder 영속화
+    private func applyIncompleteReorder(favorites: [TodoEntity]?, nonFavorites: [TodoEntity]?) {
+        let favs = favorites ?? todos.filter { !$0.isCompleted && $0.isFavorite }
+        let nonFavs = nonFavorites ?? todos.filter { !$0.isCompleted && !$0.isFavorite }
+        let completed = todos.filter { $0.isCompleted }
+        todos = favs + nonFavs + completed
+
+        let combined = favs + nonFavs
+        let updates = combined.enumerated().map { (idx, todo) in (id: todo.id, sortOrder: idx) }
         Task {
             do {
                 try await updateTodoSortOrdersUseCase.execute(updates: updates)
@@ -401,7 +417,10 @@ final class MainViewModel: ObservableObject {
     private static func sorted(_ input: [TodoEntity]) -> [TodoEntity] {
         input.sorted { a, b in
             if a.isCompleted != b.isCompleted { return !a.isCompleted }
-            if !a.isCompleted { return a.sortOrder < b.sortOrder }
+            if !a.isCompleted {
+                if a.isFavorite != b.isFavorite { return a.isFavorite }
+                return a.sortOrder < b.sortOrder
+            }
             return (a.completedAt ?? .distantPast) < (b.completedAt ?? .distantPast)
         }
     }
@@ -451,6 +470,7 @@ final class MainViewModel: ObservableObject {
                 try await toggleFavoriteUseCase.execute(id: id)
                 if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].isFavorite.toggle()
+                    todos = Self.sorted(todos)
                 }
             } catch {
                 errorMessage = error.localizedDescription

@@ -94,6 +94,15 @@ struct TodoRowView: View {
 
     private var textArea: some View {
         HStack(spacing: 4) {
+            if todo.isFavorite {
+                PixelArtView(
+                    grid: PixelArtAssets.favoriteStarGrid,
+                    palette: PixelArtAssets.favoriteStarPalette,
+                    scale: 1.5
+                )
+                .opacity(todo.isCompleted ? 0.4 : 1)
+            }
+
             if !todo.emoji.isEmpty {
                 Text(todo.emoji)
                     .font(.system(size: 14))

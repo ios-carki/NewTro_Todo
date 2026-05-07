@@ -9,7 +9,7 @@ struct TemplateFormView: View {
     @State private var selectedEmoji: String = ""
     @State private var importance: Importance = .none
 
-    private let emojis = ["⭐", "🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️"]
+    private let emojis = ["🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️", "☕"]
     private var isEditMode: Bool { editingTemplate != nil }
     private var isEmpty: Bool { text.trimmingCharacters(in: .whitespaces).isEmpty }
 

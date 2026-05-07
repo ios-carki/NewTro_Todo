@@ -86,6 +86,20 @@ enum PixelArtAssets {
         "1": .ink, "2": .sun,
     ]
 
+    // MARK: - Favorite Star (7×7) — Todo row 즐겨찾기 인디케이터
+    static let favoriteStarGrid: [String] = [
+        "...1...",
+        "...1...",
+        ".11211.",
+        "1121211",
+        ".12221.",
+        "..121..",
+        ".11.11.",
+    ]
+    static let favoriteStarPalette: [Character: Color] = [
+        "1": .ink, "2": .sun,
+    ]
+
     // MARK: - Bush (12×6)
     static let bushGrid: [String] = [
         "...11..11...",
