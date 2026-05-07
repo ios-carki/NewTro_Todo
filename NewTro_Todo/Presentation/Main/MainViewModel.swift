@@ -11,6 +11,12 @@ struct DayPreviewStats: Equatable {
     var incompleteTodos: Int { max(0, totalTodos - completedTodos) }
 }
 
+enum TodoSection: String, CaseIterable {
+    case favorites
+    case todo
+    case done
+}
+
 enum MainActiveSheet: Identifiable {
     case addTodo
     case editTodo(TodoEntity)
@@ -43,9 +49,21 @@ final class MainViewModel: ObservableObject {
     @Published var actionMenuRecentlyDismissed: Bool = false
     @Published private(set) var dayMemos: [MemoEntity] = []
     @Published private(set) var dayPostponeEvents: [PostponeEventEntity] = []
+    @Published private var collapsedByDate: [String: Set<String>] = [:]
 
     private var toastTask: Task<Void, Never>?
     private var actionMenuDismissTask: Task<Void, Never>?
+
+    // 섹션 접기 상태 영속화 (UserDefaults — 화면 선호도이므로 Realm 마이그레이션 회피)
+    private static let collapsedDefaultsKey = "sectionCollapsedByDate.v1"
+    private static let dateKeyFormatter: DateFormatter = {
+        let f = DateFormatter()
+        f.calendar = Calendar(identifier: .gregorian)
+        f.locale = Locale(identifier: "en_US_POSIX")
+        f.dateFormat = "yyyy-MM-dd"
+        f.timeZone = .current
+        return f
+    }()
 
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
     var completedCount: Int { todos.filter(\.isCompleted).count }
@@ -165,7 +183,53 @@ final class MainViewModel: ObservableObject {
         self.earnCoinsUseCase = earnCoinsUseCase
         self.recordPostponeEventUseCase = recordPostponeEventUseCase
         self.fetchPostponeEventsForDateUseCase = fetchPostponeEventsForDateUseCase
+        loadCollapsedFromDefaults()
         loadTodos()
+    }
+
+    // MARK: - Section Collapse
+
+    func isCollapsed(_ section: TodoSection) -> Bool {
+        collapsedByDate[Self.dateKeyFormatter.string(from: selectedDate)]?.contains(section.rawValue) ?? false
+    }
+
+    func toggleCollapse(_ section: TodoSection) {
+        let key = Self.dateKeyFormatter.string(from: selectedDate)
+        var set = collapsedByDate[key] ?? []
+        if set.contains(section.rawValue) {
+            set.remove(section.rawValue)
+        } else {
+            set.insert(section.rawValue)
+        }
+        if set.isEmpty {
+            collapsedByDate.removeValue(forKey: key)
+        } else {
+            collapsedByDate[key] = set
+        }
+        persistCollapsed()
+    }
+
+    private func loadCollapsedFromDefaults() {
+        guard let data = UserDefaults.standard.data(forKey: Self.collapsedDefaultsKey),
+              let raw = try? JSONDecoder().decode([String: [String]].self, from: data) else {
+            return
+        }
+        // 90일 지난 항목 정리 (무한 누적 방지)
+        let cutoff = Calendar.current.date(byAdding: .day, value: -90, to: Date()) ?? Date()
+        var pruned: [String: Set<String>] = [:]
+        for (keyStr, vals) in raw {
+            guard let date = Self.dateKeyFormatter.date(from: keyStr), date >= cutoff else { continue }
+            pruned[keyStr] = Set(vals)
+        }
+        collapsedByDate = pruned
+        if pruned.count != raw.count { persistCollapsed() }
+    }
+
+    private func persistCollapsed() {
+        let raw = collapsedByDate.mapValues { Array($0) }
+        if let data = try? JSONEncoder().encode(raw) {
+            UserDefaults.standard.set(data, forKey: Self.collapsedDefaultsKey)
+        }
     }
 
     // MARK: - Action Menu Dismiss Guard

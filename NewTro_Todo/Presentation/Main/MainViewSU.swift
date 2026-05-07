@@ -220,41 +220,50 @@ struct MainView: View {
                 }
             } else {
                 List {
-                    ForEach(favoriteIncompleteTodos, id: \.id) { todo in
-                        TodoRowView(todo: todo, viewModel: viewModel)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 5)
-                            .listRowInsets(EdgeInsets())
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                    }
-                    .onMove { from, to in
-                        viewModel.reorderFavorites(from: from, to: to)
-                    }
-
-                    ForEach(nonFavoriteIncompleteTodos, id: \.id) { todo in
-                        TodoRowView(todo: todo, viewModel: viewModel)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 5)
-                            .listRowInsets(EdgeInsets())
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
-                    }
-                    .onMove { from, to in
-                        viewModel.reorderNonFavorites(from: from, to: to)
+                    if !favoriteIncompleteTodos.isEmpty {
+                        Section {
+                            sectionDivider("★ STAR", section: .favorites)
+                            if !isSectionCollapsed(.favorites) {
+                                ForEach(favoriteIncompleteTodos, id: \.id) { todo in
+                                    todoRow(todo)
+                                }
+                                .onMove { from, to in
+                                    viewModel.reorderFavorites(from: from, to: to)
+                                }
+                            }
+                        }
+                        .listSectionSeparator(.hidden)
                     }
 
-                    ForEach(completedTodos, id: \.id) { todo in
-                        TodoRowView(todo: todo, viewModel: viewModel)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 5)
-                            .listRowInsets(EdgeInsets())
-                            .listRowBackground(Color.clear)
-                            .listRowSeparator(.hidden)
+                    if !nonFavoriteIncompleteTodos.isEmpty {
+                        Section {
+                            sectionDivider("TODO", section: .todo)
+                            if !isSectionCollapsed(.todo) {
+                                ForEach(nonFavoriteIncompleteTodos, id: \.id) { todo in
+                                    todoRow(todo)
+                                }
+                                .onMove { from, to in
+                                    viewModel.reorderNonFavorites(from: from, to: to)
+                                }
+                            }
+                        }
+                        .listSectionSeparator(.hidden)
+                    }
+
+                    if !completedTodos.isEmpty {
+                        Section {
+                            sectionDivider("DONE", section: .done)
+                            if !isSectionCollapsed(.done) {
+                                ForEach(completedTodos, id: \.id) { todo in
+                                    todoRow(todo)
+                                }
+                            }
+                        }
+                        .listSectionSeparator(.hidden)
                     }
 
                     Color.clear.frame(height: 160)
-                        .listRowBackground(Color.clear)
+                        .listRowBackground(Color.sky)
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets())
                 }
@@ -264,6 +273,57 @@ struct MainView: View {
             }
         }
         .padding(.top, 8)
+    }
+
+    /// SORT(편집) 모드에서는 접힘 무시 — 모든 그룹 펼쳐 드래그 가능하게
+    private func isSectionCollapsed(_ section: TodoSection) -> Bool {
+        if editMode == .active { return false }
+        return viewModel.isCollapsed(section)
+    }
+
+    private func todoRow(_ todo: TodoEntity) -> some View {
+        TodoRowView(todo: todo, viewModel: viewModel)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 5)
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.sky)
+            .listRowSeparator(.hidden)
+    }
+
+    private func sectionDivider(_ title: String, section: TodoSection) -> some View {
+        let collapsed = viewModel.isCollapsed(section)
+        let editing = editMode == .active
+        return HStack(spacing: 0) {
+            Button {
+                withAnimation(.easeInOut(duration: 0.18)) {
+                    viewModel.toggleCollapse(section)
+                }
+            } label: {
+                HStack(spacing: 6) {
+                    Text(title)
+                        .font(.pressStart7())
+                    Text(collapsed ? "▶" : "▼")
+                        .font(.pressStart7())
+                        .opacity(editing ? 0.35 : 1)
+                }
+                .foregroundColor(.ink)
+                .padding(.horizontal, 8)
+                .frame(height: 24)
+                .background(Color.cream)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+            }
+            .buttonStyle(.borderless)
+            .disabled(editing)
+            Spacer()
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 10)
+        .padding(.bottom, 6)
+        .listRowInsets(EdgeInsets())
+        .listRowBackground(Color.sky)
+        .listRowSeparator(.hidden)
+        .moveDisabled(true)
     }
 
     private var emptyState: some View {
