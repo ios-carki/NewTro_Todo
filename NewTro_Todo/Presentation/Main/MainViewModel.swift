@@ -337,8 +337,7 @@ final class MainViewModel: ObservableObject {
                             date: selectedDate
                         )
                         try? await earnCoinsUseCase.execute(reason: .todoCompleted(
-                            importance: todos[idx].importance,
-                            isFavorite: todos[idx].isFavorite
+                            importance: todos[idx].importance
                         ))
                     }
                     todos = Self.sorted(todos)
