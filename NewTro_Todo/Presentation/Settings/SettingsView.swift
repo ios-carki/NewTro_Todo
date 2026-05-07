@@ -19,6 +19,7 @@ struct SettingsView: View {
                             mascotPanel
                             achievementPanel
                             settingsPanel
+                            tutorialPanel
                             aboutPanel
                             resetButton
                         }
@@ -172,6 +173,32 @@ struct SettingsView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
+    }
+
+    // MARK: - Tutorial Panel
+    private var tutorialPanel: some View {
+        PixelPanel(bg: .white, padding: 0) {
+            Button {
+                NotificationCenter.default.post(name: .replayTodoCoachmark, object: nil)
+            } label: {
+                HStack {
+                    Image(systemName: "questionmark.circle.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(.shade)
+                        .frame(width: 20)
+                    Text("튜토리얼 다시 보기")
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                    Spacer()
+                    Text("PLAY ▶")
+                        .font(.pressStart7())
+                        .foregroundColor(.sun)
+                }
+                .padding(.horizontal, 14)
+                .padding(.vertical, 12)
+            }
+            .buttonStyle(.plain)
+        }
     }
 
     // MARK: - About Panel
