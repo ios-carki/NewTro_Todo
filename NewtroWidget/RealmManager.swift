@@ -25,11 +25,11 @@ class RealmManager {
 
     func todayTodo(date: Date) -> [Todo] {
         guard let realm else { return [] }
-        let dateStr = DateFormatter.dateToString(date: date)
+        let dayStart = Calendar.current.startOfDay(for: date)
         return Array(
             realm.objects(Todo.self)
+                .filter("targetDate == %@", dayStart)
                 .sorted(byKeyPath: "regDate", ascending: true)
-                .filter { $0.stringDate == dateStr }
         )
     }
 }

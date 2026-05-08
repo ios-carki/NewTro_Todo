@@ -6,10 +6,12 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
     func fetchTodos(year: Int, month: Int) async throws -> [TodoEntity] {
         try await MainActor.run {
             let realm = try Realm()
-            // stringDate format: "yyyy년 MM월 dd일"
-            let prefix = String(format: "%d년 %02d월", year, month)
+            let calendar = Calendar.current
+            guard let monthStart = calendar.date(from: DateComponents(year: year, month: month, day: 1)),
+                  let nextMonthStart = calendar.date(byAdding: .month, value: 1, to: monthStart)
+            else { return [] }
             return realm.objects(Todo.self)
-                .filter("stringDate BEGINSWITH %@", prefix)
+                .filter("targetDate >= %@ AND targetDate < %@", monthStart, nextMonthStart)
                 .toArray()
                 .map { $0.toDomain() }
         }
@@ -17,9 +19,9 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
 
     @MainActor func fetchTodos(targetDate: Date) throws -> [TodoEntity] {
         let realm = try Realm()
-        let dateStr = DateFormatter.dateToString(date: targetDate)
+        let dayStart = Calendar.current.startOfDay(for: targetDate)
         let entities = realm.objects(Todo.self)
-            .filter("stringDate == %@", dateStr)
+            .filter("targetDate == %@", dayStart)
             .toArray()
             .map { $0.toDomain() }
         return entities.sorted { a, b in
@@ -32,9 +34,11 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
     func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?, targetDate: Date) async throws -> TodoEntity {
         try await MainActor.run {
             let realm = try Realm()
-            let dateStr = DateFormatter.dateToString(date: targetDate)
+            let dayStart = Calendar.current.startOfDay(for: targetDate)
+            // stringDate는 v10 제거 예정. 그 전까지 위젯/롤백 호환 위해 함께 기록.
+            let dateStr = DateFormatter.dateToString(date: dayStart)
             let minSortOrder: Int = realm.objects(Todo.self)
-                .filter("stringDate == %@", dateStr)
+                .filter("targetDate == %@", dayStart)
                 .min(ofProperty: "sortOrder") ?? 1
             let todo = Todo(
                 todo: text,
@@ -42,6 +46,7 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
                 importance: importance.rawValue,
                 regDate: Date(),
                 stringDate: dateStr,
+                targetDate: dayStart,
                 isFinished: false,
                 emoji: emoji,
                 dueTime: dueTime,
@@ -96,8 +101,11 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             guard let todo = realm.objects(Todo.self)
                 .filter("objectID == %@", try ObjectId(string: id)).first
             else { throw RepositoryError.notFound }
+            let dayStart = Calendar.current.startOfDay(for: toDate)
             try realm.write {
-                todo.stringDate = DateFormatter.dateToString(date: toDate)
+                todo.targetDate = dayStart
+                // v10 제거 예정. 위젯/롤백 호환 위해 함께 갱신.
+                todo.stringDate = DateFormatter.dateToString(date: dayStart)
                 todo.postponeCount += 1
             }
         }

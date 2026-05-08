@@ -26,7 +26,14 @@ final class MemoRepositoryImpl: MemoRepositoryProtocol {
         try await MainActor.run {
             let realm = try Realm()
             let now = Date()
-            let obj = QuickNote(note: "", regDate: now, stringToRegDate: "", isWrited: false, colorName: colorName)
+            let obj = QuickNote(
+                note: "",
+                regDate: now,
+                stringToRegDate: "",
+                targetDate: Calendar.current.startOfDay(for: now),
+                isWrited: false,
+                colorName: colorName
+            )
             try realm.write { realm.add(obj) }
             return obj.toMemoEntity()
         }

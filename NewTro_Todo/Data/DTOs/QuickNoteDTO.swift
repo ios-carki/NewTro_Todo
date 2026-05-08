@@ -6,7 +6,7 @@ extension QuickNote {
             id: objectID.stringValue,
             note: note,
             createdAt: regDate,
-            targetDate: DateFormatter.stringToDate(stringToRegDate) ?? regDate,
+            targetDate: targetDate,
             isWritten: isWrited
         )
     }

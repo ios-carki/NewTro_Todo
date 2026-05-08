@@ -228,7 +228,7 @@ struct TodoAddView: View {
                     if text.isEmpty {
                         Text("할 일을 입력하세요")
                             .font(.galBold14())
-                            .foregroundColor(.shade.opacity(0.5))
+                            .foregroundColor(.ink.opacity(0.4))
                             .padding(.top, 12)
                             .padding(.leading, selectedEmoji.isEmpty ? 12 : 34)
                             .allowsHitTesting(false)
@@ -236,16 +236,27 @@ struct TodoAddView: View {
                 }
                 .transition(.opacity)
             } else {
-                HStack(spacing: 8) {
-                    if !selectedEmoji.isEmpty {
-                        Text(selectedEmoji).font(.system(size: 18))
+                ZStack(alignment: .leading) {
+                    HStack(spacing: 8) {
+                        if !selectedEmoji.isEmpty {
+                            Text(selectedEmoji).font(.system(size: 18))
+                        }
+                        // 시스템 placeholder 색을 직접 바꿀 수 없어 빈 prompt + custom overlay
+                        TextField("", text: $text)
+                            .font(.galBold14())
+                            .foregroundColor(.ink)
+                            .accessibilityIdentifier("todoTextField")
                     }
-                    TextField("할 일을 입력하세요", text: $text)
-                        .font(.galBold14())
-                        .foregroundColor(.ink)
-                        .accessibilityIdentifier("todoTextField")
+                    .padding(.horizontal, 14)
+
+                    if text.isEmpty {
+                        Text("할 일을 입력하세요")
+                            .font(.galBold14())
+                            .foregroundColor(.ink.opacity(0.4))
+                            .padding(.leading, selectedEmoji.isEmpty ? 14 : 40)
+                            .allowsHitTesting(false)
+                    }
                 }
-                .padding(.horizontal, 14)
                 .transition(.opacity)
             }
         }
