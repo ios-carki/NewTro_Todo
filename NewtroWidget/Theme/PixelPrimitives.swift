@@ -46,24 +46,26 @@ struct MiniPanel<Content: View>: View {
 
 struct SkyBg: View {
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: [.sky, .sky, .skyDeep],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .ignoresSafeArea()
+        GeometryReader { geo in
+            ZStack {
+                LinearGradient(
+                    colors: [.sky, .sky, .skyDeep],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
 
-            // Pixel cloud (top-left)
-            CloudShape()
-                .frame(width: 24, height: 6)
-                .position(x: 28, y: 18)
+                // 좌측 위 구름
+                CloudShape()
+                    .frame(width: 24, height: 6)
+                    .position(x: geo.size.width * 0.18, y: geo.size.height * 0.12)
 
-            // Pixel cloud (top-right)
-            CloudShape()
-                .frame(width: 18, height: 5)
-                .position(x: 130, y: 28)
+                // 우측 위 구름
+                CloudShape()
+                    .frame(width: 18, height: 5)
+                    .position(x: geo.size.width * 0.78, y: geo.size.height * 0.18)
+            }
         }
+        .ignoresSafeArea()
     }
 }
 

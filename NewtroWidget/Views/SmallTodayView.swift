@@ -13,35 +13,36 @@ struct SmallTodayView: View {
                     .padding(.top, 12)
                     .padding(.horizontal, 12)
 
-                Spacer().frame(height: 6)
+                Spacer().frame(height: 8)
 
                 Text("오늘 할 일")
                     .font(.galCondensed13())
-                    .foregroundColor(.shade)
+                    .foregroundColor(.ink)
                     .padding(.horizontal, 12)
 
                 HStack(alignment: .firstTextBaseline, spacing: 4) {
                     Text("\(data.done)")
-                        .font(.pressStart20())
+                        .font(.pressStart28())
                         .foregroundColor(.ink)
                     Text("/\(data.total)")
-                        .font(.pressStart12())
+                        .font(.pressStart14())
                         .foregroundColor(.shade)
                 }
+                .padding(.top, 2)
                 .padding(.horizontal, 12)
 
                 Spacer()
 
-                PixelProgressBar(progress: data.progress)
+                PixelProgressBar(progress: data.progress, height: 14)
                     .padding(.horizontal, 12)
-                    .padding(.bottom, 36)
+                    .padding(.bottom, 38)
             }
 
             VStack {
                 Spacer()
                 HStack {
                     Spacer()
-                    MiniMascot(scale: 2.2)
+                    MiniMascot(scale: 2.8)
                         .padding(.trailing, 10)
                         .padding(.bottom, 14)
                 }
@@ -49,7 +50,7 @@ struct SmallTodayView: View {
 
             VStack(spacing: 0) {
                 Spacer()
-                GrassStrip(height: 12)
+                GrassStrip(height: 14)
             }
         }
     }
@@ -58,7 +59,7 @@ struct SmallTodayView: View {
         HStack {
             Text(worldDateLabel)
                 .font(.pressStart9())
-                .foregroundColor(.pinkDk)
+                .foregroundColor(.peachDk)
             Spacer()
             HStack(spacing: 3) {
                 MiniIcon(kind: .coin, scale: 2)

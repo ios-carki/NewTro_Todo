@@ -55,6 +55,7 @@ extension Font {
     static func pressStart12() -> Font { .custom(Galmuri.pressStart2P.value, size: 12) }
     static func pressStart14() -> Font { .custom(Galmuri.pressStart2P.value, size: 14) }
     static func pressStart20() -> Font { .custom(Galmuri.pressStart2P.value, size: 20) }
+    static func pressStart28() -> Font { .custom(Galmuri.pressStart2P.value, size: 28) }
     static func pressStart34() -> Font { .custom(Galmuri.pressStart2P.value, size: 34) }
     static func pressStart48() -> Font { .custom(Galmuri.pressStart2P.value, size: 48) }
 

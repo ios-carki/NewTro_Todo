@@ -81,6 +81,20 @@ struct NewtroWidget: Widget {
         .configurationDisplayName("뉴트로 투두")
         .description("오늘 작성된 Todo를 한 눈에 확인 해보세요!")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .disableContentMarginsIfAvailable()
+    }
+}
+
+// MARK: - iOS 17+ contentMarginsDisabled 헬퍼
+// some WidgetConfiguration 의 if/else 타입 불일치를 우회하기 위해 extension 으로 분리
+
+private extension WidgetConfiguration {
+    func disableContentMarginsIfAvailable() -> some WidgetConfiguration {
+        if #available(iOS 17.0, *) {
+            return self.contentMarginsDisabled()
+        } else {
+            return self
+        }
     }
 }
 
