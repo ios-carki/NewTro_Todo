@@ -78,6 +78,7 @@ let project = Project(
             deploymentTargets: .iOS("16.0"),
             infoPlist: .extendingDefault(with: [
                 "UIAppFonts": .array([
+                    .string("Galmuri11-Bold.ttf"),
                     .string("Galmuri11-Condensed.ttf"),
                     .string("PressStart2P-Regular.ttf"),
                 ]),
@@ -97,9 +98,11 @@ let project = Project(
                 "NewTro_Todo/Source/Extension/DateFormat+Extension.swift",
                 "NewTro_Todo/Source/Extension/Date+Extension.swift",
                 "NewTro_Todo/Source/Extension/Color+Extension.swift",
+                "NewTro_Todo/Source/Extension/Font+Extension.swift",
             ],
             resources: [
                 "NewtroWidget/Assets.xcassets",
+                "NewTro_Todo/Source/Extension/Font/Galmuri11/Galmuri11-Bold.ttf",
                 "NewTro_Todo/Source/Extension/Font/Galmuri11/Galmuri11-Condensed.ttf",
                 "NewTro_Todo/Source/Extension/Font/PressStart2P/PressStart2P-Regular.ttf",
                 "NewTro_Todo/Localizing/**",
