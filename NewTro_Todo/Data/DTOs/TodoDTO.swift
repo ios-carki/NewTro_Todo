@@ -8,7 +8,7 @@ extension Todo {
             isFavorite: favorite,
             importance: Importance(rawValue: importance) ?? .none,
             createdAt: regDate,
-            targetDate: DateFormatter.stringToDate(stringDate) ?? regDate,
+            targetDate: targetDate,
             isCompleted: isFinished,
             postponeCount: postponeCount,
             emoji: emoji,
@@ -21,16 +21,20 @@ extension Todo {
 
 extension TodoEntity {
     func toRealmObject() -> Todo {
-        Todo(
+        let normalized = Calendar.current.startOfDay(for: targetDate)
+        return Todo(
             todo: text,
             favorite: isFavorite,
             importance: importance.rawValue,
             regDate: createdAt,
-            stringDate: DateFormatter.dateToString(date: targetDate),
+            stringDate: DateFormatter.dateToString(date: normalized),
+            targetDate: normalized,
             isFinished: isCompleted,
             postponeCount: postponeCount,
             emoji: emoji,
-            dueTime: dueTime
+            dueTime: dueTime,
+            sortOrder: sortOrder,
+            completedAt: completedAt
         )
     }
 }
