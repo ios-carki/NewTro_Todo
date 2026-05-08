@@ -11,7 +11,10 @@ enum RealmConfiguration {
     // v7: Todo.sortOrder Int 추가 (regDate 기반 역순 초기값), Todo.completedAt Date? 추가
     // v8: PostponeEventObject 신규 테이블, WalletObject 싱글톤 추가
     //     기존 완료 Todo·작성 메모를 가중치(.none=1, .medium=2, .high=3, 메모=1)로 합산 백필
-    static let schemaVersion: UInt64 = 8
+    // v9: Todo.targetDate / QuickNote.targetDate Date 추가
+    //     기존 stringDate / stringToRegDate(한국어 포맷) 파싱 → startOfDay 정규화해 백필
+    //     실패 시 regDate.startOfDay fallback. stringDate 컬럼은 호환 위해 유지(롤백 안전망)
+    static let schemaVersion: UInt64 = 9
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -115,6 +118,38 @@ enum RealmConfiguration {
                 "balance": totalEarned,
                 "totalEarned": totalEarned
             ])
+        }
+        // v9: targetDate Date 컬럼 백필
+        // stringDate / stringToRegDate ("yyyy년 MM월 dd일") 파싱 → startOfDay 정규화
+        // 파싱 실패 시 regDate.startOfDay fallback (데이터 손실 방지)
+        if oldVersion < 9 {
+            // 마이그 시점 헬퍼 변경에 영향받지 않도록 inline DateFormatter 구성
+            let formatter = DateFormatter()
+            formatter.locale = Locale(identifier: "ko_KR")
+            formatter.timeZone = .current
+            formatter.dateFormat = "yyyy년 MM월 dd일"
+            let calendar = Calendar.current
+
+            func backfill(from oldString: String?, regDate: Date?) -> Date {
+                if let s = oldString, !s.isEmpty, let parsed = formatter.date(from: s) {
+                    return calendar.startOfDay(for: parsed)
+                }
+                if let r = regDate {
+                    return calendar.startOfDay(for: r)
+                }
+                return calendar.startOfDay(for: Date())
+            }
+
+            migration.enumerateObjects(ofType: "Todo") { oldObject, newObject in
+                let str = oldObject?["stringDate"] as? String
+                let reg = oldObject?["regDate"] as? Date
+                newObject?["targetDate"] = backfill(from: str, regDate: reg)
+            }
+            migration.enumerateObjects(ofType: "QuickNote") { oldObject, newObject in
+                let str = oldObject?["stringToRegDate"] as? String
+                let reg = oldObject?["regDate"] as? Date
+                newObject?["targetDate"] = backfill(from: str, regDate: reg)
+            }
         }
     }
 }

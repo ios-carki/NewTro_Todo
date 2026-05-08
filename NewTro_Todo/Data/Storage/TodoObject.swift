@@ -7,6 +7,7 @@ final class Todo: Object, ObjectKeyIdentifiable {
     @Persisted var importance: Int = 0
     @Persisted var regDate: Date = Date()
     @Persisted var stringDate: String = ""
+    @Persisted var targetDate: Date = Date()
     @Persisted var isFinished: Bool = false
     @Persisted var postponeCount: Int = 0
     @Persisted var emoji: String = ""
@@ -22,6 +23,7 @@ final class Todo: Object, ObjectKeyIdentifiable {
         importance: Int,
         regDate: Date,
         stringDate: String,
+        targetDate: Date,
         isFinished: Bool,
         postponeCount: Int = 0,
         emoji: String = "",
@@ -35,6 +37,7 @@ final class Todo: Object, ObjectKeyIdentifiable {
         self.importance = importance
         self.regDate = regDate
         self.stringDate = stringDate
+        self.targetDate = targetDate
         self.isFinished = isFinished
         self.postponeCount = postponeCount
         self.emoji = emoji
