@@ -4,6 +4,8 @@ struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @ObservedObject var statsVM: StatsViewModel
 
+    @State private var openHelp: SettingsHelpKey?
+
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottom) {
@@ -20,7 +22,7 @@ struct SettingsView: View {
                             achievementPanel
                             settingsPanel
                             tutorialPanel
-                            aboutPanel
+                            versionPanel
                             resetButton
                         }
                         .padding(.horizontal, 14)
@@ -28,6 +30,9 @@ struct SettingsView: View {
                         .padding(.bottom, 120)
                     }
                 }
+            }
+            .overlayPreferenceValue(SettingsHelpAnchorKey.self) { anchors in
+                helpOverlay(anchors: anchors)
             }
             .alert("데이터 초기화", isPresented: $viewModel.showResetConfirm) {
                 Button("취소", role: .cancel) {}
@@ -117,25 +122,23 @@ struct SettingsView: View {
     // MARK: - Settings Panel
     private var settingsPanel: some View {
         PixelPanel(bg: .white, padding: 0) {
-            VStack(spacing: 0) {
-                settingRow(label: "테마") {
-                    SegToggle(
-                        options: [("peach", "복숭아"), ("pink", "핑크"), ("sun", "햇살")],
-                        selected: viewModel.theme
-                    ) { viewModel.theme = $0 }
-                }
-                Divider().background(Color.ink.opacity(0.2)).padding(.horizontal, 14)
-
-                settingRow(label: "스캔라인") {
-                    PxSwitch(isOn: viewModel.scanlineOn) { viewModel.scanlineOn.toggle() }
-                }
-                Divider().background(Color.ink.opacity(0.2)).padding(.horizontal, 14)
-
-                settingRow(label: "마스코트 화면") {
-                    PxSwitch(isOn: viewModel.welcomeOnLaunch) { viewModel.welcomeOnLaunch.toggle() }
-                }
-            }
+            titleScreenRow
         }
+    }
+
+    private var titleScreenRow: some View {
+        HStack(spacing: 8) {
+            helpButton(for: .titleScreen)
+            Text("타이틀 화면")
+                .font(.galBold14())
+                .foregroundColor(.ink)
+            Spacer()
+            PxSwitch(isOn: viewModel.welcomeOnLaunch) { viewModel.welcomeOnLaunch.toggle() }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+        .background(Color.white)
+        .settingsHelpAnchor(SettingsHelpKey.titleScreen.rawValue)
     }
 
     private func settingRow<C: View>(label: LocalizedStringKey, @ViewBuilder content: () -> C) -> some View {
@@ -171,66 +174,112 @@ struct SettingsView: View {
     // MARK: - Tutorial Panel
     private var tutorialPanel: some View {
         PixelPanel(bg: .white, padding: 0) {
-            Button {
-                NotificationCenter.default.post(name: .replayTodoCoachmark, object: nil)
-            } label: {
-                HStack {
-                    Image(systemName: "questionmark.circle.fill")
-                        .font(.system(size: 14))
-                        .foregroundColor(.shade)
-                        .frame(width: 20)
-                    Text("튜토리얼 다시 보기")
-                        .font(.galBold14())
-                        .foregroundColor(.ink)
-                    Spacer()
-                    Text("PLAY ▶")
-                        .font(.pressStart7())
-                        .foregroundColor(.sun)
+            HStack(spacing: 8) {
+                helpButton(for: .tutorialReplay)
+
+                Button {
+                    NotificationCenter.default.post(name: .replayTodoCoachmark, object: nil)
+                } label: {
+                    HStack {
+                        Text("튜토리얼 다시 보기")
+                            .font(.galBold14())
+                            .foregroundColor(.ink)
+                        Spacer()
+                        Text("PLAY ▶")
+                            .font(.pressStart7())
+                            .foregroundColor(.sun)
+                    }
+                    .contentShape(Rectangle())
                 }
-                .padding(.horizontal, 14)
-                .padding(.vertical, 12)
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .background(Color.white)
+            .settingsHelpAnchor(SettingsHelpKey.tutorialReplay.rawValue)
         }
     }
 
-    // MARK: - About Panel
-    private var aboutPanel: some View {
-        PixelPanel(bg: .cream, padding: 14) {
-            VStack(alignment: .leading, spacing: 8) {
-                Text("소개")
-                    .font(.pressStart9())
-                    .foregroundColor(.shade)
+    // MARK: - Version
+    private var versionPanel: some View {
+        Text("v\(viewModel.appVersion)")
+            .font(.pressStart12())
+            .foregroundColor(.shade)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 16)
+    }
 
-                HStack {
-                    Text("New-Tro ToDo!")
-                        .font(.pressStart14())
-                        .foregroundColor(.ink)
-                    Spacer()
-                    Text("v\(viewModel.appVersion)")
-                        .font(.pressStart9())
-                        .foregroundColor(.shade)
+    // MARK: - Inline Help
+
+    private func helpButton(for key: SettingsHelpKey) -> some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.15)) { openHelp = key }
+        } label: {
+            Image(systemName: "questionmark.circle.fill")
+                .font(.system(size: 14))
+                .foregroundColor(.shade)
+                .frame(width: 20, height: 20)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(.borderless)
+    }
+
+    @ViewBuilder
+    private func helpOverlay(anchors: [String: Anchor<CGRect>]) -> some View {
+        GeometryReader { geo in
+            if let key = openHelp, let anchor = anchors[key.rawValue] {
+                let rect = geo[anchor]
+                ZStack(alignment: .topLeading) {
+                    Rectangle()
+                        .fill(Color.black.opacity(0.55))
+                        .ignoresSafeArea()
+                        .reverseMask {
+                            Rectangle()
+                                .frame(width: rect.width, height: rect.height)
+                                .position(x: rect.midX, y: rect.midY)
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            withAnimation(.easeOut(duration: 0.15)) { openHelp = nil }
+                        }
+
+                    helpCard(for: key)
+                        .frame(width: rect.width)
+                        .offset(x: rect.minX, y: rect.maxY + 8)
                 }
-
-                HStack(spacing: 14) {
-                    MascotBobView(info: currentCharInfo ?? CharacterData.all[0])
-
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("레트로 감성 할 일 관리")
-                            .font(.pressStart9())
-                            .foregroundColor(.shade)
-                        Text("최고의 투두앱 ♡")
-                            .font(.galBold16())
-                            .foregroundColor(.pinkDk)
-                        Text("마스코트 화면 ON 시\n앱 실행마다 표시됩니다")
-                            .font(.pressStart7())
-                            .foregroundColor(.shade)
-                            .padding(.top, 2)
-                    }
-                }
-                .padding(.top, 4)
+                .transition(.opacity)
             }
         }
+    }
+
+    private func helpCard(for key: SettingsHelpKey) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(key.message)
+                .font(.galBold14())
+                .foregroundColor(.ink)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack {
+                Spacer()
+                Button {
+                    withAnimation(.easeOut(duration: 0.15)) { openHelp = nil }
+                } label: {
+                    Text("확인")
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                        .padding(.horizontal, 16)
+                        .frame(height: 32)
+                        .background(Color.peach)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.borderless)
+            }
+        }
+        .padding(12)
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
     }
 
     // MARK: - Reset Button
@@ -248,25 +297,30 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - MascotBobView
-private struct MascotBobView: View {
-    let info: FriendCharInfo
-    @State private var bobY: CGFloat = 0
+// MARK: - Inline Help Anchor
 
-    var body: some View {
-        PixelArtView(
-            grid: PixelArtAssets.characterGrid(type: info.gridType),
-            palette: info.palette,
-            scale: 4
-        )
-        .offset(y: bobY)
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                withAnimation(.easeInOut(duration: 0.45).repeatForever(autoreverses: true)) {
-                    bobY = -4
-                }
-            }
+enum SettingsHelpKey: String {
+    case titleScreen    = "title_screen"
+    case tutorialReplay = "tutorial_replay"
+
+    var message: LocalizedStringKey {
+        switch self {
+        case .titleScreen:    return "ON 시 앱 실행마다 타이틀 화면이 표시됩니다."
+        case .tutorialReplay: return "Todo 화면에 대한 설명을 다시 볼 수 있어요."
         }
+    }
+}
+
+struct SettingsHelpAnchorKey: PreferenceKey {
+    static var defaultValue: [String: Anchor<CGRect>] = [:]
+    static func reduce(value: inout [String: Anchor<CGRect>], nextValue: () -> [String: Anchor<CGRect>]) {
+        value.merge(nextValue(), uniquingKeysWith: { $1 })
+    }
+}
+
+extension View {
+    fileprivate func settingsHelpAnchor(_ id: String) -> some View {
+        anchorPreference(key: SettingsHelpAnchorKey.self, value: .bounds) { [id: $0] }
     }
 }
 
@@ -295,25 +349,3 @@ struct PxSwitch: View {
     }
 }
 
-// MARK: - SegToggle
-struct SegToggle: View {
-    let options: [(String, LocalizedStringKey)]
-    let selected: String
-    let onChange: (String) -> Void
-
-    var body: some View {
-        HStack(spacing: 0) {
-            ForEach(options, id: \.0) { value, label in
-                Button { onChange(value) } label: {
-                    Text(label)
-                        .font(.pressStart7())
-                        .foregroundColor(.ink)
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 6)
-                        .background(selected == value ? Color.sun : Color.white)
-                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                }
-            }
-        }
-    }
-}
