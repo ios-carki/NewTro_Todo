@@ -65,62 +65,8 @@
 //CalendarViewController
 "TodoCountLabel_Text %d" = "A total of %d cases have been recorded.";
 
-//SettingViewController
-//백업 복구부분 해야됨
-"settingMenuList_Noti" = "Notification";
-
-"settingMenuList_Theme" = "Theme";
-
-"settingMenuList_ClearData" = "Clear Data";
-
-"settingMenuList_Contact_Developer" = "Contact Developer";
-
-"settingMenuList_License" = "License";
-
-"settingMenuList_SetWidgetBackgroundImage" = "Widget Image";
-
-"loadView_versionInfoLabel_Text" = "Now Version: ver"; //뒤에 버전 변수가 붙으면?
-
-"NavigationBar_Title_SettingViewController" = "Setting";
-
-"Alert_SettingViewController_Theme_CustomAlertSimple_Title" = "Coming soon";
-
-"Alert_SettingViewController_Theme_CustomAlertSimple_Message" = "New themes will be updated soon";
-
-"Alert_SettingViewController_Theme_CustomAlertSimple_CancelButtonText" = "Confirm";
-
-"Alert_SettingViewController_DataClear_UIAlertAction_OkButton_Title" = "Clear Data";
-
-"Alert_SettingViewController_DataClear_UIAlertAction_Title" = "Warning";
-
-"Alert_SettingViewController_DataClear_UIAlertAction_Message" = "Data stored on the device will be deleted.";
-
-//importanceViewController
-"importanceView_NavigationBar_Title" = "
-See all";
-
 //customAlert
 "Alert_Cancel_Title" = "Cancel";
-
-"SettingViewController_MailQuestions_Subject" = "Questions of New-Tro Todo";
-
-"SettingViewController_FailToMail_Alert_Title" = "The mail could not be sent.";
-
-"SettingViewController_FailToMail_Alert_Message" = "Settings App -> Mail -> Accounts -> Check Account Linking\nor\nSend Mail to newtrotodo@gmail.com";
-
-"SettingViewController_CopyMailAddress_Alert_Title" = "Mail Account Copy";
-
-"SettingViewController_CopyMailAddress_ToastMessage" = "Copied to clipboard.";
-
-"SettingViewController_CopyMailAddress_CancelButton_Title" = "Ok";
-
-"SettingViewController_mailComposeController_Cancelled" = "Cancel";
-
-"SettingViewController_mailComposeController_Saved" = "Temporary Storage";
-
-"SettingViewController_mailComposeController_Sent" = "Sent";
-
-"SettingViewController_mailComposeController_Failed" = "Failed";
 //MARK: -- ViewController
 
 //MARK: -- CustomMenuPopupView

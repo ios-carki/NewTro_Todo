@@ -66,61 +66,8 @@
 //CalendarViewController
 "TodoCountLabel_Text %d" = "총 %d건이 기록되어 있습니다.";
 
-//SettingViewController
-//백업 복구부분 해야됨
-"settingMenuList_Noti" = "알림";
-
-"settingMenuList_Theme" = "테마";
-
-"settingMenuList_ClearData" = "데이터 초기화";
-
-"settingMenuList_Contact_Developer" = "문의사항";
-
-"settingMenuList_License" = "라이센스";
-
-"settingMenuList_SetWidgetBackgroundImage" = "위젯 배경사진";
-
-"loadView_versionInfoLabel_Text" = "현재버전: ver";
-
-"NavigationBar_Title_SettingViewController" = "설정";
-
-"Alert_SettingViewController_Theme_CustomAlertSimple_Title" = "준비중입니다";
-
-"Alert_SettingViewController_Theme_CustomAlertSimple_Message" = "새로운 테마가 업데이트 예정입니다.";
-
-"Alert_SettingViewController_Theme_CustomAlertSimple_CancelButtonText" = "확인";
-
-"Alert_SettingViewController_DataClear_UIAlertAction_OkButton_Title" = "데이터 초기화";
-
-"Alert_SettingViewController_DataClear_UIAlertAction_Title" = "경고";
-
-"Alert_SettingViewController_DataClear_UIAlertAction_Message" = "기기에 저장된 데이터가 삭제됩니다.";
-
-//importanceViewController
-"importanceView_NavigationBar_Title" = "모아보기";
-
 //customAlert
 "Alert_Cancel_Title" = "취소";
-
-"SettingViewController_MailQuestions_Subject" = "New-Tro Todo 문의사항 - ";
-
-"SettingViewController_FailToMail_Alert_Title" = "메일을 전송할 수 없습니다.";
-
-"SettingViewController_FailToMail_Alert_Message" = "(설정 앱 -> Mail -> 계정 -> 계정 연동 확인)\nor\n'newtrotodo@gmail.com' 메일 전송";
-
-"SettingViewController_CopyMailAddress_Alert_Title" = "문의 계정 복사";
-
-"SettingViewController_CopyMailAddress_ToastMessage" = "클립보드에 복사되었습니다.";
-
-"SettingViewController_CopyMailAddress_CancelButton_Title" = "확인";
-
-"SettingViewController_mailComposeController_Cancelled" = "취소";
-
-"SettingViewController_mailComposeController_Saved" = "임시저장";
-
-"SettingViewController_mailComposeController_Sent" = "보냄";
-
-"SettingViewController_mailComposeController_Failed" = "실패";
 //MARK: -- ViewController
 
 //MARK: -- CustomMenuPopupView
