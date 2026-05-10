@@ -4,8 +4,14 @@ import WidgetKit
 struct MediumListView: View {
     let data: WidgetTodayData
 
+    private static let maxRows = 4
+
     private var rows: [WidgetTodoItem] {
-        Array(data.topItems.prefix(4))
+        Array(data.topItems.prefix(Self.maxRows))
+    }
+
+    private var emptySlots: Int {
+        max(0, Self.maxRows - rows.count)
     }
 
     var body: some View {
@@ -21,18 +27,18 @@ struct MediumListView: View {
                     ForEach(rows) { item in
                         TodoRow(item: item, fontSize: 11)
                     }
-                    if rows.isEmpty {
-                        emptyState
+                    ForEach(0..<emptySlots, id: \.self) { _ in
+                        TodoRow.placeholder(fontSize: 11)
                     }
                 }
                 .padding(.horizontal, 12)
 
-                Spacer(minLength: 0)
+                Spacer(minLength: 14)
             }
 
             VStack(spacing: 0) {
                 Spacer()
-                GrassStrip(height: 8)
+                GrassStrip(height: 10)
             }
         }
     }
@@ -57,17 +63,6 @@ struct MediumListView: View {
         }
     }
 
-    private var emptyState: some View {
-        MiniPanel(background: .white, padding: 10) {
-            HStack {
-                Spacer()
-                Text("오늘 할 일이 없어요")
-                    .font(.galCondensed13())
-                    .foregroundColor(.shade)
-                Spacer()
-            }
-        }
-    }
 }
 
 // MARK: - Todo Row
@@ -75,6 +70,23 @@ struct MediumListView: View {
 struct TodoRow: View {
     let item: WidgetTodoItem
     var fontSize: CGFloat = 11
+    var isPlaceholder: Bool = false
+
+    static func placeholder(fontSize: CGFloat = 11) -> some View {
+        TodoRow(
+            item: WidgetTodoItem(
+                id: "placeholder-\(UUID().uuidString)",
+                text: " ",
+                emoji: "",
+                importance: 0,
+                done: false,
+                dueTime: nil
+            ),
+            fontSize: fontSize,
+            isPlaceholder: true
+        )
+        .hidden()
+    }
 
     var body: some View {
         MiniPanel(background: item.done ? Color(hex: "#E8F5D8") : .white, padding: 5) {

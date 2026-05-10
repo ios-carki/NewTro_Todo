@@ -35,7 +35,7 @@ struct SmallTodayView: View {
 
                 PixelProgressBar(progress: data.progress, height: 14)
                     .padding(.horizontal, 12)
-                    .padding(.bottom, 38)
+                    .padding(.bottom, 44)
             }
 
             VStack {
@@ -44,13 +44,13 @@ struct SmallTodayView: View {
                     Spacer()
                     MiniMascot(scale: 2.8)
                         .padding(.trailing, 10)
-                        .padding(.bottom, 14)
+                        .padding(.bottom, 22)
                 }
             }
 
             VStack(spacing: 0) {
                 Spacer()
-                GrassStrip(height: 14)
+                GrassStrip(height: 12)
             }
         }
     }

@@ -4,8 +4,14 @@ import WidgetKit
 struct LargeTodayView: View {
     let data: WidgetTodayData
 
+    private static let maxRows = 5
+
     private var rows: [WidgetTodoItem] {
-        Array(data.topItems.prefix(5))
+        Array(data.topItems.prefix(Self.maxRows))
+    }
+
+    private var emptySlots: Int {
+        max(0, Self.maxRows - rows.count)
     }
 
     var body: some View {
@@ -29,8 +35,8 @@ struct LargeTodayView: View {
                     ForEach(rows) { item in
                         TodoRow(item: item, fontSize: 12)
                     }
-                    if rows.isEmpty {
-                        emptyState
+                    ForEach(0..<emptySlots, id: \.self) { _ in
+                        TodoRow.placeholder(fontSize: 12)
                     }
                 }
                 .padding(.top, 12)
@@ -40,12 +46,12 @@ struct LargeTodayView: View {
 
                 bottomStats
                     .padding(.horizontal, 14)
-                    .padding(.bottom, 22)
+                    .padding(.bottom, 28)
             }
 
             VStack(spacing: 0) {
                 Spacer()
-                GrassStrip(height: 14)
+                GrassStrip(height: 12)
             }
         }
     }
@@ -81,18 +87,6 @@ struct LargeTodayView: View {
             Text("\(data.done)/\(data.total)")
                 .font(.pressStart10())
                 .foregroundColor(.pinkDk)
-        }
-    }
-
-    private var emptyState: some View {
-        MiniPanel(background: .white, padding: 12) {
-            HStack {
-                Spacer()
-                Text("오늘 할 일이 없어요")
-                    .font(.galCondensed16())
-                    .foregroundColor(.shade)
-                Spacer()
-            }
         }
     }
 
