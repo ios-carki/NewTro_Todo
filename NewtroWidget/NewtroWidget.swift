@@ -1,186 +1,122 @@
-//
-//  NewtroWidget.swift
-//  NewtroWidget
-//
-//  Created by Carki on 2023/01/12.
-//
-
 import WidgetKit
 import SwiftUI
 
-import RealmSwift
+// MARK: - Timeline Entry
 
-struct Provider: TimelineProvider {
-    func placeholder(in context: Context) -> SimpleEntry {
-        SimpleEntry(date: Date())
+struct NewtroEntry: TimelineEntry {
+    let date: Date
+    let data: WidgetTodayData
+}
+
+// MARK: - Provider
+
+struct NewtroProvider: TimelineProvider {
+    func placeholder(in context: Context) -> NewtroEntry {
+        NewtroEntry(date: Date(), data: .placeholder)
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (SimpleEntry) -> ()) {
-        let entry = SimpleEntry(date: Date())
-        completion(entry)
+    func getSnapshot(in context: Context, completion: @escaping (NewtroEntry) -> Void) {
+        let data = context.isPreview
+            ? WidgetTodayData.placeholder
+            : WidgetRealmReader.loadToday()
+        completion(NewtroEntry(date: Date(), data: data))
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        var entries: [SimpleEntry] = []
-        
-        let current = Date()
-        
-        var entry = SimpleEntry(date: current)
-        entries.append(entry)
-        
-        for i in 0..<1 {
-            let todayMonth = Calendar.current.dateComponents([.year, .month, .day, .hour], from: current)
-            
-            var dateComponents = DateComponents(hour: 0)
-            dateComponents.year = todayMonth.year
-            dateComponents.month = todayMonth.month
-            dateComponents.day = todayMonth.day! + 1
-            
-            let date = Calendar.current.date(from: dateComponents)
-            let secondEntry = SimpleEntry(date: date!)
-            entries.append(secondEntry)
-        }
+    func getTimeline(in context: Context, completion: @escaping (Timeline<NewtroEntry>) -> Void) {
+        let now = Date()
+        let data = WidgetRealmReader.loadToday(date: now)
+        let entry = NewtroEntry(date: now, data: data)
 
-        let timeline = Timeline(entries: entries, policy: .atEnd)
+        // 자정에 다음 날 데이터로 갱신되도록 self-refresh
+        let calendar = Calendar.current
+        let nextMidnight = calendar.nextDate(
+            after: now,
+            matching: DateComponents(hour: 0, minute: 0),
+            matchingPolicy: .nextTime
+        ) ?? now.addingTimeInterval(60 * 60)
+
+        let timeline = Timeline(entries: [entry], policy: .after(nextMidnight))
         completion(timeline)
     }
 }
 
-struct SimpleEntry: TimelineEntry {
-    let date: Date
-}
+// MARK: - Entry View Router
 
+struct NewtroWidgetEntryView: View {
+    @Environment(\.widgetFamily) private var family
+    let entry: NewtroEntry
 
-struct NewtroWidgetEntryView : View {
-    
-    var entry: Provider.Entry
-    @Environment(\.widgetFamily) private var widgetFamily
-    
-//    let list = RealmManager.shared.todayTodo(date: Date())
-    let list = RealmManager.shared.todayTodo(date: Date())
-    
-    var body: some View {
-        
-        ZStack {
-            Color(.mainBackGroundColor)
-            switch widgetFamily {
-            case .systemMedium:
-                VStack(alignment: .center, spacing: 0) {
-                    HStack(alignment: .center) {
-                        VStack {
-                            Text("오늘의 Todo")
-                                .padding(12)
-                                .font(.custom("Galmuri11-Condensed", size: 12))
-                            Text("\(list.count)개")
-                                .font(.custom("Galmuri11-Condensed", size: 12))
-                        }
-                        VStack(alignment: .center) {
-                                let count = list.count >= 3 ? 3 : list.count
-                                ForEach(0..<count) { i in
-                                    if count < 3 {
-                                        Text(list[i].todo ?? "")
-                                            .font(.custom("Galmuri11-Condensed", size: 12))
-                                        Divider()
-                                    } else {
-                                        Divider()
-                                        Text(list[i].todo ?? "")
-                                            .font(.custom("Galmuri11-Condensed", size: 12))
-                                    }
-                                }
-                        }
-                    }
-                    Image("SettingBackGround")
-                        .resizable()
-                        .frame(maxWidth: .infinity)
-                }
-                
-            //Large
-            case .systemLarge:
-                ZStack {
-                    if UserDefaults.standard.data(forKey: "KEY") != nil {
-                        Image(uiImage: loadImage()!)
-                            .resizable()
-                            .aspectRatio(1.0, contentMode: .fill)
-                        Color.black.opacity(0.2)
-                        VStack(alignment: .center, spacing: 0) {
-                            HStack(alignment: .center) {
-                                VStack {
-                                    Text("오늘의 Todo")
-                                        .padding(12)
-                                        .font(.custom("Galmuri11-Condensed", size: 12))
-                                    Text("\(list.count)개")
-                                        .font(.custom("Galmuri11-Condensed", size: 12))
-                                    Text(String(UserDefaults.standard.data(forKey: "KEY") != nil))
-                                        .foregroundColor(.white)
-                                }
-                                VStack(alignment: .center) {
-                                        let count = list.count >= 3 ? 3 : list.count
-                                        ForEach(0..<count) { i in
-                                            if count < 3 {
-                                                Text(list[i].todo ?? "")
-                                                    .font(.custom("Galmuri11-Condensed", size: 12))
-                                                Divider()
-                                            } else {
-                                                Divider()
-                                                Text(list[i].todo ?? "")
-                                                    .font(.custom("Galmuri11-Condensed", size: 12))
-                                            }
-                                        }
-                                }
-                            }
-                        }
-                    } else {
-                        Text("이미지 없음")
-                    }
-                    
-                }
-                
-            @unknown default:
-                let count = list.count >= 3 ? 3 : list.count
-            }
-            
+    @ViewBuilder
+    private var content: some View {
+        switch family {
+        case .systemSmall:  SmallTodayView(data: entry.data)
+        case .systemMedium: MediumListView(data: entry.data)
+        case .systemLarge:  LargeTodayView(data: entry.data)
+        default:            SmallTodayView(data: entry.data)
         }
-    
     }
-    
-    func loadImage() -> UIImage? {
-         guard let data = UserDefaults.standard.data(forKey: "KEY") else { return UIImage(systemName: "x.square")}
-         let decoded = try! PropertyListDecoder().decode(Data.self, from: data)
-         let image = UIImage(data: decoded)
-        
-        return image
+
+    var body: some View {
+        if #available(iOS 17.0, *) {
+            content.containerBackground(for: .widget) { Color.sky }
+        } else {
+            ZStack {
+                Color.sky
+                content
+            }
+        }
     }
 }
+
+// MARK: - Widget Declaration
 
 @main
 struct NewtroWidget: Widget {
     let kind: String = "NewtroWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: Provider()) { entry in
+        StaticConfiguration(kind: kind, provider: NewtroProvider()) { entry in
             NewtroWidgetEntryView(entry: entry)
         }
-        .configurationDisplayName("뉴트로 투두 위젯")
-        .description("오늘 작성된 Todo를 확인 해보세요!")
-        .supportedFamilies([.systemMedium, .systemLarge])
+        .configurationDisplayName("뉴트로 투두")
+        .description("오늘 작성된 Todo를 한 눈에 확인 해보세요!")
+        .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
+        .disableContentMarginsIfAvailable()
     }
 }
 
-struct NewtroWidget_Previews: PreviewProvider {
-    static var previews: some View {
-        NewtroWidgetEntryView(entry: SimpleEntry(date: Date()))
-            .previewContext(WidgetPreviewContext(family: .systemLarge))
-    }
-}
+// MARK: - iOS 17+ contentMarginsDisabled 헬퍼
+// some WidgetConfiguration 의 if/else 타입 불일치를 우회하기 위해 extension 으로 분리
 
-struct CellView: View {
-    let text: String
-    
-    var body: some View {
-        HStack{
-            Text(text)
-                .font(.system(size: 12))
-            Spacer()
+private extension WidgetConfiguration {
+    func disableContentMarginsIfAvailable() -> some WidgetConfiguration {
+        if #available(iOS 17.0, *) {
+            return self.contentMarginsDisabled()
+        } else {
+            return self
         }
     }
+}
+
+// MARK: - Previews (iOS 17+)
+
+@available(iOS 17.0, *)
+#Preview("Small", as: .systemSmall) {
+    NewtroWidget()
+} timeline: {
+    NewtroEntry(date: .now, data: .placeholder)
+}
+
+@available(iOS 17.0, *)
+#Preview("Medium", as: .systemMedium) {
+    NewtroWidget()
+} timeline: {
+    NewtroEntry(date: .now, data: .placeholder)
+}
+
+@available(iOS 17.0, *)
+#Preview("Large", as: .systemLarge) {
+    NewtroWidget()
+} timeline: {
+    NewtroEntry(date: .now, data: .placeholder)
 }
