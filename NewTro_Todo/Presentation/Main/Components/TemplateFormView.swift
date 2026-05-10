@@ -127,7 +127,7 @@ struct TemplateFormView: View {
 
     // MARK: - Section Label
 
-    private func sectionLabel(_ title: String) -> some View {
+    private func sectionLabel(_ title: LocalizedStringKey) -> some View {
         HStack {
             Text(title).font(.pressStart9()).foregroundColor(.shade)
             Spacer()
@@ -139,7 +139,7 @@ struct TemplateFormView: View {
 
     // MARK: - Chips
 
-    private func emojiChip(_ emoji: String, label: String? = nil) -> some View {
+    private func emojiChip(_ emoji: String, label: LocalizedStringKey? = nil) -> some View {
         let isSelected = selectedEmoji == emoji
         return Button { selectedEmoji = emoji } label: {
             Group {
@@ -156,7 +156,7 @@ struct TemplateFormView: View {
         }
     }
 
-    private func importanceChip(_ imp: Importance, label: String) -> some View {
+    private func importanceChip(_ imp: Importance, label: LocalizedStringKey) -> some View {
         let isSelected = importance == imp
         let chipColor: Color = switch imp {
         case .none:   .grass

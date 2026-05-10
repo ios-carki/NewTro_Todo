@@ -155,7 +155,7 @@ struct MemoView: View {
         return Button {
             viewModel.sortType = type
         } label: {
-            Text(type.rawValue)
+            Text(type.displayName)
                 .font(.galBold9())
                 .foregroundColor(.ink)
                 .padding(.horizontal, 6)

@@ -128,7 +128,7 @@ struct RootTabContainerView: View {
     
     // MARK: - Tab Item
     
-    private func tabItem(_ tab: AppTab, label: String, sfSymbol: String) -> some View {
+    private func tabItem(_ tab: AppTab, label: LocalizedStringKey, sfSymbol: String) -> some View {
         let isActive = selectedTab == tab
         return Button { selectedTab = tab } label: {
             VStack(spacing: 5) {

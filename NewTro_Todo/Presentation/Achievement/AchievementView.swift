@@ -34,7 +34,7 @@ struct AchievementView: View {
                 }
             }
         }
-        .navigationTitle("업적 & 도전과제")
+        .navigationTitle(Text("업적 & 도전과제"))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { statsVM.loadStats() }
     }
@@ -48,7 +48,7 @@ struct AchievementView: View {
         }
     }
 
-    private func tabChip(_ label: String, tab: AchTab) -> some View {
+    private func tabChip(_ label: LocalizedStringKey, tab: AchTab) -> some View {
         Button { selectedTab = tab } label: {
             Text(label)
                 .font(.pressStart9())
@@ -70,25 +70,25 @@ struct AchievementView: View {
             )
             challengeSection(
                 title: "연속 도전",
-                subtitle: "연속 기록: \(statsVM.stats.currentStreak)일",
+                subtitle: "연속 기록: %d일".localized(with: statsVM.stats.currentStreak),
                 challenges: ChallengeData.streak
             )
             challengeSection(
                 title: "누적 도전",
-                subtitle: "누적 완료: \(statsVM.stats.totalCompleted)개",
+                subtitle: "누적 완료: %d개".localized(with: statsVM.stats.totalCompleted),
                 challenges: ChallengeData.cumulative
             )
         }
     }
 
     private var todayChallengeSubtitle: String {
-        let cal = Calendar.current
-        let m = cal.component(.month, from: Date())
-        let d = cal.component(.day, from: Date())
-        return String(format: "%d월 %d일", m, d)
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.setLocalizedDateFormatFromTemplate("MMMd")
+        return formatter.string(from: Date())
     }
 
-    private func challengeSection(title: String, subtitle: String, challenges: [ChallengeDefinition]) -> some View {
+    private func challengeSection(title: LocalizedStringKey, subtitle: String, challenges: [ChallengeDefinition]) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(alignment: .bottom) {
                 Text(title)
@@ -122,7 +122,7 @@ struct AchievementView: View {
     private var collectionContent: some View {
         VStack(alignment: .leading, spacing: 16) {
             let unlocked = statsVM.stats.unlockedCharacterIds.count
-            Text("\(unlocked)/\(CharacterData.all.count) 해금")
+            Text(String(format: "%d/%d 해금".localized(), unlocked, CharacterData.all.count))
                 .font(.pressStart7())
                 .foregroundColor(.shade)
 
@@ -157,7 +157,7 @@ private struct ChallengeCard: View {
                     Image(systemName: challenge.sfSymbol)
                         .font(.system(size: 14))
                         .foregroundColor(isClaimed ? .shade : challenge.accentColor)
-                    Text(challenge.title)
+                    Text(LocalizedStringKey(challenge.title))
                         .font(.galBold14())
                         .foregroundColor(isClaimed ? .shade : .ink)
                     Spacer()
@@ -167,7 +167,7 @@ private struct ChallengeCard: View {
                     }
                 }
 
-                Text(challenge.description)
+                Text(LocalizedStringKey(challenge.description))
                     .font(.pressStart7())
                     .foregroundColor(isClaimed ? .shade.opacity(0.6) : .shade)
 
@@ -289,12 +289,12 @@ private struct CharacterCollectionCard: View {
                 }
                 .frame(height: 52)
 
-                Text(isUnlocked ? info.name : "???")
+                Text(isUnlocked ? LocalizedStringKey(info.name) : LocalizedStringKey("???"))
                     .font(.pressStart7())
                     .foregroundColor(isUnlocked ? .ink : .shade.opacity(0.4))
 
                 if !isUnlocked {
-                    Text(info.unlockDescription)
+                    Text(LocalizedStringKey(info.unlockDescription))
                         .font(.pressStart7())
                         .foregroundColor(.shade.opacity(0.6))
                         .multilineTextAlignment(.center)

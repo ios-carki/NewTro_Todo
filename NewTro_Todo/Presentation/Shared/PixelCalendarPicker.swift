@@ -1,6 +1,11 @@
 import SwiftUI
 
-private let pickerWeekdays = ["일", "월", "화", "수", "목", "금", "토"]
+private var pickerWeekdays: [String] {
+    var cal = Calendar.current
+    cal.locale = Locale.current
+    let symbols = cal.veryShortStandaloneWeekdaySymbols
+    return symbols.count == 7 ? symbols : ["S", "M", "T", "W", "T", "F", "S"]
+}
 
 struct PixelCalendarPicker: View {
     let onDateSelected: (Date) -> Void

@@ -60,7 +60,7 @@ struct SettingsView: View {
                         Text("내 마스코트")
                             .font(.pressStart9())
                             .foregroundColor(.shade)
-                        Text(currentCharInfo?.name ?? "핑코")
+                        Text(LocalizedStringKey(currentCharInfo?.name ?? "핑코"))
                             .font(.galBold16())
                             .foregroundColor(.ink)
                         Text("LV.\(statsVM.stats.level) · \(statsVM.levelTitle)")
@@ -120,7 +120,7 @@ struct SettingsView: View {
             VStack(spacing: 0) {
                 settingRow(label: "언어") {
                     SegToggle(
-                        options: [("ko", "한국어"), ("en", "English")],
+                        options: [("ko", "한국어"), ("en", "English"), ("zh-Hans", "中文"), ("ja", "日本語")],
                         selected: viewModel.language
                     ) { viewModel.language = $0 }
                 }
@@ -146,7 +146,7 @@ struct SettingsView: View {
         }
     }
 
-    private func settingRow<C: View>(label: String, @ViewBuilder content: () -> C) -> some View {
+    private func settingRow<C: View>(label: LocalizedStringKey, @ViewBuilder content: () -> C) -> some View {
         HStack {
             Text(label)
                 .font(.galBold14())
@@ -158,7 +158,7 @@ struct SettingsView: View {
         .padding(.vertical, 12)
     }
 
-    private func settingRowNavigation(label: String, icon: String) -> some View {
+    private func settingRowNavigation(label: LocalizedStringKey, icon: String) -> some View {
         HStack {
             Image(systemName: icon)
                 .font(.system(size: 14))
@@ -305,7 +305,7 @@ struct PxSwitch: View {
 
 // MARK: - SegToggle
 struct SegToggle: View {
-    let options: [(String, String)]
+    let options: [(String, LocalizedStringKey)]
     let selected: String
     let onChange: (String) -> Void
 

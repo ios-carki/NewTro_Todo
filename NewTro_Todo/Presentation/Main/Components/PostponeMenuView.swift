@@ -29,7 +29,7 @@ struct PostponeMenuView: View {
                 HStack(spacing: 8) {
                     quickChip(label: "내일",  days: 1)
                     quickChip(label: "모레",  days: 2)
-                    quickChip(label: "+7일", days: 7)
+                    quickChip(label: "+7일",  days: 7)
                 }
                 .padding(.horizontal, 16)
 
@@ -55,18 +55,14 @@ struct PostponeMenuView: View {
                     viewModel.postpone(id: todo.id, toDate: selectedDate)
                     dismiss()
                 } label: {
-                    HStack(spacing: 6) {
-                        Text(dateLabel(selectedDate))
-                            .font(.pressStart9())
-                        Text("로 미루기")
-                            .font(.galBold14())
-                    }
-                    .foregroundColor(.ink)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 46)
-                    .background(Color.peach)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                    .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                    Text("%@로 미루기".localized(with: dateLabel(selectedDate)))
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 46)
+                        .background(Color.peach)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 32)
@@ -80,7 +76,7 @@ struct PostponeMenuView: View {
         Calendar.current.date(byAdding: .day, value: 1, to: viewModel.selectedDate) ?? viewModel.selectedDate
     }
 
-    private func quickChip(label: String, days: Int) -> some View {
+    private func quickChip(label: LocalizedStringKey, days: Int) -> some View {
         let target = Calendar.current.date(byAdding: .day, value: days, to: viewModel.selectedDate) ?? viewModel.selectedDate
         let isSelected = Calendar.current.isDate(selectedDate, inSameDayAs: target)
         return Button { selectedDate = target } label: {

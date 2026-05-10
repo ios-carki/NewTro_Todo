@@ -83,14 +83,14 @@ struct DatePickerSheetView: View {
 
     private func statsGrid(stats: DayPreviewStats) -> some View {
         HStack(spacing: 8) {
-            statChip(label: "할 일", value: stats.totalTodos, accent: .ink)
+            statChip(label: "할 일 수", value: stats.totalTodos, accent: .ink)
             statChip(label: "완료", value: stats.completedTodos, accent: .grassDk)
             statChip(label: "미완료", value: stats.incompleteTodos, accent: .pinkDk)
             statChip(label: "메모", value: stats.memoCount, accent: .peachDk)
         }
     }
 
-    private func statChip(label: String, value: Int, accent: Color) -> some View {
+    private func statChip(label: LocalizedStringKey, value: Int, accent: Color) -> some View {
         VStack(spacing: 4) {
             Text(label)
                 .font(.galBold10())
@@ -124,19 +124,17 @@ struct DatePickerSheetView: View {
     }
 
     private var navigateLabel: String {
-        let cal = Calendar.current
-        let y = cal.component(.year, from: selectedDate)
-        let m = cal.component(.month, from: selectedDate)
-        let day = cal.component(.day, from: selectedDate)
-        return "\(y)년 \(m)월 \(day)일로 이동"
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.dateStyle = .long
+        return "%@로 이동".localized(with: formatter.string(from: selectedDate))
     }
 
     private func formattedHeader(_ d: Date) -> String {
-        let cal = Calendar.current
-        let y = cal.component(.year, from: d)
-        let m = cal.component(.month, from: d)
-        let day = cal.component(.day, from: d)
-        return String(format: "%04d.%02d.%02d 요약", y, m, day)
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.dateStyle = .medium
+        return "%@ 요약".localized(with: formatter.string(from: d))
     }
 
     // MARK: - Stats Loading

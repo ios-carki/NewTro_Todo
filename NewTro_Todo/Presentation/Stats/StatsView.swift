@@ -75,14 +75,14 @@ struct StatsView: View {
     // MARK: - Stats Grid
     private var statsGrid: some View {
         LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-            statCell(label: "연속기록", value: "\(viewModel.stats.currentStreak)일", icon: "flame.fill", color: .peach)
-            statCell(label: "완료",    value: "\(viewModel.stats.totalCompleted)개", icon: "checkmark.circle.fill", color: .done)
-            statCell(label: "최장연속", value: "\(viewModel.stats.longestStreak)일",  icon: "bolt.fill", color: .sun)
-            statCell(label: "퍼펙트",  value: "\(viewModel.stats.totalPerfectDays)회", icon: "star.fill", color: .sun)
+            statCell(label: "연속기록", value: "%d일".localized(with: viewModel.stats.currentStreak), icon: "flame.fill", color: .peach)
+            statCell(label: "완료",    value: "%d개".localized(with: viewModel.stats.totalCompleted), icon: "checkmark.circle.fill", color: .done)
+            statCell(label: "최장연속", value: "%d일".localized(with: viewModel.stats.longestStreak),  icon: "bolt.fill", color: .sun)
+            statCell(label: "퍼펙트",  value: "%d회".localized(with: viewModel.stats.totalPerfectDays), icon: "star.fill", color: .sun)
         }
     }
 
-    private func statCell(label: String, value: String, icon: String, color: Color) -> some View {
+    private func statCell(label: LocalizedStringKey, value: String, icon: String, color: Color) -> some View {
         PixelPanel(bg: .panel, padding: 10) {
             VStack(spacing: 4) {
                 HStack(spacing: 4) {
@@ -203,7 +203,7 @@ struct StatsView: View {
                     Text("→")
                         .font(.pressStart7())
                         .foregroundColor(.shade)
-                    Text("퍼펙트 \(perfectSet.count)회")
+                    Text("퍼펙트 %d회".localized(with: perfectSet.count))
                         .font(.pressStart7())
                         .foregroundColor(perfectSet.isEmpty ? .shade.opacity(0.4) : .sun)
                 }

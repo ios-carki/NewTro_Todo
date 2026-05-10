@@ -92,7 +92,7 @@ struct CoachmarkOverlay: View {
             Spacer()
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
-                    Text(step.title)
+                    Text(LocalizedStringKey(step.title))
                         .font(.pressStart12())
                         .foregroundColor(.ink)
                     Spacer()
@@ -100,7 +100,7 @@ struct CoachmarkOverlay: View {
                         .font(.pressStart7())
                         .foregroundColor(.shade)
                 }
-                Text(step.message)
+                Text(LocalizedStringKey(step.message))
                     .font(.galBold16())
                     .foregroundColor(.ink)
                     .fixedSize(horizontal: false, vertical: true)

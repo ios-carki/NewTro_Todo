@@ -1,110 +1,254 @@
-/* Localizable.strings NewTro_Todo Created by Carki on 2022/10/02. */
-//MARK: --DateFormat
-//CalendarView
-"headerDateFormat" = "MMMM yyyy";
+/*
+  Localizable.strings (en)
+  NewTro_Todo
+*/
 
-//MainView
-"DatePickBtn_DateFormat" = "mm dd yyyy";
-//MARK: --DateFormat
+// MARK: - Common Actions
+"취소" = "Cancel";
+"확인" = "OK";
+"저장" = "Save";
+"수정" = "Edit";
+"삭제" = "Delete";
+"닫기" = "Close";
+"뒤로" = "Back";
+"오류" = "Error";
+"초기화" = "Reset";
 
-//MARK: -- View
+// MARK: - Status
+"완료" = "Done";
+"미완료" = "Pending";
+"진행 중" = "In Progress";
+"선택됨" = "Selected";
+"수령하기" = "Claim";
 
-//PageView - FirstView
-"PageLabel1_Text" = "dot sensibility";
+// MARK: - Screen Titles
+"메인" = "Main";
+"메모장" = "Notes";
+"통계" = "Stats";
+"설정" = "Settings";
+"소개" = "About";
+"마스코트 변경" = "Change Mascot";
+"데이터 초기화" = "Reset Data";
+"메모 삭제" = "Delete Note";
+"메모 수정" = "Edit Note";
+"메모 작성" = "Write Note";
+"새 할 일" = "New Todo";
+"할 일 수정" = "Edit Todo";
+"새 템플릿" = "New Template";
+"템플릿 편집" = "Edit Template";
+"템플릿 목록" = "Templates";
+"날짜 이동" = "Pick Date";
+"도전과제" = "Challenges";
+"캐릭터 도감" = "Characters";
 
-"PageLabel2_Text" = "ToDo App";
+// MARK: - Tab Labels
+"할일" = "Todo";
+"메모" = "Notes";
 
-"pageLabel3_Text" = "New-Tro\nToDo!";
+// MARK: - Main / Empty States
+"오늘의 할 일" = "Today's Todos";
+"기록이 남아있지 않아요" = "No records here";
+"조용히 지나간 하루였나봐요" = "Looks like a quiet day";
+"오늘은 할 일이 없어요" = "No todos for today";
+"Todo 작성 버튼으로 추가해보세요!" = "Tap the + TODO button to add one!";
+"저장된 템플릿이 없어요" = "No saved templates";
+"오늘은 메모가 없어요" = "No notes for today";
+"아직 해금된 캐릭터가 없어요" = "No characters unlocked yet";
 
-"SwipeLabel_Text" = "Swipe Left!";
+// MARK: - Form / Input
+"할 일을 입력하세요" = "Enter your todo";
+"템플릿 이름을 입력하세요" = "Enter template name";
+"오늘의 생각을 기록해보세요..." = "Write down your thoughts...";
+"이모지 선택" = "Pick Emoji";
+"없음" = "None";
+"중요도" = "Priority";
+"낮음" = "Low";
+"보통" = "Medium";
+"높음" = "High";
+"알림 시간" = "Reminder Time";
+"템플릿" = "Template";
+"저장된 템플릿" = "Saved Templates";
 
-//PageView - SecondView
-"page2_ImageExplainLabel_Text" = "Manage your to-dos\nwith cute dot theme\nand convenient UI!";
+// MARK: - Postpone
+"언제로 미룰까요?" = "Postpone to?";
+"내일" = "Tomorrow";
+"모레" = "Day After";
+"+7일" = "+7d";
+"%@로 미루기" = "Postpone to %@";
+"%@로 이동" = "Go to %@";
+"%@ 요약" = "%@ Summary";
+"불러오는 중…" = "Loading…";
 
-//PageView = ThirdView
-"page3_ImageExplainLabel_Text" = "Also try the handy notepad\nof dot text!";
+// MARK: - Stats Labels
+"연속기록" = "Streak";
+"최장연속" = "Best";
+"퍼펙트" = "Perfect";
+"할 일 수" = "Todos";
 
-"signupButton_SetTitle" = "Get started now";
+// MARK: - Units (format)
+"%d일" = "%d days";
+"%d개" = "%d items";
+"%d회" = "%d times";
+"퍼펙트 %d회" = "%d Perfects";
+"연속 기록: %d일" = "Streak: %d days";
+"누적 완료: %d개" = "Total: %d";
+"%d/%d 해금" = "%d/%d unlocked";
+"업적 & 도전과제" = "Achievements & Challenges";
 
-//MainView
-"CoinCountLabel_Text" = "MMddyy";//SettingView
+// MARK: - Settings
+"내 마스코트" = "My Mascot";
+"마스코트 화면" = "Mascot Screen";
+"튜토리얼 다시 보기" = "Show Tutorial";
+"모든 데이터 초기화" = "Reset All Data";
+"모든 할일과 메모가 삭제됩니다. 계속하시겠어요?" = "All todos and notes will be deleted. Continue?";
+"언어" = "Language";
+"테마" = "Theme";
+"복숭아" = "Peach";
+"핑크" = "Pink";
+"햇살" = "Sun";
+"스캔라인" = "Scanline";
+"레트로 감성 할 일 관리" = "Retro vibe todo manager";
+"최고의 투두앱 ♡" = "The best todo app ♡";
+"마스코트 화면 ON 시\n앱 실행마다 표시됩니다" = "When Mascot Screen is ON,\nshown on every app launch";
 
-"versionInfoLabel_Text" = "Current Version";
+// MARK: - Memo Sort/Filter
+"전체" = "All";
+"오늘" = "Today";
+"기간" = "Range";
+"정렬" = "Sort";
+"최신순" = "Newest";
+"오래된 순" = "Oldest";
+"색상순" = "By Color";
 
-"versionCreditLabel_Text" = "Developer: Carki\nDesigner: Carki";
+// MARK: - Memo Create/Edit
+"+ 작성" = "+ Write";
+"+ 작성 버튼으로 추가해보세요!" = "Tap the + Write button to add one!";
+"이 메모를 삭제할까요?\n삭제하면 되돌릴 수 없어요." = "Delete this note?\nThis can't be undone.";
+"색:" = "Color:";
+"오늘 날짜에만 수정 가능" = "Editable on today's date only";
+"목록 보기 >" = "View List >";
 
-//CalendarView
-"todoTextLabel_Text" = "Written to-do list";
+// MARK: - Template List
+"+ 추가" = "+ Add";
+"+ 추가 버튼으로 만들어보세요" = "Tap + Add to create one";
 
-"todoCountLabel_Text" = "A total of 10 cases have been recorded.";
+// MARK: - Notifications / Toasts
+"할 일 알림" = "Todo Reminder";
+"템플릿 저장 완료" = "Template saved";
+"완료한 투두는 수정할 수 없습니다" = "Completed todos can't be edited";
+"지난 날의 Todo는 수정할 수 없습니다" = "Past todos can't be edited";
+"즐겨찾기 추가" = "Add to Favorites";
+"즐겨찾기 해제" = "Remove Favorite";
+"중요도: 없음 → 높음" = "Priority: None → High";
+"중요도: 높음 → 중간" = "Priority: High → Medium";
+"중요도: 중간 → 없음" = "Priority: Medium → None";
+"템플릿으로 저장" = "Save as Template";
 
-//MARK: -- View
+// MARK: - Coach Mark
+"다른 날짜로 이동할 수 있어" = "Travel to another date";
+"새 할 일을 추가하자" = "Add a new todo";
+"그 날 완료한 Todo로 모은 보상이야" = "Rewards earned from todos you finished that day";
+"오늘 추가한 Todo만큼 차오르고, 미루면 줄어들어" = "Fills as you add today's todos, drops when you postpone";
+"Todo 순서를 직접 정렬해" = "Reorder todos manually";
+"건너뛰기" = "Skip";
+"다음 ▶" = "Next ▶";
+"◀ 이전" = "◀ Back";
+"시작!" = "Start!";
 
-//MARK: -- ViewController
-//MainViewController
-//Func_fetchRealm
-"dateFormat" = "MMM dd YYYY";
-"showDateFormat" = "EEE, MMM dd YYYY";
+// MARK: - Mascot Picker
+"보유 캐릭터 중 마스코트를 선택해요" = "Pick a mascot from owned characters";
+"도전과제를 달성해서\n친구를 만나보세요!" = "Complete challenges\nto meet new friends!";
 
-//todo status
-"todoStatus_notDone" = "Incomplete";
-"todoStatus_Done" = "Complete";
-"todoStatus" = "Complete / Incomplete";
+// MARK: - Challenge Categories
+"오늘의 도전" = "Daily Challenge";
+"연속 도전" = "Streak Challenge";
+"누적 도전" = "Cumulative Challenge";
 
-//Func_navigationSetting
-"navigationBar_Title" = "Main";
+// MARK: - Challenge Titles & Descriptions
+"할일 만들기" = "Create a Todo";
+"오늘 할일을 1개 이상 작성해요" = "Write at least 1 todo today";
+"퍼펙트 클리어" = "Perfect Clear";
+"오늘 모든 할일을 완료해요" = "Finish all todos today";
+"오늘 할 일은 오늘" = "Today's Todos, Today";
+"오늘은 미루지 않고 마무리해요" = "Finish without postponing today";
+"3일 연속" = "3-Day Streak";
+"3일 연속 완료해요" = "Complete 3 days in a row";
+"7일 연속" = "7-Day Streak";
+"7일 연속 완료해요" = "Complete 7 days in a row";
+"14일 연속" = "14-Day Streak";
+"14일 연속 완료해요" = "Complete 14 days in a row";
+"21일 연속" = "21-Day Streak";
+"21일 연속 완료해요" = "Complete 21 days in a row";
+"한달 연속" = "30-Day Streak";
+"30일 연속 완료해요" = "Complete 30 days in a row";
+"60일 연속" = "60-Day Streak";
+"60일 연속 완료해요" = "Complete 60 days in a row";
+"100일 연속" = "100-Day Streak";
+"100일 연속 완료해요" = "Complete 100 days in a row";
+"첫 걸음" = "First Step";
+"할일을 처음으로 완료해요" = "Complete your first todo";
+"10개 완료" = "10 Completed";
+"할일을 누적 10개 완료해요" = "Complete 10 todos in total";
+"30개 완료" = "30 Completed";
+"할일을 누적 30개 완료해요" = "Complete 30 todos in total";
+"50개 완료" = "50 Completed";
+"할일을 누적 50개 완료해요" = "Complete 50 todos in total";
+"100개 완료" = "100 Completed";
+"할일을 누적 100개 완료해요" = "Complete 100 todos in total";
+"200개 완료" = "200 Completed";
+"할일을 누적 200개 완료해요" = "Complete 200 todos in total";
+"365개 완료" = "365 Completed";
+"할일을 누적 365개 완료해요" = "Complete 365 todos in total";
+"퍼펙트 3회" = "3 Perfect Days";
+"퍼펙트 데이를 3회 달성해요" = "Achieve 3 perfect days";
+"퍼펙트 7회" = "7 Perfect Days";
+"퍼펙트 데이를 7회 달성해요" = "Achieve 7 perfect days";
+"퍼펙트 15회" = "15 Perfect Days";
+"퍼펙트 데이를 15회 달성해요" = "Achieve 15 perfect days";
+"퍼펙트 30회" = "30 Perfect Days";
+"퍼펙트 데이를 30회 달성해요" = "Achieve 30 perfect days";
+"퍼펙트 50회" = "50 Perfect Days";
+"퍼펙트 데이를 50회 달성해요" = "Achieve 50 perfect days";
 
-//Func_makeToastMessageFunc
-"toastMessage" = "Please write to-dos in 50 characters or less.";
+// MARK: - Achievements
+"시작이 반" = "Off to a Start";
+"첫 번째 할일 완료" = "Complete your first todo";
+"일주일 전사" = "Week Warrior";
+"7일 연속 완료" = "7-day streak";
+"하루 모든 할일 완료" = "All todos in a day";
+"100 돌파" = "Cleared 100";
+"누적 100개 완료" = "Complete 100 todos";
+"한달 마스터" = "Month Master";
+"30일 연속 완료" = "30-day streak";
+"레전드" = "Legend";
+"모든 업적 달성" = "All achievements unlocked";
 
-"already_completed_todo_toastMessage" = "This is a to-do that has already been completed.";
+// MARK: - Character Names
+"핑코" = "Pinko";
+"삐약" = "Chick";
+"민티" = "Minty";
+"보리" = "Bori";
+"황금이" = "Goldie";
+"블루" = "Blue";
+"라일락" = "Lilac";
+"레드" = "Red";
+"오렌지" = "Orange";
+"흑요석" = "Obsidian";
+"눈꽃" = "Snowflake";
+"별이" = "Star";
+"구름이" = "Cloud";
+"불꽃" = "Flame";
+"물방울" = "Drop";
+"새싹" = "Sprout";
+"달빛" = "Moon";
+"태양이" = "Sun";
+"무지개" = "Rainbow";
 
-//MainTableViewCell
-"CellPlaceHolder" = "Please enter your to-do.";
+// MARK: - Character Unlock Conditions
+"기본 캐릭터" = "Default";
+"모든 캐릭터 해금" = "All characters unlocked";
 
-//CalendarViewController
-"TodoCountLabel_Text %d" = "A total of %d cases have been recorded.";
-
-//customAlert
-"Alert_Cancel_Title" = "Cancel";
-//MARK: -- ViewController
-
-//MARK: -- CustomMenuPopupView
-
-"DetailTitleLable_Text" = "Detailed settings";
-
-"CancelButton_SetTitle" = "Ok";
-
-"SetImportanceButton_SetTitle" = "[ Importance ]";
-
-"SetImportanceStatusLabel_Text" = "...[ Low ]";
-
-"SetFavoriteStatusButton_SetTitle" = "[ Favorites ]";
-
-"SetFavoriteStatusLabel_Text" = "...[ OFF ]";
-
-"DeleteButton_SetTitle" = "[ Delete ]";
-//MARK: -- CustomMenuPopupView
-
-//MARK: -- CustomMenuPopupViewController
-
-"tasks[receivedTag!].importance_0" = "...[ Low ]";
-"tasks[receivedTag!].importance_1" = "...[ Medium ]";
-"tasks[receivedTag!].importance_2" = "...[ High ]";
-
-"tasks[receivedTag!].favorite_ON" = "...[ ON ]";
-"tasks[receivedTag!].favorite_OFF" = "...[ OFF ]";
-//MARK: -- CustomMenuPopupViewController
-
-//MARK: -- CustomNotePopupViewController
-"NoteSaveButtonClicked_ToastMessage" = "Saved Your Memo";
-
-//MARK: -- CustomNotePopupViewController
-
-//MARK: -- CustomNotePopupView
-
-"NoteNameLabel_Text" = "Take notes";
-
-"NoteSaveButton_SetTitle" = "Save";
-//MARK: -- CustomMenuPopupView
-
+// MARK: - Repository Errors
+"데이터를 찾을 수 없습니다." = "Data not found.";
+"잘못된 데이터 식별자입니다." = "Invalid data identifier.";
+"잔액이 부족합니다." = "Insufficient balance.";

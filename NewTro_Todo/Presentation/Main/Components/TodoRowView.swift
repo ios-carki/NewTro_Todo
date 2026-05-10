@@ -35,7 +35,7 @@ struct TodoRowView: View {
     }
 
     private func showLockedToast() {
-        viewModel.showToast("지난 날의 Todo는 수정할 수 없습니다")
+        viewModel.showToast("지난 날의 Todo는 수정할 수 없습니다".localized())
     }
 
     // MARK: - Priority strip (left 6px)
@@ -180,7 +180,7 @@ struct TodoRowView: View {
     // MARK: - Helpers
     private func openEdit() {
         guard !todo.isCompleted else {
-            viewModel.showToast("완료한 투두는 수정할 수 없습니다")
+            viewModel.showToast("완료한 투두는 수정할 수 없습니다".localized())
             return
         }
         viewModel.presentEditTodo(todo)

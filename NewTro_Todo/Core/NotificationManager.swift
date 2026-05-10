@@ -12,7 +12,7 @@ final class NotificationManager {
     func schedule(todoId: String, text: String, emoji: String, at date: Date) {
         let content = UNMutableNotificationContent()
         let prefix = emoji.isEmpty ? "" : "\(emoji) "
-        content.title = "할 일 알림"
+        content.title = "할 일 알림".localized()
         content.body = prefix + text
         content.sound = .default
 

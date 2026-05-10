@@ -156,18 +156,18 @@ enum MemoSortType: String, CaseIterable {
     case newest = "최신순"
     case oldest = "오래된 순"
     case color  = "색상순"
+
+    var displayName: String { rawValue.localized() }
 }
 
 // MARK: - Filter label (presentation extension)
 extension MemoFilter {
     var label: String {
         switch self {
-        case .all:          return "전체"
-        case .today:        return "오늘"
-        case .days(7):      return "7일"
-        case .days(30):     return "30일"
-        case .days(let n):  return "\(n)일"
-        case .range:        return "기간"
+        case .all:          return "전체".localized()
+        case .today:        return "오늘".localized()
+        case .days(let n):  return "%d일".localized(with: n)
+        case .range:        return "기간".localized()
         }
     }
 }

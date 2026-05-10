@@ -17,6 +17,13 @@ let project = Project(
             deploymentTargets: .iOS("15.0"),
             infoPlist: .extendingDefault(with: [
                 "UILaunchScreen": .dictionary([:]),
+                "CFBundleDevelopmentRegion": .string("ko"),
+                "CFBundleLocalizations": .array([
+                    .string("ko"),
+                    .string("en"),
+                    .string("zh-Hans"),
+                    .string("ja"),
+                ]),
                 "UIAppFonts": .array([
                     .string("Galmuri11-Bold.ttf"),
                     .string("Galmuri11-Condensed.ttf"),
