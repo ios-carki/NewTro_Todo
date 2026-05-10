@@ -118,14 +118,6 @@ struct SettingsView: View {
     private var settingsPanel: some View {
         PixelPanel(bg: .white, padding: 0) {
             VStack(spacing: 0) {
-                settingRow(label: "언어") {
-                    SegToggle(
-                        options: [("ko", "한국어"), ("en", "English"), ("zh-Hans", "中文"), ("ja", "日本語")],
-                        selected: viewModel.language
-                    ) { viewModel.language = $0 }
-                }
-                Divider().background(Color.ink.opacity(0.2)).padding(.horizontal, 14)
-
                 settingRow(label: "테마") {
                     SegToggle(
                         options: [("peach", "복숭아"), ("pink", "핑크"), ("sun", "햇살")],
