@@ -26,7 +26,6 @@
 "메모장" = "Notes";
 "통계" = "Stats";
 "설정" = "Settings";
-"소개" = "About";
 "마스코트 변경" = "Change Mascot";
 "데이터 초기화" = "Reset Data";
 "메모 삭제" = "Delete Note";
@@ -97,19 +96,13 @@
 
 // MARK: - Settings
 "내 마스코트" = "My Mascot";
-"마스코트 화면" = "Mascot Screen";
+"타이틀 화면" = "Title Screen";
 "튜토리얼 다시 보기" = "Show Tutorial";
+"ON 시 앱 실행마다 타이틀 화면이 표시됩니다." = "When ON, the title screen appears on every app launch.";
+"Todo 화면에 대한 설명을 다시 볼 수 있어요." = "Replay the explanation of the Todo screen.";
 "모든 데이터 초기화" = "Reset All Data";
 "모든 할일과 메모가 삭제됩니다. 계속하시겠어요?" = "All todos and notes will be deleted. Continue?";
-"언어" = "Language";
-"테마" = "Theme";
-"복숭아" = "Peach";
-"핑크" = "Pink";
-"햇살" = "Sun";
-"스캔라인" = "Scanline";
 "레트로 감성 할 일 관리" = "Retro vibe todo manager";
-"최고의 투두앱 ♡" = "The best todo app ♡";
-"마스코트 화면 ON 시\n앱 실행마다 표시됩니다" = "When Mascot Screen is ON,\nshown on every app launch";
 
 // MARK: - Memo Sort/Filter
 "전체" = "All";

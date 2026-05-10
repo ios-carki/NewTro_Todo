@@ -4,15 +4,6 @@ import Foundation
 final class SettingsViewModel: ObservableObject {
 
     // MARK: - Settings (UserDefaults 동기화)
-    @Published var language: String {
-        didSet { UserDefaults.standard.set(language, forKey: "appLanguage") }
-    }
-    @Published var theme: String {
-        didSet { UserDefaults.standard.set(theme, forKey: "appTheme") }
-    }
-    @Published var scanlineOn: Bool {
-        didSet { UserDefaults.standard.set(scanlineOn, forKey: "scanlineEnabled") }
-    }
     @Published var welcomeOnLaunch: Bool {
         didSet { UserDefaults.standard.set(welcomeOnLaunch, forKey: "showWelcomeOnLaunch") }
     }
@@ -29,9 +20,6 @@ final class SettingsViewModel: ObservableObject {
 
     init(clearAllDataUseCase: any ClearAllDataUseCaseProtocol) {
         self.clearAllDataUseCase = clearAllDataUseCase
-        self.language            = UserDefaults.standard.string(forKey: "appLanguage")       ?? "ko"
-        self.theme               = UserDefaults.standard.string(forKey: "appTheme")          ?? "peach"
-        self.scanlineOn          = UserDefaults.standard.bool(forKey: "scanlineEnabled")
         self.welcomeOnLaunch     = UserDefaults.standard.bool(forKey: "showWelcomeOnLaunch")
         self.selectedCharacterId = UserDefaults.standard.string(forKey: "selectedCharacterId") ?? "pinko"
     }
