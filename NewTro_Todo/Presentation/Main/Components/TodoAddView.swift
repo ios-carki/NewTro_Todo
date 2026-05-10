@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct TodoAddView: View {
     @ObservedObject var viewModel: MainViewModel
@@ -206,6 +207,23 @@ struct TodoAddView: View {
     // MARK: - Text Input
     // ZStack 컨테이너의 frame 높이가 애니메이션되고, 내부 컨텐츠는 opacity 전환.
 
+    @ViewBuilder
+    private var todoTextEditor: some View {
+        if #available(iOS 16.0, *) {
+            TextEditor(text: $text)
+                .font(.galBold14())
+                .foregroundColor(.ink)
+                .scrollContentBackground(.hidden)
+                .background(Color.clear)
+        } else {
+            TextEditor(text: $text)
+                .font(.galBold14())
+                .foregroundColor(.ink)
+                .background(Color.clear)
+                .onAppear { UITextView.appearance().backgroundColor = .clear }
+        }
+    }
+
     private var textInputSection: some View {
         ZStack(alignment: isExpanded ? .topLeading : .leading) {
             if isExpanded {
@@ -216,10 +234,7 @@ struct TodoAddView: View {
                             .padding(.top, 10)
                             .padding(.leading, 10)
                     }
-                    TextEditor(text: $text)
-                        .font(.galBold14())
-                        .foregroundColor(.ink)
-                        .background(Color.clear)
+                    todoTextEditor
                         .padding(.leading, selectedEmoji.isEmpty ? 6 : 28)
                         .padding(.vertical, 4)
 
