@@ -10,6 +10,12 @@ struct RootTabContainerView: View {
     // ZStack은 safe area 없이 물리적 전체 화면을 채움 → safe area 값을 직접 읽어야 함
     @State private var safeAreaBottom: CGFloat = 34
 
+    // 같은 탭 재선택 시 NavigationView를 재생성해 root까지 pop
+    @State private var todoTabId     = UUID()
+    @State private var memoTabId     = UUID()
+    @State private var statsTabId    = UUID()
+    @State private var settingsTabId = UUID()
+
     @AppStorage("hasSeenTodoOnboarding") private var hasSeenOnboarding: Bool = false
     @State private var showCoachmark: Bool = false
 
@@ -101,13 +107,13 @@ struct RootTabContainerView: View {
     private var tabContent: some View {
         switch selectedTab {
         case .todo:
-            MainView(viewModel: mainVM)
+            MainView(viewModel: mainVM).id(todoTabId)
         case .memo:
-            MemoView(viewModel: memoVM)
+            MemoView(viewModel: memoVM).id(memoTabId)
         case .stats:
-            StatsView(viewModel: statsVM)
+            StatsView(viewModel: statsVM).id(statsTabId)
         case .settings:
-            SettingsView(viewModel: settingsVM, statsVM: statsVM)
+            SettingsView(viewModel: settingsVM, statsVM: statsVM).id(settingsTabId)
         }
     }
     
@@ -125,12 +131,29 @@ struct RootTabContainerView: View {
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
         .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
     }
-    
+
+    // MARK: - Tab Reset
+
+    private func resetTab(_ tab: AppTab) {
+        switch tab {
+        case .todo:     todoTabId = UUID()
+        case .memo:     memoTabId = UUID()
+        case .stats:    statsTabId = UUID()
+        case .settings: settingsTabId = UUID()
+        }
+    }
+
     // MARK: - Tab Item
     
     private func tabItem(_ tab: AppTab, label: LocalizedStringKey, sfSymbol: String) -> some View {
         let isActive = selectedTab == tab
-        return Button { selectedTab = tab } label: {
+        return Button {
+            if isActive {
+                resetTab(tab)
+            } else {
+                selectedTab = tab
+            }
+        } label: {
             VStack(spacing: 5) {
                 Spacer(minLength: 0)
                 

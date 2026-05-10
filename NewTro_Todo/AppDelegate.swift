@@ -62,9 +62,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor.mainBackGroundColor
+        appearance.shadowColor = .clear
+
+        let titleFont = UIFont(name: "Galmuri11-Bold", size: 17) ?? .boldSystemFont(ofSize: 17)
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.inkC,
+            .font: titleFont,
+        ]
+
+        let backItemAppearance = UIBarButtonItemAppearance()
+        backItemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
+        appearance.backButtonAppearance = backItemAppearance
+
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().tintColor = .inkC
+
         return true
     }
 

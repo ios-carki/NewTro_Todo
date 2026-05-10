@@ -5,11 +5,14 @@ struct MascotPickerView: View {
     @ObservedObject var statsVM: StatsViewModel
 
     @State private var unlockInfo: FriendCharInfo?
+    @State private var filter: MascotFilter = .all
 
     private let columns = [
         GridItem(.flexible(), spacing: 10),
         GridItem(.flexible(), spacing: 10),
     ]
+
+    private let selectedCardBg = Color(hex: "#C8EEF7")
 
     var body: some View {
         ZStack {
@@ -26,13 +29,12 @@ struct MascotPickerView: View {
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
 
-                    LazyVGrid(columns: columns, spacing: 10) {
-                        ForEach(CharacterData.all) { info in
-                            mascotCard(info)
-                        }
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 32)
+                    filterBar
+                        .padding(.horizontal, 12)
+
+                    mascotContent
+                        .padding(.horizontal, 12)
+                        .padding(.bottom, 120)
                 }
             }
         }
@@ -51,14 +53,99 @@ struct MascotPickerView: View {
         return String(format: "%d/%d 해금".localized(), unlocked, CharacterData.all.count)
     }
 
+    // MARK: - Filter
+
+    private var filterBar: some View {
+        HStack(spacing: 8) {
+            ForEach(MascotFilter.allCases, id: \.self) { f in
+                filterChip(f)
+            }
+            Spacer(minLength: 0)
+        }
+    }
+
+    private func filterChip(_ f: MascotFilter) -> some View {
+        let isOn = filter == f
+        return Button {
+            withAnimation(.easeOut(duration: 0.12)) { filter = f }
+        } label: {
+            Text(f.label)
+                .font(.pressStart7())
+                .foregroundColor(isOn ? .cream : .ink)
+                .padding(.horizontal, 12)
+                .frame(height: 26)
+                .background(isOn ? Color.ink : Color.cream)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+        }
+        .buttonStyle(.plain)
+    }
+
+    // MARK: - Content
+
+    @ViewBuilder
+    private var mascotContent: some View {
+        let owned   = CharacterData.all.filter { statsVM.stats.unlockedCharacterIds.contains($0.id) }
+        let locked  = CharacterData.all.filter { !statsVM.stats.unlockedCharacterIds.contains($0.id) }
+
+        switch filter {
+        case .all:
+            VStack(alignment: .leading, spacing: 12) {
+                if !owned.isEmpty {
+                    sectionHeader(title: "OWNED", count: owned.count, icon: "checkmark.seal.fill")
+                        .padding(.top, 4)
+                    grid(items: owned)
+                }
+                if !locked.isEmpty {
+                    sectionHeader(title: "LOCKED", count: locked.count, icon: "lock.fill")
+                        .padding(.top, 12)
+                    grid(items: locked)
+                }
+            }
+        case .owned:
+            grid(items: owned)
+        case .locked:
+            grid(items: locked)
+        }
+    }
+
+    private func grid(items: [FriendCharInfo]) -> some View {
+        LazyVGrid(columns: columns, spacing: 10) {
+            ForEach(items) { info in
+                mascotCard(info)
+            }
+        }
+    }
+
+    private func sectionHeader(title: String, count: Int, icon: String) -> some View {
+        HStack(spacing: 6) {
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(.ink)
+                Text("\(title)  \(count)")
+                    .font(.pressStart9())
+                    .foregroundColor(.ink)
+            }
+            .padding(.horizontal, 10)
+            .frame(height: 26)
+            .background(Color.cream)
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+
+            Spacer(minLength: 0)
+        }
+        .padding(.leading, 2)
+    }
+
     // MARK: - Card
     private func mascotCard(_ info: FriendCharInfo) -> some View {
         let isUnlocked = statsVM.stats.unlockedCharacterIds.contains(info.id)
         let isSelected = settingsVM.selectedCharacterId == info.id
 
-        return PixelPanel(bg: isSelected ? Color.sun.opacity(0.25) : .panel, padding: 10) {
+        return PixelPanel(bg: isSelected ? selectedCardBg : .panel, padding: 10) {
             VStack(spacing: 8) {
-                portrait(info: info, isUnlocked: isUnlocked)
+                portrait(info: info)
 
                 Text(isUnlocked ? LocalizedStringKey(info.name) : LocalizedStringKey("???"))
                     .font(.pressStart9())
@@ -92,7 +179,7 @@ struct MascotPickerView: View {
         }
     }
 
-    private func portrait(info: FriendCharInfo, isUnlocked: Bool) -> some View {
+    private func portrait(info: FriendCharInfo) -> some View {
         ZStack {
             Color.cream
                 .frame(width: 76, height: 76)
@@ -103,8 +190,6 @@ struct MascotPickerView: View {
                 palette: info.palette,
                 scale: 5
             )
-            .grayscale(isUnlocked ? 0 : 1)
-            .opacity(isUnlocked ? 1 : 0.45)
         }
     }
 
@@ -169,9 +254,7 @@ struct MascotPickerView: View {
 
     // MARK: - Unlock Info Popup
     private func unlockInfoOverlay(_ info: FriendCharInfo) -> some View {
-        let isUnlocked = statsVM.stats.unlockedCharacterIds.contains(info.id)
-
-        return ZStack {
+        ZStack {
             Color.black.opacity(0.55)
                 .ignoresSafeArea()
                 .contentShape(Rectangle())
@@ -189,8 +272,6 @@ struct MascotPickerView: View {
                         palette: info.palette,
                         scale: 7
                     )
-                    .grayscale(isUnlocked ? 0 : 1)
-                    .opacity(isUnlocked ? 1 : 0.45)
                 }
 
                 Text(LocalizedStringKey(info.name))
@@ -232,6 +313,20 @@ struct MascotPickerView: View {
             .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
             .padding(.horizontal, 40)
             .transition(.opacity)
+        }
+    }
+}
+
+// MARK: - Filter Enum
+
+enum MascotFilter: CaseIterable {
+    case all, owned, locked
+
+    var label: LocalizedStringKey {
+        switch self {
+        case .all:    return "ALL"
+        case .owned:  return "OWNED"
+        case .locked: return "LOCKED"
         }
     }
 }
