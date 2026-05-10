@@ -55,8 +55,6 @@ struct TodoActionMenuView: View {
                 .padding(.bottom, 24)
             }
         }
-        .presentationDetents([.height(viewModel.isViewingPastDate ? 220 : 360)])
-        .presentationDragIndicator(.visible)
     }
 
     private func actionRow(

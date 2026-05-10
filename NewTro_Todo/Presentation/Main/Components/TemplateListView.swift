@@ -1,12 +1,5 @@
 import SwiftUI
 
-// Navigation destinations for the template flow (used inside TodoAddView's NavigationStack)
-enum TemplateNavDest: Hashable {
-    case templateList
-    case newTemplate
-    case editTemplate(TemplateEntity)
-}
-
 struct TemplateListView: View {
     @ObservedObject var viewModel: MainViewModel
     @Environment(\.dismiss) private var dismiss
@@ -36,7 +29,7 @@ struct TemplateListView: View {
 
                     Spacer()
 
-                    NavigationLink(value: TemplateNavDest.newTemplate) {
+                    NavigationLink(destination: TemplateFormView(viewModel: viewModel, editingTemplate: nil)) {
                         Text("+ 추가")
                             .font(.pressStart7())
                             .foregroundColor(.ink)
@@ -93,7 +86,7 @@ struct TemplateListView: View {
                 Spacer(minLength: 4)
 
                 // 편집 버튼
-                NavigationLink(value: TemplateNavDest.editTemplate(template)) {
+                NavigationLink(destination: TemplateFormView(viewModel: viewModel, editingTemplate: template)) {
                     Text("✎")
                         .font(.pressStart9())
                         .foregroundColor(.shade)

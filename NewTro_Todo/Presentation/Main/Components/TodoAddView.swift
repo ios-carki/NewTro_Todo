@@ -4,7 +4,7 @@ struct TodoAddView: View {
     @ObservedObject var viewModel: MainViewModel
     @Environment(\.dismiss) private var dismiss
     var editingTodo: TodoEntity? = nil
-    @Binding var selectedDetent: PresentationDetent
+    @Binding var isExpanded: Bool
 
     @State private var text: String = ""
     @State private var selectedEmoji: String = ""
@@ -18,7 +18,6 @@ struct TodoAddView: View {
 
     private let emojis = ["🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️", "☕"]
     private var isEditMode: Bool { editingTodo != nil }
-    private var isExpanded: Bool { selectedDetent == .large }
     private var isEmpty: Bool { text.trimmingCharacters(in: .whitespaces).isEmpty }
 
     var body: some View {
@@ -47,7 +46,7 @@ struct TodoAddView: View {
                                     insertion: .opacity.combined(with: .move(edge: .bottom)),
                                     removal: .opacity
                                 ))
-                            NavigationLink(value: TemplateNavDest.templateList) {
+                            NavigationLink(destination: TemplateListView(viewModel: viewModel)) {
                                 HStack {
                                     Text("저장된 템플릿")
                                         .font(.galBold14())
@@ -220,7 +219,6 @@ struct TodoAddView: View {
                     TextEditor(text: $text)
                         .font(.galBold14())
                         .foregroundColor(.ink)
-                        .scrollContentBackground(.hidden)
                         .background(Color.clear)
                         .padding(.leading, selectedEmoji.isEmpty ? 6 : 28)
                         .padding(.vertical, 4)
@@ -418,5 +416,5 @@ struct TodoAddScrollHeightKey: PreferenceKey {
 
 #Preview { @MainActor in
     let di = DIContainer()
-    return TodoAddView(viewModel: di.makeMainViewModel(), selectedDetent: .constant(.height(380)))
+    return TodoAddView(viewModel: di.makeMainViewModel(), isExpanded: .constant(true))
 }

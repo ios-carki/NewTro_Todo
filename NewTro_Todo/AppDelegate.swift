@@ -19,6 +19,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         RealmConfiguration.setup()
 
+        // iOS 15 호환 — scrollContentBackground(.hidden) 대체
+        UITableView.appearance().backgroundColor = .clear
+        UITextView.appearance().backgroundColor = .clear
+
         //로컬노티 딜리게이트
         UNUserNotificationCenter.current().delegate = self
         

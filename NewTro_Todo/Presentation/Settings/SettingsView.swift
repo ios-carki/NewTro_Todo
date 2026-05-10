@@ -5,7 +5,7 @@ struct SettingsView: View {
     @ObservedObject var statsVM: StatsViewModel
 
     var body: some View {
-        NavigationStack {
+        NavigationView {
             ZStack(alignment: .bottom) {
                 Color.sky.ignoresSafeArea()
 
@@ -36,6 +36,7 @@ struct SettingsView: View {
                 Text("모든 할일과 메모가 삭제됩니다. 계속하시겠어요?")
             }
         }
+        .navigationViewStyle(.stack)
     }
 
     // MARK: - Header

@@ -35,7 +35,6 @@ struct MainView: View {
             case .actionMenu(let todo):
                 TodoActionMenuView(todo: todo, viewModel: viewModel)
                     .interactiveDismissDisabled(true)
-                    .presentationDragIndicator(.hidden)
             case .postpone(let todo):
                 PostponeMenuView(todo: todo, viewModel: viewModel)
             case .datePicker:
@@ -275,7 +274,6 @@ struct MainView: View {
                         .listRowInsets(EdgeInsets())
                 }
                 .listStyle(.plain)
-                .scrollContentBackground(.hidden)
                 .environment(\.editMode, $editMode)
             }
         }
@@ -357,46 +355,12 @@ struct MainView: View {
 private struct TodoAddSheetWrapper: View {
     @ObservedObject var viewModel: MainViewModel
     var editingTodo: TodoEntity? = nil
-    @State private var selectedDetent: PresentationDetent = .height(400)
-    @State private var compactHeight: CGFloat = 400
-    @State private var keyboardActiveInCompact: Bool = false
-
-    private func templateNav(_ dest: TemplateNavDest) -> some View {
-        switch dest {
-        case .templateList:      AnyView(TemplateListView(viewModel: viewModel))
-        case .newTemplate:       AnyView(TemplateFormView(viewModel: viewModel, editingTemplate: nil))
-        case .editTemplate(let t): AnyView(TemplateFormView(viewModel: viewModel, editingTemplate: t))
-        }
-    }
-
-    private var availableDetents: Set<PresentationDetent> {
-        // 키보드가 compact 상태에서 올라오면 .large 옵션 제거 → iOS 자동 승격 방지
-        keyboardActiveInCompact ? [.height(compactHeight)] : [.height(compactHeight), .large]
-    }
 
     var body: some View {
-        NavigationStack {
-            TodoAddView(viewModel: viewModel, editingTodo: editingTodo, selectedDetent: $selectedDetent)
-                .navigationDestination(for: TemplateNavDest.self) { templateNav($0) }
+        NavigationView {
+            TodoAddView(viewModel: viewModel, editingTodo: editingTodo, isExpanded: .constant(true))
         }
-        .presentationDetents(availableDetents, selection: $selectedDetent)
-        .presentationDragIndicator(.visible)
-        .onPreferenceChange(TodoAddScrollHeightKey.self) { scrollH in
-            guard scrollH > 0, selectedDetent != .large else { return }
-            let clamped = min(max(scrollH, 320), 520)
-            if abs(clamped - compactHeight) > 4 {
-                compactHeight = clamped
-                selectedDetent = .height(clamped)
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
-            if selectedDetent != .large {
-                keyboardActiveInCompact = true
-            }
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-            keyboardActiveInCompact = false
-        }
+        .navigationViewStyle(.stack)
     }
 }
 
