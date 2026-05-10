@@ -57,8 +57,6 @@ struct DatePickerSheetView: View {
                     .padding(.bottom, 20)
             }
         }
-        .presentationDetents([.large])
-        .presentationDragIndicator(.visible)
         .onAppear { loadStats(for: selectedDate) }
     }
 

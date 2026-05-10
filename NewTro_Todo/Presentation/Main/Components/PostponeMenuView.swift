@@ -72,8 +72,6 @@ struct PostponeMenuView: View {
                 .padding(.bottom, 32)
             }
         }
-        .presentationDetents([.large])
-        .presentationDragIndicator(.visible)
     }
 
     // MARK: - Helpers

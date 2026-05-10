@@ -14,7 +14,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.jun.NewTro-Todo",
-            deploymentTargets: .iOS("16.0"),
+            deploymentTargets: .iOS("15.0"),
             infoPlist: .extendingDefault(with: [
                 "UILaunchScreen": .dictionary([:]),
                 "UIAppFonts": .array([
@@ -63,7 +63,7 @@ let project = Project(
             destinations: .iOS,
             product: .appExtension,
             bundleId: "com.jun.NewTro-Todo.NewtroWidget",
-            deploymentTargets: .iOS("16.0"),
+            deploymentTargets: .iOS("15.0"),
             infoPlist: .extendingDefault(with: [
                 "UIAppFonts": .array([
                     .string("Galmuri11-Bold.ttf"),
@@ -112,7 +112,7 @@ let project = Project(
             destinations: .iOS,
             product: .uiTests,
             bundleId: "com.jun.NewTro-Todo.UITests",
-            deploymentTargets: .iOS("16.0"),
+            deploymentTargets: .iOS("15.0"),
             sources: ["NewTro_TodoUITests/**/*.swift"],
             dependencies: [
                 .target(name: "NewTro_Todo"),
