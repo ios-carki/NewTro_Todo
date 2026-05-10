@@ -58,7 +58,7 @@ struct TodoActionMenuView: View {
     }
 
     private func actionRow(
-        title: String,
+        title: LocalizedStringKey,
         icon: String,
         color: Color,
         isDestructive: Bool = false,
@@ -82,7 +82,7 @@ struct TodoActionMenuView: View {
         }
     }
 
-    private var importanceTitle: String {
+    private var importanceTitle: LocalizedStringKey {
         switch todo.importance {
         case .none:   return "중요도: 없음 → 높음"
         case .high:   return "중요도: 높음 → 중간"
@@ -98,7 +98,7 @@ struct TodoActionMenuView: View {
         }
     }
 
-    private var favoriteTitle: String {
+    private var favoriteTitle: LocalizedStringKey {
         todo.isFavorite ? "즐겨찾기 해제" : "즐겨찾기 추가"
     }
 }

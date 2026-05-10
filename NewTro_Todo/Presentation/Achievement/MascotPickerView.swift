@@ -41,7 +41,7 @@ struct MascotPickerView: View {
                 .padding(.bottom, 32)
             }
         }
-        .navigationTitle("마스코트 변경")
+        .navigationTitle(Text("마스코트 변경"))
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { statsVM.loadStats() }
     }
@@ -101,7 +101,7 @@ private struct MascotCell: View {
                     }
                 }
 
-                Text(info.name)
+                Text(LocalizedStringKey(info.name))
                     .font(.pressStart7())
                     .foregroundColor(.ink)
                     .lineLimit(1)

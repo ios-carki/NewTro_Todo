@@ -333,7 +333,7 @@ final class MainViewModel: ObservableObject {
             do {
                 _ = try await addTemplateUseCase.execute(text: text, emoji: emoji, importance: importance)
                 templates = try await fetchTemplatesUseCase.execute()
-                showToast("템플릿 저장 완료")
+                showToast("템플릿 저장 완료".localized())
             } catch { errorMessage = error.localizedDescription }
         }
     }
