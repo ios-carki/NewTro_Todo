@@ -4,13 +4,6 @@ let project = Project(
     name: "NewTro_Todo",
     organizationName: "Carki",
     packages: [
-        // 리펙토링 후 제거 예정 (UIKit → SwiftUI 전환 시 삭제)
-        .remote(url: "https://github.com/SnapKit/SnapKit.git", requirement: .upToNextMajor(from: "5.6.0")),
-        .remote(url: "https://github.com/scalessec/Toast-Swift.git", requirement: .upToNextMajor(from: "5.0.1")),
-        .remote(url: "https://github.com/WenchaoD/FSCalendar.git", requirement: .upToNextMajor(from: "2.8.4")),
-        .remote(url: "https://github.com/hackiftekhar/IQKeyboardManager.git", requirement: .upToNextMajor(from: "6.5.10")),
-        .remote(url: "https://github.com/vtourraine/AcknowList.git", requirement: .upToNextMajor(from: "3.0.0")),
-        // 유지
         .remote(url: "https://github.com/realm/realm-swift.git", requirement: .exact("10.30.0")),
         .remote(url: "https://github.com/firebase/firebase-ios-sdk", requirement: .upToNextMajor(from: "9.6.0")),
     ],
@@ -53,12 +46,7 @@ let project = Project(
             ],
             entitlements: .file(path: "NewTro_Todo/NewTro_Todo.entitlements"),
             dependencies: [
-                .package(product: "SnapKit"),
-                .package(product: "Toast"),
-                .package(product: "FSCalendar"),
-                .package(product: "IQKeyboardManagerSwift"),
                 .package(product: "RealmSwift"),
-                .package(product: "AcknowList"),
                 .package(product: "FirebaseMessaging"),
                 .target(name: "NewtroWidget"),
             ],
