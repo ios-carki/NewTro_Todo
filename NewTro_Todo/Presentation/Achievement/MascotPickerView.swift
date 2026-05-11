@@ -70,10 +70,10 @@ struct MascotPickerView: View {
             withAnimation(.easeOut(duration: 0.12)) { filter = f }
         } label: {
             Text(f.label)
-                .font(.pressStart7())
+                .font(.galBold13())
                 .foregroundColor(isOn ? .cream : .ink)
                 .padding(.horizontal, 12)
-                .frame(height: 26)
+                .frame(height: 28)
                 .background(isOn ? Color.ink : Color.cream)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                 .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
@@ -92,12 +92,12 @@ struct MascotPickerView: View {
         case .all:
             VStack(alignment: .leading, spacing: 12) {
                 if !owned.isEmpty {
-                    sectionHeader(title: "OWNED", count: owned.count, icon: "checkmark.seal.fill")
+                    sectionHeader(titleKey: "보유중", count: owned.count, icon: "checkmark.seal.fill")
                         .padding(.top, 4)
                     grid(items: owned)
                 }
                 if !locked.isEmpty {
-                    sectionHeader(title: "LOCKED", count: locked.count, icon: "lock.fill")
+                    sectionHeader(titleKey: "미보유", count: locked.count, icon: "lock.fill")
                         .padding(.top, 12)
                     grid(items: locked)
                 }
@@ -117,18 +117,21 @@ struct MascotPickerView: View {
         }
     }
 
-    private func sectionHeader(title: String, count: Int, icon: String) -> some View {
+    private func sectionHeader(titleKey: String, count: Int, icon: String) -> some View {
         HStack(spacing: 6) {
             HStack(spacing: 6) {
                 Image(systemName: icon)
                     .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.ink)
-                Text("\(title)  \(count)")
-                    .font(.pressStart9())
+                Text(LocalizedStringKey(titleKey))
+                    .font(.galBold13())
                     .foregroundColor(.ink)
+                Text("\(count)")
+                    .font(.pressStart7())
+                    .foregroundColor(.shade)
             }
             .padding(.horizontal, 10)
-            .frame(height: 26)
+            .frame(height: 28)
             .background(Color.cream)
             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
             .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
@@ -324,9 +327,9 @@ enum MascotFilter: CaseIterable {
 
     var label: LocalizedStringKey {
         switch self {
-        case .all:    return "ALL"
-        case .owned:  return "OWNED"
-        case .locked: return "LOCKED"
+        case .all:    return "전체"
+        case .owned:  return "보유중만 보기"
+        case .locked: return "미보유만 보기"
         }
     }
 }

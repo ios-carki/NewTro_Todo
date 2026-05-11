@@ -70,9 +70,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             .font: titleFont,
         ]
 
+        // 백버튼 텍스트 숨김
         let backItemAppearance = UIBarButtonItemAppearance()
         backItemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
         appearance.backButtonAppearance = backItemAppearance
+
+        // 백버튼 chevron 색을 ink로 고정 (SwiftUI NavigationLink가 기본 시스템 틴트를 쓰는 문제 회피)
+        let chevronConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
+        let chevronImage = UIImage(systemName: "chevron.backward", withConfiguration: chevronConfig)?
+            .withTintColor(.inkC, renderingMode: .alwaysOriginal)
+        appearance.setBackIndicatorImage(chevronImage, transitionMaskImage: chevronImage)
 
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance

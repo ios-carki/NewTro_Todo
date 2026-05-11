@@ -150,6 +150,10 @@
 "적용하기" = "Apply";
 "잠김" = "Locked";
 "획득 조건" = "Unlock Condition";
+"보유중만 보기" = "OWNED";
+"미보유만 보기" = "LOCKED";
+"보유중" = "OWNED";
+"미보유" = "LOCKED";
 
 // MARK: - Challenge Categories
 "오늘의 도전" = "Daily Challenge";
