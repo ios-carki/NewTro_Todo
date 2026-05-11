@@ -17,6 +17,9 @@ final class MainCoordinator: CoordinatorProtocol {
     }
 
     @MainActor func start() {
+        // 인스턴스 단위 백버튼 chevron 틴트 고정 (UINavigationBar.appearance만으로는 SwiftUI 푸시 시 시스템 파란색이 그대로 보임)
+        navigationController.navigationBar.tintColor = .inkC
+
         let mainVM     = diContainer.makeMainViewModel()
         let memoVM     = diContainer.makeMemoViewModel()
         let statsVM    = diContainer.makeStatsViewModel()

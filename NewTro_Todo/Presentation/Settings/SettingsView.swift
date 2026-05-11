@@ -113,7 +113,7 @@ struct SettingsView: View {
                 NavigationLink {
                     AchievementView(statsVM: statsVM)
                 } label: {
-                    settingRowNavigation(label: "업적 & 도전과제", icon: "trophy.fill")
+                    settingRowNavigation(label: "도전과제", icon: "trophy.fill")
                 }
             }
         }

@@ -62,9 +62,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor.mainBackGroundColor
+        appearance.shadowColor = .clear
+
+        let titleFont = UIFont(name: "Galmuri11-Bold", size: 17) ?? .boldSystemFont(ofSize: 17)
+        appearance.titleTextAttributes = [
+            .foregroundColor: UIColor.inkC,
+            .font: titleFont,
+        ]
+
+        // 백버튼 텍스트 숨김
+        let backItemAppearance = UIBarButtonItemAppearance()
+        backItemAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.clear]
+        appearance.backButtonAppearance = backItemAppearance
+
+        // 백버튼 chevron 색을 ink로 고정 (SwiftUI NavigationLink가 기본 시스템 틴트를 쓰는 문제 회피)
+        let chevronConfig = UIImage.SymbolConfiguration(pointSize: 18, weight: .semibold)
+        let chevronImage = UIImage(systemName: "chevron.backward", withConfiguration: chevronConfig)?
+            .withTintColor(.inkC, renderingMode: .alwaysOriginal)
+        appearance.setBackIndicatorImage(chevronImage, transitionMaskImage: chevronImage)
+
         UINavigationBar.appearance().standardAppearance = appearance
         UINavigationBar.appearance().scrollEdgeAppearance = appearance
-        
+        UINavigationBar.appearance().compactAppearance = appearance
+        UINavigationBar.appearance().tintColor = .inkC
+
         return true
     }
 
