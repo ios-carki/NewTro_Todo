@@ -1,10 +1,12 @@
 import SwiftUI
+import UIKit
 
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @ObservedObject var statsVM: StatsViewModel
 
     @State private var openHelp: SettingsHelpKey?
+    @State private var showTimeSheet = false
 
     var body: some View {
         NavigationView {
@@ -21,6 +23,7 @@ struct SettingsView: View {
                             mascotPanel
                             achievementPanel
                             settingsPanel
+                            notificationPanel
                             tutorialPanel
                             versionPanel
                             resetButton
@@ -40,6 +43,17 @@ struct SettingsView: View {
             } message: {
                 Text("모든 할일과 메모가 삭제됩니다. 계속하시겠어요?")
             }
+            .alert("알림 권한이 꺼져 있어요", isPresented: $viewModel.showPermissionDeniedAlert) {
+                Button("취소", role: .cancel) {}
+                Button("설정 열기") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            } message: {
+                Text("설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요.")
+            }
+            .onAppear { viewModel.refreshNotificationStateOnAppear() }
         }
         .navigationViewStyle(.stack)
     }
@@ -139,6 +153,108 @@ struct SettingsView: View {
         .padding(.vertical, 12)
         .background(Color.white)
         .settingsHelpAnchor(SettingsHelpKey.titleScreen.rawValue)
+    }
+
+    // MARK: - Notification Panel
+    private var notificationPanel: some View {
+        PixelPanel(bg: .white, padding: 0) {
+            VStack(spacing: 0) {
+                notificationMasterRow
+
+                if viewModel.notificationsEnabled {
+                    Divider()
+                        .background(Color.ink.opacity(0.2))
+                        .padding(.horizontal, 14)
+                    notificationTimeCell
+
+                    if viewModel.isCustomNotificationTimes {
+                        Divider()
+                            .background(Color.ink.opacity(0.2))
+                            .padding(.horizontal, 14)
+                        resetToSystemRow
+                    }
+                }
+            }
+            .animation(.easeOut(duration: 0.2), value: viewModel.notificationsEnabled)
+            .animation(.easeOut(duration: 0.2), value: viewModel.isCustomNotificationTimes)
+        }
+        .sheet(isPresented: $showTimeSheet) {
+            NotificationTimePickerSheet(viewModel: viewModel)
+        }
+    }
+
+    private var notificationMasterRow: some View {
+        HStack(spacing: 8) {
+            Text("알림")
+                .font(.galBold14())
+                .foregroundColor(.ink)
+            Spacer()
+            PxSwitch(isOn: viewModel.notificationsEnabled) {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    viewModel.toggleNotifications()
+                }
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+    }
+
+    private var notificationTimeCell: some View {
+        Button {
+            showTimeSheet = true
+        } label: {
+            HStack(spacing: 10) {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("아침 알림")
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                    Text("자정 임박 알림")
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                }
+                Spacer()
+                VStack(alignment: .trailing, spacing: 6) {
+                    Text(timeString(viewModel.effectiveMorningTime))
+                        .font(.pressStart10())
+                        .foregroundColor(.sun)
+                    Text(timeString(viewModel.effectiveMidnightTime))
+                        .font(.pressStart10())
+                        .foregroundColor(.sun)
+                }
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
+                    .foregroundColor(.shade.opacity(0.5))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func timeString(_ time: (hour: Int, minute: Int)) -> String {
+        String(format: "%02d:%02d", time.hour, time.minute)
+    }
+
+    private var resetToSystemRow: some View {
+        Button {
+            viewModel.resetNotificationTimesToSystem()
+        } label: {
+            HStack(spacing: 8) {
+                Image(systemName: "arrow.counterclockwise")
+                    .font(.system(size: 12))
+                    .foregroundColor(.shade)
+                    .frame(width: 20)
+                Text("시스템 기본으로 되돌리기")
+                    .font(.galBold14())
+                    .foregroundColor(.ink)
+                Spacer()
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     private func settingRow<C: View>(label: LocalizedStringKey, @ViewBuilder content: () -> C) -> some View {

@@ -26,6 +26,7 @@ extension UIColor {
     static let inkC          = UIColor(hex: "#1A1530")  // 텍스트, 테두리
     static let shadeC        = UIColor(hex: "#3B3454")  // 서브 텍스트
     static let panelC        = UIColor(hex: "#FFF7E8")  // 패널 배경
+    static let tileC         = UIColor(hex: "#FFD9A8")  // 패널 위 인셋 컨트롤 면
     static let redC          = UIColor(hex: "#E5524E")
     static let redDkC        = UIColor(hex: "#A12F2D")
 
@@ -89,6 +90,7 @@ extension Color {
     static let ink          = Color(hex: "#1A1530")
     static let shade        = Color(hex: "#3B3454")
     static let panel        = Color(hex: "#FFF7E8")
+    static let tile         = Color(hex: "#FFD9A8")
     static let pixelRed     = Color(hex: "#E5524E")
     static let redDk        = Color(hex: "#A12F2D")
 

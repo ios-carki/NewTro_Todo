@@ -9,6 +9,7 @@ final class DIContainer {
     private(set) lazy var templateRepository: any TemplateRepositoryProtocol = TemplateRepositoryImpl()
     private(set) lazy var postponeEventRepository: any PostponeEventRepositoryProtocol = PostponeEventRepositoryImpl()
     private(set) lazy var walletRepository: any WalletRepositoryProtocol = WalletRepositoryImpl()
+    private(set) lazy var localNotificationRepository: any LocalNotificationRepositoryProtocol = LocalNotificationRepositoryImpl()
 
     // MARK: - UseCases: Todo
     func makeFetchTodosUseCase() -> FetchTodosUseCase {
@@ -118,6 +119,17 @@ final class DIContainer {
         )
     }
 
+    // MARK: - UseCases: Notification
+    func makeCheckNotificationPermissionUseCase() -> CheckNotificationPermissionUseCase {
+        CheckNotificationPermissionUseCase(repository: localNotificationRepository)
+    }
+    func makeRequestNotificationPermissionUseCase() -> RequestNotificationPermissionUseCase {
+        RequestNotificationPermissionUseCase(repository: localNotificationRepository)
+    }
+    func makeApplyDailyNotificationsUseCase() -> ApplyDailyNotificationsUseCase {
+        ApplyDailyNotificationsUseCase(repository: localNotificationRepository)
+    }
+
     // MARK: - ViewModels
     @MainActor func makeMainViewModel() -> MainViewModel {
         MainViewModel(
@@ -147,7 +159,12 @@ final class DIContainer {
     }
 
     @MainActor func makeSettingsViewModel() -> SettingsViewModel {
-        SettingsViewModel(clearAllDataUseCase: makeClearAllDataUseCase())
+        SettingsViewModel(
+            clearAllDataUseCase: makeClearAllDataUseCase(),
+            checkNotificationPermissionUseCase: makeCheckNotificationPermissionUseCase(),
+            requestNotificationPermissionUseCase: makeRequestNotificationPermissionUseCase(),
+            applyDailyNotificationsUseCase: makeApplyDailyNotificationsUseCase()
+        )
     }
 
     @MainActor func makeMemoViewModel() -> MemoViewModel {
