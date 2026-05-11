@@ -22,7 +22,7 @@ struct NotificationTimePickerSheet: View {
 
     var body: some View {
         ZStack {
-            Color.sky.ignoresSafeArea()
+            Color.panel.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 topBar

@@ -18,7 +18,7 @@ struct PixelTimeWheel: View {
         .frame(maxWidth: .infinity)
         .clipped()
         .padding(.vertical, 4)
-        .background(Color.cream)
+        .background(Color.tile)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
     }
