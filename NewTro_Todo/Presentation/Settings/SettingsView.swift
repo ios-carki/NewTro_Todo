@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
@@ -21,6 +22,7 @@ struct SettingsView: View {
                             mascotPanel
                             achievementPanel
                             settingsPanel
+                            notificationPanel
                             tutorialPanel
                             versionPanel
                             resetButton
@@ -40,6 +42,17 @@ struct SettingsView: View {
             } message: {
                 Text("모든 할일과 메모가 삭제됩니다. 계속하시겠어요?")
             }
+            .alert("알림 권한이 꺼져 있어요", isPresented: $viewModel.showPermissionDeniedAlert) {
+                Button("취소", role: .cancel) {}
+                Button("설정 열기") {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            } message: {
+                Text("설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요.")
+            }
+            .onAppear { viewModel.refreshNotificationStateOnAppear() }
         }
         .navigationViewStyle(.stack)
     }
@@ -139,6 +152,103 @@ struct SettingsView: View {
         .padding(.vertical, 12)
         .background(Color.white)
         .settingsHelpAnchor(SettingsHelpKey.titleScreen.rawValue)
+    }
+
+    // MARK: - Notification Panel
+    private var notificationPanel: some View {
+        PixelPanel(bg: .white, padding: 0) {
+            VStack(spacing: 0) {
+                notificationMasterRow
+
+                if viewModel.notificationsEnabled {
+                    Divider()
+                        .background(Color.ink.opacity(0.2))
+                        .padding(.horizontal, 14)
+                    notificationTimeSection(
+                        titleKey: "아침 알림",
+                        mode: Binding(
+                            get: { viewModel.morningMode },
+                            set: { newValue in
+                                withAnimation(.easeOut(duration: 0.2)) {
+                                    viewModel.morningMode = newValue
+                                }
+                            }
+                        ),
+                        systemHintKey: "기본 시각은 07:00에 발화합니다",
+                        hour:   $viewModel.morningCustomHour,
+                        minute: $viewModel.morningCustomMinute
+                    )
+
+                    Divider()
+                        .background(Color.ink.opacity(0.2))
+                        .padding(.horizontal, 14)
+
+                    notificationTimeSection(
+                        titleKey: "자정 임박 알림",
+                        mode: Binding(
+                            get: { viewModel.midnightMode },
+                            set: { newValue in
+                                withAnimation(.easeOut(duration: 0.2)) {
+                                    viewModel.midnightMode = newValue
+                                }
+                            }
+                        ),
+                        systemHintKey: "기본 시각은 23:55에 발화합니다",
+                        hour:   $viewModel.midnightCustomHour,
+                        minute: $viewModel.midnightCustomMinute
+                    )
+                }
+            }
+            .animation(.easeOut(duration: 0.2), value: viewModel.notificationsEnabled)
+        }
+    }
+
+    private var notificationMasterRow: some View {
+        HStack(spacing: 8) {
+            Text("알림")
+                .font(.galBold14())
+                .foregroundColor(.ink)
+            Spacer()
+            PxSwitch(isOn: viewModel.notificationsEnabled) {
+                withAnimation(.easeOut(duration: 0.2)) {
+                    viewModel.toggleNotifications()
+                }
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+    }
+
+    private func notificationTimeSection(
+        titleKey: LocalizedStringKey,
+        mode: Binding<SettingsViewModel.TimeMode>,
+        systemHintKey: LocalizedStringKey,
+        hour: Binding<Int>,
+        minute: Binding<Int>
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(titleKey)
+                .font(.galBold14())
+                .foregroundColor(.ink)
+
+            PixelSelectBox(
+                options: [
+                    .init(value: .system, label: "시스템 기본 설정"),
+                    .init(value: .custom, label: "사용자 지정")
+                ],
+                selection: mode
+            )
+
+            if mode.wrappedValue == .system {
+                Text(systemHintKey)
+                    .font(.galBold11())
+                    .foregroundColor(.shade.opacity(0.7))
+            } else {
+                PixelTimeWheel(hour: hour, minute: minute)
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
     }
 
     private func settingRow<C: View>(label: LocalizedStringKey, @ViewBuilder content: () -> C) -> some View {
