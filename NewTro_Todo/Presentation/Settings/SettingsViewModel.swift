@@ -8,7 +8,6 @@ final class SettingsViewModel: ObservableObject {
         case custom
     }
 
-    // 시스템 기본 알림 시각
     static let morningDefault:  (hour: Int, minute: Int) = (7, 0)
     static let midnightDefault: (hour: Int, minute: Int) = (23, 55)
 
@@ -20,55 +19,21 @@ final class SettingsViewModel: ObservableObject {
         didSet { UserDefaults.standard.set(selectedCharacterId, forKey: "selectedCharacterId") }
     }
 
-    // MARK: - Notification State
-    @Published private(set) var notificationsEnabled: Bool {
-        didSet { UserDefaults.standard.set(notificationsEnabled, forKey: Self.keyEnabled) }
-    }
-    @Published var morningMode: TimeMode {
-        didSet {
-            UserDefaults.standard.set(morningMode.rawValue, forKey: Self.keyMorningMode)
-            reapplyNotifications()
-        }
-    }
-    @Published var morningCustomHour: Int {
-        didSet {
-            UserDefaults.standard.set(morningCustomHour, forKey: Self.keyMorningHour)
-            if morningMode == .custom { reapplyNotifications() }
-        }
-    }
-    @Published var morningCustomMinute: Int {
-        didSet {
-            UserDefaults.standard.set(morningCustomMinute, forKey: Self.keyMorningMinute)
-            if morningMode == .custom { reapplyNotifications() }
-        }
-    }
-    @Published var midnightMode: TimeMode {
-        didSet {
-            UserDefaults.standard.set(midnightMode.rawValue, forKey: Self.keyMidnightMode)
-            reapplyNotifications()
-        }
-    }
-    @Published var midnightCustomHour: Int {
-        didSet {
-            UserDefaults.standard.set(midnightCustomHour, forKey: Self.keyMidnightHour)
-            if midnightMode == .custom { reapplyNotifications() }
-        }
-    }
-    @Published var midnightCustomMinute: Int {
-        didSet {
-            UserDefaults.standard.set(midnightCustomMinute, forKey: Self.keyMidnightMinute)
-            if midnightMode == .custom { reapplyNotifications() }
-        }
-    }
+    // MARK: - Notification State (mutation은 메서드를 통해서만)
+    @Published private(set) var notificationsEnabled: Bool
+    @Published private(set) var morningMode: TimeMode
+    @Published private(set) var morningHour: Int
+    @Published private(set) var morningMinute: Int
+    @Published private(set) var midnightMode: TimeMode
+    @Published private(set) var midnightHour: Int
+    @Published private(set) var midnightMinute: Int
 
     @Published var showPermissionDeniedAlert = false
     @Published var showResetConfirm = false
     @Published var isMascotBobbing = false
 
-    // MARK: - Callbacks
     var onResetComplete: (() -> Void)?
 
-    // MARK: - UseCases
     private let clearAllDataUseCase: any ClearAllDataUseCaseProtocol
     private let checkPermissionUseCase: any CheckNotificationPermissionUseCaseProtocol
     private let requestPermissionUseCase: any RequestNotificationPermissionUseCaseProtocol
@@ -90,18 +55,19 @@ final class SettingsViewModel: ObservableObject {
         self.selectedCharacterId = ud.string(forKey: "selectedCharacterId") ?? "pinko"
 
         self.notificationsEnabled = ud.bool(forKey: Self.keyEnabled)
-        self.morningMode = TimeMode(rawValue: ud.string(forKey: Self.keyMorningMode) ?? "") ?? .system
+        self.morningMode  = TimeMode(rawValue: ud.string(forKey: Self.keyMorningMode) ?? "") ?? .system
         self.midnightMode = TimeMode(rawValue: ud.string(forKey: Self.keyMidnightMode) ?? "") ?? .system
-        self.morningCustomHour   = ud.object(forKey: Self.keyMorningHour) as? Int ?? Self.morningDefault.hour
-        self.morningCustomMinute = ud.object(forKey: Self.keyMorningMinute) as? Int ?? Self.morningDefault.minute
-        self.midnightCustomHour   = ud.object(forKey: Self.keyMidnightHour) as? Int ?? Self.midnightDefault.hour
-        self.midnightCustomMinute = ud.object(forKey: Self.keyMidnightMinute) as? Int ?? Self.midnightDefault.minute
+        self.morningHour   = ud.object(forKey: Self.keyMorningHour) as? Int ?? Self.morningDefault.hour
+        self.morningMinute = ud.object(forKey: Self.keyMorningMinute) as? Int ?? Self.morningDefault.minute
+        self.midnightHour   = ud.object(forKey: Self.keyMidnightHour) as? Int ?? Self.midnightDefault.hour
+        self.midnightMinute = ud.object(forKey: Self.keyMidnightMinute) as? Int ?? Self.midnightDefault.minute
     }
 
     // MARK: - Notification Public API
     func toggleNotifications() {
         if notificationsEnabled {
             notificationsEnabled = false
+            persistEnabled()
             reapplyNotifications()
         } else {
             Task { await enableNotifications() }
@@ -113,9 +79,35 @@ final class SettingsViewModel: ObservableObject {
             let status = await checkPermissionUseCase.execute()
             if notificationsEnabled, status != .authorized {
                 notificationsEnabled = false
+                persistEnabled()
             }
             reapplyNotifications()
         }
+    }
+
+    func saveCustomNotificationTimes(
+        morning: (hour: Int, minute: Int),
+        midnight: (hour: Int, minute: Int)
+    ) {
+        morningMode  = .custom
+        midnightMode = .custom
+        morningHour   = morning.hour
+        morningMinute = morning.minute
+        midnightHour   = midnight.hour
+        midnightMinute = midnight.minute
+        persistTimes()
+        reapplyNotifications()
+    }
+
+    func resetNotificationTimesToSystem() {
+        morningMode  = .system
+        midnightMode = .system
+        morningHour   = Self.morningDefault.hour
+        morningMinute = Self.morningDefault.minute
+        midnightHour   = Self.midnightDefault.hour
+        midnightMinute = Self.midnightDefault.minute
+        persistTimes()
+        reapplyNotifications()
     }
 
     private func enableNotifications() async {
@@ -126,6 +118,7 @@ final class SettingsViewModel: ObservableObject {
                 let granted = try await requestPermissionUseCase.execute()
                 if granted {
                     notificationsEnabled = true
+                    persistEnabled()
                     reapplyNotifications()
                 } else {
                     showPermissionDeniedAlert = true
@@ -135,6 +128,7 @@ final class SettingsViewModel: ObservableObject {
             }
         case .authorized:
             notificationsEnabled = true
+            persistEnabled()
             reapplyNotifications()
         case .denied:
             showPermissionDeniedAlert = true
@@ -154,17 +148,36 @@ final class SettingsViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Persistence
+    private func persistEnabled() {
+        UserDefaults.standard.set(notificationsEnabled, forKey: Self.keyEnabled)
+    }
+
+    private func persistTimes() {
+        let ud = UserDefaults.standard
+        ud.set(morningMode.rawValue,  forKey: Self.keyMorningMode)
+        ud.set(midnightMode.rawValue, forKey: Self.keyMidnightMode)
+        ud.set(morningHour,   forKey: Self.keyMorningHour)
+        ud.set(morningMinute, forKey: Self.keyMorningMinute)
+        ud.set(midnightHour,   forKey: Self.keyMidnightHour)
+        ud.set(midnightMinute, forKey: Self.keyMidnightMinute)
+    }
+
     // MARK: - Computed
     var effectiveMorningTime: (hour: Int, minute: Int) {
         morningMode == .system
             ? Self.morningDefault
-            : (morningCustomHour, morningCustomMinute)
+            : (morningHour, morningMinute)
     }
 
     var effectiveMidnightTime: (hour: Int, minute: Int) {
         midnightMode == .system
             ? Self.midnightDefault
-            : (midnightCustomHour, midnightCustomMinute)
+            : (midnightHour, midnightMinute)
+    }
+
+    var isCustomNotificationTimes: Bool {
+        morningMode == .custom || midnightMode == .custom
     }
 
     var appVersion: String {
