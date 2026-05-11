@@ -299,6 +299,9 @@
 "설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요." = "Turn on notifications in Settings to receive daily reminders.";
 "설정 열기" = "Open Settings";
 
+"오전" = "AM";
+"오후" = "PM";
+
 // MARK: - Notification Content
 "notification.morning.title" = "Good morning";
 "notification.morning.body" = "Shall we write today's tasks?";
