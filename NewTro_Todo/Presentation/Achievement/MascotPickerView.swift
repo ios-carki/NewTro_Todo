@@ -151,7 +151,7 @@ struct MascotPickerView: View {
                 portrait(info: info)
 
                 Text(isUnlocked ? LocalizedStringKey(info.name) : LocalizedStringKey("???"))
-                    .font(.pressStart9())
+                    .font(.galBold16())
                     .foregroundColor(isUnlocked ? .ink : .shade.opacity(0.5))
                     .lineLimit(1)
 
@@ -203,10 +203,10 @@ struct MascotPickerView: View {
                 withAnimation(.easeInOut(duration: 0.15)) { unlockInfo = info }
             } label: {
                 Text("획득방법")
-                    .font(.pressStart7())
+                    .font(.galBold11())
                     .foregroundColor(.ink)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 24)
+                    .frame(height: 28)
                     .background(Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
             }
@@ -214,15 +214,15 @@ struct MascotPickerView: View {
 
             if isUnlocked {
                 if isSelected {
-                    HStack(spacing: 3) {
+                    HStack(spacing: 4) {
                         Image(systemName: "checkmark")
-                            .font(.system(size: 10, weight: .bold))
+                            .font(.system(size: 11, weight: .bold))
                         Text("선택됨")
-                            .font(.pressStart7())
+                            .font(.galBold11())
                     }
-                    .foregroundColor(.cream)
+                    .foregroundColor(.ink)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 24)
+                    .frame(height: 28)
                     .background(Color.sun)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
                 } else {
@@ -230,25 +230,25 @@ struct MascotPickerView: View {
                         settingsVM.selectedCharacterId = info.id
                     } label: {
                         Text("적용하기")
-                            .font(.pressStart7())
-                            .foregroundColor(.cream)
+                            .font(.galBold11())
+                            .foregroundColor(.ink)
                             .frame(maxWidth: .infinity)
-                            .frame(height: 24)
+                            .frame(height: 28)
                             .background(Color.grass)
                             .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
                     }
                     .buttonStyle(.plain)
                 }
             } else {
-                HStack(spacing: 3) {
+                HStack(spacing: 4) {
                     Image(systemName: "lock.fill")
-                        .font(.system(size: 9))
+                        .font(.system(size: 10))
                     Text("잠김")
-                        .font(.pressStart7())
+                        .font(.galBold11())
                 }
                 .foregroundColor(.shade)
                 .frame(maxWidth: .infinity)
-                .frame(height: 24)
+                .frame(height: 28)
                 .background(Color.cream.opacity(0.4))
                 .overlay(Rectangle().stroke(Color.ink.opacity(0.3), lineWidth: 1.5))
             }
