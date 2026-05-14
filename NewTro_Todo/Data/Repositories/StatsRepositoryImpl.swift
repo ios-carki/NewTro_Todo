@@ -94,10 +94,13 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
 
     // MARK: - Reset
     func resetAll() async {
+        // selectedCharacter도 함께 제거. 안 비우면 unlockedChars가 빈 상태에서
+        // 선택값만 살아남아 "잠긴 캐릭터가 선택됨" 상태가 됨.
         [Key.totalScore, Key.currentStreak, Key.longestStreak, Key.totalCompleted,
          Key.totalPerfectDays, Key.lastActiveDate, Key.unlockedChars, Key.earnedAchievs,
          Key.perfectDayDates, Key.claimedChallenges,
-         Key.dailyCheckDate, Key.todayAddedTodo, Key.todayPostponed]
+         Key.dailyCheckDate, Key.todayAddedTodo, Key.todayPostponed,
+         Key.selectedCharacter]
             .forEach { defaults.removeObject(forKey: $0) }
     }
 
