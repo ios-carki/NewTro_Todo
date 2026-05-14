@@ -99,6 +99,87 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
             .forEach { defaults.removeObject(forKey: $0) }
     }
 
+    // MARK: - Backup Snapshot
+
+    func exportSnapshot() async -> BackupStatsRecord {
+        var unlocked = (defaults.array(forKey: Key.unlockedChars) as? [String]) ?? []
+        if !unlocked.contains("pinko") { unlocked.insert("pinko", at: 0) }
+
+        return BackupStatsRecord(
+            totalScore:            defaults.integer(forKey: Key.totalScore),
+            currentStreak:         defaults.integer(forKey: Key.currentStreak),
+            longestStreak:         defaults.integer(forKey: Key.longestStreak),
+            totalCompleted:        defaults.integer(forKey: Key.totalCompleted),
+            totalPerfectDays:      defaults.integer(forKey: Key.totalPerfectDays),
+            lastActiveDate:        defaults.object(forKey: Key.lastActiveDate) as? Date,
+            unlockedCharacterIds:  unlocked,
+            earnedAchievementIds:  (defaults.array(forKey: Key.earnedAchievs)     as? [String]) ?? [],
+            perfectDayDateStrings: (defaults.array(forKey: Key.perfectDayDates)   as? [String]) ?? [],
+            claimedChallengeIds:   (defaults.array(forKey: Key.claimedChallenges) as? [String]) ?? []
+        )
+    }
+
+    func restoreSnapshot(_ snapshot: BackupStatsRecord, mode: RestoreMode) async {
+        switch mode {
+        case .overwrite:
+            defaults.set(snapshot.totalScore,             forKey: Key.totalScore)
+            defaults.set(snapshot.currentStreak,          forKey: Key.currentStreak)
+            defaults.set(snapshot.longestStreak,          forKey: Key.longestStreak)
+            defaults.set(snapshot.totalCompleted,         forKey: Key.totalCompleted)
+            defaults.set(snapshot.totalPerfectDays,       forKey: Key.totalPerfectDays)
+            if let date = snapshot.lastActiveDate {
+                defaults.set(date, forKey: Key.lastActiveDate)
+            } else {
+                defaults.removeObject(forKey: Key.lastActiveDate)
+            }
+            defaults.set(snapshot.unlockedCharacterIds,   forKey: Key.unlockedChars)
+            defaults.set(snapshot.earnedAchievementIds,   forKey: Key.earnedAchievs)
+            defaults.set(snapshot.perfectDayDateStrings,  forKey: Key.perfectDayDates)
+            defaults.set(snapshot.claimedChallengeIds,    forKey: Key.claimedChallenges)
+
+        case .merge:
+            // 수치는 max — 둘 중 더 진척된 값 채택.
+            defaults.set(max(defaults.integer(forKey: Key.totalScore),       snapshot.totalScore),       forKey: Key.totalScore)
+            defaults.set(max(defaults.integer(forKey: Key.currentStreak),    snapshot.currentStreak),    forKey: Key.currentStreak)
+            defaults.set(max(defaults.integer(forKey: Key.longestStreak),    snapshot.longestStreak),    forKey: Key.longestStreak)
+            defaults.set(max(defaults.integer(forKey: Key.totalCompleted),   snapshot.totalCompleted),   forKey: Key.totalCompleted)
+            defaults.set(max(defaults.integer(forKey: Key.totalPerfectDays), snapshot.totalPerfectDays), forKey: Key.totalPerfectDays)
+
+            // lastActiveDate는 더 최근 값.
+            let currentLast = defaults.object(forKey: Key.lastActiveDate) as? Date
+            let mergedLast: Date? = {
+                switch (currentLast, snapshot.lastActiveDate) {
+                case let (a?, b?): return max(a, b)
+                case let (a?, nil): return a
+                case let (nil, b?): return b
+                case (nil, nil): return nil
+                }
+            }()
+            if let date = mergedLast {
+                defaults.set(date, forKey: Key.lastActiveDate)
+            }
+
+            // 집합은 합집합.
+            mergeUnion(key: Key.unlockedChars,     into: snapshot.unlockedCharacterIds)
+            mergeUnion(key: Key.earnedAchievs,     into: snapshot.earnedAchievementIds)
+            mergeUnion(key: Key.perfectDayDates,   into: snapshot.perfectDayDateStrings)
+            mergeUnion(key: Key.claimedChallenges, into: snapshot.claimedChallengeIds)
+        }
+
+        // 복구된 수치 기준으로 추가 잠금 해제·업적 조건이 새로 충족될 수 있음.
+        checkUnlocks()
+        checkAchievements()
+    }
+
+    private func mergeUnion(key: String, into incoming: [String]) {
+        var existing = (defaults.array(forKey: key) as? [String]) ?? []
+        var seen = Set(existing)
+        for id in incoming where seen.insert(id).inserted {
+            existing.append(id)
+        }
+        defaults.set(existing, forKey: key)
+    }
+
     // MARK: - Private Helpers
 
     private func refreshDailyIfNeeded() {

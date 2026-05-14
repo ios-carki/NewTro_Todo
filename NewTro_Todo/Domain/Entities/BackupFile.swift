@@ -9,6 +9,8 @@ struct BackupFile: Codable {
     var templates: [BackupTemplateRecord]
     var wallet: BackupWalletRecord?
     var postponeEvents: [BackupPostponeEventRecord]
+    // 이전 버전 백업 파일과의 호환을 위해 Optional. nil이면 stats를 건드리지 않음.
+    var stats: BackupStatsRecord?
 }
 
 struct BackupHeader: Codable {
@@ -71,4 +73,19 @@ struct BackupPostponeEventRecord: Codable {
     var todoId: String              // Todo ObjectId.stringValue
     var eventDate: Date
     var ordinalAtTime: Int
+}
+
+// 캐릭터·업적·진척 수치를 백업/복구하기 위한 스냅샷.
+// 일일 리셋 플래그(todayAddedTodo, todayPostponed, dailyCheckDate)는 디바이스 상태라 제외.
+struct BackupStatsRecord: Codable, Equatable {
+    var totalScore: Int
+    var currentStreak: Int
+    var longestStreak: Int
+    var totalCompleted: Int
+    var totalPerfectDays: Int
+    var lastActiveDate: Date?
+    var unlockedCharacterIds: [String]
+    var earnedAchievementIds: [String]
+    var perfectDayDateStrings: [String]
+    var claimedChallengeIds: [String]
 }

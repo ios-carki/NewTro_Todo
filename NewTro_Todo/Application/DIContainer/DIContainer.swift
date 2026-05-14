@@ -10,7 +10,7 @@ final class DIContainer {
     private(set) lazy var postponeEventRepository: any PostponeEventRepositoryProtocol = PostponeEventRepositoryImpl()
     private(set) lazy var walletRepository: any WalletRepositoryProtocol = WalletRepositoryImpl()
     private(set) lazy var localNotificationRepository: any LocalNotificationRepositoryProtocol = LocalNotificationRepositoryImpl()
-    private(set) lazy var backupRepository: any BackupRepositoryProtocol = BackupRepositoryImpl()
+    private(set) lazy var backupRepository: any BackupRepositoryProtocol = BackupRepositoryImpl(statsRepository: statsRepository)
     private(set) lazy var backupLogRepository: any BackupLogRepositoryProtocol = BackupLogRepositoryImpl()
 
     // MARK: - UseCases: Todo

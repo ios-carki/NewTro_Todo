@@ -4,11 +4,17 @@ import RealmSwift
 final class BackupRepositoryImpl: BackupRepositoryProtocol {
 
     private let fileExtension = "ntbackup"
+    private let statsRepository: any StatsRepositoryProtocol
+
+    init(statsRepository: any StatsRepositoryProtocol) {
+        self.statsRepository = statsRepository
+    }
 
     // MARK: - Export
 
     func exportBackup() async throws -> URL {
-        try await MainActor.run {
+        let statsSnapshot = await statsRepository.exportSnapshot()
+        return try await MainActor.run {
             let realm = try Realm()
 
             let todos = realm.objects(Todo.self).map(Self.makeRecord)
@@ -42,7 +48,8 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
                 quickNotes: quickNoteArr,
                 templates: templateArr,
                 wallet: wallet,
-                postponeEvents: postponeArr
+                postponeEvents: postponeArr,
+                stats: statsSnapshot
             )
 
             let encoder = JSONEncoder()
@@ -94,6 +101,11 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
             } catch {
                 throw BackupError.writeFailed
             }
+        }
+
+        // 구버전 백업 파일은 stats가 없으므로 그대로 두고 종료.
+        if let stats = file.stats {
+            await statsRepository.restoreSnapshot(stats, mode: mode)
         }
     }
 
