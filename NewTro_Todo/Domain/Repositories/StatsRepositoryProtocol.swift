@@ -7,4 +7,6 @@ protocol StatsRepositoryProtocol {
     func recordPostpone() async
     func claimChallenge(id: String, points: Int) async
     func resetAll() async
+    func exportSnapshot() async -> BackupStatsRecord
+    func restoreSnapshot(_ snapshot: BackupStatsRecord, mode: RestoreMode) async
 }

@@ -23,6 +23,7 @@ struct RootTabContainerView: View {
     @ObservedObject var memoVM: MemoViewModel
     @ObservedObject var statsVM: StatsViewModel
     @ObservedObject var settingsVM: SettingsViewModel
+    let makeBackupLogVM: @MainActor () -> BackupLogViewModel
     
     var body: some View {
         ZStack {
@@ -69,6 +70,42 @@ struct RootTabContainerView: View {
         //                .padding(.horizontal, 14)
         //                .ignoresSafeArea(edges: .bottom)
         //        }
+        // 백업·복구 모달은 floatingTabBar 보다 위 레이어에서 렌더링되어야 dim이 탭바까지 덮음.
+        .overlay {
+            ZStack {
+                if settingsVM.backupPhase.isActive {
+                    BackupProgressView(
+                        phase: .init(settingsVM.backupPhase),
+                        titleKey: "데이터 백업",
+                        onConfirm: { settingsVM.dismissBackupProgressModal() }
+                    )
+                    .transition(.opacity)
+                    .zIndex(10)
+                }
+                if settingsVM.restorePhase.isActive {
+                    BackupProgressView(
+                        phase: .init(settingsVM.restorePhase),
+                        titleKey: "데이터 불러오기",
+                        onConfirm: { settingsVM.dismissRestoreProgressModal() }
+                    )
+                    .transition(.opacity)
+                    .zIndex(11)
+                }
+                if let preview = settingsVM.restorePreview {
+                    RestorePreviewSheet(
+                        header: preview.header,
+                        onMerge:     { settingsVM.confirmRestore(mode: .merge) },
+                        onOverwrite: { settingsVM.confirmRestore(mode: .overwrite) },
+                        onCancel:    { settingsVM.cancelRestorePreview() }
+                    )
+                    .transition(.opacity)
+                    .zIndex(12)
+                }
+            }
+            .animation(.easeOut(duration: 0.15), value: settingsVM.backupPhase)
+            .animation(.easeOut(duration: 0.15), value: settingsVM.restorePhase)
+            .animation(.easeOut(duration: 0.15), value: settingsVM.restorePreview)
+        }
         .overlayPreferenceValue(CoachmarkAnchorKey.self) { anchors in
             GeometryReader { geom in
                 if showCoachmark {
@@ -113,7 +150,12 @@ struct RootTabContainerView: View {
         case .stats:
             StatsView(viewModel: statsVM).id(statsTabId)
         case .settings:
-            SettingsView(viewModel: settingsVM, statsVM: statsVM).id(settingsTabId)
+            SettingsView(
+                viewModel: settingsVM,
+                statsVM: statsVM,
+                makeBackupLogVM: makeBackupLogVM
+            )
+            .id(settingsTabId)
         }
     }
     
@@ -197,6 +239,7 @@ struct RootTabContainerView: View {
         mainVM: di.makeMainViewModel(),
         memoVM: di.makeMemoViewModel(),
         statsVM: di.makeStatsViewModel(),
-        settingsVM: di.makeSettingsViewModel()
+        settingsVM: di.makeSettingsViewModel(),
+        makeBackupLogVM: { di.makeBackupLogViewModel() }
     )
 }

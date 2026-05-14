@@ -10,6 +10,11 @@ final class DIContainer {
     private(set) lazy var postponeEventRepository: any PostponeEventRepositoryProtocol = PostponeEventRepositoryImpl()
     private(set) lazy var walletRepository: any WalletRepositoryProtocol = WalletRepositoryImpl()
     private(set) lazy var localNotificationRepository: any LocalNotificationRepositoryProtocol = LocalNotificationRepositoryImpl()
+    private(set) lazy var backupLogRepository: any BackupLogRepositoryProtocol = BackupLogRepositoryImpl()
+    private(set) lazy var backupRepository: any BackupRepositoryProtocol = BackupRepositoryImpl(
+        statsRepository: statsRepository,
+        backupLogRepository: backupLogRepository
+    )
 
     // MARK: - UseCases: Todo
     func makeFetchTodosUseCase() -> FetchTodosUseCase {
@@ -130,6 +135,26 @@ final class DIContainer {
         ApplyDailyNotificationsUseCase(repository: localNotificationRepository)
     }
 
+    // MARK: - UseCases: Backup
+    func makeCreateBackupUseCase() -> CreateBackupUseCase {
+        CreateBackupUseCase(repository: backupRepository)
+    }
+    func makeRestoreBackupUseCase() -> RestoreBackupUseCase {
+        RestoreBackupUseCase(repository: backupRepository)
+    }
+    func makePeekBackupHeaderUseCase() -> PeekBackupHeaderUseCase {
+        PeekBackupHeaderUseCase(repository: backupRepository)
+    }
+    func makeRecordBackupLogUseCase() -> RecordBackupLogUseCase {
+        RecordBackupLogUseCase(repository: backupLogRepository)
+    }
+    func makeFetchBackupLogsUseCase() -> FetchBackupLogsUseCase {
+        FetchBackupLogsUseCase(repository: backupLogRepository)
+    }
+    func makeClearBackupLogsUseCase() -> ClearBackupLogsUseCase {
+        ClearBackupLogsUseCase(repository: backupLogRepository)
+    }
+
     // MARK: - ViewModels
     @MainActor func makeMainViewModel() -> MainViewModel {
         MainViewModel(
@@ -163,7 +188,18 @@ final class DIContainer {
             clearAllDataUseCase: makeClearAllDataUseCase(),
             checkNotificationPermissionUseCase: makeCheckNotificationPermissionUseCase(),
             requestNotificationPermissionUseCase: makeRequestNotificationPermissionUseCase(),
-            applyDailyNotificationsUseCase: makeApplyDailyNotificationsUseCase()
+            applyDailyNotificationsUseCase: makeApplyDailyNotificationsUseCase(),
+            createBackupUseCase: makeCreateBackupUseCase(),
+            restoreBackupUseCase: makeRestoreBackupUseCase(),
+            peekBackupHeaderUseCase: makePeekBackupHeaderUseCase(),
+            recordBackupLogUseCase: makeRecordBackupLogUseCase()
+        )
+    }
+
+    @MainActor func makeBackupLogViewModel() -> BackupLogViewModel {
+        BackupLogViewModel(
+            fetchBackupLogsUseCase: makeFetchBackupLogsUseCase(),
+            clearBackupLogsUseCase: makeClearBackupLogsUseCase()
         )
     }
 

@@ -18,6 +18,8 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         static let dailyCheckDate     = "stats_dailyCheckDate"
         static let todayAddedTodo     = "stats_todayAddedTodo"
         static let todayPostponed     = "stats_todayPostponed"
+        // 선택된 마스코트. stats 네임스페이스는 아니지만 캐릭터 보유/선택은 한 묶음이라 여기서 같이 백업.
+        static let selectedCharacter  = "selectedCharacterId"
     }
 
     // MARK: - Fetch
@@ -92,11 +94,109 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
 
     // MARK: - Reset
     func resetAll() async {
+        // selectedCharacter도 함께 제거. 안 비우면 unlockedChars가 빈 상태에서
+        // 선택값만 살아남아 "잠긴 캐릭터가 선택됨" 상태가 됨.
         [Key.totalScore, Key.currentStreak, Key.longestStreak, Key.totalCompleted,
          Key.totalPerfectDays, Key.lastActiveDate, Key.unlockedChars, Key.earnedAchievs,
          Key.perfectDayDates, Key.claimedChallenges,
-         Key.dailyCheckDate, Key.todayAddedTodo, Key.todayPostponed]
+         Key.dailyCheckDate, Key.todayAddedTodo, Key.todayPostponed,
+         Key.selectedCharacter]
             .forEach { defaults.removeObject(forKey: $0) }
+    }
+
+    // MARK: - Backup Snapshot
+
+    func exportSnapshot() async -> BackupStatsRecord {
+        var unlocked = (defaults.array(forKey: Key.unlockedChars) as? [String]) ?? []
+        if !unlocked.contains("pinko") { unlocked.insert("pinko", at: 0) }
+
+        return BackupStatsRecord(
+            totalScore:            defaults.integer(forKey: Key.totalScore),
+            currentStreak:         defaults.integer(forKey: Key.currentStreak),
+            longestStreak:         defaults.integer(forKey: Key.longestStreak),
+            totalCompleted:        defaults.integer(forKey: Key.totalCompleted),
+            totalPerfectDays:      defaults.integer(forKey: Key.totalPerfectDays),
+            lastActiveDate:        defaults.object(forKey: Key.lastActiveDate) as? Date,
+            unlockedCharacterIds:  unlocked,
+            earnedAchievementIds:  (defaults.array(forKey: Key.earnedAchievs)     as? [String]) ?? [],
+            perfectDayDateStrings: (defaults.array(forKey: Key.perfectDayDates)   as? [String]) ?? [],
+            claimedChallengeIds:   (defaults.array(forKey: Key.claimedChallenges) as? [String]) ?? [],
+            selectedCharacterId:   defaults.string(forKey: Key.selectedCharacter)
+        )
+    }
+
+    func restoreSnapshot(_ snapshot: BackupStatsRecord, mode: RestoreMode) async {
+        switch mode {
+        case .overwrite:
+            defaults.set(snapshot.totalScore,             forKey: Key.totalScore)
+            defaults.set(snapshot.currentStreak,          forKey: Key.currentStreak)
+            defaults.set(snapshot.longestStreak,          forKey: Key.longestStreak)
+            defaults.set(snapshot.totalCompleted,         forKey: Key.totalCompleted)
+            defaults.set(snapshot.totalPerfectDays,       forKey: Key.totalPerfectDays)
+            if let date = snapshot.lastActiveDate {
+                defaults.set(date, forKey: Key.lastActiveDate)
+            } else {
+                defaults.removeObject(forKey: Key.lastActiveDate)
+            }
+            defaults.set(snapshot.unlockedCharacterIds,   forKey: Key.unlockedChars)
+            defaults.set(snapshot.earnedAchievementIds,   forKey: Key.earnedAchievs)
+            defaults.set(snapshot.perfectDayDateStrings,  forKey: Key.perfectDayDates)
+            defaults.set(snapshot.claimedChallengeIds,    forKey: Key.claimedChallenges)
+
+            // 선택 마스코트도 A 상태로. 이전 버전 백업(nil)이면 기본값 복귀를 위해 제거.
+            if let selected = snapshot.selectedCharacterId {
+                defaults.set(selected, forKey: Key.selectedCharacter)
+            } else {
+                defaults.removeObject(forKey: Key.selectedCharacter)
+            }
+
+        case .merge:
+            // 수치는 max — 둘 중 더 진척된 값 채택.
+            defaults.set(max(defaults.integer(forKey: Key.totalScore),       snapshot.totalScore),       forKey: Key.totalScore)
+            defaults.set(max(defaults.integer(forKey: Key.currentStreak),    snapshot.currentStreak),    forKey: Key.currentStreak)
+            defaults.set(max(defaults.integer(forKey: Key.longestStreak),    snapshot.longestStreak),    forKey: Key.longestStreak)
+            defaults.set(max(defaults.integer(forKey: Key.totalCompleted),   snapshot.totalCompleted),   forKey: Key.totalCompleted)
+            defaults.set(max(defaults.integer(forKey: Key.totalPerfectDays), snapshot.totalPerfectDays), forKey: Key.totalPerfectDays)
+
+            // lastActiveDate는 더 최근 값.
+            let currentLast = defaults.object(forKey: Key.lastActiveDate) as? Date
+            let mergedLast: Date? = {
+                switch (currentLast, snapshot.lastActiveDate) {
+                case let (a?, b?): return max(a, b)
+                case let (a?, nil): return a
+                case let (nil, b?): return b
+                case (nil, nil): return nil
+                }
+            }()
+            if let date = mergedLast {
+                defaults.set(date, forKey: Key.lastActiveDate)
+            }
+
+            // 집합은 합집합.
+            mergeUnion(key: Key.unlockedChars,     into: snapshot.unlockedCharacterIds)
+            mergeUnion(key: Key.earnedAchievs,     into: snapshot.earnedAchievementIds)
+            mergeUnion(key: Key.perfectDayDates,   into: snapshot.perfectDayDateStrings)
+            mergeUnion(key: Key.claimedChallenges, into: snapshot.claimedChallengeIds)
+
+            // 선택 마스코트는 백업 측 값이 있으면 우선 적용 (백업 의도 = A 상태 이식).
+            // nil인 경우는 기존 B 선택 유지.
+            if let selected = snapshot.selectedCharacterId {
+                defaults.set(selected, forKey: Key.selectedCharacter)
+            }
+        }
+
+        // 복구된 수치 기준으로 추가 잠금 해제·업적 조건이 새로 충족될 수 있음.
+        checkUnlocks()
+        checkAchievements()
+    }
+
+    private func mergeUnion(key: String, into incoming: [String]) {
+        var existing = (defaults.array(forKey: key) as? [String]) ?? []
+        var seen = Set(existing)
+        for id in incoming where seen.insert(id).inserted {
+            existing.append(id)
+        }
+        defaults.set(existing, forKey: key)
     }
 
     // MARK: - Private Helpers

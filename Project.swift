@@ -41,6 +41,26 @@ let project = Project(
                     ]),
                 ]),
                 "UIBackgroundModes": .array([.string("remote-notification")]),
+                "UTExportedTypeDeclarations": .array([
+                    .dictionary([
+                        "UTTypeIdentifier": .string("com.carki.newtro.backup"),
+                        "UTTypeDescription": .string("NewTro Todo Backup"),
+                        "UTTypeConformsTo": .array([.string("public.data")]),
+                        "UTTypeTagSpecification": .dictionary([
+                            "public.filename-extension": .array([.string("ntbackup")]),
+                            "public.mime-type": .array([.string("application/octet-stream")]),
+                        ]),
+                    ]),
+                ]),
+                "CFBundleDocumentTypes": .array([
+                    .dictionary([
+                        "CFBundleTypeName": .string("NewTro Todo Backup"),
+                        "CFBundleTypeRole": .string("Editor"),
+                        "LSHandlerRank": .string("Owner"),
+                        "LSItemContentTypes": .array([.string("com.carki.newtro.backup")]),
+                    ]),
+                ]),
+                "LSSupportsOpeningDocumentsInPlace": .boolean(false),
             ]),
             sources: ["NewTro_Todo/**/*.swift"],
             resources: [
