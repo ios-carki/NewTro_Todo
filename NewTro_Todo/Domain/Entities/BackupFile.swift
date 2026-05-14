@@ -90,4 +90,6 @@ struct BackupStatsRecord: Codable, Equatable {
     var earnedAchievementIds: [String]
     var perfectDayDateStrings: [String]
     var claimedChallengeIds: [String]
+    // 백업 시점의 마스코트 선택. nil은 이전 버전 백업 호환용.
+    var selectedCharacterId: String?
 }
