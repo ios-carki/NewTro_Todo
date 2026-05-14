@@ -49,6 +49,34 @@ final class BackupLogRepositoryImpl: BackupLogRepositoryProtocol {
         }
     }
 
+    // overwrite: 들어온 목록으로 전체 교체. merge: id 기준 합집합 후 최신 30개로 cap.
+    func restoreSnapshot(_ entries: [BackupLogEntry], mode: RestoreMode) async {
+        await withCheckedContinuation { continuation in
+            queue.async { [weak self] in
+                guard let self else { continuation.resume(); return }
+                var merged: [BackupLogEntry]
+                switch mode {
+                case .overwrite:
+                    merged = entries
+                case .merge:
+                    let existing = self.loadSync()
+                    var seen = Set(existing.map { $0.id })
+                    merged = existing
+                    for e in entries where seen.insert(e.id).inserted {
+                        merged.append(e)
+                    }
+                }
+                merged.sort { $0.createdAt < $1.createdAt }
+                let cap = Self.maxRetainedLogs
+                if merged.count > cap {
+                    merged = Array(merged.suffix(cap))
+                }
+                self.saveSync(merged)
+                continuation.resume()
+            }
+        }
+    }
+
     private func loadSync() -> [BackupLogEntry] {
         guard let data = userDefaults.data(forKey: storageKey) else { return [] }
         let decoder = JSONDecoder()

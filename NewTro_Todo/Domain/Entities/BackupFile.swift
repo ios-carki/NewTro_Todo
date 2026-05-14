@@ -11,6 +11,8 @@ struct BackupFile: Codable {
     var postponeEvents: [BackupPostponeEventRecord]
     // 이전 버전 백업 파일과의 호환을 위해 Optional. nil이면 stats를 건드리지 않음.
     var stats: BackupStatsRecord?
+    // 백업 로그(이력) 자체도 다른 기기로 이어주기 위해 포함. nil이면 로그 건드리지 않음.
+    var backupLogs: [BackupLogEntry]?
 }
 
 struct BackupHeader: Codable {

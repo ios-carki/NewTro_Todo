@@ -5,15 +5,21 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
 
     private let fileExtension = "ntbackup"
     private let statsRepository: any StatsRepositoryProtocol
+    private let backupLogRepository: any BackupLogRepositoryProtocol
 
-    init(statsRepository: any StatsRepositoryProtocol) {
+    init(
+        statsRepository: any StatsRepositoryProtocol,
+        backupLogRepository: any BackupLogRepositoryProtocol
+    ) {
         self.statsRepository = statsRepository
+        self.backupLogRepository = backupLogRepository
     }
 
     // MARK: - Export
 
     func exportBackup() async throws -> URL {
         let statsSnapshot = await statsRepository.exportSnapshot()
+        let logsSnapshot = await backupLogRepository.fetchAll()
         return try await MainActor.run {
             let realm = try Realm()
 
@@ -49,7 +55,8 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
                 templates: templateArr,
                 wallet: wallet,
                 postponeEvents: postponeArr,
-                stats: statsSnapshot
+                stats: statsSnapshot,
+                backupLogs: logsSnapshot
             )
 
             let encoder = JSONEncoder()
@@ -106,6 +113,9 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         // 구버전 백업 파일은 stats가 없으므로 그대로 두고 종료.
         if let stats = file.stats {
             await statsRepository.restoreSnapshot(stats, mode: mode)
+        }
+        if let logs = file.backupLogs {
+            await backupLogRepository.restoreSnapshot(logs, mode: mode)
         }
     }
 
