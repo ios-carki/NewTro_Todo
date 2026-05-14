@@ -42,6 +42,7 @@ struct WelcomeView: View {
             .onTapGesture { onTap?() }
         }
         .ignoresSafeArea()
+        .navigationBarHidden(true)
         .onReceive(blinkTimer) { _ in blinkVisible.toggle() }
         .onReceive(walkTimer) { _ in
             mascotX += 2

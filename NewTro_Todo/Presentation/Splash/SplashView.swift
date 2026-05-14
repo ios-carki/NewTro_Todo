@@ -36,6 +36,7 @@ struct SplashView: View {
             }
         }
         .ignoresSafeArea()
+        .navigationBarHidden(true)
         .onAppear {
             withAnimation(.easeInOut(duration: 0.5).repeatForever(autoreverses: true)) {
                 mascotBobY = -6

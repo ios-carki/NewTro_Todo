@@ -16,7 +16,10 @@ let project = Project(
             bundleId: "com.jun.NewTro-Todo",
             deploymentTargets: .iOS("15.0"),
             infoPlist: .extendingDefault(with: [
-                "UILaunchScreen": .dictionary([:]),
+                // 콜드 스타트 시 검은 깜빡임 제거 — Splash 첫 프레임의 .sky(#7CC7F0)와 동일한 색 에셋을 깔아둠.
+                "UILaunchScreen": .dictionary([
+                    "UIColorName": .string("LaunchSky"),
+                ]),
                 "CFBundleDevelopmentRegion": .string("ko"),
                 "CFBundleLocalizations": .array([
                     .string("ko"),
