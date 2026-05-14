@@ -1,7 +1,7 @@
 import Foundation
 
 protocol RecordBackupLogUseCaseProtocol {
-    func execute(counts: BackupCounts) async
+    func execute(entry: BackupLogEntry) async
 }
 
 final class RecordBackupLogUseCase: RecordBackupLogUseCaseProtocol {
@@ -11,7 +11,7 @@ final class RecordBackupLogUseCase: RecordBackupLogUseCaseProtocol {
         self.repository = repository
     }
 
-    func execute(counts: BackupCounts) async {
-        await repository.append(BackupLogEntry(counts: counts))
+    func execute(entry: BackupLogEntry) async {
+        await repository.append(entry)
     }
 }

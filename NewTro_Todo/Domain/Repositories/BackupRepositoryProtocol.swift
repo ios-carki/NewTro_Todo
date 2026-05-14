@@ -8,9 +8,11 @@ enum BackupError: Error {
 }
 
 protocol BackupRepositoryProtocol {
-    // 현재 Realm 전체를 dump 해 임시 파일 URL 반환.
+    // 현재 Realm 전체를 dump 해 임시 파일 + 이번 백업을 기술하는 로그 엔트리를 반환.
+    // 반환된 로그 엔트리는 파일 내부에도 이미 포함되어 있고, 저장 확정 시 동일 id로
+    // UserDefaults에 기록되어야 합치기 모드에서 dedupe가 성립한다.
     // 호출 측은 UIDocumentPicker로 사용자 위치 이동 후 임시 파일 cleanup 책임.
-    func exportBackup() async throws -> URL
+    func exportBackup() async throws -> (url: URL, logEntry: BackupLogEntry)
 
     // url의 헤더만 빠르게 읽어 미리보기 정보 반환. 본문은 디코드하지 않음.
     func peekHeader(at url: URL) async throws -> BackupHeader

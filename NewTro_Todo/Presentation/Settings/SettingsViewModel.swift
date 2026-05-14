@@ -83,8 +83,9 @@ final class SettingsViewModel: ObservableObject {
     private let peekBackupHeaderUseCase: any PeekBackupHeaderUseCaseProtocol
     private let recordBackupLogUseCase: any RecordBackupLogUseCaseProtocol
 
-    // 백업 성공 시 RecordBackupLog 에 넘길 counts. 임시 백업 URL 생성 시 함께 메모이즈.
-    private var pendingBackupCounts: BackupCounts?
+    // 백업 성공 시 RecordBackupLog 에 넘길 엔트리.
+    // exportBackup이 파일에 합성 포함시킨 엔트리와 동일 id를 써야 merge 복구 시 중복 안 됨.
+    private var pendingBackupLogEntry: BackupLogEntry?
 
     init(
         clearAllDataUseCase: any ClearAllDataUseCaseProtocol,
@@ -213,10 +214,11 @@ final class SettingsViewModel: ObservableObject {
         // 임시 파일 생성은 < 100ms 이므로 진행 모달 없이 바로 picker로 진입.
         Task {
             do {
-                let url = try await createBackupUseCase.execute()
-                // 백업 로그용 counts 미리 capture — 저장 확정 시 RecordBackupLog 에 전달.
-                pendingBackupCounts = (try? await peekBackupHeaderUseCase.execute(at: url))?.counts
-                pendingExportURL = url
+                let result = try await createBackupUseCase.execute()
+                // exportBackup 이 이번 백업 자체의 로그 엔트리를 합성해 파일에 포함시키고 반환한다.
+                // 저장 확정 시 동일 id로 UserDefaults에도 기록되어 merge 복구 시 dedupe 성립.
+                pendingBackupLogEntry = result.logEntry
+                pendingExportURL = result.url
                 showExportPicker = true
             } catch {
                 backupPhase = .error("백업 파일을 만들지 못했어요.".localized())
@@ -237,8 +239,8 @@ final class SettingsViewModel: ObservableObject {
             try? FileManager.default.removeItem(at: url)
             pendingExportURL = nil
         }
-        let counts = pendingBackupCounts
-        pendingBackupCounts = nil
+        let entry = pendingBackupLogEntry
+        pendingBackupLogEntry = nil
         guard saved else { return }
 
         let now = Date()
@@ -248,9 +250,10 @@ final class SettingsViewModel: ObservableObject {
         ud.set(now, forKey: Self.keyBackupLastAt)
         ud.set(backupCount, forKey: Self.keyBackupCount)
 
-        // 백업 로그 기록 (peek 실패로 counts가 없으면 0으로 채워서라도 timestamp 보존).
-        let logCounts = counts ?? BackupCounts(todo: 0, quickNote: 0, template: 0, wallet: 0, postpone: 0)
-        Task { await recordBackupLogUseCase.execute(counts: logCounts) }
+        // exportBackup 단계에서 파일에 합성 포함된 엔트리와 동일 id를 UserDefaults에도 기록.
+        if let entry {
+            Task { await recordBackupLogUseCase.execute(entry: entry) }
+        }
 
         backupPhase = .running
         Task {

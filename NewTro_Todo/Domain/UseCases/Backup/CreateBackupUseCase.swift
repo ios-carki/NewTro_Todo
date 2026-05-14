@@ -1,7 +1,7 @@
 import Foundation
 
 protocol CreateBackupUseCaseProtocol {
-    func execute() async throws -> URL
+    func execute() async throws -> (url: URL, logEntry: BackupLogEntry)
 }
 
 final class CreateBackupUseCase: CreateBackupUseCaseProtocol {
@@ -11,7 +11,7 @@ final class CreateBackupUseCase: CreateBackupUseCaseProtocol {
         self.repository = repository
     }
 
-    func execute() async throws -> URL {
+    func execute() async throws -> (url: URL, logEntry: BackupLogEntry) {
         try await repository.exportBackup()
     }
 }

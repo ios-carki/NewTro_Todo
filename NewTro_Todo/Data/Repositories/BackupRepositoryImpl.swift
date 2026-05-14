@@ -17,9 +17,9 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
 
     // MARK: - Export
 
-    func exportBackup() async throws -> URL {
+    func exportBackup() async throws -> (url: URL, logEntry: BackupLogEntry) {
         let statsSnapshot = await statsRepository.exportSnapshot()
-        let logsSnapshot = await backupLogRepository.fetchAll()
+        let priorLogs = await backupLogRepository.fetchAll()
         return try await MainActor.run {
             let realm = try Realm()
 
@@ -35,18 +35,25 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
             let templateArr = Array(templates)
             let postponeArr = Array(postpones)
 
+            let createdAt = Date()
+            let counts = BackupCounts(
+                todo: todoArr.count,
+                quickNote: quickNoteArr.count,
+                template: templateArr.count,
+                wallet: wallet == nil ? 0 : 1,
+                postpone: postponeArr.count
+            )
             let header = BackupHeader(
                 appVersion: Self.bundleShortVersion(),
                 schemaVersion: Int(RealmConfiguration.schemaVersion),
-                createdAt: Date(),
-                counts: BackupCounts(
-                    todo: todoArr.count,
-                    quickNote: quickNoteArr.count,
-                    template: templateArr.count,
-                    wallet: wallet == nil ? 0 : 1,
-                    postpone: postponeArr.count
-                )
+                createdAt: createdAt,
+                counts: counts
             )
+
+            // 이번 백업 자체를 기술하는 로그 엔트리를 파일에 합성 포함.
+            // 호출 측이 저장 확정 시 동일 id로 UserDefaults에도 기록해야 merge 모드 dedupe 성립.
+            let selfLog = BackupLogEntry(createdAt: createdAt, counts: counts)
+            let logsWithSelf = priorLogs + [selfLog]
 
             let file = BackupFile(
                 header: header,
@@ -56,7 +63,7 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
                 wallet: wallet,
                 postponeEvents: postponeArr,
                 stats: statsSnapshot,
-                backupLogs: logsSnapshot
+                backupLogs: logsWithSelf
             )
 
             let encoder = JSONEncoder()
@@ -75,7 +82,7 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
             } catch {
                 throw BackupError.writeFailed
             }
-            return url
+            return (url, selfLog)
         }
     }
 
