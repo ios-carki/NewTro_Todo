@@ -4,6 +4,7 @@ import UIKit
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
     @ObservedObject var statsVM: StatsViewModel
+    let makeBackupLogVM: @MainActor () -> BackupLogViewModel
 
     @State private var openHelp: SettingsHelpKey?
     @State private var showTimeSheet = false
@@ -24,6 +25,7 @@ struct SettingsView: View {
                             achievementPanel
                             settingsPanel
                             notificationPanel
+                            backupPanel
                             tutorialPanel
                             versionPanel
                             resetButton
@@ -33,6 +35,22 @@ struct SettingsView: View {
                         .padding(.bottom, 120)
                     }
                 }
+
+            }
+            .sheet(isPresented: $viewModel.showExportPicker) {
+                if let url = viewModel.pendingExportURL {
+                    ExportDocumentPicker(url: url) { saved in
+                        viewModel.handleExportResult(saved: saved)
+                    }
+                    .ignoresSafeArea()
+                }
+            }
+            .sheet(isPresented: $viewModel.showImportPicker) {
+                ImportDocumentPicker(
+                    onPicked: { url in viewModel.handleImportPicked(url: url) },
+                    onCancel: { viewModel.showImportPicker = false }
+                )
+                .ignoresSafeArea()
             }
             .overlayPreferenceValue(SettingsHelpAnchorKey.self) { anchors in
                 helpOverlay(anchors: anchors)
@@ -285,6 +303,114 @@ struct SettingsView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
+    }
+
+    // MARK: - Backup Panel
+    private var backupPanel: some View {
+        PixelPanel(bg: .white, padding: 0) {
+            VStack(spacing: 0) {
+                backupRow
+                Divider()
+                    .background(Color.ink.opacity(0.2))
+                    .padding(.horizontal, 14)
+                backupLogRow
+                Divider()
+                    .background(Color.ink.opacity(0.2))
+                    .padding(.horizontal, 14)
+                restoreRow
+            }
+        }
+    }
+
+    private var backupLogRow: some View {
+        NavigationLink {
+            BackupLogView(viewModel: makeBackupLogVM())
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "clock.arrow.circlepath")
+                    .font(.system(size: 14))
+                    .foregroundColor(.shade)
+                    .frame(width: 20)
+                Text("데이터 백업 로그")
+                    .font(.galBold14())
+                    .foregroundColor(.ink)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
+                    .foregroundColor(.shade.opacity(0.5))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var backupRow: some View {
+        Button {
+            viewModel.startBackup()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "externaldrive.badge.timemachine")
+                    .font(.system(size: 14))
+                    .foregroundColor(.shade)
+                    .frame(width: 20)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("데이터 백업")
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                    Text(backupMetaLine)
+                        .font(.pressStart7())
+                        .foregroundColor(.shade)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
+                    .foregroundColor(.shade.opacity(0.5))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(viewModel.backupPhase.isActive || viewModel.restorePhase.isActive)
+    }
+
+    private var restoreRow: some View {
+        Button {
+            viewModel.startRestoreFlow()
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "tray.and.arrow.down.fill")
+                    .font(.system(size: 14))
+                    .foregroundColor(.shade)
+                    .frame(width: 20)
+                Text("데이터 불러오기")
+                    .font(.galBold14())
+                    .foregroundColor(.ink)
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12))
+                    .foregroundColor(.shade.opacity(0.5))
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 12)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(viewModel.backupPhase.isActive || viewModel.restorePhase.isActive)
+    }
+
+    private var backupMetaLine: String {
+        guard let date = viewModel.lastBackupAt else {
+            return "최근 백업 없음".localized()
+        }
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.dateFormat = "yyyy-MM-dd HH:mm"
+        let when = formatter.string(from: date)
+        let template = "마지막 %@ · %d회".localized()
+        return String(format: template, when, viewModel.backupCount)
     }
 
     // MARK: - Tutorial Panel

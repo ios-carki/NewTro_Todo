@@ -25,18 +25,21 @@ final class MainCoordinator: CoordinatorProtocol {
         let statsVM    = diContainer.makeStatsViewModel()
         let settingsVM = diContainer.makeSettingsViewModel()
 
-        settingsVM.onResetComplete = { [weak self] in self?.restartApp() }
+        settingsVM.onResetComplete   = { [weak self] in self?.restartApp() }
+        settingsVM.onRestoreComplete = { [weak self] in self?.restartApp() }
 
         self.mainVM     = mainVM
         self.memoVM     = memoVM
         self.statsVM    = statsVM
         self.settingsVM = settingsVM
 
+        let di = diContainer
         let container = RootTabContainerView(
             mainVM: mainVM,
             memoVM: memoVM,
             statsVM: statsVM,
-            settingsVM: settingsVM
+            settingsVM: settingsVM,
+            makeBackupLogVM: { di.makeBackupLogViewModel() }
         )
         let hostingVC = UIHostingController(rootView: container)
         navigationController.setViewControllers([hostingVC], animated: false)
