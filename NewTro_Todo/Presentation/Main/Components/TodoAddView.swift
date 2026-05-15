@@ -16,6 +16,7 @@ struct TodoAddView: View {
         comps.hour = 9; comps.minute = 0
         return Calendar.current.date(from: comps) ?? Date()
     }()
+    @State private var isPickingTime: Bool = false
 
     private let emojis = ["🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️", "☕"]
     private var isEditMode: Bool { editingTodo != nil }
@@ -24,6 +25,8 @@ struct TodoAddView: View {
     var body: some View {
         ZStack {
             Color.panel.ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture { hideKeyboard() }
 
             VStack(spacing: 0) {
                 // ── 타이틀 (고정)
@@ -34,63 +37,7 @@ struct TodoAddView: View {
                     .padding(.bottom, 14)
 
                 // ── 스크롤 영역
-                ScrollView(showsIndicators: false) {
-                    VStack(spacing: 0) {
-                        // 텍스트 입력
-                        textInputSection
-                            .padding(.horizontal, 16)
-
-                        // 템플릿 (large 전용)
-                        if isExpanded {
-                            sectionLabel("템플릿")
-                                .transition(.asymmetric(
-                                    insertion: .opacity.combined(with: .move(edge: .bottom)),
-                                    removal: .opacity
-                                ))
-                            NavigationLink(destination: TemplateListView(viewModel: viewModel)) {
-                                HStack {
-                                    Text("저장된 템플릿")
-                                        .font(.galBold14())
-                                        .foregroundColor(.ink)
-                                    Spacer()
-                                    Text("목록 보기 >")
-                                        .font(.pressStart7())
-                                        .foregroundColor(.shade)
-                                }
-                                .padding(.horizontal, 14)
-                                .frame(height: 44)
-                                .background(Color.cream)
-                                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            }
-                            .padding(.horizontal, 16)
-                            .transition(.asymmetric(
-                                insertion: .opacity.combined(with: .move(edge: .bottom)),
-                                removal: .opacity
-                            ))
-                        }
-
-                        // 이모지
-                        sectionLabel("이모지 선택")
-                        emojiSection
-
-                        // 중요도
-                        sectionLabel("중요도")
-                        importanceSection
-                            .padding(.horizontal, 16)
-
-                        // 알림 (large 전용)
-                        if isExpanded {
-                            notificationSection
-                                .transition(.asymmetric(
-                                    insertion: .opacity.combined(with: .move(edge: .bottom)),
-                                    removal: .opacity
-                                ))
-                        }
-
-                        Spacer().frame(height: 8)
-                    }
-                    .animation(.easeInOut(duration: 0.25), value: isExpanded)
-                }
+                scrollContent
 
                 // ── 구분선
                 Rectangle()
@@ -144,6 +91,69 @@ struct TodoAddView: View {
             importance = t.importance
             viewModel.pendingTemplate = nil
         }
+    }
+
+    // MARK: - Scroll Content
+    private var scrollContent: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(spacing: 0) {
+                // 텍스트 입력
+                textInputSection
+                    .padding(.horizontal, 16)
+
+                // 템플릿 (large 전용)
+                if isExpanded {
+                    sectionLabel("템플릿")
+                        .transition(.asymmetric(
+                            insertion: .opacity.combined(with: .move(edge: .bottom)),
+                            removal: .opacity
+                        ))
+                    NavigationLink(destination: TemplateListView(viewModel: viewModel)) {
+                        HStack {
+                            Text("저장된 템플릿")
+                                .font(.galBold14())
+                                .foregroundColor(.ink)
+                            Spacer()
+                            Text("▶")
+                                .font(.pressStart14())
+                                .foregroundColor(.ink)
+                        }
+                        .padding(.horizontal, 14)
+                        .frame(height: 44)
+                        .background(Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                    }
+                    .simultaneousGesture(TapGesture().onEnded { hideKeyboard() })
+                    .padding(.horizontal, 16)
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .move(edge: .bottom)),
+                        removal: .opacity
+                    ))
+                }
+
+                // 이모지
+                sectionLabel("이모지 선택")
+                emojiSection
+
+                // 중요도
+                sectionLabel("중요도")
+                importanceSection
+                    .padding(.horizontal, 16)
+
+                // 알림 (large 전용)
+                if isExpanded {
+                    notificationSection
+                        .transition(.asymmetric(
+                            insertion: .opacity.combined(with: .move(edge: .bottom)),
+                            removal: .opacity
+                        ))
+                }
+
+                Spacer().frame(height: 8)
+            }
+            .animation(.easeInOut(duration: 0.25), value: isExpanded)
+        }
+        .modifier(ScrollKeyboardDismissModifier())
     }
 
     // MARK: - Compact Content Sizer
@@ -328,21 +338,53 @@ struct TodoAddView: View {
                     .font(.galCondensed16())
                     .foregroundColor(.shade)
                 Spacer()
-                Toggle("", isOn: $hasDueTime)
-                    .labelsHidden()
-                    .tint(.grass)
+                PxSwitch(isOn: hasDueTime) {
+                    hideKeyboard()
+                    hasDueTime.toggle()
+                    if !hasDueTime { isPickingTime = false }
+                }
             }
             .padding(.horizontal, 16)
 
-            if hasDueTime {
+            Button {
+                hideKeyboard()
+                withAnimation(.easeInOut(duration: 0.2)) { isPickingTime.toggle() }
+            } label: {
+                HStack {
+                    Text(formattedDueTime)
+                        .font(.galBold14())
+                        .foregroundColor(hasDueTime ? .ink : .shade.opacity(0.5))
+                    Spacer()
+                    Text(isPickingTime ? "▼" : "▶")
+                        .font(.pressStart14())
+                        .foregroundColor(hasDueTime ? .ink : .shade.opacity(0.5))
+                }
+                .padding(.horizontal, 14)
+                .frame(height: 44)
+                .background(hasDueTime ? Color.cream : Color.shade.opacity(0.1))
+                .overlay(Rectangle().stroke(hasDueTime ? Color.ink : Color.shade.opacity(0.4), lineWidth: 2))
+            }
+            .disabled(!hasDueTime)
+            .padding(.horizontal, 16)
+
+            if hasDueTime && isPickingTime {
                 DatePicker("", selection: $dueTime, displayedComponents: [.hourAndMinute])
                     .datePickerStyle(.wheel)
                     .labelsHidden()
                     .frame(height: 100)
                     .clipped()
+                    .transition(.opacity)
             }
         }
         .padding(.top, 14)
+        .animation(.easeInOut(duration: 0.2), value: isPickingTime)
+        .animation(.easeInOut(duration: 0.2), value: hasDueTime)
+    }
+
+    private var formattedDueTime: String {
+        let f = DateFormatter()
+        f.dateFormat = "HH:mm"
+        return f.string(from: dueTime)
     }
 
     // MARK: - Helpers
@@ -360,7 +402,10 @@ struct TodoAddView: View {
 
     private func emojiChip(_ emoji: String, label: LocalizedStringKey? = nil) -> some View {
         let isSelected = selectedEmoji == emoji
-        return Button { selectedEmoji = emoji } label: {
+        return Button {
+            hideKeyboard()
+            selectedEmoji = emoji
+        } label: {
             Group {
                 if emoji.isEmpty {
                     Text(label ?? "없음")
@@ -384,7 +429,10 @@ struct TodoAddView: View {
         case .medium: .sun
         case .high:   .pixelRed
         }
-        return Button { importance = imp } label: {
+        return Button {
+            hideKeyboard()
+            importance = imp
+        } label: {
             Text(label)
                 .font(.galCondensed16())
                 .foregroundColor(isSelected ? .cream : .ink)
@@ -393,6 +441,10 @@ struct TodoAddView: View {
                 .background(isSelected ? chipColor : Color.cream)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }
+    }
+
+    private func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
     private func save() {
@@ -426,6 +478,19 @@ struct TodoAddScrollHeightKey: PreferenceKey {
     static var defaultValue: CGFloat = 0
     static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
         value = nextValue()
+    }
+}
+
+// MARK: - ScrollKeyboardDismissModifier
+// iOS 16+: 스크롤 시 키보드 즉시 내림. iOS 15는 no-op.
+struct ScrollKeyboardDismissModifier: ViewModifier {
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content.scrollDismissesKeyboard(.immediately)
+        } else {
+            content
+        }
     }
 }
 
