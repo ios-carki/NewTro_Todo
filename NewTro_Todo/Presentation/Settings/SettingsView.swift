@@ -12,7 +12,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottom) {
-                SkyBackgroundView(animateClouds: false).ignoresSafeArea()
+                BackgroundSceneryView().ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     header

@@ -27,8 +27,8 @@ struct RootTabContainerView: View {
     
     var body: some View {
         ZStack {
-            // 하늘 그라데이션 + 정적 구름 (드리프트 애니메이션 OFF — 탭 전환 부담 최소화)
-            SkyBackgroundView(animateClouds: false)
+            // Welcome 배경 (마스코트 제외, 애니메이션 OFF)
+            BackgroundSceneryView()
                 .ignoresSafeArea()
 
             // safe area 측정 전용 투명 레이어
