@@ -3,11 +3,17 @@ import SwiftUI
 struct WelcomeView: View {
     var onTap: (() -> Void)?
 
+    @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
+
     @State private var blinkVisible = true
     @State private var mascotX: CGFloat = -60
     @State private var mascotBobY: CGFloat = 0
     @State private var coinBobY: CGFloat = 0
     @State private var starBobY: CGFloat = 0
+
+    private var selectedCharInfo: FriendCharInfo {
+        CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
+    }
 
     private let blinkTimer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
     private let walkTimer  = Timer.publish(every: 0.06, on: .main, in: .common).autoconnect()
@@ -32,11 +38,15 @@ struct WelcomeView: View {
                 PixelArtView(grid: PixelArtAssets.bushGrid, palette: PixelArtAssets.bushPalette, scale: 3)
                     .position(x: geo.size.width - 55, y: geo.size.height - 58)
 
-                PixelArtView(grid: PixelArtAssets.mascotGrid, palette: PixelArtAssets.mascotPalette, scale: 3)
-                    .offset(y: mascotBobY)
-                    .position(x: mascotX, y: geo.size.height - 65)
-
                 GroundStripView()
+
+                PixelArtView(
+                    grid: PixelArtAssets.characterGrid(type: selectedCharInfo.gridType),
+                    palette: selectedCharInfo.palette,
+                    scale: 3
+                )
+                .offset(y: mascotBobY)
+                .position(x: mascotX, y: geo.size.height - 88)
             }
             .contentShape(Rectangle())
             .onTapGesture { onTap?() }

@@ -3,7 +3,13 @@ import SwiftUI
 struct SplashView: View {
     var onFinished: (() -> Void)?
 
+    @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
+
     @State private var mascotBobY: CGFloat = 0
+
+    private var selectedCharInfo: FriendCharInfo {
+        CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
+    }
 
     var body: some View {
         GeometryReader { geo in
@@ -12,8 +18,8 @@ struct SplashView: View {
 
                 VStack(spacing: 12) {
                     PixelArtView(
-                        grid: PixelArtAssets.mascotGrid,
-                        palette: PixelArtAssets.mascotPalette,
+                        grid: PixelArtAssets.characterGrid(type: selectedCharInfo.gridType),
+                        palette: selectedCharInfo.palette,
                         scale: 4
                     )
                     .offset(y: mascotBobY)
