@@ -46,7 +46,7 @@ struct WelcomeView: View {
                     scale: 3
                 )
                 .offset(y: mascotBobY)
-                .position(x: mascotX, y: geo.size.height - 88)
+                .position(x: mascotX, y: geo.size.height - 64)
             }
             .contentShape(Rectangle())
             .onTapGesture { onTap?() }
