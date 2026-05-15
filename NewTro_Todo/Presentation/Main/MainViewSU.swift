@@ -12,8 +12,6 @@ struct MainView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Color.sky.ignoresSafeArea()
-
             VStack(spacing: 0) {
                 topHUD
                     .padding(.horizontal, 16)
@@ -26,6 +24,7 @@ struct MainView: View {
                     .padding(.top, 8)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(item: $viewModel.activeSheet) { sheet in
             switch sheet {
             case .addTodo:

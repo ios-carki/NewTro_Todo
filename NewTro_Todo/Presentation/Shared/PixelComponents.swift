@@ -156,6 +156,9 @@ struct BobbingCharView: View {
 // MARK: - SkyBackgroundView
 // 시안 하늘 그라데이션 + 드리프트 구름
 struct SkyBackgroundView: View {
+    // 탭 배경 등 정적 사용처에서는 false로 호출 — 드리프트 애니메이션 생략
+    var animateClouds: Bool = true
+
     @State private var cloud1Offset: CGFloat = -80
     @State private var cloud2Offset: CGFloat = 60
     @State private var cloud3Offset: CGFloat = -40
@@ -194,6 +197,7 @@ struct SkyBackgroundView: View {
             }
         }
         .onAppear {
+            guard animateClouds else { return }
             withAnimation(.linear(duration: 40).repeatForever(autoreverses: false)) {
                 cloud1Offset = 480
             }

@@ -27,9 +27,13 @@ struct RootTabContainerView: View {
     
     var body: some View {
         ZStack {
-            // GeometryReader로 실제 safe area 값 취득 + 하늘 배경 (전체 화면 덮음)
+            // 하늘 그라데이션 + 정적 구름 (드리프트 애니메이션 OFF — 탭 전환 부담 최소화)
+            SkyBackgroundView(animateClouds: false)
+                .ignoresSafeArea()
+
+            // safe area 측정 전용 투명 레이어
             GeometryReader { geo in
-                Color.sky
+                Color.clear
                     .onAppear { safeAreaBottom = geo.safeAreaInsets.bottom }
             }
             .ignoresSafeArea()

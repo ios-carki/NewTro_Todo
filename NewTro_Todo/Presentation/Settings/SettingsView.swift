@@ -12,7 +12,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottom) {
-                Color.sky.ignoresSafeArea()
+                SkyBackgroundView(animateClouds: false).ignoresSafeArea()
 
                 VStack(spacing: 0) {
                     header
