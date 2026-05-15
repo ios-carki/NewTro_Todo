@@ -156,9 +156,14 @@ struct BobbingCharView: View {
 // MARK: - SkyBackgroundView
 // 시안 하늘 그라데이션 + 드리프트 구름
 struct SkyBackgroundView: View {
+    // 탭 배경 등 정적 사용처에서는 false로 호출 — 드리프트 애니메이션 생략
+    var animateClouds: Bool = true
+
     @State private var cloud1Offset: CGFloat = -80
     @State private var cloud2Offset: CGFloat = 60
     @State private var cloud3Offset: CGFloat = -40
+    @State private var cloud4Offset: CGFloat = -100
+    @State private var cloud5Offset: CGFloat = 80
 
     var body: some View {
         GeometryReader { geo in
@@ -169,6 +174,14 @@ struct SkyBackgroundView: View {
                     startPoint: .top, endPoint: .bottom
                 )
                 .ignoresSafeArea()
+
+                // 구름 4 (상단, 작은)
+                PixelArtView(grid: PixelArtAssets.cloudGrid, palette: PixelArtAssets.cloudPalette, scale: 2)
+                    .offset(x: cloud4Offset, y: -260)
+
+                // 구름 5 (상단, 큰, 반대 방향)
+                PixelArtView(grid: PixelArtAssets.cloudGrid, palette: PixelArtAssets.cloudPalette, scale: 3)
+                    .offset(x: geo.size.width - cloud5Offset, y: -180)
 
                 // 구름 1 (큰)
                 PixelArtView(grid: PixelArtAssets.cloudGrid, palette: PixelArtAssets.cloudPalette, scale: 3)
@@ -184,6 +197,7 @@ struct SkyBackgroundView: View {
             }
         }
         .onAppear {
+            guard animateClouds else { return }
             withAnimation(.linear(duration: 40).repeatForever(autoreverses: false)) {
                 cloud1Offset = 480
             }
@@ -192,6 +206,49 @@ struct SkyBackgroundView: View {
             }
             withAnimation(.linear(duration: 65).repeatForever(autoreverses: false)) {
                 cloud3Offset = 480
+            }
+            withAnimation(.linear(duration: 50).repeatForever(autoreverses: false)) {
+                cloud4Offset = 480
+            }
+            withAnimation(.linear(duration: 70).repeatForever(autoreverses: false)) {
+                cloud5Offset = 480
+            }
+        }
+    }
+}
+
+// MARK: - BackgroundSceneryView
+// Welcome 화면에서 마스코트를 제외한 정적 배경 요소들 (하늘+구름+멀리 언덕+코인+별+부쉬).
+// 탭 컨테이너·Settings 등 화면 전체에 깔리는 배경으로 사용. 움직이는 애니메이션은 모두 OFF.
+struct BackgroundSceneryView: View {
+    var animateClouds: Bool = false
+
+    var body: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .bottom) {
+                SkyBackgroundView(animateClouds: animateClouds)
+
+                // 멀리 언덕 (좌·우)
+                Ellipse()
+                    .fill(Color.grassDk.opacity(0.5))
+                    .frame(width: 200, height: 90)
+                    .position(x: 80, y: geo.size.height - 70)
+                Ellipse()
+                    .fill(Color.grassDk.opacity(0.5))
+                    .frame(width: 230, height: 100)
+                    .position(x: geo.size.width - 70, y: geo.size.height - 75)
+
+                // 코인 (우상단)
+                PixelArtView(grid: PixelArtAssets.coinGrid, palette: PixelArtAssets.coinPalette, scale: 3)
+                    .position(x: geo.size.width - 55, y: geo.size.height - 105)
+
+                // 별 (좌상단)
+                PixelArtView(grid: PixelArtAssets.starGrid, palette: PixelArtAssets.starPalette, scale: 2)
+                    .position(x: 75, y: geo.size.height - 130)
+
+                // 부쉬 (잔디 위 우측)
+                PixelArtView(grid: PixelArtAssets.bushGrid, palette: PixelArtAssets.bushPalette, scale: 3)
+                    .position(x: geo.size.width - 55, y: geo.size.height - 58)
             }
         }
     }

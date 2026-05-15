@@ -12,8 +12,6 @@ struct MainView: View {
 
     var body: some View {
         ZStack(alignment: .bottom) {
-            Color.sky.ignoresSafeArea()
-
             VStack(spacing: 0) {
                 topHUD
                     .padding(.horizontal, 16)
@@ -26,6 +24,7 @@ struct MainView: View {
                     .padding(.top, 8)
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .sheet(item: $viewModel.activeSheet) { sheet in
             switch sheet {
             case .addTodo:
@@ -269,7 +268,7 @@ struct MainView: View {
                     }
 
                     Color.clear.frame(height: 160)
-                        .listRowBackground(Color.sky)
+                        .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets())
                 }
@@ -291,7 +290,7 @@ struct MainView: View {
             .padding(.horizontal, 16)
             .padding(.vertical, 5)
             .listRowInsets(EdgeInsets())
-            .listRowBackground(Color.sky)
+            .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
     }
 
@@ -326,7 +325,7 @@ struct MainView: View {
         .padding(.top, 10)
         .padding(.bottom, 6)
         .listRowInsets(EdgeInsets())
-        .listRowBackground(Color.sky)
+        .listRowBackground(Color.clear)
         .listRowSeparator(.hidden)
         .moveDisabled(true)
     }
