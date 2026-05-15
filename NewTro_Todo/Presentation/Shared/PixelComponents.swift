@@ -159,6 +159,8 @@ struct SkyBackgroundView: View {
     @State private var cloud1Offset: CGFloat = -80
     @State private var cloud2Offset: CGFloat = 60
     @State private var cloud3Offset: CGFloat = -40
+    @State private var cloud4Offset: CGFloat = -100
+    @State private var cloud5Offset: CGFloat = 80
 
     var body: some View {
         GeometryReader { geo in
@@ -169,6 +171,14 @@ struct SkyBackgroundView: View {
                     startPoint: .top, endPoint: .bottom
                 )
                 .ignoresSafeArea()
+
+                // 구름 4 (상단, 작은)
+                PixelArtView(grid: PixelArtAssets.cloudGrid, palette: PixelArtAssets.cloudPalette, scale: 2)
+                    .offset(x: cloud4Offset, y: -260)
+
+                // 구름 5 (상단, 큰, 반대 방향)
+                PixelArtView(grid: PixelArtAssets.cloudGrid, palette: PixelArtAssets.cloudPalette, scale: 3)
+                    .offset(x: geo.size.width - cloud5Offset, y: -180)
 
                 // 구름 1 (큰)
                 PixelArtView(grid: PixelArtAssets.cloudGrid, palette: PixelArtAssets.cloudPalette, scale: 3)
@@ -192,6 +202,12 @@ struct SkyBackgroundView: View {
             }
             withAnimation(.linear(duration: 65).repeatForever(autoreverses: false)) {
                 cloud3Offset = 480
+            }
+            withAnimation(.linear(duration: 50).repeatForever(autoreverses: false)) {
+                cloud4Offset = 480
+            }
+            withAnimation(.linear(duration: 70).repeatForever(autoreverses: false)) {
+                cloud5Offset = 480
             }
         }
     }
