@@ -14,7 +14,12 @@ enum RealmConfiguration {
     // v9: Todo.targetDate / QuickNote.targetDate Date 추가
     //     기존 stringDate / stringToRegDate(한국어 포맷) 파싱 → startOfDay 정규화해 백필
     //     실패 시 regDate.startOfDay fallback. stringDate 컬럼은 호환 위해 유지(롤백 안전망)
-    static let schemaVersion: UInt64 = 9
+    // v10: 미루기 기능 제거 + 알림 모델 재설계
+    //     Todo.dueTime → notifyAt 으로 lossless rename (baseline 알림 시각 보존)
+    //     Todo에 targetTimeStart/targetTimeEnd/isAllDay 신규 컬럼 추가 (진행 시각 분리)
+    //     기존 dueTime 값을 targetTimeStart에도 복사해 "진행 시각" 의미로도 보존
+    //     PostponeEventObject 테이블 전체 삭제, Todo.postponeCount 컬럼 자동 drop
+    static let schemaVersion: UInt64 = 10
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -150,6 +155,18 @@ enum RealmConfiguration {
                 let reg = oldObject?["regDate"] as? Date
                 newObject?["targetDate"] = backfill(from: str, regDate: reg)
             }
+        }
+        // v10: 미루기 제거 + 알림 모델 재설계
+        // dueTime → notifyAt 으로 rename (lossless). targetTimeStart 에도 같은 값 복사.
+        // PostponeEventObject 테이블은 완전 삭제, postponeCount 컬럼은 모델 정의에서 사라져 자동 drop.
+        if oldVersion < 10 {
+            migration.renameProperty(onType: "Todo", from: "dueTime", to: "notifyAt")
+            migration.enumerateObjects(ofType: "Todo") { _, newObject in
+                newObject?["targetTimeStart"] = newObject?["notifyAt"]
+                newObject?["targetTimeEnd"] = nil
+                newObject?["isAllDay"] = false
+            }
+            migration.deleteData(forType: "PostponeEventObject")
         }
     }
 }

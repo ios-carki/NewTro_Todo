@@ -8,9 +8,11 @@ struct TodoEntity: Identifiable {
     var createdAt: Date
     var targetDate: Date
     var isCompleted: Bool
-    var postponeCount: Int
     var emoji: String
-    var dueTime: Date?
+    var targetTimeStart: Date?
+    var targetTimeEnd: Date?
+    var isAllDay: Bool
+    var notifyAt: Date?
     var sortOrder: Int
     var completedAt: Date?
 }

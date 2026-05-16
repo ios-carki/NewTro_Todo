@@ -80,7 +80,9 @@ struct TodoRow: View {
                 emoji: "",
                 importance: 0,
                 done: false,
-                dueTime: nil
+                targetTimeStart: nil,
+                targetTimeEnd: nil,
+                isAllDay: false
             ),
             fontSize: fontSize,
             isPlaceholder: true
@@ -129,9 +131,14 @@ struct TodoRow: View {
     }
 
     private var timeLabel: String? {
-        guard let due = item.dueTime else { return nil }
+        // 종일 / 범위 / 단일 시각 / 없음 4분기 분기.
+        if item.isAllDay { return "종일" }
+        guard let start = item.targetTimeStart else { return nil }
         let f = DateFormatter()
         f.dateFormat = "HH:mm"
-        return f.string(from: due)
+        if let end = item.targetTimeEnd {
+            return "\(f.string(from: start))~\(f.string(from: end))"
+        }
+        return f.string(from: start)
     }
 }

@@ -116,7 +116,7 @@ struct RestorePreviewSheet: View {
 
     private func countsLine() -> String {
         let c = header.counts
-        let template = "할일 %d · 메모 %d · 템플릿 %d · 미루기 %d".localized()
-        return String(format: template, c.todo, c.quickNote, c.template, c.postpone)
+        let template = "할일 %d · 메모 %d · 템플릿 %d".localized()
+        return String(format: template, c.todo, c.quickNote, c.template)
     }
 }

@@ -21,7 +21,6 @@ enum MainActiveSheet: Identifiable {
     case addTodo
     case editTodo(TodoEntity)
     case actionMenu(TodoEntity)
-    case postpone(TodoEntity)
     case datePicker
 
     var id: String {
@@ -29,7 +28,6 @@ enum MainActiveSheet: Identifiable {
         case .addTodo:           return "addTodo"
         case .editTodo(let t):   return "editTodo_\(t.id)"
         case .actionMenu(let t): return "actionMenu_\(t.id)"
-        case .postpone(let t):   return "postpone_\(t.id)"
         case .datePicker:        return "datePicker"
         }
     }
@@ -48,7 +46,6 @@ final class MainViewModel: ObservableObject {
     @Published var pendingTemplate: TemplateEntity? = nil
     @Published var actionMenuRecentlyDismissed: Bool = false
     @Published private(set) var dayMemos: [MemoEntity] = []
-    @Published private(set) var dayPostponeEvents: [PostponeEventEntity] = []
     @Published private var collapsedByDate: [String: Set<String>] = [:]
 
     private var toastTask: Task<Void, Never>?
@@ -77,17 +74,9 @@ final class MainViewModel: ObservableObject {
         return todoCoins + memoCoins
     }
 
-    /// HUD 하트 — 그 날 작성수 - 미루기 누적 페널티(회차당 1/2/3 캡)
-    /// writeCount는 "그 날 한때라도 stringDate가 selectedDate였던 todo 개수":
-    ///   현재 보이는 todos.count + 그 날 미루기로 떠난 이벤트 수
-    /// (이렇게 안 하면 미루기 시 writeCount −1 + 페널티 −1 = 하트 −2 잘못 깎임)
-    var heartCount: Int {
-        let writeCount = todos.count + dayPostponeEvents.count
-        let penalty = dayPostponeEvents
-            .map { min($0.ordinalAtTime, 3) }
-            .reduce(0, +)
-        return max(0, writeCount - penalty)
-    }
+    /// HUD 하트 — 미루기 기능 제거 후 잠정 정의: "그 날 작성한 Todo 개수".
+    /// 의미 재정의는 후속 PR에서 다시 다룸.
+    var heartCount: Int { todos.count }
 
     var worldDate: String {
         let cal = Calendar.current
@@ -105,7 +94,7 @@ final class MainViewModel: ObservableObject {
     }
 
     /// 오늘보다 이전 날짜를 보고 있으면 true
-    /// → 완료 토글/미루기/편집은 잠그고, 삭제만 허용
+    /// → 완료 토글/편집은 잠그고, 삭제만 허용
     var isViewingPastDate: Bool {
         let cal = Calendar.current
         let today = cal.startOfDay(for: Date())
@@ -120,13 +109,11 @@ final class MainViewModel: ObservableObject {
     private let addTodoUseCase: any AddTodoUseCaseProtocol
     private let updateTodoTextUseCase: any UpdateTodoTextUseCaseProtocol
     private let toggleCompleteUseCase: any ToggleTodoCompleteUseCaseProtocol
-    private let postponeTodoUseCase: any PostponeTodoUseCaseProtocol
     private let updateImportanceUseCase: any UpdateTodoImportanceUseCaseProtocol
     private let toggleFavoriteUseCase: any ToggleTodoFavoriteUseCaseProtocol
     private let deleteTodoUseCase: any DeleteTodoUseCaseProtocol
     private let recordCompleteUseCase: any RecordTodoCompleteUseCaseProtocol
     private let recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol
-    private let recordPostponeUseCase: any RecordPostponeUseCaseProtocol
     private let editTodoUseCase: any EditTodoUseCaseProtocol
     private let updateTodoSortOrdersUseCase: any UpdateTodoSortOrdersUseCaseProtocol
     private let fetchTemplatesUseCase: any FetchTemplatesUseCaseProtocol
@@ -134,8 +121,6 @@ final class MainViewModel: ObservableObject {
     private let updateTemplateUseCase: any UpdateTemplateUseCaseProtocol
     private let deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
     private let earnCoinsUseCase: any EarnCoinsUseCaseProtocol
-    private let recordPostponeEventUseCase: any RecordPostponeEventUseCaseProtocol
-    private let fetchPostponeEventsForDateUseCase: any FetchPostponeEventsForDateUseCaseProtocol
 
     init(
         fetchTodosUseCase: any FetchTodosUseCaseProtocol,
@@ -144,22 +129,18 @@ final class MainViewModel: ObservableObject {
         addTodoUseCase: any AddTodoUseCaseProtocol,
         updateTodoTextUseCase: any UpdateTodoTextUseCaseProtocol,
         toggleCompleteUseCase: any ToggleTodoCompleteUseCaseProtocol,
-        postponeTodoUseCase: any PostponeTodoUseCaseProtocol,
         updateImportanceUseCase: any UpdateTodoImportanceUseCaseProtocol,
         toggleFavoriteUseCase: any ToggleTodoFavoriteUseCaseProtocol,
         deleteTodoUseCase: any DeleteTodoUseCaseProtocol,
         recordCompleteUseCase: any RecordTodoCompleteUseCaseProtocol,
         recordTodoAddedUseCase: any RecordTodoAddedUseCaseProtocol,
-        recordPostponeUseCase: any RecordPostponeUseCaseProtocol,
         editTodoUseCase: any EditTodoUseCaseProtocol,
         updateTodoSortOrdersUseCase: any UpdateTodoSortOrdersUseCaseProtocol,
         fetchTemplatesUseCase: any FetchTemplatesUseCaseProtocol,
         addTemplateUseCase: any AddTemplateUseCaseProtocol,
         updateTemplateUseCase: any UpdateTemplateUseCaseProtocol,
         deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol,
-        earnCoinsUseCase: any EarnCoinsUseCaseProtocol,
-        recordPostponeEventUseCase: any RecordPostponeEventUseCaseProtocol,
-        fetchPostponeEventsForDateUseCase: any FetchPostponeEventsForDateUseCaseProtocol
+        earnCoinsUseCase: any EarnCoinsUseCaseProtocol
     ) {
         self.fetchTodosUseCase = fetchTodosUseCase
         self.fetchMemosUseCase = fetchMemosUseCase
@@ -167,13 +148,11 @@ final class MainViewModel: ObservableObject {
         self.addTodoUseCase = addTodoUseCase
         self.updateTodoTextUseCase = updateTodoTextUseCase
         self.toggleCompleteUseCase = toggleCompleteUseCase
-        self.postponeTodoUseCase = postponeTodoUseCase
         self.updateImportanceUseCase = updateImportanceUseCase
         self.toggleFavoriteUseCase = toggleFavoriteUseCase
         self.deleteTodoUseCase = deleteTodoUseCase
         self.recordCompleteUseCase = recordCompleteUseCase
         self.recordTodoAddedUseCase = recordTodoAddedUseCase
-        self.recordPostponeUseCase = recordPostponeUseCase
         self.editTodoUseCase = editTodoUseCase
         self.updateTodoSortOrdersUseCase = updateTodoSortOrdersUseCase
         self.fetchTemplatesUseCase = fetchTemplatesUseCase
@@ -181,8 +160,6 @@ final class MainViewModel: ObservableObject {
         self.updateTemplateUseCase = updateTemplateUseCase
         self.deleteTemplateUseCase = deleteTemplateUseCase
         self.earnCoinsUseCase = earnCoinsUseCase
-        self.recordPostponeEventUseCase = recordPostponeEventUseCase
-        self.fetchPostponeEventsForDateUseCase = fetchPostponeEventsForDateUseCase
         loadCollapsedFromDefaults()
         loadTodos()
     }
@@ -277,12 +254,11 @@ final class MainViewModel: ObservableObject {
         Task { await loadDayMetrics() }
     }
 
-    /// HUD 동전·하트 계산용 일일 데이터 (메모, 미루기 이벤트) 로드
-    /// 메모 쿼리: FetchMemosUseCase의 `.range`가 from/to에 startOfDay·+1일 정규화를 자동 적용하므로
+    /// HUD 동전 계산용 일일 메모 로드.
+    /// FetchMemosUseCase의 `.range`가 from/to에 startOfDay·+1일 정규화를 자동 적용하므로
     /// 같은 날짜를 양쪽에 넘긴다(같은 날 boundary 보정 → [start, start+1) 1일 윈도우).
     private func loadDayMetrics() async {
         dayMemos = (try? await fetchMemosUseCase.execute(filter: .range(from: selectedDate, to: selectedDate))) ?? []
-        dayPostponeEvents = (try? await fetchPostponeEventsForDateUseCase.execute(date: selectedDate)) ?? []
     }
 
     func presentAddTodo() {
@@ -364,20 +340,41 @@ final class MainViewModel: ObservableObject {
         activeSheet = .editTodo(todo)
     }
 
-    func editTodo(id: String, text: String, emoji: String, importance: Importance, dueTime: Date?) {
+    func editTodo(
+        id: String,
+        text: String,
+        emoji: String,
+        importance: Importance,
+        targetTimeStart: Date?,
+        targetTimeEnd: Date?,
+        isAllDay: Bool,
+        notifyAt: Date?
+    ) {
         Task {
             do {
-                try await editTodoUseCase.execute(id: id, text: text, emoji: emoji, importance: importance, dueTime: dueTime)
+                try await editTodoUseCase.execute(
+                    id: id,
+                    text: text,
+                    emoji: emoji,
+                    importance: importance,
+                    targetTimeStart: targetTimeStart,
+                    targetTimeEnd: targetTimeEnd,
+                    isAllDay: isAllDay,
+                    notifyAt: notifyAt
+                )
                 if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].text = text
                     todos[idx].emoji = emoji
                     todos[idx].importance = importance
-                    todos[idx].dueTime = dueTime
+                    todos[idx].targetTimeStart = targetTimeStart
+                    todos[idx].targetTimeEnd = targetTimeEnd
+                    todos[idx].isAllDay = isAllDay
+                    todos[idx].notifyAt = notifyAt
                 }
                 // 알림 재설정: 기존 취소 후 새 시간 있으면 등록
                 NotificationManager.shared.cancel(todoId: id)
-                if let dueTime {
-                    NotificationManager.shared.schedule(todoId: id, text: text, emoji: emoji, at: dueTime)
+                if let notifyAt {
+                    NotificationManager.shared.schedule(todoId: id, text: text, emoji: emoji, at: notifyAt)
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
@@ -386,16 +383,31 @@ final class MainViewModel: ObservableObject {
         }
     }
 
-    func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?) {
+    func addTodo(
+        text: String,
+        emoji: String,
+        importance: Importance,
+        targetTimeStart: Date?,
+        targetTimeEnd: Date?,
+        isAllDay: Bool,
+        notifyAt: Date?
+    ) {
         Task {
             do {
                 let newTodo = try await addTodoUseCase.execute(
-                    text: text, emoji: emoji, importance: importance, dueTime: dueTime, targetDate: selectedDate
+                    text: text,
+                    emoji: emoji,
+                    importance: importance,
+                    targetDate: selectedDate,
+                    targetTimeStart: targetTimeStart,
+                    targetTimeEnd: targetTimeEnd,
+                    isAllDay: isAllDay,
+                    notifyAt: notifyAt
                 )
                 todos.append(newTodo)
                 await recordTodoAddedUseCase.execute()
-                if let dueTime {
-                    NotificationManager.shared.schedule(todoId: newTodo.id, text: text, emoji: emoji, at: dueTime)
+                if let notifyAt {
+                    NotificationManager.shared.schedule(todoId: newTodo.id, text: text, emoji: emoji, at: notifyAt)
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
@@ -425,16 +437,17 @@ final class MainViewModel: ObservableObject {
                     todos[idx].isCompleted.toggle()
                     todos[idx].completedAt = todos[idx].isCompleted ? Date() : nil
                     if todos[idx].isCompleted {
-                        let wasPostponed = todos[idx].postponeCount > 0
                         let isPerfect = !todos.isEmpty && todos.allSatisfy(\.isCompleted)
                         await recordCompleteUseCase.execute(
-                            wasPostponed: wasPostponed,
+                            wasPostponed: false,
                             isPerfectDay: isPerfect,
                             date: selectedDate
                         )
                         try? await earnCoinsUseCase.execute(reason: .todoCompleted(
                             importance: todos[idx].importance
                         ))
+                        // 완료된 Todo의 알림은 발화 의미 없음. 회귀 방지를 위해 취소.
+                        NotificationManager.shared.cancel(todoId: id)
                     }
                     todos = Self.sorted(todos)
                 }
@@ -486,32 +499,6 @@ final class MainViewModel: ObservableObject {
                 return a.sortOrder < b.sortOrder
             }
             return (a.completedAt ?? .distantPast) < (b.completedAt ?? .distantPast)
-        }
-    }
-
-    func postpone(id: String) {
-        let nextDay = Calendar.current.date(byAdding: .day, value: 1, to: selectedDate) ?? selectedDate
-        postpone(id: id, toDate: nextDay)
-    }
-
-    func postpone(id: String, toDate: Date) {
-        Task {
-            do {
-                let oldOrdinal = todos.first(where: { $0.id == id })?.postponeCount ?? 0
-                let eventDate = Calendar.current.startOfDay(for: selectedDate)
-                try await postponeTodoUseCase.execute(id: id, toDate: toDate)
-                todos.removeAll { $0.id == id }
-                await recordPostponeUseCase.execute()
-                try? await recordPostponeEventUseCase.execute(
-                    todoId: id,
-                    eventDate: eventDate,
-                    ordinalAtTime: oldOrdinal + 1
-                )
-                await loadDayMetrics()
-                WidgetCenter.shared.reloadAllTimelines()
-            } catch {
-                errorMessage = error.localizedDescription
-            }
         }
     }
 

@@ -34,8 +34,6 @@ struct MainView: View {
             case .actionMenu(let todo):
                 TodoActionMenuView(todo: todo, viewModel: viewModel)
                     .interactiveDismissDisabled(true)
-            case .postpone(let todo):
-                PostponeMenuView(todo: todo, viewModel: viewModel)
             case .datePicker:
                 DatePickerSheetView(
                     initialDate: viewModel.selectedDate,

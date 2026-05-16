@@ -90,26 +90,6 @@ enum ChallengeData {
                 return stats.perfectDayDateStrings.contains(today) ? 1 : 0
             }
         ),
-        ChallengeDefinition(
-            challengeId: "daily_noPostpone",
-            title: "오늘 할 일은 오늘",
-            description: "오늘은 미루지 않고 마무리해요",
-            category: .daily,
-            sfSymbol: "clock.badge.checkmark.fill",
-            accentColor: .pixelPink,
-            targetValue: 1,
-            rewardPoints: 20,
-            rewardCharacterId: nil,
-            progressGetter: { stats in
-                guard !stats.todayPostponed else { return 0 }
-                let cal = Calendar.current
-                let y = cal.component(.year,  from: Date())
-                let m = cal.component(.month, from: Date())
-                let d = cal.component(.day,   from: Date())
-                let today = String(format: "%04d-%02d-%02d", y, m, d)
-                return stats.perfectDayDateStrings.contains(today) ? 1 : 0
-            }
-        ),
     ]
 
     static let streak: [ChallengeDefinition] = [

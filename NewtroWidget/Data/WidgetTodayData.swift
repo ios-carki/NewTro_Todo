@@ -9,7 +9,9 @@ struct WidgetTodoItem: Identifiable, Hashable {
     let emoji: String
     let importance: Int   // Importance.rawValue: 0=none, 1=high, 2=medium
     let done: Bool
-    let dueTime: Date?
+    let targetTimeStart: Date?
+    let targetTimeEnd: Date?
+    let isAllDay: Bool
 }
 
 struct WidgetTodayData {
@@ -29,11 +31,11 @@ struct WidgetTodayData {
         total: 5,
         done: 2,
         topItems: [
-            .init(id: "1", text: "운동 30분",   emoji: "💪", importance: 1, done: false, dueTime: nil),
-            .init(id: "2", text: "우유 사러 가기", emoji: "🥛", importance: 0, done: true,  dueTime: nil),
-            .init(id: "3", text: "도트 공부",   emoji: "🎮", importance: 2, done: false, dueTime: nil),
-            .init(id: "4", text: "책 한 챕터",  emoji: "📚", importance: 0, done: false, dueTime: nil),
-            .init(id: "5", text: "화분 물주기", emoji: "🌸", importance: 0, done: false, dueTime: nil)
+            .init(id: "1", text: "운동 30분",   emoji: "💪", importance: 1, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "2", text: "우유 사러 가기", emoji: "🥛", importance: 0, done: true,  targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "3", text: "도트 공부",   emoji: "🎮", importance: 2, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "4", text: "책 한 챕터",  emoji: "📚", importance: 0, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "5", text: "화분 물주기", emoji: "🌸", importance: 0, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false)
         ],
         coinBalance: 12
     )
@@ -63,7 +65,9 @@ enum WidgetRealmReader {
                 emoji: t.emoji,
                 importance: t.importance,
                 done: t.isFinished,
-                dueTime: t.dueTime
+                targetTimeStart: t.targetTimeStart,
+                targetTimeEnd: t.targetTimeEnd,
+                isAllDay: t.isAllDay
             )
         }
 

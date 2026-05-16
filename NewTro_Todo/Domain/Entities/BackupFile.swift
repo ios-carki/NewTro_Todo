@@ -8,7 +8,8 @@ struct BackupFile: Codable {
     var quickNotes: [BackupQuickNoteRecord]
     var templates: [BackupTemplateRecord]
     var wallet: BackupWalletRecord?
-    var postponeEvents: [BackupPostponeEventRecord]
+    // v10에서 미루기 기능 제거. 옛 백업 decode 호환을 위해 Optional 유지, 신규 export 시 nil.
+    var postponeEvents: [BackupPostponeEventRecord]?
     // 이전 버전 백업 파일과의 호환을 위해 Optional. nil이면 stats를 건드리지 않음.
     var stats: BackupStatsRecord?
     // 백업 로그(이력) 자체도 다른 기기로 이어주기 위해 포함. nil이면 로그 건드리지 않음.
@@ -27,7 +28,8 @@ struct BackupCounts: Codable {
     let quickNote: Int
     let template: Int
     let wallet: Int
-    let postpone: Int
+    // v10에서 미루기 기능 제거. 옛 백업 decode 호환을 위해 Optional 유지, 신규 export 시 nil.
+    let postpone: Int?
 }
 
 struct BackupTodoRecord: Codable {
@@ -39,11 +41,17 @@ struct BackupTodoRecord: Codable {
     var stringDate: String
     var targetDate: Date
     var isFinished: Bool
-    var postponeCount: Int
     var emoji: String
-    var dueTime: Date?
     var sortOrder: Int
     var completedAt: Date?
+    // v10 신규 4필드. 알림과 진행 시각이 분리됨.
+    var targetTimeStart: Date?
+    var targetTimeEnd: Date?
+    var isAllDay: Bool?             // 옛 백업 decode 시 nil → false 해석
+    var notifyAt: Date?
+    // 옛 백업(v9 이하) decode 호환용. v10 export 시 항상 nil.
+    var dueTime: Date?
+    var postponeCount: Int?
 }
 
 struct BackupQuickNoteRecord: Codable {

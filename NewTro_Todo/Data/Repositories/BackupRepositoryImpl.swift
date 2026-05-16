@@ -28,12 +28,10 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
             let templates = realm.objects(TemplateObject.self).map(Self.makeRecord)
             let walletObj = realm.object(ofType: WalletObject.self, forPrimaryKey: WalletObject.singletonId)
             let wallet = walletObj.map(Self.makeRecord)
-            let postpones = realm.objects(PostponeEventObject.self).map(Self.makeRecord)
 
             let todoArr = Array(todos)
             let quickNoteArr = Array(quickNotes)
             let templateArr = Array(templates)
-            let postponeArr = Array(postpones)
 
             let createdAt = Date()
             let counts = BackupCounts(
@@ -41,7 +39,7 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
                 quickNote: quickNoteArr.count,
                 template: templateArr.count,
                 wallet: wallet == nil ? 0 : 1,
-                postpone: postponeArr.count
+                postpone: nil
             )
             let header = BackupHeader(
                 appVersion: Self.bundleShortVersion(),
@@ -61,7 +59,7 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
                 quickNotes: quickNoteArr,
                 templates: templateArr,
                 wallet: wallet,
-                postponeEvents: postponeArr,
+                postponeEvents: nil,
                 stats: statsSnapshot,
                 backupLogs: logsWithSelf
             )
@@ -138,11 +136,15 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
             stringDate: o.stringDate,
             targetDate: o.targetDate,
             isFinished: o.isFinished,
-            postponeCount: o.postponeCount,
             emoji: o.emoji,
-            dueTime: o.dueTime,
             sortOrder: o.sortOrder,
-            completedAt: o.completedAt
+            completedAt: o.completedAt,
+            targetTimeStart: o.targetTimeStart,
+            targetTimeEnd: o.targetTimeEnd,
+            isAllDay: o.isAllDay,
+            notifyAt: o.notifyAt,
+            dueTime: nil,
+            postponeCount: nil
         )
     }
 
@@ -172,15 +174,6 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         BackupWalletRecord(id: o.id, balance: o.balance, totalEarned: o.totalEarned)
     }
 
-    private static func makeRecord(_ o: PostponeEventObject) -> BackupPostponeEventRecord {
-        BackupPostponeEventRecord(
-            id: o.id,
-            todoId: o.todoId,
-            eventDate: o.eventDate,
-            ordinalAtTime: o.ordinalAtTime
-        )
-    }
-
     // MARK: - Record → Realm
 
     private static func buildTodo(from r: BackupTodoRecord) throws -> Todo {
@@ -193,11 +186,22 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         t.stringDate = r.stringDate
         t.targetDate = r.targetDate
         t.isFinished = r.isFinished
-        t.postponeCount = r.postponeCount
         t.emoji = r.emoji
-        t.dueTime = r.dueTime
         t.sortOrder = r.sortOrder
         t.completedAt = r.completedAt
+        // v10 신규 필드가 있으면 그대로 적용, 없고 레거시 dueTime만 있으면 진행 시각=알림 시각으로 fallback.
+        // postponeCount는 무시 — 미루기 기능 자체가 제거됨.
+        if r.targetTimeStart != nil || r.notifyAt != nil || r.isAllDay != nil {
+            t.targetTimeStart = r.targetTimeStart
+            t.targetTimeEnd = r.targetTimeEnd
+            t.isAllDay = r.isAllDay ?? false
+            t.notifyAt = r.notifyAt
+        } else if let due = r.dueTime {
+            t.targetTimeStart = due
+            t.targetTimeEnd = nil
+            t.isAllDay = false
+            t.notifyAt = due
+        }
         return t
     }
 
@@ -231,15 +235,6 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         return w
     }
 
-    private static func buildPostpone(from r: BackupPostponeEventRecord) -> PostponeEventObject {
-        let p = PostponeEventObject()
-        p.id = r.id
-        p.todoId = r.todoId
-        p.eventDate = r.eventDate
-        p.ordinalAtTime = r.ordinalAtTime
-        return p
-    }
-
     // MARK: - Insert (overwrite)
 
     private static func insertAll(file: BackupFile, into realm: Realm) {
@@ -257,9 +252,7 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         if let r = file.wallet {
             realm.add(buildWallet(from: r))
         }
-        for r in file.postponeEvents {
-            realm.add(buildPostpone(from: r))
-        }
+        // v10에서 PostponeEvent 제거. 옛 백업의 postponeEvents 배열은 import 시 무시.
     }
 
     // MARK: - Merge
@@ -282,10 +275,7 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
             if realm.object(ofType: TemplateObject.self, forPrimaryKey: r.id) != nil { continue }
             realm.add(buildTemplate(from: r))
         }
-        for r in file.postponeEvents {
-            if realm.object(ofType: PostponeEventObject.self, forPrimaryKey: r.id) != nil { continue }
-            realm.add(buildPostpone(from: r))
-        }
+        // v10에서 PostponeEvent 제거. 옛 백업의 postponeEvents 배열은 merge 시 무시.
         // Wallet은 mergeIn에서 건드리지 않음 — recomputeWallet에서 처리.
     }
 
