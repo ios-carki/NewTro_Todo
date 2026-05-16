@@ -14,7 +14,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.jun.NewTro-Todo",
-            deploymentTargets: .iOS("15.0"),
+            deploymentTargets: .iOS("16.0"),
             infoPlist: .extendingDefault(with: [
                 // 콜드 스타트 시 검은 깜빡임 제거 — Splash 첫 프레임의 .sky(#7CC7F0)와 동일한 색 에셋을 깔아둠.
                 "UILaunchScreen": .dictionary([
@@ -93,7 +93,7 @@ let project = Project(
             destinations: .iOS,
             product: .appExtension,
             bundleId: "com.jun.NewTro-Todo.NewtroWidget",
-            deploymentTargets: .iOS("15.0"),
+            deploymentTargets: .iOS("16.0"),
             infoPlist: .extendingDefault(with: [
                 "UIAppFonts": .array([
                     .string("Galmuri11-Bold.ttf"),
@@ -141,7 +141,7 @@ let project = Project(
             destinations: .iOS,
             product: .uiTests,
             bundleId: "com.jun.NewTro-Todo.UITests",
-            deploymentTargets: .iOS("15.0"),
+            deploymentTargets: .iOS("16.0"),
             sources: ["NewTro_TodoUITests/**/*.swift"],
             dependencies: [
                 .target(name: "NewTro_Todo"),
