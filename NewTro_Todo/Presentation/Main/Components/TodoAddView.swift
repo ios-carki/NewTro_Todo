@@ -207,21 +207,12 @@ struct TodoAddView: View {
     // MARK: - Text Input
     // ZStack 컨테이너의 frame 높이가 애니메이션되고, 내부 컨텐츠는 opacity 전환.
 
-    @ViewBuilder
     private var todoTextEditor: some View {
-        if #available(iOS 16.0, *) {
-            TextEditor(text: $text)
-                .font(.galBold14())
-                .foregroundColor(.ink)
-                .scrollContentBackground(.hidden)
-                .background(Color.clear)
-        } else {
-            TextEditor(text: $text)
-                .font(.galBold14())
-                .foregroundColor(.ink)
-                .background(Color.clear)
-                .onAppear { UITextView.appearance().backgroundColor = .clear }
-        }
+        TextEditor(text: $text)
+            .font(.galBold14())
+            .foregroundColor(.ink)
+            .scrollContentBackground(.hidden)
+            .background(Color.clear)
     }
 
     private var textInputSection: some View {

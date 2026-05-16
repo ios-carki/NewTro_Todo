@@ -37,12 +37,8 @@ struct BackupLogView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { viewModel.onAppear() }
         .sheet(isPresented: $viewModel.showCustomRangePicker) {
-            if #available(iOS 16.0, *) {
-                customRangeSheet
-                    .presentationDetents([.medium])
-            } else {
-                customRangeSheet
-            }
+            customRangeSheet
+                .presentationDetents([.medium])
         }
     }
 

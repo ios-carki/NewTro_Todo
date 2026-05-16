@@ -19,31 +19,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         RealmConfiguration.setup()
 
-        // iOS 15 호환 — scrollContentBackground(.hidden) 대체
+        // 전역 List/TextEditor 배경 투명 — 화면별 .scrollContentBackground(.hidden) 누락 시 안전망
         UITableView.appearance().backgroundColor = .clear
         UITextView.appearance().backgroundColor = .clear
 
         //로컬노티 딜리게이트
         UNUserNotificationCenter.current().delegate = self
-        
+
         //파이어베이스 초기화 코드
         FirebaseApp.configure()
-        
-        //알림 시스템에 앱을 등록
-        if #available(iOS 10.0, *) {
-          // For iOS 10 display notification (sent via APNS)
-          UNUserNotificationCenter.current().delegate = self
 
-          let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-          UNUserNotificationCenter.current().requestAuthorization(
+        //알림 시스템에 앱을 등록
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        UNUserNotificationCenter.current().requestAuthorization(
             options: authOptions,
             completionHandler: { _, _ in }
-          )
-        } else {
-          let settings: UIUserNotificationSettings =
-            UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
-          application.registerUserNotificationSettings(settings)
-        }
+        )
 
         application.registerForRemoteNotifications()
         

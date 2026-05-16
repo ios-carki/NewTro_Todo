@@ -33,9 +33,7 @@ private func applyWhiteAppearanceForDocumentPicker() {
     navProxy.standardAppearance = navAppearance
     navProxy.scrollEdgeAppearance = navAppearance
     navProxy.compactAppearance = navAppearance
-    if #available(iOS 15.0, *) {
-        navProxy.compactScrollEdgeAppearance = navAppearance
-    }
+    navProxy.compactScrollEdgeAppearance = navAppearance
 
     // UIBarButtonItem 자체에도 직접 텍스트 attribute 지정 (이중 안전망).
     let btnProxy = UIBarButtonItem.appearance(whenContainedInInstancesOf: pickerClass)
