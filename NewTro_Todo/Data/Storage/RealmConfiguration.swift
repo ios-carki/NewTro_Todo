@@ -14,7 +14,9 @@ enum RealmConfiguration {
     // v9: Todo.targetDate / QuickNote.targetDate Date 추가
     //     기존 stringDate / stringToRegDate(한국어 포맷) 파싱 → startOfDay 정규화해 백필
     //     실패 시 regDate.startOfDay fallback. stringDate 컬럼은 호환 위해 유지(롤백 안전망)
-    static let schemaVersion: UInt64 = 9
+    // v10: Todo.dueTime → targetTime 리네임 (값 보존), Todo.isAllDay Bool 추가(false),
+    //      Todo.reminderOffsetMinutes Int? 추가. targetTime 있으면 0(정시), 없으면 nil
+    static let schemaVersion: UInt64 = 10
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -149,6 +151,18 @@ enum RealmConfiguration {
                 let str = oldObject?["stringToRegDate"] as? String
                 let reg = oldObject?["regDate"] as? Date
                 newObject?["targetDate"] = backfill(from: str, regDate: reg)
+            }
+        }
+        // v10: dueTime → targetTime lossless rename, isAllDay/reminderOffsetMinutes 신규
+        if oldVersion < 10 {
+            migration.renameProperty(onType: "Todo", from: "dueTime", to: "targetTime")
+            migration.enumerateObjects(ofType: "Todo") { _, newObject in
+                newObject?["isAllDay"] = false
+                if newObject?["targetTime"] is Date {
+                    newObject?["reminderOffsetMinutes"] = 0
+                } else {
+                    newObject?["reminderOffsetMinutes"] = nil
+                }
             }
         }
     }

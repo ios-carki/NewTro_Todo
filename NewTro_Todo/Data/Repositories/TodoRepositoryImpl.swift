@@ -31,7 +31,7 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         }
     }
 
-    func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?, targetDate: Date) async throws -> TodoEntity {
+    func addTodo(text: String, emoji: String, importance: Importance, targetTime: Date?, isAllDay: Bool, reminderOffsetMinutes: Int?, targetDate: Date) async throws -> TodoEntity {
         try await MainActor.run {
             let realm = try Realm()
             let dayStart = Calendar.current.startOfDay(for: targetDate)
@@ -49,7 +49,9 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
                 targetDate: dayStart,
                 isFinished: false,
                 emoji: emoji,
-                dueTime: dueTime,
+                targetTime: targetTime,
+                isAllDay: isAllDay,
+                reminderOffsetMinutes: reminderOffsetMinutes,
                 sortOrder: minSortOrder - 1
             )
             try realm.write { realm.add(todo) }
@@ -57,7 +59,7 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         }
     }
 
-    func updateTodo(id: String, text: String, emoji: String, importance: Importance, dueTime: Date?) async throws {
+    func updateTodo(id: String, text: String, emoji: String, importance: Importance, targetTime: Date?, isAllDay: Bool, reminderOffsetMinutes: Int?) async throws {
         try await MainActor.run {
             let realm = try Realm()
             guard let todo = realm.objects(Todo.self)
@@ -67,7 +69,9 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
                 todo.todo = text
                 todo.emoji = emoji
                 todo.importance = importance.rawValue
-                todo.dueTime = dueTime
+                todo.targetTime = targetTime
+                todo.isAllDay = isAllDay
+                todo.reminderOffsetMinutes = reminderOffsetMinutes
             }
         }
     }

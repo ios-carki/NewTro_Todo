@@ -140,7 +140,10 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
             isFinished: o.isFinished,
             postponeCount: o.postponeCount,
             emoji: o.emoji,
-            dueTime: o.dueTime,
+            targetTime: o.targetTime,
+            isAllDay: o.isAllDay,
+            reminderOffsetMinutes: o.reminderOffsetMinutes,
+            dueTime: nil,
             sortOrder: o.sortOrder,
             completedAt: o.completedAt
         )
@@ -195,7 +198,16 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         t.isFinished = r.isFinished
         t.postponeCount = r.postponeCount
         t.emoji = r.emoji
-        t.dueTime = r.dueTime
+        if let tt = r.targetTime {
+            t.targetTime = tt
+            t.isAllDay = r.isAllDay ?? false
+            t.reminderOffsetMinutes = r.reminderOffsetMinutes
+        } else if let legacy = r.dueTime {
+            // v9 이하 백업: 기존 dueTime은 알림 발화 시각이었으므로 진행 시각으로 옮기고 offset=0.
+            t.targetTime = legacy
+            t.isAllDay = false
+            t.reminderOffsetMinutes = 0
+        }
         t.sortOrder = r.sortOrder
         t.completedAt = r.completedAt
         return t

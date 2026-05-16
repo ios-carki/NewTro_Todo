@@ -41,6 +41,11 @@ struct BackupTodoRecord: Codable {
     var isFinished: Bool
     var postponeCount: Int
     var emoji: String
+    // v10 신규. 알림 발화 시각이 아닌 "진행 시각"으로 의미 분리.
+    var targetTime: Date?
+    var isAllDay: Bool?
+    var reminderOffsetMinutes: Int?
+    // v9 이하 백업 호환용 레거시 필드. import 시 targetTime이 없으면 여기서 fallback.
     var dueTime: Date?
     var sortOrder: Int
     var completedAt: Date?

@@ -80,7 +80,8 @@ struct TodoRow: View {
                 emoji: "",
                 importance: 0,
                 done: false,
-                dueTime: nil
+                targetTime: nil,
+                isAllDay: false
             ),
             fontSize: fontSize,
             isPlaceholder: true
@@ -112,7 +113,7 @@ struct TodoRow: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 if let timeLabel = timeLabel {
-                    Text("⏱\(timeLabel)")
+                    Text(item.isAllDay ? timeLabel : "⏱\(timeLabel)")
                         .font(.pressStart8())
                         .foregroundColor(.shade)
                 }
@@ -129,9 +130,10 @@ struct TodoRow: View {
     }
 
     private var timeLabel: String? {
-        guard let due = item.dueTime else { return nil }
+        if item.isAllDay { return "종일" }
+        guard let tt = item.targetTime else { return nil }
         let f = DateFormatter()
         f.dateFormat = "HH:mm"
-        return f.string(from: due)
+        return f.string(from: tt)
     }
 }

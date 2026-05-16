@@ -11,7 +11,9 @@ final class Todo: Object, ObjectKeyIdentifiable {
     @Persisted var isFinished: Bool = false
     @Persisted var postponeCount: Int = 0
     @Persisted var emoji: String = ""
-    @Persisted var dueTime: Date? = nil
+    @Persisted var targetTime: Date? = nil
+    @Persisted var isAllDay: Bool = false
+    @Persisted var reminderOffsetMinutes: Int? = nil
     @Persisted var sortOrder: Int = 0
     @Persisted var completedAt: Date? = nil
 
@@ -27,7 +29,9 @@ final class Todo: Object, ObjectKeyIdentifiable {
         isFinished: Bool,
         postponeCount: Int = 0,
         emoji: String = "",
-        dueTime: Date? = nil,
+        targetTime: Date? = nil,
+        isAllDay: Bool = false,
+        reminderOffsetMinutes: Int? = nil,
         sortOrder: Int = 0,
         completedAt: Date? = nil
     ) {
@@ -41,7 +45,9 @@ final class Todo: Object, ObjectKeyIdentifiable {
         self.isFinished = isFinished
         self.postponeCount = postponeCount
         self.emoji = emoji
-        self.dueTime = dueTime
+        self.targetTime = targetTime
+        self.isAllDay = isAllDay
+        self.reminderOffsetMinutes = reminderOffsetMinutes
         self.sortOrder = sortOrder
         self.completedAt = completedAt
     }

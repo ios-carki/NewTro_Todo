@@ -12,7 +12,9 @@ extension Todo {
             isCompleted: isFinished,
             postponeCount: postponeCount,
             emoji: emoji,
-            dueTime: dueTime,
+            targetTime: targetTime,
+            isAllDay: isAllDay,
+            reminderOffsetMinutes: reminderOffsetMinutes,
             sortOrder: sortOrder,
             completedAt: completedAt
         )
@@ -32,7 +34,9 @@ extension TodoEntity {
             isFinished: isCompleted,
             postponeCount: postponeCount,
             emoji: emoji,
-            dueTime: dueTime,
+            targetTime: targetTime,
+            isAllDay: isAllDay,
+            reminderOffsetMinutes: reminderOffsetMinutes,
             sortOrder: sortOrder,
             completedAt: completedAt
         )

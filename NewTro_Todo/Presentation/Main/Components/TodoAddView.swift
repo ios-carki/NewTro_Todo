@@ -394,9 +394,9 @@ struct TodoAddView: View {
         text = todo.text
         selectedEmoji = todo.emoji
         importance = todo.importance
-        if let dt = todo.dueTime {
+        if let tt = todo.targetTime {
             hasDueTime = true
-            dueTime = dt
+            dueTime = tt
         }
     }
 
@@ -451,22 +451,24 @@ struct TodoAddView: View {
         let trimmed = text.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
 
-        let resolvedDueTime: Date?
+        let resolvedTargetTime: Date?
         if hasDueTime {
             let dayComps = Calendar.current.dateComponents([.year, .month, .day], from: viewModel.selectedDate)
             let timeComps = Calendar.current.dateComponents([.hour, .minute], from: dueTime)
             var merged = DateComponents()
             merged.year = dayComps.year; merged.month = dayComps.month; merged.day = dayComps.day
             merged.hour = timeComps.hour; merged.minute = timeComps.minute
-            resolvedDueTime = Calendar.current.date(from: merged)
+            resolvedTargetTime = Calendar.current.date(from: merged)
         } else {
-            resolvedDueTime = nil
+            resolvedTargetTime = nil
         }
+        // B1 호환 레이어: 기존 UI는 종일 미지원, 알림 = 정시(offset 0)
+        let resolvedOffset: Int? = (resolvedTargetTime != nil) ? 0 : nil
 
         if let todo = editingTodo {
-            viewModel.editTodo(id: todo.id, text: trimmed, emoji: selectedEmoji, importance: importance, dueTime: resolvedDueTime)
+            viewModel.editTodo(id: todo.id, text: trimmed, emoji: selectedEmoji, importance: importance, targetTime: resolvedTargetTime, isAllDay: false, reminderOffsetMinutes: resolvedOffset)
         } else {
-            viewModel.addTodo(text: trimmed, emoji: selectedEmoji, importance: importance, dueTime: resolvedDueTime)
+            viewModel.addTodo(text: trimmed, emoji: selectedEmoji, importance: importance, targetTime: resolvedTargetTime, isAllDay: false, reminderOffsetMinutes: resolvedOffset)
         }
         dismiss()
     }

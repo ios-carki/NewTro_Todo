@@ -364,20 +364,21 @@ final class MainViewModel: ObservableObject {
         activeSheet = .editTodo(todo)
     }
 
-    func editTodo(id: String, text: String, emoji: String, importance: Importance, dueTime: Date?) {
+    func editTodo(id: String, text: String, emoji: String, importance: Importance, targetTime: Date?, isAllDay: Bool, reminderOffsetMinutes: Int?) {
         Task {
             do {
-                try await editTodoUseCase.execute(id: id, text: text, emoji: emoji, importance: importance, dueTime: dueTime)
+                try await editTodoUseCase.execute(id: id, text: text, emoji: emoji, importance: importance, targetTime: targetTime, isAllDay: isAllDay, reminderOffsetMinutes: reminderOffsetMinutes)
                 if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].text = text
                     todos[idx].emoji = emoji
                     todos[idx].importance = importance
-                    todos[idx].dueTime = dueTime
+                    todos[idx].targetTime = targetTime
+                    todos[idx].isAllDay = isAllDay
+                    todos[idx].reminderOffsetMinutes = reminderOffsetMinutes
                 }
-                // 알림 재설정: 기존 취소 후 새 시간 있으면 등록
                 NotificationManager.shared.cancel(todoId: id)
-                if let dueTime {
-                    NotificationManager.shared.schedule(todoId: id, text: text, emoji: emoji, at: dueTime)
+                if let notifyAt = Self.computeNotifyAt(targetTime: targetTime, isAllDay: isAllDay, offsetMinutes: reminderOffsetMinutes) {
+                    NotificationManager.shared.schedule(todoId: id, text: text, emoji: emoji, at: notifyAt)
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
@@ -386,22 +387,31 @@ final class MainViewModel: ObservableObject {
         }
     }
 
-    func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?) {
+    func addTodo(text: String, emoji: String, importance: Importance, targetTime: Date?, isAllDay: Bool, reminderOffsetMinutes: Int?) {
         Task {
             do {
                 let newTodo = try await addTodoUseCase.execute(
-                    text: text, emoji: emoji, importance: importance, dueTime: dueTime, targetDate: selectedDate
+                    text: text, emoji: emoji, importance: importance,
+                    targetTime: targetTime, isAllDay: isAllDay, reminderOffsetMinutes: reminderOffsetMinutes,
+                    targetDate: selectedDate
                 )
                 todos.append(newTodo)
                 await recordTodoAddedUseCase.execute()
-                if let dueTime {
-                    NotificationManager.shared.schedule(todoId: newTodo.id, text: text, emoji: emoji, at: dueTime)
+                if let notifyAt = Self.computeNotifyAt(targetTime: targetTime, isAllDay: isAllDay, offsetMinutes: reminderOffsetMinutes) {
+                    NotificationManager.shared.schedule(todoId: newTodo.id, text: text, emoji: emoji, at: notifyAt)
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
             }
         }
+    }
+
+    // 종일이면 진행일의 startOfDay 기준, 아니면 targetTime 기준에서 offsetMinutes(음수=이전)만큼 더한 시각
+    static func computeNotifyAt(targetTime: Date?, isAllDay: Bool, offsetMinutes: Int?) -> Date? {
+        guard let targetTime, let offset = offsetMinutes else { return nil }
+        let anchor = isAllDay ? Calendar.current.startOfDay(for: targetTime) : targetTime
+        return anchor.addingTimeInterval(TimeInterval(offset * 60))
     }
 
     func updateText(id: String, text: String) {
