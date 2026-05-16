@@ -31,11 +31,19 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         }
     }
 
-    func addTodo(text: String, emoji: String, importance: Importance, dueTime: Date?, targetDate: Date) async throws -> TodoEntity {
+    func addTodo(
+        text: String,
+        emoji: String,
+        importance: Importance,
+        targetDate: Date,
+        targetTimeStart: Date?,
+        targetTimeEnd: Date?,
+        isAllDay: Bool,
+        notifyAt: Date?
+    ) async throws -> TodoEntity {
         try await MainActor.run {
             let realm = try Realm()
             let dayStart = Calendar.current.startOfDay(for: targetDate)
-            // stringDate는 v10 제거 예정. 그 전까지 위젯/롤백 호환 위해 함께 기록.
             let dateStr = DateFormatter.dateToString(date: dayStart)
             let minSortOrder: Int = realm.objects(Todo.self)
                 .filter("targetDate == %@", dayStart)
@@ -49,7 +57,10 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
                 targetDate: dayStart,
                 isFinished: false,
                 emoji: emoji,
-                dueTime: dueTime,
+                targetTimeStart: targetTimeStart,
+                targetTimeEnd: targetTimeEnd,
+                isAllDay: isAllDay,
+                notifyAt: notifyAt,
                 sortOrder: minSortOrder - 1
             )
             try realm.write { realm.add(todo) }
@@ -57,7 +68,16 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         }
     }
 
-    func updateTodo(id: String, text: String, emoji: String, importance: Importance, dueTime: Date?) async throws {
+    func updateTodo(
+        id: String,
+        text: String,
+        emoji: String,
+        importance: Importance,
+        targetTimeStart: Date?,
+        targetTimeEnd: Date?,
+        isAllDay: Bool,
+        notifyAt: Date?
+    ) async throws {
         try await MainActor.run {
             let realm = try Realm()
             guard let todo = realm.objects(Todo.self)
@@ -67,7 +87,10 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
                 todo.todo = text
                 todo.emoji = emoji
                 todo.importance = importance.rawValue
-                todo.dueTime = dueTime
+                todo.targetTimeStart = targetTimeStart
+                todo.targetTimeEnd = targetTimeEnd
+                todo.isAllDay = isAllDay
+                todo.notifyAt = notifyAt
             }
         }
     }
@@ -91,22 +114,6 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             try realm.write {
                 todo.isFinished.toggle()
                 todo.completedAt = todo.isFinished ? Date() : nil
-            }
-        }
-    }
-
-    func postpone(id: String, toDate: Date) async throws {
-        try await MainActor.run {
-            let realm = try Realm()
-            guard let todo = realm.objects(Todo.self)
-                .filter("objectID == %@", try ObjectId(string: id)).first
-            else { throw RepositoryError.notFound }
-            let dayStart = Calendar.current.startOfDay(for: toDate)
-            try realm.write {
-                todo.targetDate = dayStart
-                // v10 제거 예정. 위젯/롤백 호환 위해 함께 갱신.
-                todo.stringDate = DateFormatter.dateToString(date: dayStart)
-                todo.postponeCount += 1
             }
         }
     }

@@ -7,7 +7,6 @@ final class DIContainer {
     private(set) lazy var memoRepository: any MemoRepositoryProtocol = MemoRepositoryImpl()
     private(set) lazy var statsRepository: any StatsRepositoryProtocol = StatsRepositoryImpl()
     private(set) lazy var templateRepository: any TemplateRepositoryProtocol = TemplateRepositoryImpl()
-    private(set) lazy var postponeEventRepository: any PostponeEventRepositoryProtocol = PostponeEventRepositoryImpl()
     private(set) lazy var walletRepository: any WalletRepositoryProtocol = WalletRepositoryImpl()
     private(set) lazy var localNotificationRepository: any LocalNotificationRepositoryProtocol = LocalNotificationRepositoryImpl()
     private(set) lazy var backupLogRepository: any BackupLogRepositoryProtocol = BackupLogRepositoryImpl()
@@ -28,9 +27,6 @@ final class DIContainer {
     }
     func makeToggleTodoCompleteUseCase() -> ToggleTodoCompleteUseCase {
         ToggleTodoCompleteUseCase(repository: todoRepository)
-    }
-    func makePostponeTodoUseCase() -> PostponeTodoUseCase {
-        PostponeTodoUseCase(repository: todoRepository)
     }
     func makeUpdateTodoImportanceUseCase() -> UpdateTodoImportanceUseCase {
         UpdateTodoImportanceUseCase(repository: todoRepository)
@@ -81,9 +77,6 @@ final class DIContainer {
     func makeRecordTodoAddedUseCase() -> RecordTodoAddedUseCase {
         RecordTodoAddedUseCase(repository: statsRepository)
     }
-    func makeRecordPostponeUseCase() -> RecordPostponeUseCase {
-        RecordPostponeUseCase(repository: statsRepository)
-    }
 
     // MARK: - UseCases: Template
     func makeFetchTemplatesUseCase() -> FetchTemplatesUseCase {
@@ -105,14 +98,6 @@ final class DIContainer {
     }
     func makeFetchWalletUseCase() -> FetchWalletUseCase {
         FetchWalletUseCase(repository: walletRepository)
-    }
-
-    // MARK: - UseCases: PostponeEvent
-    func makeRecordPostponeEventUseCase() -> RecordPostponeEventUseCase {
-        RecordPostponeEventUseCase(repository: postponeEventRepository)
-    }
-    func makeFetchPostponeEventsForDateUseCase() -> FetchPostponeEventsForDateUseCase {
-        FetchPostponeEventsForDateUseCase(repository: postponeEventRepository)
     }
 
     // MARK: - UseCases: Settings
@@ -164,22 +149,18 @@ final class DIContainer {
             addTodoUseCase: makeAddTodoUseCase(),
             updateTodoTextUseCase: makeUpdateTodoTextUseCase(),
             toggleCompleteUseCase: makeToggleTodoCompleteUseCase(),
-            postponeTodoUseCase: makePostponeTodoUseCase(),
             updateImportanceUseCase: makeUpdateTodoImportanceUseCase(),
             toggleFavoriteUseCase: makeToggleTodoFavoriteUseCase(),
             deleteTodoUseCase: makeDeleteTodoUseCase(),
             recordCompleteUseCase: makeRecordTodoCompleteUseCase(),
             recordTodoAddedUseCase: makeRecordTodoAddedUseCase(),
-            recordPostponeUseCase: makeRecordPostponeUseCase(),
             editTodoUseCase: makeEditTodoUseCase(),
             updateTodoSortOrdersUseCase: makeUpdateTodoSortOrdersUseCase(),
             fetchTemplatesUseCase: makeFetchTemplatesUseCase(),
             addTemplateUseCase: makeAddTemplateUseCase(),
             updateTemplateUseCase: makeUpdateTemplateUseCase(),
             deleteTemplateUseCase: makeDeleteTemplateUseCase(),
-            earnCoinsUseCase: makeEarnCoinsUseCase(),
-            recordPostponeEventUseCase: makeRecordPostponeEventUseCase(),
-            fetchPostponeEventsForDateUseCase: makeFetchPostponeEventsForDateUseCase()
+            earnCoinsUseCase: makeEarnCoinsUseCase()
         )
     }
 

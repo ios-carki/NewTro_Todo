@@ -12,7 +12,6 @@ struct StatsEntity {
     var perfectDayDateStrings: [String]
     var claimedChallengeIds: [String]
     var todayAddedTodo: Bool
-    var todayPostponed: Bool
 
     init(
         totalScore: Int = 0,
@@ -25,8 +24,7 @@ struct StatsEntity {
         earnedAchievementIds: [String] = [],
         perfectDayDateStrings: [String] = [],
         claimedChallengeIds: [String] = [],
-        todayAddedTodo: Bool = false,
-        todayPostponed: Bool = false
+        todayAddedTodo: Bool = false
     ) {
         self.totalScore = totalScore
         self.currentStreak = currentStreak
@@ -39,7 +37,6 @@ struct StatsEntity {
         self.perfectDayDateStrings = perfectDayDateStrings
         self.claimedChallengeIds = claimedChallengeIds
         self.todayAddedTodo = todayAddedTodo
-        self.todayPostponed = todayPostponed
     }
 
     var level: Int { Int(sqrt(Double(totalScore) / 100.0)) }

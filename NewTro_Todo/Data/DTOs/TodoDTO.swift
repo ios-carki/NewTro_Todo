@@ -10,9 +10,11 @@ extension Todo {
             createdAt: regDate,
             targetDate: targetDate,
             isCompleted: isFinished,
-            postponeCount: postponeCount,
             emoji: emoji,
-            dueTime: dueTime,
+            targetTimeStart: targetTimeStart,
+            targetTimeEnd: targetTimeEnd,
+            isAllDay: isAllDay,
+            notifyAt: notifyAt,
             sortOrder: sortOrder,
             completedAt: completedAt
         )
@@ -30,9 +32,11 @@ extension TodoEntity {
             stringDate: DateFormatter.dateToString(date: normalized),
             targetDate: normalized,
             isFinished: isCompleted,
-            postponeCount: postponeCount,
             emoji: emoji,
-            dueTime: dueTime,
+            targetTimeStart: targetTimeStart,
+            targetTimeEnd: targetTimeEnd,
+            isAllDay: isAllDay,
+            notifyAt: notifyAt,
             sortOrder: sortOrder,
             completedAt: completedAt
         )

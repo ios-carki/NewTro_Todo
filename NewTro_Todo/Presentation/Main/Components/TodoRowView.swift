@@ -115,10 +115,6 @@ struct TodoRowView: View {
                 .font(.galBold14())
                 .lineLimit(1)
                 .frame(maxWidth: .infinity, alignment: .leading)
-
-            if todo.postponeCount > 0 {
-                postponeBadge
-            }
         }
         .contentShape(Rectangle())
         .onTapGesture {
@@ -126,40 +122,8 @@ struct TodoRowView: View {
         }
     }
 
-    private var postponeBadge: some View {
-        HStack(spacing: 1) {
-            Text("🕐")
-                .font(.system(size: 9))
-            Text("×\(todo.postponeCount)")
-                .font(.pressStart7())
-                .foregroundColor(todo.postponeCount >= 3 ? .white : .ink)
-        }
-        .padding(.horizontal, 4)
-        .padding(.vertical, 2)
-        .background(todo.postponeCount >= 3 ? Color.redDk : Color.cream)
-        .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
-    }
-
     private var trailingButtons: some View {
         HStack(spacing: 4) {
-            Button {
-                if isLocked {
-                    showLockedToast()
-                } else {
-                    viewModel.activeSheet = .postpone(todo)
-                }
-            } label: {
-                Text("ZZZ")
-                    .font(.pressStart7())
-                    .foregroundColor(.ink)
-                    .padding(.horizontal, 6)
-                    .frame(height: 28)
-                    .background(Color.cream)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
-            }
-            .buttonStyle(.borderless)
-            .accessibilityIdentifier("postpone_\(todo.id)")
-
             Button {
                 viewModel.activeSheet = .actionMenu(todo)
             } label: {

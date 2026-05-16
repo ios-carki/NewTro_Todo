@@ -91,29 +91,6 @@ final class TodoListUITests: XCTestCase {
                       "완료 해제 후 체크박스가 사라짐")
     }
 
-    // MARK: - Test 03: 미루기 버튼 → 미루기 Sheet
-
-    func test_03_postponeButton_opensSheet() throws {
-        addTodo("미루기 테스트")
-
-        guard let id = firstTodoId() else { XCTFail("Todo 없음"); return }
-
-        let postponeBtn = app.buttons["postpone_\(id)"]
-        XCTAssertTrue(postponeBtn.waitForExistence(timeout: 3), "postpone 버튼 없음")
-        postponeBtn.tap()
-        sleep(1)
-
-        // 미루기 sheet 확인 (PostponeMenuView 타이틀)
-        XCTAssertTrue(
-            app.staticTexts["언제로 미룰까요?"].waitForExistence(timeout: 3),
-            "미루기 sheet가 열리지 않음"
-        )
-
-        // sheet 닫기 (PostponeMenuView는 취소 버튼 없음 → 스와이프 다운)
-        app.swipeDown()
-        sleep(1)
-    }
-
     // MARK: - Test 04: ... 버튼 → 액션 메뉴 Sheet
 
     func test_04_actionMenuButton_opensSheet() throws {
@@ -155,12 +132,6 @@ final class TodoListUITests: XCTestCase {
         app.buttons.matching(NSPredicate(format: "label == '취소'")).firstMatch.tap()
         sleep(1)
 
-        // 닫힌 후 미루기 sheet가 열리면 안 됨
-        XCTAssertFalse(
-            app.staticTexts["언제로 미룰까요?"].exists,
-            "[BUG] 액션 메뉴 닫힌 후 미루기 sheet가 잘못 열림"
-        )
-
         // 체크박스가 사라지면 안 됨 (완료 처리되면 안 됨)
         XCTAssertTrue(
             app.buttons["checkbox_\(id)"].exists,
@@ -187,28 +158,6 @@ final class TodoListUITests: XCTestCase {
 
         // 취소
         app.buttons.matching(NSPredicate(format: "label == '취소'")).firstMatch.tap()
-        sleep(1)
-    }
-
-    // MARK: - Test 07: 미루기 후 미루기 sheet만 열리는지
-
-    func test_07_postponeButton_onlyOpensPostponeSheet() throws {
-        addTodo("미루기 단독 테스트")
-
-        guard let id = firstTodoId() else { XCTFail("Todo 없음"); return }
-
-        app.buttons["postpone_\(id)"].tap()
-        sleep(1)
-
-        // 미루기 sheet만 열려야 함 (PostponeMenuView 타이틀)
-        XCTAssertTrue(app.staticTexts["언제로 미룰까요?"].waitForExistence(timeout: 3),
-                      "미루기 sheet 열리지 않음")
-
-        // 액션 메뉴 sheet가 동시에 열리면 안 됨
-        XCTAssertFalse(app.staticTexts["삭제"].exists,
-                       "[BUG] 미루기 탭 시 액션 메뉴도 같이 열림")
-
-        app.swipeDown()
         sleep(1)
     }
 }

@@ -17,7 +17,6 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         static let claimedChallenges  = "stats_claimedChallengeIds"
         static let dailyCheckDate     = "stats_dailyCheckDate"
         static let todayAddedTodo     = "stats_todayAddedTodo"
-        static let todayPostponed     = "stats_todayPostponed"
         // 선택된 마스코트. stats 네임스페이스는 아니지만 캐릭터 보유/선택은 한 묶음이라 여기서 같이 백업.
         static let selectedCharacter  = "selectedCharacterId"
     }
@@ -39,8 +38,7 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
             earnedAchievementIds: (defaults.array(forKey: Key.earnedAchievs)     as? [String]) ?? [],
             perfectDayDateStrings:(defaults.array(forKey: Key.perfectDayDates)   as? [String]) ?? [],
             claimedChallengeIds:  (defaults.array(forKey: Key.claimedChallenges) as? [String]) ?? [],
-            todayAddedTodo:       defaults.bool(forKey: Key.todayAddedTodo),
-            todayPostponed:       defaults.bool(forKey: Key.todayPostponed)
+            todayAddedTodo:       defaults.bool(forKey: Key.todayAddedTodo)
         )
     }
 
@@ -76,12 +74,6 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         defaults.set(true, forKey: Key.todayAddedTodo)
     }
 
-    // MARK: - Record Postpone
-    func recordPostpone() async {
-        refreshDailyIfNeeded()
-        defaults.set(true, forKey: Key.todayPostponed)
-    }
-
     // MARK: - Claim Challenge
     func claimChallenge(id: String, points: Int) async {
         var claimed = (defaults.array(forKey: Key.claimedChallenges) as? [String]) ?? []
@@ -99,7 +91,7 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         [Key.totalScore, Key.currentStreak, Key.longestStreak, Key.totalCompleted,
          Key.totalPerfectDays, Key.lastActiveDate, Key.unlockedChars, Key.earnedAchievs,
          Key.perfectDayDates, Key.claimedChallenges,
-         Key.dailyCheckDate, Key.todayAddedTodo, Key.todayPostponed,
+         Key.dailyCheckDate, Key.todayAddedTodo,
          Key.selectedCharacter]
             .forEach { defaults.removeObject(forKey: $0) }
     }
@@ -207,7 +199,6 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         guard today != last else { return }
         defaults.set(today, forKey: Key.dailyCheckDate)
         defaults.set(false, forKey: Key.todayAddedTodo)
-        defaults.set(false, forKey: Key.todayPostponed)
     }
 
     @discardableResult

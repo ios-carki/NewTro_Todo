@@ -352,7 +352,9 @@ struct TodoAddView: View {
         text = todo.text
         selectedEmoji = todo.emoji
         importance = todo.importance
-        if let dt = todo.dueTime {
+        // v10 호환 레이어: 새 모델에서 notifyAt 또는 targetTimeStart 중 무엇이든 있으면 시간 지정으로 본다.
+        // 새 UI(PR B2)에서 진행 시각·알림 시각·종일 스위치가 분리되면 이 호환 레이어 제거.
+        if let dt = todo.notifyAt ?? todo.targetTimeStart {
             hasDueTime = true
             dueTime = dt
         }
@@ -399,22 +401,42 @@ struct TodoAddView: View {
         let trimmed = text.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
 
-        let resolvedDueTime: Date?
+        // v10 호환 레이어: 기존 UI는 시간 ON/OFF만 다루므로
+        // 사용자가 시간을 켰을 때 그 시각을 "진행 시각 = 알림 시각" 단일 시점으로 박는다 (v9 동작 유지).
+        // PR B2에서 진행 시간 범위 wheel·종일 스위치·별도 알림 화면이 도입되면 이 매핑 제거.
+        let resolvedTime: Date?
         if hasDueTime {
             let dayComps = Calendar.current.dateComponents([.year, .month, .day], from: viewModel.selectedDate)
             let timeComps = Calendar.current.dateComponents([.hour, .minute], from: dueTime)
             var merged = DateComponents()
             merged.year = dayComps.year; merged.month = dayComps.month; merged.day = dayComps.day
             merged.hour = timeComps.hour; merged.minute = timeComps.minute
-            resolvedDueTime = Calendar.current.date(from: merged)
+            resolvedTime = Calendar.current.date(from: merged)
         } else {
-            resolvedDueTime = nil
+            resolvedTime = nil
         }
 
         if let todo = editingTodo {
-            viewModel.editTodo(id: todo.id, text: trimmed, emoji: selectedEmoji, importance: importance, dueTime: resolvedDueTime)
+            viewModel.editTodo(
+                id: todo.id,
+                text: trimmed,
+                emoji: selectedEmoji,
+                importance: importance,
+                targetTimeStart: resolvedTime,
+                targetTimeEnd: nil,
+                isAllDay: false,
+                notifyAt: resolvedTime
+            )
         } else {
-            viewModel.addTodo(text: trimmed, emoji: selectedEmoji, importance: importance, dueTime: resolvedDueTime)
+            viewModel.addTodo(
+                text: trimmed,
+                emoji: selectedEmoji,
+                importance: importance,
+                targetTimeStart: resolvedTime,
+                targetTimeEnd: nil,
+                isAllDay: false,
+                notifyAt: resolvedTime
+            )
         }
         dismiss()
     }

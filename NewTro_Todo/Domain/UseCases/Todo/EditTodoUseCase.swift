@@ -1,7 +1,16 @@
 import Foundation
 
 protocol EditTodoUseCaseProtocol {
-    func execute(id: String, text: String, emoji: String, importance: Importance, dueTime: Date?) async throws
+    func execute(
+        id: String,
+        text: String,
+        emoji: String,
+        importance: Importance,
+        targetTimeStart: Date?,
+        targetTimeEnd: Date?,
+        isAllDay: Bool,
+        notifyAt: Date?
+    ) async throws
 }
 
 final class EditTodoUseCase: EditTodoUseCaseProtocol {
@@ -11,7 +20,25 @@ final class EditTodoUseCase: EditTodoUseCaseProtocol {
         self.repository = repository
     }
 
-    func execute(id: String, text: String, emoji: String, importance: Importance, dueTime: Date?) async throws {
-        try await repository.updateTodo(id: id, text: text, emoji: emoji, importance: importance, dueTime: dueTime)
+    func execute(
+        id: String,
+        text: String,
+        emoji: String,
+        importance: Importance,
+        targetTimeStart: Date?,
+        targetTimeEnd: Date?,
+        isAllDay: Bool,
+        notifyAt: Date?
+    ) async throws {
+        try await repository.updateTodo(
+            id: id,
+            text: text,
+            emoji: emoji,
+            importance: importance,
+            targetTimeStart: targetTimeStart,
+            targetTimeEnd: targetTimeEnd,
+            isAllDay: isAllDay,
+            notifyAt: notifyAt
+        )
     }
 }
