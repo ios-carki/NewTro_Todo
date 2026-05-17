@@ -33,7 +33,6 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
 
     func addTodo(
         text: String,
-        emoji: String,
         importance: Importance,
         targetDate: Date,
         targetTimeStart: Date?,
@@ -56,7 +55,6 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
                 stringDate: dateStr,
                 targetDate: dayStart,
                 isFinished: false,
-                emoji: emoji,
                 targetTimeStart: targetTimeStart,
                 targetTimeEnd: targetTimeEnd,
                 isAllDay: isAllDay,
@@ -71,7 +69,6 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
     func updateTodo(
         id: String,
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
@@ -85,7 +82,6 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             else { throw RepositoryError.notFound }
             try realm.write {
                 todo.todo = text
-                todo.emoji = emoji
                 todo.importance = importance.rawValue
                 todo.targetTimeStart = targetTimeStart
                 todo.targetTimeEnd = targetTimeEnd

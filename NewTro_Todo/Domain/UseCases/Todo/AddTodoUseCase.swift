@@ -3,7 +3,6 @@ import Foundation
 protocol AddTodoUseCaseProtocol {
     func execute(
         text: String,
-        emoji: String,
         importance: Importance,
         targetDate: Date,
         targetTimeStart: Date?,
@@ -22,7 +21,6 @@ final class AddTodoUseCase: AddTodoUseCaseProtocol {
 
     func execute(
         text: String,
-        emoji: String,
         importance: Importance,
         targetDate: Date,
         targetTimeStart: Date?,
@@ -32,7 +30,6 @@ final class AddTodoUseCase: AddTodoUseCaseProtocol {
     ) async throws -> TodoEntity {
         return try await repository.addTodo(
             text: text,
-            emoji: emoji,
             importance: importance,
             targetDate: targetDate,
             targetTimeStart: targetTimeStart,

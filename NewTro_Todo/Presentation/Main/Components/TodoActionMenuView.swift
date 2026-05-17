@@ -28,7 +28,7 @@ struct TodoActionMenuView: View {
                             dismiss()
                         }
                         actionRow(title: "템플릿으로 저장", icon: "square.and.arrow.down", color: .grass) {
-                            viewModel.saveTemplate(text: todo.text, emoji: todo.emoji, importance: todo.importance)
+                            viewModel.saveTemplate(text: todo.text, importance: todo.importance)
                             dismiss()
                         }
                     }

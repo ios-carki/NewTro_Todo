@@ -9,11 +9,10 @@ final class NotificationManager {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { _, _ in }
     }
 
-    func schedule(todoId: String, text: String, emoji: String, at date: Date) {
+    func schedule(todoId: String, text: String, at date: Date) {
         let content = UNMutableNotificationContent()
-        let prefix = emoji.isEmpty ? "" : "\(emoji) "
         content.title = "할 일 알림".localized()
-        content.body = prefix + text
+        content.body = text
         content.sound = .default
 
         let comps = Calendar.current.dateComponents([.year, .month, .day, .hour, .minute], from: date)

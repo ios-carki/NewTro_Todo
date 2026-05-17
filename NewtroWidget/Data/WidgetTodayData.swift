@@ -6,7 +6,6 @@ import RealmSwift
 struct WidgetTodoItem: Identifiable, Hashable {
     let id: String
     let text: String
-    let emoji: String
     let importance: Int   // Importance.rawValue: 0=none, 1=high, 2=medium
     let done: Bool
     let targetTimeStart: Date?
@@ -31,11 +30,11 @@ struct WidgetTodayData {
         total: 5,
         done: 2,
         topItems: [
-            .init(id: "1", text: "운동 30분",   emoji: "💪", importance: 1, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
-            .init(id: "2", text: "우유 사러 가기", emoji: "🥛", importance: 0, done: true,  targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
-            .init(id: "3", text: "도트 공부",   emoji: "🎮", importance: 2, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
-            .init(id: "4", text: "책 한 챕터",  emoji: "📚", importance: 0, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
-            .init(id: "5", text: "화분 물주기", emoji: "🌸", importance: 0, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false)
+            .init(id: "1", text: "운동 30분",   importance: 1, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "2", text: "우유 사러 가기", importance: 0, done: true,  targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "3", text: "도트 공부",   importance: 2, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "4", text: "책 한 챕터",  importance: 0, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "5", text: "화분 물주기", importance: 0, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false)
         ],
         coinBalance: 12
     )
@@ -62,7 +61,6 @@ enum WidgetRealmReader {
             WidgetTodoItem(
                 id: t.objectID.stringValue,
                 text: t.todo,
-                emoji: t.emoji,
                 importance: t.importance,
                 done: t.isFinished,
                 targetTimeStart: t.targetTimeStart,

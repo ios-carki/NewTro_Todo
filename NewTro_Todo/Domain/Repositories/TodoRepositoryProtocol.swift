@@ -5,7 +5,6 @@ protocol TodoRepositoryProtocol {
     func fetchTodos(year: Int, month: Int) async throws -> [TodoEntity]
     func addTodo(
         text: String,
-        emoji: String,
         importance: Importance,
         targetDate: Date,
         targetTimeStart: Date?,
@@ -17,7 +16,6 @@ protocol TodoRepositoryProtocol {
     func updateTodo(
         id: String,
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,

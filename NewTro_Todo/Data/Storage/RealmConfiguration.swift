@@ -19,7 +19,9 @@ enum RealmConfiguration {
     //     Todo에 targetTimeStart/targetTimeEnd/isAllDay 신규 컬럼 추가 (진행 시각 분리)
     //     기존 dueTime 값을 targetTimeStart에도 복사해 "진행 시각" 의미로도 보존
     //     PostponeEventObject 테이블 전체 삭제, Todo.postponeCount 컬럼 자동 drop
-    static let schemaVersion: UInt64 = 10
+    // v11: 이모지 기능 제거 (기획 폐기)
+    //     Todo.emoji / TemplateObject.emoji 컬럼은 모델 정의에서 사라져 Realm 이 자동 drop
+    static let schemaVersion: UInt64 = 11
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -168,5 +170,6 @@ enum RealmConfiguration {
             }
             migration.deleteData(forType: "PostponeEventObject")
         }
+        // v11: 이모지 기능 제거. emoji 컬럼은 모델에서 사라져 자동 drop 됨.
     }
 }

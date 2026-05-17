@@ -304,20 +304,20 @@ final class MainViewModel: ObservableObject {
         }
     }
 
-    func saveTemplate(text: String, emoji: String, importance: Importance) {
+    func saveTemplate(text: String, importance: Importance) {
         Task {
             do {
-                _ = try await addTemplateUseCase.execute(text: text, emoji: emoji, importance: importance)
+                _ = try await addTemplateUseCase.execute(text: text, importance: importance)
                 templates = try await fetchTemplatesUseCase.execute()
                 showToast("템플릿 저장 완료".localized())
             } catch { errorMessage = error.localizedDescription }
         }
     }
 
-    func updateTemplate(id: String, text: String, emoji: String, importance: Importance) {
+    func updateTemplate(id: String, text: String, importance: Importance) {
         Task {
             do {
-                try await updateTemplateUseCase.execute(id: id, text: text, emoji: emoji, importance: importance)
+                try await updateTemplateUseCase.execute(id: id, text: text, importance: importance)
                 templates = try await fetchTemplatesUseCase.execute()
             } catch { errorMessage = error.localizedDescription }
         }
@@ -343,7 +343,6 @@ final class MainViewModel: ObservableObject {
     func editTodo(
         id: String,
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
@@ -355,7 +354,6 @@ final class MainViewModel: ObservableObject {
                 try await editTodoUseCase.execute(
                     id: id,
                     text: text,
-                    emoji: emoji,
                     importance: importance,
                     targetTimeStart: targetTimeStart,
                     targetTimeEnd: targetTimeEnd,
@@ -364,7 +362,6 @@ final class MainViewModel: ObservableObject {
                 )
                 if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].text = text
-                    todos[idx].emoji = emoji
                     todos[idx].importance = importance
                     todos[idx].targetTimeStart = targetTimeStart
                     todos[idx].targetTimeEnd = targetTimeEnd
@@ -374,7 +371,7 @@ final class MainViewModel: ObservableObject {
                 // 알림 재설정: 기존 취소 후 새 시간 있으면 등록
                 NotificationManager.shared.cancel(todoId: id)
                 if let notifyAt {
-                    NotificationManager.shared.schedule(todoId: id, text: text, emoji: emoji, at: notifyAt)
+                    NotificationManager.shared.schedule(todoId: id, text: text, at: notifyAt)
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
@@ -385,7 +382,6 @@ final class MainViewModel: ObservableObject {
 
     func addTodo(
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
@@ -396,7 +392,6 @@ final class MainViewModel: ObservableObject {
             do {
                 let newTodo = try await addTodoUseCase.execute(
                     text: text,
-                    emoji: emoji,
                     importance: importance,
                     targetDate: selectedDate,
                     targetTimeStart: targetTimeStart,
@@ -407,7 +402,7 @@ final class MainViewModel: ObservableObject {
                 todos.append(newTodo)
                 await recordTodoAddedUseCase.execute()
                 if let notifyAt {
-                    NotificationManager.shared.schedule(todoId: newTodo.id, text: text, emoji: emoji, at: notifyAt)
+                    NotificationManager.shared.schedule(todoId: newTodo.id, text: text, at: notifyAt)
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {

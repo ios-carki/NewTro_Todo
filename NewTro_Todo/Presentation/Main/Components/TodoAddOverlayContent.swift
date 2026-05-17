@@ -17,8 +17,6 @@ struct TodoAddOverlayContent: View {
 
     @State private var dragOffset: CGFloat = 0
 
-    private let emojis = ["🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️", "☕"]
-
     var body: some View {
         VStack(spacing: 0) {
             // 위치 0: 헤더 (compact: drag handle, expanded: topBar) — if/else 라 identity 분리되어도 무방.
@@ -124,9 +122,6 @@ struct TodoAddOverlayContent: View {
     // MARK: - Text Input
     private var textInputRow: some View {
         HStack(spacing: 8) {
-            if !formState.selectedEmoji.isEmpty {
-                Text(formState.selectedEmoji).font(.system(size: 18))
-            }
             AutoFocusTextField(
                 text: $formState.text,
                 placeholder: NSLocalizedString("할 일을 입력하세요", comment: "Todo input placeholder"),
@@ -219,10 +214,6 @@ struct TodoAddOverlayContent: View {
             sectionLabel("중요도")
             importanceSection
                 .padding(.horizontal, 16)
-
-            sectionLabel("이모지")
-            emojiSection
-                .padding(.bottom, 4)
 
             sectionLabel("알림")
             reminderSection
@@ -392,39 +383,6 @@ struct TodoAddOverlayContent: View {
                 .frame(height: 36)
                 .background(isSelected ? chipColor : Color.cream)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-        }
-        .buttonStyle(.plain)
-    }
-
-    // MARK: - Emoji
-    private var emojiSection: some View {
-        let gridColumns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
-        return LazyVGrid(columns: gridColumns, spacing: 8) {
-            emojiChip("", label: "없음")
-            ForEach(emojis, id: \.self) { emojiChip($0) }
-        }
-        .padding(.horizontal, 16)
-    }
-
-    private func emojiChip(_ emoji: String, label: LocalizedStringKey? = nil) -> some View {
-        let isSelected = formState.selectedEmoji == emoji
-        return Button {
-            hideKeyboard()
-            formState.selectedEmoji = emoji
-        } label: {
-            Group {
-                if emoji.isEmpty {
-                    Text(label ?? "없음")
-                        .font(.galBold14())
-                        .foregroundColor(isSelected ? .ink : .shade)
-                } else {
-                    Text(emoji).font(.system(size: 20))
-                }
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 46)
-            .background(isSelected ? Color.peach : Color.cream)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }
         .buttonStyle(.plain)
     }

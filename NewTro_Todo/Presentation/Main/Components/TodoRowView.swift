@@ -103,11 +103,6 @@ struct TodoRowView: View {
                 .opacity(todo.isCompleted ? 0.4 : 1)
             }
 
-            if !todo.emoji.isEmpty {
-                Text(todo.emoji)
-                    .font(.system(size: 14))
-            }
-
             let displayText = todo.text.isEmpty ? "..." : todo.text
             Text(displayText)
                 .strikethrough(todo.isCompleted, color: .shade)

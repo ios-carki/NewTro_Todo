@@ -7,7 +7,6 @@ final class TodoFormState: ObservableObject {
     enum DueChip { case today, tomorrow, nextWeek, custom }
 
     @Published var text: String = ""
-    @Published var selectedEmoji: String = ""
     @Published var importance: Importance = .none
 
     @Published var hasDueDate: Bool = true
@@ -34,7 +33,6 @@ final class TodoFormState: ObservableObject {
     func reset(for todo: TodoEntity?) {
         editingTodo = todo
         text = ""
-        selectedEmoji = ""
         importance = .none
         hasDueDate = true
         dueDate = Calendar.current.startOfDay(for: Date())
@@ -45,7 +43,6 @@ final class TodoFormState: ObservableObject {
 
         guard let todo else { return }
         text = todo.text
-        selectedEmoji = todo.emoji
         importance = todo.importance
 
         if let start = todo.targetTimeStart {
@@ -64,7 +61,6 @@ final class TodoFormState: ObservableObject {
 
     func applyTemplate(_ t: TemplateEntity) {
         text = t.text
-        selectedEmoji = t.emoji
         importance = t.importance
     }
 

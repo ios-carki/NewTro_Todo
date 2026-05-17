@@ -12,12 +12,11 @@ final class TemplateRepositoryImpl: TemplateRepositoryProtocol {
         }
     }
 
-    func add(text: String, emoji: String, importance: Importance) async throws -> TemplateEntity {
+    func add(text: String, importance: Importance) async throws -> TemplateEntity {
         try await MainActor.run {
             let realm = try Realm()
             let obj = TemplateObject()
             obj.text = text
-            obj.emoji = emoji
             obj.importance = importance.rawValue
             obj.createdAt = Date()
             try realm.write { realm.add(obj) }
@@ -25,14 +24,13 @@ final class TemplateRepositoryImpl: TemplateRepositoryProtocol {
         }
     }
 
-    func update(id: String, text: String, emoji: String, importance: Importance) async throws {
+    func update(id: String, text: String, importance: Importance) async throws {
         try await MainActor.run {
             let realm = try Realm()
             guard let obj = realm.object(ofType: TemplateObject.self, forPrimaryKey: id)
             else { throw RepositoryError.notFound }
             try realm.write {
                 obj.text = text
-                obj.emoji = emoji
                 obj.importance = importance.rawValue
             }
         }
@@ -53,7 +51,6 @@ private extension TemplateObject {
         TemplateEntity(
             id: id,
             text: text,
-            emoji: emoji,
             importance: Importance(rawValue: importance) ?? .none,
             createdAt: createdAt
         )

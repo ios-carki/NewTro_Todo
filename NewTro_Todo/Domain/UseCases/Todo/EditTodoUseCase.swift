@@ -4,7 +4,6 @@ protocol EditTodoUseCaseProtocol {
     func execute(
         id: String,
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
@@ -23,7 +22,6 @@ final class EditTodoUseCase: EditTodoUseCaseProtocol {
     func execute(
         id: String,
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
@@ -33,7 +31,6 @@ final class EditTodoUseCase: EditTodoUseCaseProtocol {
         try await repository.updateTodo(
             id: id,
             text: text,
-            emoji: emoji,
             importance: importance,
             targetTimeStart: targetTimeStart,
             targetTimeEnd: targetTimeEnd,

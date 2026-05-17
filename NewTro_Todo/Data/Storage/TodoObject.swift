@@ -9,7 +9,6 @@ final class Todo: Object, ObjectKeyIdentifiable {
     @Persisted var stringDate: String = ""
     @Persisted var targetDate: Date = Date()
     @Persisted var isFinished: Bool = false
-    @Persisted var emoji: String = ""
     @Persisted var targetTimeStart: Date? = nil
     @Persisted var targetTimeEnd: Date? = nil
     @Persisted var isAllDay: Bool = false
@@ -27,7 +26,6 @@ final class Todo: Object, ObjectKeyIdentifiable {
         stringDate: String,
         targetDate: Date,
         isFinished: Bool,
-        emoji: String = "",
         targetTimeStart: Date? = nil,
         targetTimeEnd: Date? = nil,
         isAllDay: Bool = false,
@@ -43,7 +41,6 @@ final class Todo: Object, ObjectKeyIdentifiable {
         self.stringDate = stringDate
         self.targetDate = targetDate
         self.isFinished = isFinished
-        self.emoji = emoji
         self.targetTimeStart = targetTimeStart
         self.targetTimeEnd = targetTimeEnd
         self.isAllDay = isAllDay
