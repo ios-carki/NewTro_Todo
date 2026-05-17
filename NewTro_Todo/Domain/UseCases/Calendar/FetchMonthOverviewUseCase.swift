@@ -1,9 +1,10 @@
 import Foundation
 
-struct DayContent: OptionSet {
-    let rawValue: Int
-    static let todo = DayContent(rawValue: 1 << 0)
-    static let memo = DayContent(rawValue: 1 << 1)
+struct DayContent: Equatable {
+    var todoCount: Int = 0
+    var memoCount: Int = 0
+
+    var isEmpty: Bool { todoCount == 0 && memoCount == 0 }
 }
 
 struct MonthOverview {
@@ -47,11 +48,11 @@ final class FetchMonthOverviewUseCase: FetchMonthOverviewUseCaseProtocol {
         var map: [Int: DayContent] = [:]
         for todo in todos {
             let day = cal.component(.day, from: todo.targetDate)
-            map[day, default: []].insert(.todo)
+            map[day, default: DayContent()].todoCount += 1
         }
         for memo in memos {
             let day = cal.component(.day, from: memo.targetDate)
-            map[day, default: []].insert(.memo)
+            map[day, default: DayContent()].memoCount += 1
         }
         return MonthOverview(year: year, month: month, dayContent: map)
     }
