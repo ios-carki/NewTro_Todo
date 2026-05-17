@@ -141,14 +141,17 @@ struct RootTabContainerView: View {
             .animation(.easeOut(duration: 0.15), value: settingsVM.restorePhase)
             .animation(.easeOut(duration: 0.15), value: settingsVM.restorePreview)
         }
-        .fullScreenCover(isPresented: $showTemplateList) {
-            NavigationView {
+        .sheet(isPresented: $showTemplateList) {
+            NavigationStack {
                 TemplateListView(viewModel: mainVM)
             }
-            .navigationViewStyle(.stack)
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.hidden)
         }
-        .fullScreenCover(isPresented: $showReminderPicker) {
+        .sheet(isPresented: $showReminderPicker) {
             ReminderDatePickerView(reminderDate: $todoFormState.reminderDate)
+                .presentationDetents([.height(420)])
+                .presentationDragIndicator(.hidden)
         }
         .overlayPreferenceValue(CoachmarkAnchorKey.self) { anchors in
             GeometryReader { geom in
@@ -284,7 +287,6 @@ struct RootTabContainerView: View {
             mainVM.editTodo(
                 id: todo.id,
                 text: trimmed,
-                emoji: todoFormState.selectedEmoji,
                 importance: todoFormState.importance,
                 targetTimeStart: targetTimeStart,
                 targetTimeEnd: nil,
@@ -294,7 +296,6 @@ struct RootTabContainerView: View {
         } else {
             mainVM.addTodo(
                 text: trimmed,
-                emoji: todoFormState.selectedEmoji,
                 importance: todoFormState.importance,
                 targetTimeStart: targetTimeStart,
                 targetTimeEnd: nil,

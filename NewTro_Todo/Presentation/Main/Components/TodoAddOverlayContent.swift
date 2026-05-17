@@ -367,21 +367,27 @@ struct TodoAddOverlayContent: View {
 
     private func importanceChip(_ imp: Importance, label: LocalizedStringKey) -> some View {
         let isSelected = formState.importance == imp
-        let chipColor: Color = switch imp {
-        case .none:   .grass
-        case .medium: .sun
-        case .high:   .pixelRed
+        // 선택 시: 연한 배경 + 진한 텍스트. 톤다운된 파스텔 + Dk 텍스트 페어링.
+        let chipBg: Color = switch imp {
+        case .none:   .grassLt
+        case .medium: .sunLt
+        case .high:   .redLt
+        }
+        let selectedTextColor: Color = switch imp {
+        case .none:   .grassDk
+        case .medium: .sunDk
+        case .high:   .redDk
         }
         return Button {
             hideKeyboard()
             formState.importance = imp
         } label: {
             Text(label)
-                .font(.galCondensed16())
-                .foregroundColor(isSelected ? .cream : .ink)
+                .font(.galBold14())
+                .foregroundColor(isSelected ? selectedTextColor : .ink)
                 .frame(maxWidth: .infinity)
-                .frame(height: 36)
-                .background(isSelected ? chipColor : Color.cream)
+                .frame(height: 40)
+                .background(isSelected ? chipBg : Color.cream)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }
         .buttonStyle(.plain)

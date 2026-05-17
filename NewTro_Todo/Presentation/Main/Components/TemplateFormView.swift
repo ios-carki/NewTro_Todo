@@ -6,10 +6,8 @@ struct TemplateFormView: View {
     @Environment(\.dismiss) private var dismiss
 
     @State private var text: String = ""
-    @State private var selectedEmoji: String = ""
     @State private var importance: Importance = .none
 
-    private let emojis = ["🔥", "💪", "📚", "🏃", "💡", "🎯", "❤️", "🍀", "🎵", "🌙", "✏️", "☕"]
     private var isEditMode: Bool { editingTemplate != nil }
     private var isEmpty: Bool { text.trimmingCharacters(in: .whitespaces).isEmpty }
 
@@ -51,11 +49,16 @@ struct TemplateFormView: View {
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 0) {
                         // 텍스트
-                        HStack(spacing: 8) {
-                            if !selectedEmoji.isEmpty {
-                                Text(selectedEmoji).font(.system(size: 18))
+                        // SwiftUI TextField placeholder는 시스템 secondaryLabel(연한 회색) 고정이라
+                        // cream 배경 위에서는 거의 보이지 않음. ZStack 오버레이로 직접 그려 색·폰트 제어.
+                        ZStack(alignment: .leading) {
+                            if text.isEmpty {
+                                Text("새 템플릿으로 추가할 할 일을 작성해주세요")
+                                    .font(.galBold14())
+                                    .foregroundColor(.shade.opacity(0.55))
+                                    .allowsHitTesting(false)
                             }
-                            TextField("템플릿 이름을 입력하세요", text: $text)
+                            TextField("", text: $text)
                                 .font(.galBold14())
                                 .foregroundColor(.ink)
                         }
@@ -64,16 +67,7 @@ struct TemplateFormView: View {
                         .background(Color.cream)
                         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                         .padding(.horizontal, 16)
-
-                        // 이모지
-                        sectionLabel("이모지 선택")
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 8) {
-                                emojiChip("", label: "없음")
-                                ForEach(emojis, id: \.self) { emojiChip($0) }
-                            }
-                            .padding(.horizontal, 16)
-                        }
+                        .padding(.top, 18)
 
                         // 중요도
                         sectionLabel("중요도")
@@ -129,47 +123,36 @@ struct TemplateFormView: View {
 
     private func sectionLabel(_ title: LocalizedStringKey) -> some View {
         HStack {
-            Text(title).font(.pressStart9()).foregroundColor(.shade)
+            Text(title).font(.galBold14()).foregroundColor(.shade)
             Spacer()
         }
         .padding(.horizontal, 16)
-        .padding(.top, 14)
-        .padding(.bottom, 6)
+        .padding(.top, 16)
+        .padding(.bottom, 8)
     }
 
     // MARK: - Chips
 
-    private func emojiChip(_ emoji: String, label: LocalizedStringKey? = nil) -> some View {
-        let isSelected = selectedEmoji == emoji
-        return Button { selectedEmoji = emoji } label: {
-            Group {
-                if emoji.isEmpty {
-                    Text(label ?? "없음").font(.galBold14())
-                        .foregroundColor(isSelected ? .ink : .shade)
-                } else {
-                    Text(emoji).font(.system(size: 20))
-                }
-            }
-            .frame(width: 52, height: 44)
-            .background(isSelected ? Color.peach : Color.cream)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-        }
-    }
-
     private func importanceChip(_ imp: Importance, label: LocalizedStringKey) -> some View {
         let isSelected = importance == imp
-        let chipColor: Color = switch imp {
-        case .none:   .grass
-        case .medium: .sun
-        case .high:   .pixelRed
+        // 선택 시: 연한 배경 + 진한 텍스트. 톤다운된 파스텔 + Dk 텍스트 페어링.
+        let chipBg: Color = switch imp {
+        case .none:   .grassLt
+        case .medium: .sunLt
+        case .high:   .redLt
+        }
+        let selectedTextColor: Color = switch imp {
+        case .none:   .grassDk
+        case .medium: .sunDk
+        case .high:   .redDk
         }
         return Button { importance = imp } label: {
             Text(label)
-                .font(.pressStart9())
-                .foregroundColor(isSelected ? .cream : .ink)
+                .font(.galBold14())
+                .foregroundColor(isSelected ? selectedTextColor : .ink)
                 .frame(maxWidth: .infinity)
-                .frame(height: 36)
-                .background(isSelected ? chipColor : Color.cream)
+                .frame(height: 40)
+                .background(isSelected ? chipBg : Color.cream)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }
     }
@@ -179,7 +162,6 @@ struct TemplateFormView: View {
     private func populate() {
         guard let t = editingTemplate else { return }
         text = t.text
-        selectedEmoji = t.emoji
         importance = t.importance
     }
 
@@ -187,9 +169,9 @@ struct TemplateFormView: View {
         let trimmed = text.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty else { return }
         if let t = editingTemplate {
-            viewModel.updateTemplate(id: t.id, text: trimmed, emoji: selectedEmoji, importance: importance)
+            viewModel.updateTemplate(id: t.id, text: trimmed, importance: importance)
         } else {
-            viewModel.saveTemplate(text: trimmed, emoji: selectedEmoji, importance: importance)
+            viewModel.saveTemplate(text: trimmed, importance: importance)
         }
         dismiss()
     }
