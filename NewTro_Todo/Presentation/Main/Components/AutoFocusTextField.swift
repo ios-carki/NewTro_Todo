@@ -85,6 +85,11 @@ final class AutoFocusUITextField: UITextField {
         super.didMoveToWindow()
         guard shouldAutoFocus, !didAttemptFocus, window != nil else { return }
         didAttemptFocus = true
-        becomeFirstResponder()
+        // didMoveToWindow 시점엔 RTI(원격 텍스트 입력) 세션이 아직 미발급 상태라
+        // 즉시 becomeFirstResponder 호출하면 sessionID 재시도 로그 + 살짝 딜레이가 발생.
+        // 다음 런루프 tick으로 미뤄 세션 준비 후 포커스 잡도록 함.
+        DispatchQueue.main.async { [weak self] in
+            self?.becomeFirstResponder()
+        }
     }
 }
