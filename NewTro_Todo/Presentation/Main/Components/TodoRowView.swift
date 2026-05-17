@@ -24,8 +24,8 @@ struct TodoRowView: View {
             .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
             .offset(x: offsetX)
             .opacity(offsetX == 0 ? 1 : Double(max(0, 1 - offsetX / 200)))
-            .grayscale(isLocked ? 0.7 : 0)
-            .opacity(isLocked ? 0.65 : 1)
+            .grayscale(todo.isCompleted ? 0.85 : (isLocked ? 0.7 : 0))
+            .opacity(todo.isCompleted ? 0.55 : (isLocked ? 0.65 : 1))
 
             if showFireworks {
                 FireworksView()
