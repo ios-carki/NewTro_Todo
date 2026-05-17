@@ -22,7 +22,7 @@ struct MascotPickerView: View {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Text(unlockedSummary)
-                            .font(.pressStart7())
+                            .font(.pressStart9())
                             .foregroundColor(.shade)
                         Spacer()
                     }
@@ -127,7 +127,7 @@ struct MascotPickerView: View {
                     .font(.galBold13())
                     .foregroundColor(.ink)
                 Text("\(count)")
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.shade)
             }
             .padding(.horizontal, 10)
@@ -287,7 +287,7 @@ struct MascotPickerView: View {
                     .padding(.horizontal, 12)
 
                 Text("획득 조건")
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.shade)
 
                 Text(LocalizedStringKey(info.unlockDescription))

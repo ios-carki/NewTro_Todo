@@ -36,31 +36,15 @@ struct NotificationTimePickerSheet: View {
     private var topBar: some View {
         ZStack {
             HStack {
-                Button { dismiss() } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.ink)
-                        .frame(width: 36, height: 36)
-                        .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-
+                PxXIcon { dismiss() }
                 Spacer()
-
-                Button {
+                PxCheckIcon {
                     viewModel.saveCustomNotificationTimes(
                         morning:  (morningHour,  morningMinute),
                         midnight: (midnightHour, midnightMinute)
                     )
                     dismiss()
-                } label: {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 18, weight: .bold))
-                        .foregroundColor(.ink)
-                        .frame(width: 36, height: 36)
-                        .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
             }
 
             Text("알림")

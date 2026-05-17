@@ -83,7 +83,7 @@ struct BackupLogView: View {
                     .padding(.top, 2)
 
                 Text(LocalizedStringKey(candidate.titleKey))
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.ink)
                     .padding(.horizontal, 10)
                     .frame(height: 26)
@@ -117,7 +117,7 @@ struct BackupLogView: View {
         HStack(spacing: 8) {
             if case let .custom(from, to) = viewModel.filter {
                 Text(customRangeLabel(from: from, to: to))
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.shade)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
@@ -233,7 +233,7 @@ struct BackupLogView: View {
                     .font(.galBold13())
                     .foregroundColor(.ink)
                 Text(countsLine(entry.counts))
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.shade)
             }
 

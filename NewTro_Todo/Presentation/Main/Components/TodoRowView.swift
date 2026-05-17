@@ -128,7 +128,7 @@ struct TodoRowView: View {
                 viewModel.activeSheet = .actionMenu(todo)
             } label: {
                 Text("MENU")
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.ink)
                     .padding(.horizontal, 6)
                     .frame(height: 28)

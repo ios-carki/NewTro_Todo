@@ -27,6 +27,47 @@ struct PixelArtView: View {
     }
 }
 
+// MARK: - PxCheckIcon / PxXIcon
+// 시트 상단 바의 저장/취소 도트 버튼. 마스코트 톤 픽셀 아이콘 + 충분한 터치 영역.
+struct PxCheckIcon: View {
+    var scale: CGFloat = 2
+    var disabled: Bool = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            PixelArtView(
+                grid: PixelArtAssets.dotCheckGrid,
+                palette: PixelArtAssets.dotCheckPalette,
+                scale: scale
+            )
+            .opacity(disabled ? 0.4 : 1)
+            .frame(width: 44, height: 44, alignment: .center)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(disabled)
+    }
+}
+
+struct PxXIcon: View {
+    var scale: CGFloat = 2
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            PixelArtView(
+                grid: PixelArtAssets.dotXGrid,
+                palette: PixelArtAssets.dotXPalette,
+                scale: scale
+            )
+            .frame(width: 44, height: 44, alignment: .center)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+    }
+}
+
 // MARK: - PixelPanel
 // 4방향 3px ink 테두리 + 크림색 배경 패널
 struct PixelPanel<Content: View>: View {

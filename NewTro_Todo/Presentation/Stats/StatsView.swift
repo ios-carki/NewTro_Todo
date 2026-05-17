@@ -65,7 +65,7 @@ struct StatsView: View {
                 HStack {
                     Spacer()
                     Text("NEXT LV: \(viewModel.stats.nextLevelScore)")
-                        .font(.pressStart7())
+                        .font(.pressStart9())
                         .foregroundColor(.shade)
                 }
             }
@@ -87,7 +87,7 @@ struct StatsView: View {
             VStack(spacing: 4) {
                 HStack(spacing: 4) {
                     Image(systemName: icon).font(.system(size: 10)).foregroundColor(color)
-                    Text(label).font(.pressStart7()).foregroundColor(.shade)
+                    Text(label).font(.pressStart9()).foregroundColor(.shade)
                 }
                 Text(value).font(.pressStart14()).foregroundColor(.ink).minimumScaleFactor(0.6)
             }
@@ -109,7 +109,7 @@ struct StatsView: View {
                             Spacer()
                             barColumn(index: i)
                             Text(viewModel.weeklyLabels.indices.contains(i) ? viewModel.weeklyLabels[i] : "")
-                                .font(.pressStart7())
+                                .font(.pressStart9())
                                 .foregroundColor(i == 6 ? .ink : .shade.opacity(0.7))
                                 .minimumScaleFactor(0.5)
                                 .lineLimit(1)
@@ -159,7 +159,7 @@ struct StatsView: View {
                                 .foregroundColor(.shade)
                         }
                         Text(viewModel.monthLabel(for: calendarDate))
-                            .font(.pressStart7())
+                            .font(.pressStart9())
                             .foregroundColor(.shade)
                         Button {
                             let next = Calendar.current.date(
@@ -185,7 +185,7 @@ struct StatsView: View {
 
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 4) {
                     ForEach(["S","M","T","W","T","F","S"], id: \.self) { d in
-                        Text(d).font(.pressStart7()).foregroundColor(.shade).frame(height: 16)
+                        Text(d).font(.pressStart9()).foregroundColor(.shade).frame(height: 16)
                     }
                     ForEach(0..<cells.count, id: \.self) { i in
                         if let day = cells[i] {
@@ -198,13 +198,13 @@ struct StatsView: View {
 
                 HStack {
                     Text(viewModel.monthLabel(for: calendarDate))
-                        .font(.pressStart7())
+                        .font(.pressStart9())
                         .foregroundColor(.shade)
                     Text("→")
-                        .font(.pressStart7())
+                        .font(.pressStart9())
                         .foregroundColor(.shade)
                     Text("퍼펙트 %d회".localized(with: perfectSet.count))
-                        .font(.pressStart7())
+                        .font(.pressStart9())
                         .foregroundColor(perfectSet.isEmpty ? .shade.opacity(0.4) : .sun)
                 }
                 .padding(.top, 4)
@@ -218,7 +218,7 @@ struct StatsView: View {
                 Color.sun.opacity(0.4)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
                 Text("\(day)")
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.ink)
                 Image(systemName: "star.fill")
                     .font(.system(size: 6))
@@ -228,7 +228,7 @@ struct StatsView: View {
                 (isToday ? Color.pixelPink.opacity(0.2) : Color.clear)
                     .overlay(Rectangle().stroke(isToday ? Color.ink : Color.clear, lineWidth: 1))
                 Text("\(day)")
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(isToday ? .ink : .shade.opacity(0.6))
             }
         }
