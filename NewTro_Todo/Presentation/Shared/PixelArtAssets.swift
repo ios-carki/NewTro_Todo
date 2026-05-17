@@ -115,6 +115,56 @@ enum PixelArtAssets {
         "1": .ink,
     ]
 
+    // MARK: - Mascot Check Dot (10×10) — 저장/확인 도트 버튼 아이콘
+    // 마스코트 톤(ink 외곽 + grass 본체 + cream 안쪽 심볼 + grassDk 하단 그림자 띠)
+    static let dotCheckGrid: [String] = [
+        "1111111111",
+        "1222222221",
+        "1222222241",
+        "1222222421",
+        "1222224221",
+        "1422242221",
+        "1242422221",
+        "1224222221",
+        "1333333331",
+        "1111111111",
+    ]
+    static let dotCheckPalette: [Character: Color] = [
+        "1": .ink, "2": .grass, "3": .grassDk, "4": .cream,
+    ]
+
+    // MARK: - Mascot X Dot (10×10) — 취소/닫기 도트 버튼 아이콘
+    static let dotXGrid: [String] = [
+        "1111111111",
+        "1222222221",
+        "1244224421",
+        "1224444221",
+        "1222442221",
+        "1222442221",
+        "1224444221",
+        "1244224421",
+        "1333333331",
+        "1111111111",
+    ]
+    static let dotXPalette: [Character: Color] = [
+        "1": .ink, "2": .pixelRed, "3": .pinkDk, "4": .cream,
+    ]
+
+    // MARK: - Chevron Right (5×7) — 리스트 push 행의 시각적 affordance 픽셀 아이콘
+    // SF Symbol chevron.right 대체. Galmuri 픽셀 톤과 톤매치.
+    static let dotChevronRightGrid: [String] = [
+        "1....",
+        ".1...",
+        "..1..",
+        "...1.",
+        "..1..",
+        ".1...",
+        "1....",
+    ]
+    static let dotChevronRightPalette: [Character: Color] = [
+        "1": .shade,
+    ]
+
     // MARK: - Arrow Up-Down (5×7) — used for SORT button label
     static let arrowUpDownGrid: [String] = [
         "..1..",

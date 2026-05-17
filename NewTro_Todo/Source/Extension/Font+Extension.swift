@@ -48,7 +48,6 @@ extension Font {
     static func galBold9()  -> Font { .custom(Galmuri.galmuriBold.value, size: 9) }
 
     //MARK: Press Start 2P
-    static func pressStart7() -> Font  { .custom(Galmuri.pressStart2P.value, size: 7) }
     static func pressStart8() -> Font  { .custom(Galmuri.pressStart2P.value, size: 8) }
     static func pressStart9() -> Font  { .custom(Galmuri.pressStart2P.value, size: 9) }
     static func pressStart10() -> Font { .custom(Galmuri.pressStart2P.value, size: 10) }

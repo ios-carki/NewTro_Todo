@@ -31,7 +31,7 @@ struct TemplateListView: View {
 
                     NavigationLink(destination: TemplateFormView(viewModel: viewModel, editingTemplate: nil)) {
                         Text("+ 추가")
-                            .font(.pressStart7())
+                            .font(.pressStart9())
                             .foregroundColor(.ink)
                             .padding(.horizontal, 8)
                             .frame(height: 30)
@@ -120,7 +120,7 @@ struct TemplateListView: View {
                 .font(.galBold14())
                 .foregroundColor(.shade.opacity(0.6))
             Text("+ 추가 버튼으로 만들어보세요")
-                .font(.pressStart7())
+                .font(.pressStart9())
                 .foregroundColor(.shade.opacity(0.4))
             Spacer()
         }

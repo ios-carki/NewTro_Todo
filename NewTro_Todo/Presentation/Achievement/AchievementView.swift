@@ -56,7 +56,7 @@ struct AchievementView: View {
                     .foregroundColor(.ink)
                 Spacer()
                 Text(subtitle)
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.shade)
             }
 
@@ -111,7 +111,7 @@ private struct ChallengeCard: View {
                 }
 
                 Text(LocalizedStringKey(challenge.description))
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(isClaimed ? .shade.opacity(0.6) : .shade)
 
                 if challenge.targetValue > 1 {
@@ -120,7 +120,7 @@ private struct ChallengeCard: View {
 
                 HStack {
                     Text("+\(challenge.rewardPoints)pt")
-                        .font(.pressStart7())
+                        .font(.pressStart9())
                         .foregroundColor(isClaimed ? .shade : .sun)
                     Spacer()
                     stateView
@@ -146,7 +146,7 @@ private struct ChallengeCard: View {
                     .frame(width: geo.size.width * min(ratio, 1.0))
                     .animation(.easeInOut(duration: 0.3), value: ratio)
                 Text("\(progress)/\(challenge.targetValue)")
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.ink)
                     .frame(maxWidth: .infinity)
             }
@@ -163,7 +163,7 @@ private struct ChallengeCard: View {
                     .font(.system(size: 12))
                     .foregroundColor(.done)
                 Text("완료")
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.done)
             }
         } else if isCompleted {
@@ -171,7 +171,7 @@ private struct ChallengeCard: View {
                 onClaim(claimId, challenge.rewardPoints)
             } label: {
                 Text("수령하기")
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.cream)
                     .padding(.horizontal, 10)
                     .frame(height: 26)
@@ -181,7 +181,7 @@ private struct ChallengeCard: View {
             }
         } else {
             Text("진행 중")
-                .font(.pressStart7())
+                .font(.pressStart9())
                 .foregroundColor(.shade.opacity(0.6))
         }
     }
@@ -200,7 +200,7 @@ private struct ChallengeCard: View {
                 )
             } else {
                 Text("?")
-                    .font(.pressStart7())
+                    .font(.pressStart9())
                     .foregroundColor(.shade.opacity(0.5))
             }
         }

@@ -97,7 +97,7 @@ struct CoachmarkOverlay: View {
                         .foregroundColor(.ink)
                     Spacer()
                     Text("\(stepIndex + 1) / \(steps.count)")
-                        .font(.pressStart7())
+                        .font(.pressStart9())
                         .foregroundColor(.shade)
                 }
                 Text(LocalizedStringKey(step.message))

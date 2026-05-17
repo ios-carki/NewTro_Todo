@@ -10,6 +10,28 @@ struct MainView: View {
         CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
     }
 
+    // .addTodo / .editTodo 는 상위(RootTabContainerView)가 인라인 패널/풀스크린으로 처리하므로
+    // 여기 .sheet 바인딩에서는 걸러낸다. nil 로 set 되는 경우만 VM 상태도 같이 정리.
+    private var nonTodoAddActiveSheetBinding: Binding<MainActiveSheet?> {
+        Binding<MainActiveSheet?>(
+            get: {
+                guard let s = viewModel.activeSheet else { return nil }
+                switch s {
+                case .actionMenu, .datePicker: return s
+                case .addTodo, .editTodo:      return nil
+                }
+            },
+            set: { newValue in
+                guard newValue == nil else { return }
+                // 현재 표시 중인 시트가 actionMenu/datePicker 일 때만 클리어 → addTodo 흐름 보호.
+                switch viewModel.activeSheet {
+                case .actionMenu, .datePicker: viewModel.activeSheet = nil
+                default: break
+                }
+            }
+        )
+    }
+
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
@@ -25,12 +47,10 @@ struct MainView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .sheet(item: $viewModel.activeSheet) { sheet in
+        // .addTodo / .editTodo 는 RootTabContainerView 의 인라인 패널 + .fullScreenCover 로 라우팅.
+        // 여기서는 .actionMenu / .datePicker 만 SwiftUI .sheet 로 처리.
+        .sheet(item: nonTodoAddActiveSheetBinding) { sheet in
             switch sheet {
-            case .addTodo:
-                TodoAddSheetWrapper(viewModel: viewModel)
-            case .editTodo(let todo):
-                TodoAddSheetWrapper(viewModel: viewModel, editingTodo: todo)
             case .actionMenu(let todo):
                 TodoActionMenuView(todo: todo, viewModel: viewModel)
                     .interactiveDismissDisabled(true)
@@ -47,6 +67,9 @@ struct MainView: View {
                         viewModel.navigateToDate(date)
                     }
                 )
+            case .addTodo, .editTodo:
+                // 이 분기로는 오지 않음 — 바인딩에서 nil 처리.
+                EmptyView()
             }
         }
         .onChange(of: viewModel.activeSheet?.id) { newId in
@@ -63,34 +86,9 @@ struct MainView: View {
         } message: {
             Text(viewModel.errorMessage ?? "")
         }
-        .overlay(alignment: .top) {
-            if let msg = viewModel.toastMessage {
-                toastBanner(msg)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-            }
-        }
         .onAppear {
             viewModel.loadTodos()
         }
-    }
-
-    // MARK: - Toast Banner
-    private func toastBanner(_ message: String) -> some View {
-        HStack(spacing: 6) {
-            Text("!")
-                .font(.pressStart9())
-                .foregroundColor(.cream)
-            Text(message)
-                .font(.galBold14())
-                .foregroundColor(.cream)
-        }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-        .background(Color.shade)
-        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
-        .padding(.horizontal, 24)
-        .padding(.top, 8)
     }
 
     // MARK: - Top HUD
@@ -140,7 +138,7 @@ struct MainView: View {
 
                 Button { viewModel.presentDatePicker() } label: {
                     Text("WARP")
-                        .font(.pressStart7())
+                        .font(.pressStart9())
                         .foregroundColor(.ink)
                         .padding(.horizontal, 6)
                         .frame(height: 34)
@@ -163,7 +161,7 @@ struct MainView: View {
                                 scale: 2
                             )
                             Text("DONE")
-                                .font(.pressStart7())
+                                .font(.pressStart9())
                                 .foregroundColor(.ink)
                         } else {
                             PixelArtView(
@@ -172,7 +170,7 @@ struct MainView: View {
                                 scale: 2
                             )
                             Text("SORT")
-                                .font(.pressStart7())
+                                .font(.pressStart9())
                                 .foregroundColor(.ink)
                         }
                     }
@@ -303,9 +301,9 @@ struct MainView: View {
             } label: {
                 HStack(spacing: 6) {
                     Text(title)
-                        .font(.pressStart7())
+                        .font(.pressStart9())
                     Text(collapsed ? "▶" : "▼")
-                        .font(.pressStart7())
+                        .font(.pressStart9())
                         .opacity(editing ? 0.35 : 1)
                 }
                 .foregroundColor(.ink)
@@ -344,20 +342,6 @@ struct MainView: View {
             }
             .padding(.horizontal, 16)
         }
-    }
-}
-
-// MARK: - TodoAdd Sheet Wrapper
-
-private struct TodoAddSheetWrapper: View {
-    @ObservedObject var viewModel: MainViewModel
-    var editingTodo: TodoEntity? = nil
-
-    var body: some View {
-        NavigationView {
-            TodoAddView(viewModel: viewModel, editingTodo: editingTodo, isExpanded: .constant(true))
-        }
-        .navigationViewStyle(.stack)
     }
 }
 

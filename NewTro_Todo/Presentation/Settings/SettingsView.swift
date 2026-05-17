@@ -101,7 +101,7 @@ struct SettingsView: View {
                             .font(.galBold16())
                             .foregroundColor(.ink)
                         Text("LV.\(statsVM.stats.level) · \(statsVM.levelTitle)")
-                            .font(.pressStart7())
+                            .font(.pressStart9())
                             .foregroundColor(.sun)
                     }
                     Spacer()
@@ -360,7 +360,7 @@ struct SettingsView: View {
                         .font(.galBold14())
                         .foregroundColor(.ink)
                     Text(backupMetaLine)
-                        .font(.pressStart7())
+                        .font(.pressStart9())
                         .foregroundColor(.shade)
                 }
                 Spacer()
@@ -428,7 +428,7 @@ struct SettingsView: View {
                             .foregroundColor(.ink)
                         Spacer()
                         Text("PLAY ▶")
-                            .font(.pressStart7())
+                            .font(.pressStart9())
                             .foregroundColor(.sun)
                     }
                     .contentShape(Rectangle())
