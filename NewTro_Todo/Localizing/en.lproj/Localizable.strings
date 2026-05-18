@@ -45,6 +45,8 @@
 
 // MARK: - Main / Empty States
 "오늘의 할 일" = "Today's Todos";
+"과거에 한 일" = "Past Todos";
+"미래에 할 일" = "Upcoming Todos";
 "기록이 남아있지 않아요" = "No records here";
 "조용히 지나간 하루였나봐요" = "Looks like a quiet day";
 "오늘은 할 일이 없어요" = "No todos for today";

@@ -62,18 +62,25 @@ enum PixelArtAssets {
         "1": .ink, "2": .sun,
     ]
 
-    // MARK: - Favorite Star (7×7) — Todo row 즐겨찾기 인디케이터
-    static let favoriteStarGrid: [String] = [
-        "...1...",
-        "...1...",
-        ".11211.",
-        "1121211",
-        ".12221.",
-        "..121..",
-        ".11.11.",
+    // MARK: - Trash (10×10) — 편집 화면 하단 삭제 버튼 (빨강 원 안 흰 휴지통)
+    //  - row 0: 손잡이 (cols 4-5)
+    //  - row 1~2: 뚜껑 (full width → 1칸 살짝 들어옴)
+    //  - row 3~7: 통 본체 + 수직 grooves (1px 간격)
+    //  - row 8: 통 바닥
+    static let dotTrashGrid: [String] = [
+        "....11....",
+        "1111111111",
+        ".11111111.",
+        ".1.1.1.1.1",
+        ".1.1.1.1.1",
+        ".1.1.1.1.1",
+        ".1.1.1.1.1",
+        ".1.1.1.1.1",
+        ".11111111.",
+        "..........",
     ]
-    static let favoriteStarPalette: [Character: Color] = [
-        "1": .ink, "2": .sun,
+    static let dotTrashPalette: [Character: Color] = [
+        "1": .cream,
     ]
 
     // MARK: - Bush (12×6)
@@ -150,18 +157,54 @@ enum PixelArtAssets {
         "1": .ink, "2": .pixelRed, "3": .pinkDk, "4": .cream,
     ]
 
-    // MARK: - Hourglass (8×8) — 기한 row inline 아이콘. 이모지 ⌛ 대체.
-    static let dotHourglassGrid: [String] = [
+    // MARK: - Flag (8×8) — 기한 row inline 아이콘. "마감/결승 깃발" 의미.
+    // 천: 옆으로 눕힌 M 모양 swallowtail (속이 채워진 형태, 우측 트레일링 엣지에 V-notch).
+    //  - row 0/4: 긴 다리 (M 의 외곽 두 변이 가로로 뉘인 형태)
+    //  - row 1~3: 우측 V-notch (col 6 → col 5 peak → col 6)
+    // 깃대: col 0 전체 height. 천 아래로 4행 더 내려가 "꽂힌" 느낌.
+    static let dotFlagGrid: [String] = [
         "11111111",
-        ".111111.",
-        "..1111..",
-        "...11...",
-        "...11...",
-        "..1111..",
-        ".111111.",
+        "111111..",
+        "11111...",
+        "111111..",
         "11111111",
+        "1.......",
+        "1.......",
+        "1.......",
     ]
-    static let dotHourglassPalette: [Character: Color] = [
+    static let dotFlagPalette: [Character: Color] = [
+        "1": .ink,
+    ]
+
+    // MARK: - Color Wheel (8×8) — 색상 row inline 아이콘.
+    // 원형 ink 외곽 + 3 sectors (좌상=red, 우상=yellow, 하반=green) 으로 분할.
+    // 다른 ink 아이콘과 톤이 다르지만 "색상 선택" 메타포를 색 자체로 표현.
+    static let dotPaletteGrid: [String] = [
+        ".111111.",
+        "12223331",
+        "12223331",
+        "12223331",
+        "14444441",
+        "14444441",
+        "14444441",
+        ".111111.",
+    ]
+    static let dotPalettePalette: [Character: Color] = [
+        "1": .ink, "2": .pixelRed, "3": .sun, "4": .grass,
+    ]
+
+    // MARK: - Bars (8×8) — 중요도 row inline 아이콘. 막대 3개 상승 (낮음→보통→높음).
+    static let dotBarsGrid: [String] = [
+        "......11",
+        "......11",
+        "......11",
+        "...11.11",
+        "...11.11",
+        "11.11.11",
+        "11.11.11",
+        "11.11.11",
+    ]
+    static let dotBarsPalette: [Character: Color] = [
         "1": .ink,
     ]
 

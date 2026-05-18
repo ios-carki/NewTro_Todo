@@ -91,52 +91,29 @@ final class TodoListUITests: XCTestCase {
                       "완료 해제 후 체크박스가 사라짐")
     }
 
-    // MARK: - Test 04: ... 버튼 → 액션 메뉴 Sheet
+    // MARK: - Test 04: 즐겨찾기 토글 버튼 동작
 
-    func test_04_actionMenuButton_opensSheet() throws {
-        addTodo("액션 메뉴 테스트")
-
-        guard let id = firstTodoId() else { XCTFail("Todo 없음"); return }
-
-        let actionBtn = app.buttons["action_\(id)"]
-        XCTAssertTrue(actionBtn.waitForExistence(timeout: 3), "action 버튼 없음")
-        actionBtn.tap()
-        sleep(1)
-
-        // 액션 메뉴 sheet 확인
-        XCTAssertTrue(
-            app.staticTexts["삭제"].waitForExistence(timeout: 3),
-            "액션 메뉴 sheet가 열리지 않음"
-        )
-
-        // 취소로 닫기
-        let cancelBtn = app.buttons.matching(NSPredicate(format: "label == '취소'")).firstMatch
-        XCTAssertTrue(cancelBtn.waitForExistence(timeout: 2), "취소 버튼 없음")
-        cancelBtn.tap()
-        sleep(1)
-    }
-
-    // MARK: - Test 05: ... 닫은 후 다른 액션 오작동 없음
-
-    func test_05_actionMenuClose_noGhostTap() throws {
-        addTodo("오작동 방지 테스트")
+    func test_04_favoriteToggle() throws {
+        addTodo("즐겨찾기 테스트")
 
         guard let id = firstTodoId() else { XCTFail("Todo 없음"); return }
 
-        // ... 탭
-        app.buttons["action_\(id)"].tap()
-        sleep(1)
-        XCTAssertTrue(app.staticTexts["삭제"].waitForExistence(timeout: 3), "액션 메뉴 열리지 않음")
-
-        // 취소로 닫기
-        app.buttons.matching(NSPredicate(format: "label == '취소'")).firstMatch.tap()
+        let favBtn = app.buttons["favorite_\(id)"]
+        XCTAssertTrue(favBtn.waitForExistence(timeout: 3), "favorite 버튼 없음")
+        favBtn.tap()
         sleep(1)
 
-        // 체크박스가 사라지면 안 됨 (완료 처리되면 안 됨)
+        // 토글 후에도 같은 todo 가 존재
         XCTAssertTrue(
-            app.buttons["checkbox_\(id)"].exists,
-            "[BUG] 액션 메뉴 닫힌 후 Todo가 완료 처리됨"
+            app.buttons["checkbox_\(id)"].waitForExistence(timeout: 3),
+            "즐겨찾기 토글 후 Todo 사라짐"
         )
+
+        // 다시 토글
+        app.buttons["favorite_\(id)"].tap()
+        sleep(1)
+        XCTAssertTrue(app.buttons["checkbox_\(id)"].exists,
+                      "즐겨찾기 두 번째 토글 후 Todo 사라짐")
     }
 
     // MARK: - Test 06: 텍스트 탭 → 편집 Sheet

@@ -103,47 +103,48 @@ struct TodoRowView: View {
         .accessibilityIdentifier("checkbox_\(todo.id)")
     }
 
+    // 텍스트 왼쪽 즐겨찾기 인디케이터는 제거. 우측 토글 버튼 자체가 ON/OFF 상태를 충분히 표현.
     private var textArea: some View {
-        HStack(spacing: 4) {
-            if todo.isFavorite {
-                PixelArtView(
-                    grid: PixelArtAssets.favoriteStarGrid,
-                    palette: PixelArtAssets.favoriteStarPalette,
-                    scale: 1.5
-                )
-                .opacity(todo.isCompleted ? 0.4 : 1)
+        let displayText = todo.text.isEmpty ? "..." : todo.text
+        return Text(displayText)
+            .foregroundColor(todo.isCompleted ? .shade : .ink)
+            .font(.galBold14())
+            .lineLimit(1)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if isLocked { showLockedToast() } else { openEdit() }
             }
-
-            let displayText = todo.text.isEmpty ? "..." : todo.text
-            Text(displayText)
-                .foregroundColor(todo.isCompleted ? .shade : .ink)
-                .font(.galBold14())
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            if isLocked { showLockedToast() } else { openEdit() }
-        }
     }
 
+    // MARK: - Trailing favorite toggle
+    // 기존 MENU 버튼 자리 즐겨찾기 토글. 인디케이터 사이즈(16)와 동일하게 통일.
+    // ON: sun fill 위에 ink outline 겹쳐 밝은 배경에서도 별 윤곽이 또렷.
+    // OFF: shade outline 만 — ink 검정은 톤 강해서 부드러운 shade 보라회색으로.
     private var trailingButtons: some View {
-        HStack(spacing: 4) {
-            Button {
-                viewModel.activeSheet = .actionMenu(todo)
-            } label: {
-                Text("MENU")
-                    .font(.pressStart9())
-                    .foregroundColor(.ink)
-                    .padding(.horizontal, 6)
-                    .frame(height: 28)
-                    .background(Color.cream)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
+        Button {
+            if isLocked { showLockedToast(); return }
+            viewModel.toggleFavorite(id: todo.id)
+        } label: {
+            Group {
+                if todo.isFavorite {
+                    ZStack {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.sun)
+                        Image(systemName: "star")
+                            .foregroundColor(.ink)
+                    }
+                } else {
+                    Image(systemName: "star")
+                        .foregroundColor(.shade)
+                }
             }
-            .buttonStyle(.borderless)
-            .accessibilityIdentifier("action_\(todo.id)")
+            .font(.system(size: 16, weight: .bold))
+            .frame(width: 36, height: 36)
+            .contentShape(Rectangle())
         }
-        .allowsHitTesting(!viewModel.actionMenuRecentlyDismissed)
+        .buttonStyle(.borderless)
+        .accessibilityIdentifier("favorite_\(todo.id)")
     }
 
     // MARK: - Helpers

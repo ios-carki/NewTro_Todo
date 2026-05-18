@@ -20,14 +20,12 @@ enum TodoSection: String, CaseIterable {
 enum MainActiveSheet: Identifiable {
     case addTodo
     case editTodo(TodoEntity)
-    case actionMenu(TodoEntity)
     case datePicker
 
     var id: String {
         switch self {
         case .addTodo:           return "addTodo"
         case .editTodo(let t):   return "editTodo_\(t.id)"
-        case .actionMenu(let t): return "actionMenu_\(t.id)"
         case .datePicker:        return "datePicker"
         }
     }
@@ -44,12 +42,10 @@ final class MainViewModel: ObservableObject {
     @Published var toastMessage: String? = nil
     @Published var templates: [TemplateEntity] = []
     @Published var pendingTemplate: TemplateEntity? = nil
-    @Published var actionMenuRecentlyDismissed: Bool = false
     @Published private(set) var dayMemos: [MemoEntity] = []
     @Published private var collapsedByDate: [String: Set<String>] = [:]
 
     private var toastTask: Task<Void, Never>?
-    private var actionMenuDismissTask: Task<Void, Never>?
 
     // 섹션 접기 상태 영속화 (UserDefaults — 화면 선호도이므로 Realm 마이그레이션 회피)
     private static let collapsedDefaultsKey = "sectionCollapsedByDate.v1"
@@ -100,6 +96,16 @@ final class MainViewModel: ObservableObject {
         let today = cal.startOfDay(for: Date())
         let viewing = cal.startOfDay(for: selectedDate)
         return viewing < today
+    }
+
+    /// 상단 타이틀. 선택 날짜 기준 과거/오늘/미래 분기.
+    var headerTitle: String {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let viewing = cal.startOfDay(for: selectedDate)
+        if viewing < today { return "과거에 한 일".localized() }
+        if viewing > today { return "미래에 할 일".localized() }
+        return "오늘의 할 일".localized()
     }
 
     // MARK: - Use Cases
@@ -206,18 +212,6 @@ final class MainViewModel: ObservableObject {
         let raw = collapsedByDate.mapValues { Array($0) }
         if let data = try? JSONEncoder().encode(raw) {
             UserDefaults.standard.set(data, forKey: Self.collapsedDefaultsKey)
-        }
-    }
-
-    // MARK: - Action Menu Dismiss Guard
-
-    func onActionMenuDismissed() {
-        actionMenuDismissTask?.cancel()
-        actionMenuRecentlyDismissed = true
-        actionMenuDismissTask = Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 400_000_000)
-            guard !Task.isCancelled else { return }
-            actionMenuRecentlyDismissed = false
         }
     }
 

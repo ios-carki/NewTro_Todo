@@ -285,6 +285,7 @@ private struct PickerDayCell: View {
 
     // MARK: - Todo 사각형 row
     // 0개: 비움 / 1·2·3개: 그만큼 ▣ / 4개 이상: ▣▣▣ +N (남은 개수)
+    //   +N 의 N 은 99 캡 — 99 초과 시 "99+" 한 토큰으로 표시 (셀 폭 오버플로 방지).
     @ViewBuilder
     private var todoSquaresRow: some View {
         if marker.todoCount > 0 {
@@ -292,7 +293,8 @@ private struct PickerDayCell: View {
                 let shown = min(marker.todoCount, 3)
                 ForEach(0..<shown, id: \.self) { _ in todoSquare }
                 if marker.todoCount > 3 {
-                    Text("+\(marker.todoCount - 3)")
+                    let remaining = marker.todoCount - 3
+                    Text(remaining > 99 ? "99+" : "+\(remaining)")
                         .font(.pressStart8())
                         .foregroundColor(.ink)
                         .monospacedDigit()
