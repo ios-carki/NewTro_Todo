@@ -149,9 +149,12 @@ struct RootTabContainerView: View {
             .presentationDragIndicator(.hidden)
         }
         .sheet(isPresented: $showReminderPicker) {
-            ReminderDatePickerView(reminderDate: $todoFormState.reminderDate)
-                .presentationDetents([.height(420)])
-                .presentationDragIndicator(.hidden)
+            ReminderDatePickerView(
+                reminderDate: $todoFormState.reminderDate,
+                hasReminder: $todoFormState.hasReminder
+            )
+            .presentationDetents([.height(420)])
+            .presentationDragIndicator(.hidden)
         }
         .overlayPreferenceValue(CoachmarkAnchorKey.self) { anchors in
             GeometryReader { geom in

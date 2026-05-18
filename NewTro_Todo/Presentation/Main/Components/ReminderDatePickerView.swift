@@ -1,16 +1,24 @@
 import SwiftUI
 
 // TodoAddOverlayContent 의 알림 row에서 sheet 로 present 되는 알림 시각 선택 화면.
-// 외부 binding은 "선택" 버튼 탭 시점에만 갱신 — drag down / 취소 시 원복.
+// 알림 row 에 토글이 없어 ON/OFF 트랜지션이 이 picker 에서 일어남:
+//  - "선택" → reminderDate 갱신 + hasReminder = true
+//  - "취소" → 원복
+//  - "알림 끄기" → hasReminder = false (현재 ON 상태로 진입한 경우에만 노출)
 struct ReminderDatePickerView: View {
     @Environment(\.dismiss) private var dismiss
     @Binding var reminderDate: Date
+    @Binding var hasReminder: Bool
 
     @State private var tempDate: Date
+    // 시트 진입 시점의 hasReminder 를 캡쳐. 켜진 상태로 들어왔을 때만 "끄기" 버튼 노출.
+    @State private var wasInitiallyOn: Bool
 
-    init(reminderDate: Binding<Date>) {
+    init(reminderDate: Binding<Date>, hasReminder: Binding<Bool>) {
         self._reminderDate = reminderDate
+        self._hasReminder = hasReminder
         self._tempDate = State(initialValue: reminderDate.wrappedValue)
+        self._wasInitiallyOn = State(initialValue: hasReminder.wrappedValue)
     }
 
     var body: some View {
@@ -81,6 +89,20 @@ struct ReminderDatePickerView: View {
 
     private var bottomButtons: some View {
         HStack(spacing: 10) {
+            if wasInitiallyOn {
+                Button {
+                    hasReminder = false
+                    dismiss()
+                } label: {
+                    Text("끄기")
+                        .font(.galBold13())
+                        .foregroundColor(.redDk)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 44)
+                        .background(Color.redLt.opacity(0.4))
+                        .overlay(Rectangle().stroke(Color.redDk, lineWidth: 2))
+                }
+            }
             Button { dismiss() } label: {
                 Text("취소")
                     .font(.galBold13())
@@ -92,6 +114,7 @@ struct ReminderDatePickerView: View {
             }
             Button {
                 reminderDate = tempDate
+                hasReminder = true
                 dismiss()
             } label: {
                 Text("선택")

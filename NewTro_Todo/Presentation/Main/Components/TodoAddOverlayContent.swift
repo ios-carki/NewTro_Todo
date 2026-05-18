@@ -120,30 +120,55 @@ struct TodoAddOverlayContent: View {
     }
 
     // MARK: - Text Input
+    // 박스 제거 — TextField 영역 하단에만 2pt 밑줄. 우측 [템플릿] 버튼은 expanded 에서만 노출.
+    // 밑줄은 TextField 영역 한정 — 템플릿 버튼 아래로는 이어지지 않음.
     private var textInputRow: some View {
-        HStack(spacing: 8) {
-            AutoFocusTextField(
-                text: $formState.text,
-                placeholder: NSLocalizedString("할 일을 입력하세요", comment: "Todo input placeholder"),
-                autoFocus: !formState.isEditMode,
-                font: UIFont.boldFont(size: 14),
-                textColor: UIColor(Color.ink),
-                placeholderColor: UIColor(Color.ink).withAlphaComponent(0.4),
-                accessibilityIdentifier: "todoTextField",
-                onSubmit: {
-                    if formState.isEmpty {
-                        onEmptyAttempt()
-                        return false
+        HStack(spacing: 10) {
+            VStack(spacing: 0) {
+                AutoFocusTextField(
+                    text: $formState.text,
+                    placeholder: NSLocalizedString("할 일을 입력하세요", comment: "Todo input placeholder"),
+                    autoFocus: !formState.isEditMode,
+                    font: UIFont.boldFont(size: 14),
+                    textColor: UIColor(Color.ink),
+                    placeholderColor: UIColor(Color.ink).withAlphaComponent(0.4),
+                    accessibilityIdentifier: "todoTextField",
+                    onSubmit: {
+                        if formState.isEmpty {
+                            onEmptyAttempt()
+                            return false
+                        }
+                        onSave()
+                        return true
                     }
-                    onSave()
-                    return true
-                }
-            )
+                )
+                .frame(height: 40)
+                Rectangle()
+                    .fill(Color.ink)
+                    .frame(height: 2)
+            }
+
+            if isExpanded {
+                templateInlineButton
+            }
         }
-        .padding(.horizontal, 14)
-        .frame(height: 46)
-        .background(Color.cream)
-        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+    }
+
+    // expanded 에서 TextField 우측에 인라인 노출. 저장된 템플릿 선택 화면을 시트로 띄움.
+    private var templateInlineButton: some View {
+        Button {
+            hideKeyboard()
+            onShowTemplates()
+        } label: {
+            Text("템플릿")
+                .font(.galBold13())
+                .foregroundColor(.ink)
+                .padding(.horizontal, 10)
+                .frame(height: 32)
+                .background(Color.cream)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Compact 기한 row
@@ -201,82 +226,42 @@ struct TodoAddOverlayContent: View {
     }
 
     // MARK: - Expanded Sections
+    // 섹션 헤더 라벨 제거. 각 row 의 첫 항목으로 라벨이 inline 포함.
+    // 순서: 색 → 기한 → 중요도 → 알림. (템플릿은 TextField 우측 인라인 버튼으로 이동)
     private var expandedSections: some View {
-        VStack(spacing: 0) {
-            sectionLabel("템플릿")
-            templatesLink
-                .padding(.horizontal, 16)
-
-            sectionLabel("기한")
-            dueSection
-                .padding(.horizontal, 16)
-
-            sectionLabel("중요도")
-            importanceSection
-                .padding(.horizontal, 16)
-
-            sectionLabel("배경색")
+        VStack(spacing: 14) {
             colorSection
-                .padding(.horizontal, 16)
-
-            sectionLabel("알림")
+                .padding(.top, 18)
+            dueSection
+            importanceSection
             reminderSection
-                .padding(.horizontal, 16)
                 .padding(.bottom, 24)
         }
-    }
-
-    private func sectionLabel(_ title: LocalizedStringKey) -> some View {
-        HStack {
-            Text(title)
-                .font(.galCondensed16())
-                .foregroundColor(.shade)
-            Spacer()
-        }
         .padding(.horizontal, 16)
-        .padding(.top, 14)
-        .padding(.bottom, 6)
-    }
-
-    // MARK: - Templates Link
-    // NavigationLink 대신 callback. RootTabContainerView 가 .fullScreenCover 로 TemplateListView 를 띄움.
-    // 오버레이 자체가 NavigationView 안에 있지 않아도 되어 dim 합성 문제와 second-tap 무응답을 회피.
-    private var templatesLink: some View {
-        Button {
-            hideKeyboard()
-            onShowTemplates()
-        } label: {
-            HStack {
-                Text("저장된 템플릿")
-                    .font(.galBold14())
-                    .foregroundColor(.ink)
-                Spacer()
-                HStack(spacing: 4) {
-                    Text("목록 보기")
-                        .font(.galBold13())
-                        .foregroundColor(.shade)
-                    PixelArtView(
-                        grid: PixelArtAssets.dotChevronRightGrid,
-                        palette: PixelArtAssets.dotChevronRightPalette,
-                        scale: 2
-                    )
-                }
-            }
-            .padding(.horizontal, 14)
-            .frame(height: 44)
-            .background(Color.cream)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-        }
-        .buttonStyle(.plain)
     }
 
     // MARK: - 기한 (Expanded)
+    // 인라인 row: [모래시계] [라벨 또는 설정된 날짜] [Spacer] [Toggle]
+    //  - OFF: "기한 없음"
+    //  - ON:  "yyyy.MM.dd(EEE) 까지" (galBold16 — 라벨보다 살짝 큰 시각 강조)
     private var dueSection: some View {
         VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                HStack(spacing: 6) {
-                    Text("⌛").font(.system(size: 16))
-                    Text("기한").font(.galBold14()).foregroundColor(.ink)
+            HStack(spacing: 8) {
+                PixelArtView(
+                    grid: PixelArtAssets.dotHourglassGrid,
+                    palette: PixelArtAssets.dotHourglassPalette,
+                    scale: 2
+                )
+                if formState.hasDueDate {
+                    Text(dueDateInlineLabel(formState.dueDate))
+                        .font(.galBold16())
+                        .foregroundColor(.ink)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                } else {
+                    Text("기한 없음")
+                        .font(.galBold14())
+                        .foregroundColor(.shade)
                 }
                 Spacer()
                 PxSwitch(isOn: formState.hasDueDate) {
@@ -293,17 +278,9 @@ struct TodoAddOverlayContent: View {
                     }
                 }
             }
+            .frame(minHeight: 36)
 
             if formState.hasDueDate {
-                Text(dueDateLabel(formState.dueDate))
-                    .font(.pressStart9())
-                    .foregroundColor(.ink)
-                    .padding(.horizontal, 12)
-                    .frame(height: 32)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(Color.cream)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-
                 dueChipsRow
 
                 if formState.dueCustomOpen {
@@ -315,6 +292,13 @@ struct TodoAddOverlayContent: View {
                 }
             }
         }
+    }
+
+    private func dueDateInlineLabel(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.locale = Locale.current
+        f.dateFormat = "yyyy.MM.dd(EEE)"
+        return f.string(from: date) + " 까지"
     }
 
     private var dueChipsRow: some View {
@@ -361,12 +345,18 @@ struct TodoAddOverlayContent: View {
     }
 
     // MARK: - Importance
+    // 인라인 row: [중요도] [Spacer] [낮음] [보통] [높음]
     private var importanceSection: some View {
-        HStack(spacing: 0) {
+        HStack(spacing: 6) {
+            Text("중요도")
+                .font(.galBold14())
+                .foregroundColor(.ink)
+            Spacer()
             importanceChip(.none,   label: "낮음")
             importanceChip(.medium, label: "보통")
             importanceChip(.high,   label: "높음")
         }
+        .frame(minHeight: 36)
     }
 
     private func importanceChip(_ imp: Importance, label: LocalizedStringKey) -> some View {
@@ -387,93 +377,91 @@ struct TodoAddOverlayContent: View {
             formState.importance = imp
         } label: {
             Text(label)
-                .font(.galBold14())
+                .font(.galBold13())
                 .foregroundColor(isSelected ? selectedTextColor : .ink)
-                .frame(maxWidth: .infinity)
-                .frame(height: 40)
+                .padding(.horizontal, 10)
+                .frame(height: 32)
                 .background(isSelected ? chipBg : Color.cream)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }
         .buttonStyle(.plain)
     }
 
-    // MARK: - 배경색
+    // MARK: - 색
     // 메모(QuickNote)와 동일한 6색 팔레트 공유. 행 자체 배경에 적용되며 중요도 strip 은 그대로 유지.
+    // 인라인 row: [색] [스와치 6개 — 가용폭 균등 분할]
     private var colorSection: some View {
-        HStack(spacing: 10) {
-            ForEach(MemoColorPalette.all, id: \.name) { item in
-                Button {
-                    hideKeyboard()
-                    formState.colorName = item.name
-                } label: {
-                    let isSelected = formState.colorName == item.name
-                    item.color
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 36)
-                        .overlay(
-                            Rectangle().stroke(
-                                isSelected ? Color.ink : Color.ink.opacity(0.3),
-                                lineWidth: isSelected ? 2.5 : 1.5
+        HStack(spacing: 8) {
+            Text("색")
+                .font(.galBold14())
+                .foregroundColor(.ink)
+
+            HStack(spacing: 6) {
+                ForEach(MemoColorPalette.all, id: \.name) { item in
+                    Button {
+                        hideKeyboard()
+                        formState.colorName = item.name
+                    } label: {
+                        let isSelected = formState.colorName == item.name
+                        item.color
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 30)
+                            .overlay(
+                                Rectangle().stroke(
+                                    isSelected ? Color.ink : Color.ink.opacity(0.3),
+                                    lineWidth: isSelected ? 2.5 : 1.5
+                                )
                             )
-                        )
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
         }
+        .frame(minHeight: 36)
     }
 
     // MARK: - 알림
+    // 토글 없음 — row 전체를 누르면 picker 가 열리고, picker 의 "선택"/"끄기" 로 hasReminder 결정.
+    //  OFF: [종] 알림
+    //  ON:  [종] 알림 [Spacer] 2026.05.18(일) 오후 1:10 [chevron]
     private var reminderSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            HStack {
-                HStack(spacing: 6) {
-                    Text("🔔").font(.system(size: 16))
-                    Text("알림").font(.galBold14()).foregroundColor(.ink)
-                }
+        Button {
+            hideKeyboard()
+            if !formState.hasReminder, formState.reminderDate < Date() {
+                formState.reminderDate = ReminderDatePickerView.defaultReminderDate()
+            }
+            onShowReminder()
+        } label: {
+            HStack(spacing: 8) {
+                PixelArtView(
+                    grid: PixelArtAssets.dotBellGrid,
+                    palette: PixelArtAssets.dotBellPalette,
+                    scale: 2
+                )
+                Text("알림")
+                    .font(.galBold14())
+                    .foregroundColor(.ink)
                 Spacer()
-                PxSwitch(isOn: formState.hasReminder) {
-                    hideKeyboard()
-                    formState.hasReminder.toggle()
-                    if formState.hasReminder {
-                        if formState.reminderDate < Date() {
-                            formState.reminderDate = ReminderDatePickerView.defaultReminderDate()
-                        }
-                    }
+                if formState.hasReminder {
+                    Text(reminderLabel(formState.reminderDate))
+                        .font(.galBold13())
+                        .foregroundColor(.ink)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
+                    PixelArtView(
+                        grid: PixelArtAssets.dotChevronRightGrid,
+                        palette: PixelArtAssets.dotChevronRightPalette,
+                        scale: 2
+                    )
                 }
             }
-
-            if formState.hasReminder {
-                Button {
-                    hideKeyboard()
-                    onShowReminder()
-                } label: {
-                    HStack {
-                        Text(reminderLabel(formState.reminderDate))
-                            .font(.pressStart9())
-                            .foregroundColor(.ink)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.system(size: 12, weight: .bold))
-                            .foregroundColor(.shade)
-                    }
-                    .padding(.horizontal, 12)
-                    .frame(height: 40)
-                    .background(Color.cream)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                }
-                .buttonStyle(.plain)
-            }
+            .frame(minHeight: 36)
+            .contentShape(Rectangle())
         }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Formatting
-    private func dueDateLabel(_ date: Date) -> String {
-        let f = DateFormatter()
-        f.locale = Locale.current
-        f.dateFormat = "yyyy.MM.dd(EEE)"
-        return "⌛ " + f.string(from: date) + " 까지"
-    }
-
     private func reminderLabel(_ date: Date) -> String {
         let f = DateFormatter()
         f.locale = Locale.current

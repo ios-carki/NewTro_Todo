@@ -150,6 +150,36 @@ enum PixelArtAssets {
         "1": .ink, "2": .pixelRed, "3": .pinkDk, "4": .cream,
     ]
 
+    // MARK: - Hourglass (8×8) — 기한 row inline 아이콘. 이모지 ⌛ 대체.
+    static let dotHourglassGrid: [String] = [
+        "11111111",
+        ".111111.",
+        "..1111..",
+        "...11...",
+        "...11...",
+        "..1111..",
+        ".111111.",
+        "11111111",
+    ]
+    static let dotHourglassPalette: [Character: Color] = [
+        "1": .ink,
+    ]
+
+    // MARK: - Bell (8×8) — 알림 row inline 아이콘. 이모지 🔔 대체.
+    static let dotBellGrid: [String] = [
+        "...11...",
+        "..1111..",
+        ".111111.",
+        ".111111.",
+        ".111111.",
+        ".111111.",
+        "11111111",
+        "...11...",
+    ]
+    static let dotBellPalette: [Character: Color] = [
+        "1": .ink,
+    ]
+
     // MARK: - Chevron Right (5×7) — 리스트 push 행의 시각적 affordance 픽셀 아이콘
     // SF Symbol chevron.right 대체. Galmuri 픽셀 톤과 톤매치.
     static let dotChevronRightGrid: [String] = [
