@@ -19,8 +19,8 @@ struct TodoRowView: View {
                 .opacity(contentOpacity)
 
             rowContent
+                .background(MemoColorPalette.color(for: todo.colorName))
         }
-        .background(Color.panel)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
         .offset(x: offsetX)

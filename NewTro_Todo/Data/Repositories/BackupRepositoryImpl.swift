@@ -144,7 +144,8 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
             isAllDay: o.isAllDay,
             notifyAt: o.notifyAt,
             dueTime: nil,
-            postponeCount: nil
+            postponeCount: nil,
+            colorName: o.colorName
         )
     }
 
@@ -189,6 +190,8 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         // v11: 이모지 제거. 옛 백업의 r.emoji 값은 무시.
         t.sortOrder = r.sortOrder
         t.completedAt = r.completedAt
+        // v12: 행 배경색. 옛 백업은 colorName 키 부재 → "yellow" fallback.
+        t.colorName = r.colorName ?? "yellow"
         // v10 신규 필드가 있으면 그대로 적용, 없고 레거시 dueTime만 있으면 진행 시각=알림 시각으로 fallback.
         // postponeCount는 무시 — 미루기 기능 자체가 제거됨.
         if r.targetTimeStart != nil || r.notifyAt != nil || r.isAllDay != nil {

@@ -10,7 +10,8 @@ protocol TodoRepositoryProtocol {
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws -> TodoEntity
     func updateText(id: String, text: String) async throws
     func updateTodo(
@@ -20,7 +21,8 @@ protocol TodoRepositoryProtocol {
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws
     func toggleComplete(id: String) async throws
     func updateImportance(id: String, importance: Importance) async throws

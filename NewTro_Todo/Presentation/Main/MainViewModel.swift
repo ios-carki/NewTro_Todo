@@ -347,7 +347,8 @@ final class MainViewModel: ObservableObject {
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) {
         Task {
             do {
@@ -358,7 +359,8 @@ final class MainViewModel: ObservableObject {
                     targetTimeStart: targetTimeStart,
                     targetTimeEnd: targetTimeEnd,
                     isAllDay: isAllDay,
-                    notifyAt: notifyAt
+                    notifyAt: notifyAt,
+                    colorName: colorName
                 )
                 if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].text = text
@@ -367,6 +369,7 @@ final class MainViewModel: ObservableObject {
                     todos[idx].targetTimeEnd = targetTimeEnd
                     todos[idx].isAllDay = isAllDay
                     todos[idx].notifyAt = notifyAt
+                    todos[idx].colorName = colorName
                 }
                 // 알림 재설정: 기존 취소 후 새 시간 있으면 등록
                 NotificationManager.shared.cancel(todoId: id)
@@ -386,7 +389,8 @@ final class MainViewModel: ObservableObject {
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) {
         Task {
             do {
@@ -397,7 +401,8 @@ final class MainViewModel: ObservableObject {
                     targetTimeStart: targetTimeStart,
                     targetTimeEnd: targetTimeEnd,
                     isAllDay: isAllDay,
-                    notifyAt: notifyAt
+                    notifyAt: notifyAt,
+                    colorName: colorName
                 )
                 todos.append(newTodo)
                 await recordTodoAddedUseCase.execute()

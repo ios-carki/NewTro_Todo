@@ -53,6 +53,8 @@ struct BackupTodoRecord: Codable {
     // 옛 백업(v9 이하) decode 호환용. v10 export 시 항상 nil.
     var dueTime: Date?
     var postponeCount: Int?
+    // v12 신규: 행 배경색. 옛 백업 decode 시 nil → "yellow" 로 fallback.
+    var colorName: String?
 }
 
 struct BackupQuickNoteRecord: Codable {

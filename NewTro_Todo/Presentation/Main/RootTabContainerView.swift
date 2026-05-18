@@ -291,7 +291,8 @@ struct RootTabContainerView: View {
                 targetTimeStart: targetTimeStart,
                 targetTimeEnd: nil,
                 isAllDay: false,
-                notifyAt: notifyAt
+                notifyAt: notifyAt,
+                colorName: todoFormState.colorName
             )
         } else {
             mainVM.addTodo(
@@ -300,7 +301,8 @@ struct RootTabContainerView: View {
                 targetTimeStart: targetTimeStart,
                 targetTimeEnd: nil,
                 isAllDay: false,
-                notifyAt: notifyAt
+                notifyAt: notifyAt,
+                colorName: todoFormState.colorName
             )
         }
         dismissTodoAdd()

@@ -38,7 +38,8 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws -> TodoEntity {
         try await MainActor.run {
             let realm = try Realm()
@@ -59,7 +60,8 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
                 targetTimeEnd: targetTimeEnd,
                 isAllDay: isAllDay,
                 notifyAt: notifyAt,
-                sortOrder: minSortOrder - 1
+                sortOrder: minSortOrder - 1,
+                colorName: colorName
             )
             try realm.write { realm.add(todo) }
             return todo.toDomain()
@@ -73,7 +75,8 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws {
         try await MainActor.run {
             let realm = try Realm()
@@ -87,6 +90,7 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
                 todo.targetTimeEnd = targetTimeEnd
                 todo.isAllDay = isAllDay
                 todo.notifyAt = notifyAt
+                todo.colorName = colorName
             }
         }
     }

@@ -15,7 +15,8 @@ extension Todo {
             isAllDay: isAllDay,
             notifyAt: notifyAt,
             sortOrder: sortOrder,
-            completedAt: completedAt
+            completedAt: completedAt,
+            colorName: colorName
         )
     }
 }
@@ -36,7 +37,8 @@ extension TodoEntity {
             isAllDay: isAllDay,
             notifyAt: notifyAt,
             sortOrder: sortOrder,
-            completedAt: completedAt
+            completedAt: completedAt,
+            colorName: colorName
         )
     }
 }

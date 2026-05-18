@@ -17,6 +17,8 @@ final class TodoFormState: ObservableObject {
     @Published var hasReminder: Bool = false
     @Published var reminderDate: Date = ReminderDatePickerView.defaultReminderDate()
 
+    @Published var colorName: String = "yellow"
+
     @Published var editingTodo: TodoEntity? = nil
 
     var isEditMode: Bool { editingTodo != nil }
@@ -40,10 +42,12 @@ final class TodoFormState: ObservableObject {
         dueCustomOpen = false
         hasReminder = false
         reminderDate = ReminderDatePickerView.defaultReminderDate()
+        colorName = "yellow"
 
         guard let todo else { return }
         text = todo.text
         importance = todo.importance
+        colorName = todo.colorName
 
         if let start = todo.targetTimeStart {
             hasDueDate = true

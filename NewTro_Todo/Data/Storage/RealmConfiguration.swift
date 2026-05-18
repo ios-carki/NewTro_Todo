@@ -21,7 +21,9 @@ enum RealmConfiguration {
     //     PostponeEventObject 테이블 전체 삭제, Todo.postponeCount 컬럼 자동 drop
     // v11: 이모지 기능 제거 (기획 폐기)
     //     Todo.emoji / TemplateObject.emoji 컬럼은 모델 정의에서 사라져 Realm 이 자동 drop
-    static let schemaVersion: UInt64 = 11
+    // v12: Todo.colorName String 추가 (기본값 "yellow"). 리스트 행 배경색 사용자 지정.
+    //     QuickNote 의 colorName 과 동일 팔레트(yellow/pink/mint/lavender/peach/sky) 공유.
+    static let schemaVersion: UInt64 = 12
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -171,5 +173,13 @@ enum RealmConfiguration {
             migration.deleteData(forType: "PostponeEventObject")
         }
         // v11: 이모지 기능 제거. emoji 컬럼은 모델에서 사라져 자동 drop 됨.
+        // v12: Todo.colorName 추가. 기존 행은 "yellow" 로 백필 (모델 default 와 동일).
+        if oldVersion < 12 {
+            migration.enumerateObjects(ofType: "Todo") { _, newObject in
+                if newObject?["colorName"] == nil {
+                    newObject?["colorName"] = "yellow"
+                }
+            }
+        }
     }
 }

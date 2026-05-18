@@ -8,7 +8,8 @@ protocol EditTodoUseCaseProtocol {
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws
 }
 
@@ -26,7 +27,8 @@ final class EditTodoUseCase: EditTodoUseCaseProtocol {
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws {
         try await repository.updateTodo(
             id: id,
@@ -35,7 +37,8 @@ final class EditTodoUseCase: EditTodoUseCaseProtocol {
             targetTimeStart: targetTimeStart,
             targetTimeEnd: targetTimeEnd,
             isAllDay: isAllDay,
-            notifyAt: notifyAt
+            notifyAt: notifyAt,
+            colorName: colorName
         )
     }
 }

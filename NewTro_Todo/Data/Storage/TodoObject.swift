@@ -15,6 +15,7 @@ final class Todo: Object, ObjectKeyIdentifiable {
     @Persisted var notifyAt: Date? = nil
     @Persisted var sortOrder: Int = 0
     @Persisted var completedAt: Date? = nil
+    @Persisted var colorName: String = "yellow"
 
     @Persisted(primaryKey: true) var objectID: ObjectId
 
@@ -31,7 +32,8 @@ final class Todo: Object, ObjectKeyIdentifiable {
         isAllDay: Bool = false,
         notifyAt: Date? = nil,
         sortOrder: Int = 0,
-        completedAt: Date? = nil
+        completedAt: Date? = nil,
+        colorName: String = "yellow"
     ) {
         self.init()
         self.todo = todo
@@ -47,5 +49,6 @@ final class Todo: Object, ObjectKeyIdentifiable {
         self.notifyAt = notifyAt
         self.sortOrder = sortOrder
         self.completedAt = completedAt
+        self.colorName = colorName
     }
 }

@@ -215,6 +215,10 @@ struct TodoAddOverlayContent: View {
             importanceSection
                 .padding(.horizontal, 16)
 
+            sectionLabel("배경색")
+            colorSection
+                .padding(.horizontal, 16)
+
             sectionLabel("알림")
             reminderSection
                 .padding(.horizontal, 16)
@@ -391,6 +395,31 @@ struct TodoAddOverlayContent: View {
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }
         .buttonStyle(.plain)
+    }
+
+    // MARK: - 배경색
+    // 메모(QuickNote)와 동일한 6색 팔레트 공유. 행 자체 배경에 적용되며 중요도 strip 은 그대로 유지.
+    private var colorSection: some View {
+        HStack(spacing: 10) {
+            ForEach(MemoColorPalette.all, id: \.name) { item in
+                Button {
+                    hideKeyboard()
+                    formState.colorName = item.name
+                } label: {
+                    let isSelected = formState.colorName == item.name
+                    item.color
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .overlay(
+                            Rectangle().stroke(
+                                isSelected ? Color.ink : Color.ink.opacity(0.3),
+                                lineWidth: isSelected ? 2.5 : 1.5
+                            )
+                        )
+                }
+                .buttonStyle(.plain)
+            }
+        }
     }
 
     // MARK: - 알림
