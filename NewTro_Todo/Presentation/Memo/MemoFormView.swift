@@ -250,7 +250,10 @@ private struct UIMemoEditor: UIViewRepresentable {
         textView.font = UIFont(name: "Galmuri11-Bold", size: 13) ?? .systemFont(ofSize: 13)
         textView.backgroundColor = backgroundColor
         textView.textColor = UIColor(Color.ink)
-        textView.textContainerInset = UIEdgeInsets(top: 6, left: 4, bottom: 6, right: 4)
+        // SwiftUI 오버레이 Placeholder(.padding 14)와 시작점을 일치시키기 위해
+        // 기본 lineFragmentPadding(5pt)을 제거하고 inset을 14로 통일.
+        textView.textContainerInset = UIEdgeInsets(top: 14, left: 14, bottom: 14, right: 14)
+        textView.textContainer.lineFragmentPadding = 0
         textView.isEditable = isEditable
         textView.inputAccessoryView = makeAccessoryToolbar(coordinator: context.coordinator)
         return textView
