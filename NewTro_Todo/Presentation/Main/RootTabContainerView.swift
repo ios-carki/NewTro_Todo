@@ -141,14 +141,20 @@ struct RootTabContainerView: View {
             .animation(.easeOut(duration: 0.15), value: settingsVM.restorePhase)
             .animation(.easeOut(duration: 0.15), value: settingsVM.restorePreview)
         }
-        .fullScreenCover(isPresented: $showTemplateList) {
-            NavigationView {
+        .sheet(isPresented: $showTemplateList) {
+            NavigationStack {
                 TemplateListView(viewModel: mainVM)
             }
-            .navigationViewStyle(.stack)
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.hidden)
         }
-        .fullScreenCover(isPresented: $showReminderPicker) {
-            ReminderDatePickerView(reminderDate: $todoFormState.reminderDate)
+        .sheet(isPresented: $showReminderPicker) {
+            ReminderDatePickerView(
+                reminderDate: $todoFormState.reminderDate,
+                hasReminder: $todoFormState.hasReminder
+            )
+            .presentationDetents([.height(420)])
+            .presentationDragIndicator(.hidden)
         }
         .overlayPreferenceValue(CoachmarkAnchorKey.self) { anchors in
             GeometryReader { geom in
@@ -198,7 +204,13 @@ struct RootTabContainerView: View {
                 onDismiss:  { dismissTodoAdd() },
                 onEmptyAttempt: { mainVM.showToast("할 일을 입력하세요".localized()) },
                 onShowTemplates: { showTemplateList = true },
-                onShowReminder:  { showReminderPicker = true }
+                onShowReminder:  { showReminderPicker = true },
+                onDelete: {
+                    if let id = todoFormState.editingTodo?.id {
+                        mainVM.deleteTodo(id: id)
+                    }
+                    dismissTodoAdd()
+                }
             )
             .frame(maxHeight: todoAddExpanded ? .infinity : nil, alignment: .top)
         }
@@ -228,7 +240,7 @@ struct RootTabContainerView: View {
     // MARK: - TodoAdd Routing
 
     // MainViewModel.activeSheet 의 .addTodo / .editTodo 를 단일 오버레이로 라우팅.
-    // .actionMenu / .datePicker 는 MainView 내 .sheet 가 처리.
+    // .datePicker 는 MainView 내 .sheet 가 처리.
     private func routeActiveSheetChange() {
         guard let sheet = mainVM.activeSheet else {
             // 외부에서 activeSheet 가 nil 로 비워지는 경로(예: VM 측 강제 dismiss) — 일반 흐름은
@@ -253,7 +265,7 @@ struct RootTabContainerView: View {
             // 편집은 곧바로 expanded — 세부 항목까지 보여야 의미가 있음.
             todoAddExpanded = true
             withAnimation(.easeInOut(duration: 0.25)) { todoAddOpen = true }
-        case .actionMenu, .datePicker:
+        case .datePicker:
             break
         }
     }
@@ -284,22 +296,22 @@ struct RootTabContainerView: View {
             mainVM.editTodo(
                 id: todo.id,
                 text: trimmed,
-                emoji: todoFormState.selectedEmoji,
                 importance: todoFormState.importance,
                 targetTimeStart: targetTimeStart,
                 targetTimeEnd: nil,
                 isAllDay: false,
-                notifyAt: notifyAt
+                notifyAt: notifyAt,
+                colorName: todoFormState.colorName
             )
         } else {
             mainVM.addTodo(
                 text: trimmed,
-                emoji: todoFormState.selectedEmoji,
                 importance: todoFormState.importance,
                 targetTimeStart: targetTimeStart,
                 targetTimeEnd: nil,
                 isAllDay: false,
-                notifyAt: notifyAt
+                notifyAt: notifyAt,
+                colorName: todoFormState.colorName
             )
         }
         dismissTodoAdd()

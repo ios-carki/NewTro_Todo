@@ -77,7 +77,6 @@ struct TodoRow: View {
             item: WidgetTodoItem(
                 id: "placeholder-\(UUID().uuidString)",
                 text: " ",
-                emoji: "",
                 importance: 0,
                 done: false,
                 targetTimeStart: nil,
@@ -99,11 +98,6 @@ struct TodoRow: View {
                     .fill(priorityColor)
                     .frame(width: 4)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
-
-                if !item.emoji.isEmpty {
-                    Text(item.emoji)
-                        .font(.system(size: fontSize - 1))
-                }
 
                 Text(item.text)
                     .font(.galCondensed13())

@@ -75,6 +75,7 @@ extension Color {
     // Ground
     static let grass        = Color(hex: "#6FC44F")
     static let grassDk      = Color(hex: "#3F8D37")
+    static let grassLt      = Color(hex: "#CFEAC2")
     static let dirt         = Color(hex: "#C88B5A")
     static let dirtDk       = Color(hex: "#8F5A33")
 
@@ -85,6 +86,8 @@ extension Color {
     static let pinkDk       = Color(hex: "#D46A95")
     static let cream        = Color(hex: "#FFE9B0")
     static let sun          = Color(hex: "#FFCF57")
+    static let sunDk        = Color(hex: "#8F6A00")
+    static let sunLt        = Color(hex: "#FFE079")
 
     // UI
     static let ink          = Color(hex: "#1A1530")
@@ -93,6 +96,7 @@ extension Color {
     static let tile         = Color(hex: "#FFD9A8")
     static let pixelRed     = Color(hex: "#E5524E")
     static let redDk        = Color(hex: "#A12F2D")
+    static let redLt        = Color(hex: "#F7B5B2")
 
     // Status
     static let done         = Color(hex: "#7FD37F")

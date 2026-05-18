@@ -12,6 +12,7 @@ struct PixelCalendarPicker: View {
     var minimumDate: Date? = nil
     var externalDate: Date? = nil
     var monthOverviewProvider: ((Int, Int) async -> [Int: DayContent])? = nil
+    var onHeaderTap: (() -> Void)? = nil
 
     @State private var viewYear: Int
     @State private var viewMonth: Int
@@ -22,6 +23,7 @@ struct PixelCalendarPicker: View {
         minimumDate: Date? = nil,
         externalDate: Date? = nil,
         monthOverviewProvider: ((Int, Int) async -> [Int: DayContent])? = nil,
+        onHeaderTap: (() -> Void)? = nil,
         onDateSelected: @escaping (Date) -> Void
     ) {
         let cal = Calendar.current
@@ -31,6 +33,7 @@ struct PixelCalendarPicker: View {
         self.minimumDate   = minimumDate
         self.externalDate  = externalDate
         self.monthOverviewProvider = monthOverviewProvider
+        self.onHeaderTap = onHeaderTap
         self.onDateSelected = onDateSelected
     }
 
@@ -67,13 +70,22 @@ struct PixelCalendarPicker: View {
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
             }
 
-            Text(monthTitle)
-                .font(.pressStart14())
-                .foregroundColor(.ink)
-                .frame(maxWidth: .infinity)
-                .frame(height: 46)
-                .background(Color.panel)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            HStack(spacing: 6) {
+                Text(monthTitle)
+                    .font(.pressStart14())
+                    .foregroundColor(.ink)
+                if onHeaderTap != nil {
+                    Text("▼")
+                        .font(.pressStart8())
+                        .foregroundColor(.ink)
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 46)
+            .background(Color.panel)
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            .contentShape(Rectangle())
+            .onTapGesture { onHeaderTap?() }
 
             Button { nextMonth() } label: {
                 Text("▶")
@@ -121,7 +133,7 @@ struct PixelCalendarPicker: View {
                         isHighlighted: isHighlighted(day: d),
                         isDisabled:  isDisabled(day: d),
                         weekday:     weekdayOf(day: d),
-                        marker:      dayContent[d] ?? [],
+                        marker:      dayContent[d] ?? DayContent(),
                         onTap:       { selectDay(d) }
                     )
                 } else {
@@ -240,38 +252,106 @@ private struct PickerDayCell: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: 3) {
+            ZStack {
+                // 셀 배경 + 보더
+                Rectangle()
+                    .fill(isDisabled ? Color.shade.opacity(0.04) : bgColor)
+                    .overlay(Rectangle().stroke(borderColor, lineWidth: borderWidth))
+
+                // 날짜 — 셀 정중앙. fold/+N 과 시각적으로 분리되도록 배치.
                 Text(String(format: "%02d", day))
                     .font(.pressStart10())
                     .foregroundColor(dayColor)
-                markerRow
-                    .frame(height: 6)
+
+                // 메모 fold (우상단 코너) — 메모 있을 때만 (개수 표시 없이 플래그만)
+                if marker.memoCount > 0 {
+                    MemoFoldCorner(isDisabled: isDisabled)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                }
+
+                // Todo 사각형 row (하단)
+                VStack(spacing: 0) {
+                    Spacer(minLength: 0)
+                    todoSquaresRow
+                        .padding(.bottom, 5)
+                }
             }
-            .frame(maxWidth: .infinity)
             .frame(height: 50)
-            .background(isDisabled ? Color.shade.opacity(0.04) : bgColor)
-            .overlay(Rectangle().stroke(borderColor, lineWidth: borderWidth))
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
     }
 
-    private var markerRow: some View {
-        HStack(spacing: 3) {
-            if marker.contains(.todo) {
-                markerDot(color: .pixelPink)
+    // MARK: - Todo 사각형 row
+    // 0개: 비움 / 1·2·3개: 그만큼 ▣ / 4개 이상: ▣▣▣ +N (남은 개수)
+    //   +N 의 N 은 99 캡 — 99 초과 시 "99+" 한 토큰으로 표시 (셀 폭 오버플로 방지).
+    @ViewBuilder
+    private var todoSquaresRow: some View {
+        if marker.todoCount > 0 {
+            HStack(spacing: 2) {
+                let shown = min(marker.todoCount, 3)
+                ForEach(0..<shown, id: \.self) { _ in todoSquare }
+                if marker.todoCount > 3 {
+                    let remaining = marker.todoCount - 3
+                    Text(remaining > 99 ? "99+" : "+\(remaining)")
+                        .font(.pressStart8())
+                        .foregroundColor(.ink)
+                        .monospacedDigit()
+                }
             }
-            if marker.contains(.memo) {
-                markerDot(color: .peachDk)
-            }
+            .opacity(isDisabled ? 0.35 : 1)
+            .frame(height: 6)
+        } else {
+            Color.clear.frame(height: 6)
         }
-        .opacity(isDisabled ? 0.35 : 1)
     }
 
-    private func markerDot(color: Color) -> some View {
+    private var todoSquare: some View {
         Rectangle()
-            .fill(color)
+            .fill(Color.pixelPink)
             .frame(width: 5, height: 5)
             .overlay(Rectangle().stroke(Color.ink.opacity(0.55), lineWidth: 1))
+    }
+}
+
+// MARK: - Memo Fold Corner
+// 우상단 코너가 접힌 종이 모양. "메모 있음" 시각 플래그 전용 (개수 미표시).
+private struct MemoFoldCorner: View {
+    let isDisabled: Bool
+
+    private let foldSize: CGFloat = 12
+
+    var body: some View {
+        ZStack {
+            FoldTriangleShape()
+                .fill(Color.peachDk)
+            FoldEdgeShape()
+                .stroke(Color.ink, lineWidth: 1)
+        }
+        .frame(width: foldSize, height: foldSize)
+        .opacity(isDisabled ? 0.35 : 1)
+    }
+}
+
+// 우상단 → 우하단 → 좌상단을 잇는 직각삼각형 (페이지가 접혀 내려온 면)
+private struct FoldTriangleShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: rect.maxX, y: rect.minY))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        p.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+        p.closeSubpath()
+        return p
+    }
+}
+
+// 접힘선(좌상단 ↔ 우하단)만 한 줄
+private struct FoldEdgeShape: Shape {
+    func path(in rect: CGRect) -> Path {
+        var p = Path()
+        p.move(to: CGPoint(x: rect.minX, y: rect.minY))
+        p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        return p
     }
 }

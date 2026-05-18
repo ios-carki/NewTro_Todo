@@ -4,7 +4,6 @@ struct MainView: View {
     @ObservedObject var viewModel: MainViewModel
     @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
     @State private var editMode: EditMode = .inactive
-    @State private var previousSheetId: String? = nil
 
     private var selectedCharInfo: FriendCharInfo {
         CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
@@ -17,15 +16,15 @@ struct MainView: View {
             get: {
                 guard let s = viewModel.activeSheet else { return nil }
                 switch s {
-                case .actionMenu, .datePicker: return s
-                case .addTodo, .editTodo:      return nil
+                case .datePicker:         return s
+                case .addTodo, .editTodo: return nil
                 }
             },
             set: { newValue in
                 guard newValue == nil else { return }
-                // 현재 표시 중인 시트가 actionMenu/datePicker 일 때만 클리어 → addTodo 흐름 보호.
+                // 현재 표시 중인 시트가 datePicker 일 때만 클리어 → addTodo 흐름 보호.
                 switch viewModel.activeSheet {
-                case .actionMenu, .datePicker: viewModel.activeSheet = nil
+                case .datePicker: viewModel.activeSheet = nil
                 default: break
                 }
             }
@@ -48,12 +47,9 @@ struct MainView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         // .addTodo / .editTodo 는 RootTabContainerView 의 인라인 패널 + .fullScreenCover 로 라우팅.
-        // 여기서는 .actionMenu / .datePicker 만 SwiftUI .sheet 로 처리.
+        // 여기서는 .datePicker 만 SwiftUI .sheet 로 처리.
         .sheet(item: nonTodoAddActiveSheetBinding) { sheet in
             switch sheet {
-            case .actionMenu(let todo):
-                TodoActionMenuView(todo: todo, viewModel: viewModel)
-                    .interactiveDismissDisabled(true)
             case .datePicker:
                 DatePickerSheetView(
                     initialDate: viewModel.selectedDate,
@@ -70,12 +66,6 @@ struct MainView: View {
             case .addTodo, .editTodo:
                 // 이 분기로는 오지 않음 — 바인딩에서 nil 처리.
                 EmptyView()
-            }
-        }
-        .onChange(of: viewModel.activeSheet?.id) { newId in
-            defer { previousSheetId = newId }
-            if newId == nil && previousSheetId?.hasPrefix("actionMenu") == true {
-                viewModel.onActionMenuDismissed()
             }
         }
         .alert("오류", isPresented: Binding(
@@ -129,7 +119,7 @@ struct MainView: View {
                     Text(viewModel.displayDate)
                         .font(.pressStart12())
                         .foregroundColor(.pinkDk)
-                    Text("오늘의 할 일")
+                    Text(viewModel.headerTitle)
                         .font(.galBold22())
                         .foregroundColor(.ink)
                 }

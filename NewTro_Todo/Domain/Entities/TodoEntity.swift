@@ -8,11 +8,11 @@ struct TodoEntity: Identifiable {
     var createdAt: Date
     var targetDate: Date
     var isCompleted: Bool
-    var emoji: String
     var targetTimeStart: Date?
     var targetTimeEnd: Date?
     var isAllDay: Bool
     var notifyAt: Date?
     var sortOrder: Int
     var completedAt: Date?
+    var colorName: String
 }

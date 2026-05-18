@@ -4,12 +4,12 @@ protocol EditTodoUseCaseProtocol {
     func execute(
         id: String,
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws
 }
 
@@ -23,22 +23,22 @@ final class EditTodoUseCase: EditTodoUseCaseProtocol {
     func execute(
         id: String,
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws {
         try await repository.updateTodo(
             id: id,
             text: text,
-            emoji: emoji,
             importance: importance,
             targetTimeStart: targetTimeStart,
             targetTimeEnd: targetTimeEnd,
             isAllDay: isAllDay,
-            notifyAt: notifyAt
+            notifyAt: notifyAt,
+            colorName: colorName
         )
     }
 }

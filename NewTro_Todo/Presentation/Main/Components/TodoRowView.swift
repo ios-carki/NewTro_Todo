@@ -4,7 +4,6 @@ struct TodoRowView: View {
     let todo: TodoEntity
     @ObservedObject var viewModel: MainViewModel
     @State private var offsetX: CGFloat = 0
-    @State private var showFireworks: Bool = false
 
     init(todo: TodoEntity, viewModel: MainViewModel) {
         self.todo = todo
@@ -14,25 +13,34 @@ struct TodoRowView: View {
     private var isLocked: Bool { viewModel.isViewingPastDate }
 
     var body: some View {
-        ZStack {
-            HStack(spacing: 0) {
-                priorityStrip
-                rowContent
-            }
-            .background(Color.panel)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
-            .offset(x: offsetX)
-            .opacity(offsetX == 0 ? 1 : Double(max(0, 1 - offsetX / 200)))
-            .grayscale(isLocked ? 0.7 : 0)
-            .opacity(isLocked ? 0.65 : 1)
+        HStack(spacing: 0) {
+            priorityStrip
+                .grayscale(contentGray)
+                .opacity(contentOpacity)
 
-            if showFireworks {
-                FireworksView()
-                    .allowsHitTesting(false)
-            }
+            rowContent
+                .background(MemoColorPalette.color(for: todo.colorName))
         }
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
+        .offset(x: offsetX)
+        .opacity(offsetX == 0 ? 1 : Double(max(0, 1 - offsetX / 200)))
     }
+
+    // 완료/지난 날짜(잠금) 시 우선순위 스트립·텍스트·우측 버튼은 desaturate + dim.
+    // 체크박스만 예외 — 완료 상태에서도 색을 유지해 "완료 해제" affordance 확보. isLocked 일 때만 함께 회색.
+    private var contentGray: Double {
+        if todo.isCompleted { return 0.85 }
+        if isLocked { return 0.7 }
+        return 0
+    }
+    private var contentOpacity: Double {
+        if todo.isCompleted { return 0.55 }
+        if isLocked { return 0.65 }
+        return 1
+    }
+    private var checkboxGray: Double { isLocked ? 0.7 : 0 }
+    private var checkboxOpacity: Double { isLocked ? 0.65 : 1 }
 
     private func showLockedToast() {
         viewModel.showToast("지난 날의 Todo는 수정할 수 없습니다".localized())
@@ -53,9 +61,16 @@ struct TodoRowView: View {
     private var rowContent: some View {
         HStack(spacing: 6) {
             checkboxButton
-            textArea
-            Spacer(minLength: 4)
-            trailingButtons
+                .grayscale(checkboxGray)
+                .opacity(checkboxOpacity)
+
+            HStack(spacing: 6) {
+                textArea
+                Spacer(minLength: 4)
+                trailingButtons
+            }
+            .grayscale(contentGray)
+            .opacity(contentOpacity)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 10)
@@ -66,10 +81,6 @@ struct TodoRowView: View {
             if isLocked {
                 showLockedToast()
                 return
-            }
-            if !todo.isCompleted {
-                showFireworks = true
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) { showFireworks = false }
             }
             viewModel.toggleComplete(id: todo.id)
         } label: {
@@ -92,53 +103,48 @@ struct TodoRowView: View {
         .accessibilityIdentifier("checkbox_\(todo.id)")
     }
 
+    // 텍스트 왼쪽 즐겨찾기 인디케이터는 제거. 우측 토글 버튼 자체가 ON/OFF 상태를 충분히 표현.
     private var textArea: some View {
-        HStack(spacing: 4) {
-            if todo.isFavorite {
-                PixelArtView(
-                    grid: PixelArtAssets.favoriteStarGrid,
-                    palette: PixelArtAssets.favoriteStarPalette,
-                    scale: 1.5
-                )
-                .opacity(todo.isCompleted ? 0.4 : 1)
+        let displayText = todo.text.isEmpty ? "..." : todo.text
+        return Text(displayText)
+            .foregroundColor(todo.isCompleted ? .shade : .ink)
+            .font(.galBold14())
+            .lineLimit(1)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                if isLocked { showLockedToast() } else { openEdit() }
             }
-
-            if !todo.emoji.isEmpty {
-                Text(todo.emoji)
-                    .font(.system(size: 14))
-            }
-
-            let displayText = todo.text.isEmpty ? "..." : todo.text
-            Text(displayText)
-                .strikethrough(todo.isCompleted, color: .shade)
-                .foregroundColor(todo.isCompleted ? .shade : .ink)
-                .font(.galBold14())
-                .lineLimit(1)
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-        .contentShape(Rectangle())
-        .onTapGesture {
-            if isLocked { showLockedToast() } else { openEdit() }
-        }
     }
 
+    // MARK: - Trailing favorite toggle
+    // 기존 MENU 버튼 자리 즐겨찾기 토글. 인디케이터 사이즈(16)와 동일하게 통일.
+    // ON: sun fill 위에 ink outline 겹쳐 밝은 배경에서도 별 윤곽이 또렷.
+    // OFF: shade outline 만 — ink 검정은 톤 강해서 부드러운 shade 보라회색으로.
     private var trailingButtons: some View {
-        HStack(spacing: 4) {
-            Button {
-                viewModel.activeSheet = .actionMenu(todo)
-            } label: {
-                Text("MENU")
-                    .font(.pressStart9())
-                    .foregroundColor(.ink)
-                    .padding(.horizontal, 6)
-                    .frame(height: 28)
-                    .background(Color.cream)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
+        Button {
+            if isLocked { showLockedToast(); return }
+            viewModel.toggleFavorite(id: todo.id)
+        } label: {
+            Group {
+                if todo.isFavorite {
+                    ZStack {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.sun)
+                        Image(systemName: "star")
+                            .foregroundColor(.ink)
+                    }
+                } else {
+                    Image(systemName: "star")
+                        .foregroundColor(.shade)
+                }
             }
-            .buttonStyle(.borderless)
-            .accessibilityIdentifier("action_\(todo.id)")
+            .font(.system(size: 16, weight: .bold))
+            .frame(width: 36, height: 36)
+            .contentShape(Rectangle())
         }
-        .allowsHitTesting(!viewModel.actionMenuRecentlyDismissed)
+        .buttonStyle(.borderless)
+        .accessibilityIdentifier("favorite_\(todo.id)")
     }
 
     // MARK: - Helpers
@@ -156,46 +162,5 @@ struct TodoRowView: View {
         case .medium: return .sun
         case .none:   return .grass
         }
-    }
-}
-
-// MARK: - Fireworks
-private struct FireworksView: View {
-    private let particles: [FireParticle] = (0..<12).map { _ in FireParticle() }
-    @State private var animate = false
-
-    var body: some View {
-        ZStack {
-            ForEach(particles.indices, id: \.self) { i in
-                let p = particles[i]
-                Circle()
-                    .fill(p.color)
-                    .frame(width: p.size, height: p.size)
-                    .offset(
-                        x: animate ? p.endX : 0,
-                        y: animate ? p.endY : 0
-                    )
-                    .opacity(animate ? 0 : 1)
-            }
-        }
-        .onAppear {
-            withAnimation(.easeOut(duration: 0.7)) { animate = true }
-        }
-    }
-}
-
-private struct FireParticle {
-    let color: Color
-    let size: CGFloat
-    let endX: CGFloat
-    let endY: CGFloat
-
-    init() {
-        let angle = Double.random(in: 0..<360) * .pi / 180
-        let dist = CGFloat.random(in: 24...48)
-        color = [Color.sun, .pixelRed, .grass, .pixelPink, .done].randomElement() ?? .sun
-        size = CGFloat.random(in: 3...6)
-        endX = cos(angle) * dist
-        endY = sin(angle) * dist
     }
 }

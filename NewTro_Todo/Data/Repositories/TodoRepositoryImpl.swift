@@ -33,13 +33,13 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
 
     func addTodo(
         text: String,
-        emoji: String,
         importance: Importance,
         targetDate: Date,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws -> TodoEntity {
         try await MainActor.run {
             let realm = try Realm()
@@ -56,12 +56,12 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
                 stringDate: dateStr,
                 targetDate: dayStart,
                 isFinished: false,
-                emoji: emoji,
                 targetTimeStart: targetTimeStart,
                 targetTimeEnd: targetTimeEnd,
                 isAllDay: isAllDay,
                 notifyAt: notifyAt,
-                sortOrder: minSortOrder - 1
+                sortOrder: minSortOrder - 1,
+                colorName: colorName
             )
             try realm.write { realm.add(todo) }
             return todo.toDomain()
@@ -71,12 +71,12 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
     func updateTodo(
         id: String,
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws {
         try await MainActor.run {
             let realm = try Realm()
@@ -85,12 +85,12 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             else { throw RepositoryError.notFound }
             try realm.write {
                 todo.todo = text
-                todo.emoji = emoji
                 todo.importance = importance.rawValue
                 todo.targetTimeStart = targetTimeStart
                 todo.targetTimeEnd = targetTimeEnd
                 todo.isAllDay = isAllDay
                 todo.notifyAt = notifyAt
+                todo.colorName = colorName
             }
         }
     }

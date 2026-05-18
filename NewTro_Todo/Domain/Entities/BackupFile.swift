@@ -41,7 +41,8 @@ struct BackupTodoRecord: Codable {
     var stringDate: String
     var targetDate: Date
     var isFinished: Bool
-    var emoji: String
+    // v11 에서 이모지 기능 제거. 옛 백업 decode 호환을 위해 Optional 유지, 신규 export 시 nil.
+    var emoji: String?
     var sortOrder: Int
     var completedAt: Date?
     // v10 신규 4필드. 알림과 진행 시각이 분리됨.
@@ -52,6 +53,8 @@ struct BackupTodoRecord: Codable {
     // 옛 백업(v9 이하) decode 호환용. v10 export 시 항상 nil.
     var dueTime: Date?
     var postponeCount: Int?
+    // v12 신규: 행 배경색. 옛 백업 decode 시 nil → "yellow" 로 fallback.
+    var colorName: String?
 }
 
 struct BackupQuickNoteRecord: Codable {
@@ -67,7 +70,8 @@ struct BackupQuickNoteRecord: Codable {
 struct BackupTemplateRecord: Codable {
     let id: String                  // UUID string
     var text: String
-    var emoji: String
+    // v11 에서 이모지 기능 제거. 옛 백업 decode 호환을 위해 Optional 유지, 신규 export 시 nil.
+    var emoji: String?
     var importance: Int
     var createdAt: Date
 }

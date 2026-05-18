@@ -9,13 +9,13 @@ final class Todo: Object, ObjectKeyIdentifiable {
     @Persisted var stringDate: String = ""
     @Persisted var targetDate: Date = Date()
     @Persisted var isFinished: Bool = false
-    @Persisted var emoji: String = ""
     @Persisted var targetTimeStart: Date? = nil
     @Persisted var targetTimeEnd: Date? = nil
     @Persisted var isAllDay: Bool = false
     @Persisted var notifyAt: Date? = nil
     @Persisted var sortOrder: Int = 0
     @Persisted var completedAt: Date? = nil
+    @Persisted var colorName: String = "yellow"
 
     @Persisted(primaryKey: true) var objectID: ObjectId
 
@@ -27,13 +27,13 @@ final class Todo: Object, ObjectKeyIdentifiable {
         stringDate: String,
         targetDate: Date,
         isFinished: Bool,
-        emoji: String = "",
         targetTimeStart: Date? = nil,
         targetTimeEnd: Date? = nil,
         isAllDay: Bool = false,
         notifyAt: Date? = nil,
         sortOrder: Int = 0,
-        completedAt: Date? = nil
+        completedAt: Date? = nil,
+        colorName: String = "yellow"
     ) {
         self.init()
         self.todo = todo
@@ -43,12 +43,12 @@ final class Todo: Object, ObjectKeyIdentifiable {
         self.stringDate = stringDate
         self.targetDate = targetDate
         self.isFinished = isFinished
-        self.emoji = emoji
         self.targetTimeStart = targetTimeStart
         self.targetTimeEnd = targetTimeEnd
         self.isAllDay = isAllDay
         self.notifyAt = notifyAt
         self.sortOrder = sortOrder
         self.completedAt = completedAt
+        self.colorName = colorName
     }
 }

@@ -45,6 +45,8 @@
 
 // MARK: - Main / Empty States
 "오늘의 할 일" = "Today's Todos";
+"과거에 한 일" = "Past Todos";
+"미래에 할 일" = "Upcoming Todos";
 "기록이 남아있지 않아요" = "No records here";
 "조용히 지나간 하루였나봐요" = "Looks like a quiet day";
 "오늘은 할 일이 없어요" = "No todos for today";
@@ -56,7 +58,6 @@
 "할 일을 입력하세요" = "Enter your todo";
 "템플릿 이름을 입력하세요" = "Enter template name";
 "오늘의 생각을 기록해보세요..." = "Write down your thoughts...";
-"이모지 선택" = "Pick Emoji";
 "없음" = "None";
 "중요도" = "Priority";
 "낮음" = "Low";

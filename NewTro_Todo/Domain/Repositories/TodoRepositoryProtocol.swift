@@ -5,24 +5,24 @@ protocol TodoRepositoryProtocol {
     func fetchTodos(year: Int, month: Int) async throws -> [TodoEntity]
     func addTodo(
         text: String,
-        emoji: String,
         importance: Importance,
         targetDate: Date,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws -> TodoEntity
     func updateText(id: String, text: String) async throws
     func updateTodo(
         id: String,
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) async throws
     func toggleComplete(id: String) async throws
     func updateImportance(id: String, importance: Importance) async throws

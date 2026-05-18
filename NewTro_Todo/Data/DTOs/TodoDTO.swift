@@ -10,13 +10,13 @@ extension Todo {
             createdAt: regDate,
             targetDate: targetDate,
             isCompleted: isFinished,
-            emoji: emoji,
             targetTimeStart: targetTimeStart,
             targetTimeEnd: targetTimeEnd,
             isAllDay: isAllDay,
             notifyAt: notifyAt,
             sortOrder: sortOrder,
-            completedAt: completedAt
+            completedAt: completedAt,
+            colorName: colorName
         )
     }
 }
@@ -32,13 +32,13 @@ extension TodoEntity {
             stringDate: DateFormatter.dateToString(date: normalized),
             targetDate: normalized,
             isFinished: isCompleted,
-            emoji: emoji,
             targetTimeStart: targetTimeStart,
             targetTimeEnd: targetTimeEnd,
             isAllDay: isAllDay,
             notifyAt: notifyAt,
             sortOrder: sortOrder,
-            completedAt: completedAt
+            completedAt: completedAt,
+            colorName: colorName
         )
     }
 }

@@ -7,7 +7,6 @@ final class TodoFormState: ObservableObject {
     enum DueChip { case today, tomorrow, nextWeek, custom }
 
     @Published var text: String = ""
-    @Published var selectedEmoji: String = ""
     @Published var importance: Importance = .none
 
     @Published var hasDueDate: Bool = true
@@ -17,6 +16,8 @@ final class TodoFormState: ObservableObject {
 
     @Published var hasReminder: Bool = false
     @Published var reminderDate: Date = ReminderDatePickerView.defaultReminderDate()
+
+    @Published var colorName: String = "yellow"
 
     @Published var editingTodo: TodoEntity? = nil
 
@@ -34,7 +35,6 @@ final class TodoFormState: ObservableObject {
     func reset(for todo: TodoEntity?) {
         editingTodo = todo
         text = ""
-        selectedEmoji = ""
         importance = .none
         hasDueDate = true
         dueDate = Calendar.current.startOfDay(for: Date())
@@ -42,11 +42,12 @@ final class TodoFormState: ObservableObject {
         dueCustomOpen = false
         hasReminder = false
         reminderDate = ReminderDatePickerView.defaultReminderDate()
+        colorName = "yellow"
 
         guard let todo else { return }
         text = todo.text
-        selectedEmoji = todo.emoji
         importance = todo.importance
+        colorName = todo.colorName
 
         if let start = todo.targetTimeStart {
             hasDueDate = true
@@ -64,7 +65,6 @@ final class TodoFormState: ObservableObject {
 
     func applyTemplate(_ t: TemplateEntity) {
         text = t.text
-        selectedEmoji = t.emoji
         importance = t.importance
     }
 

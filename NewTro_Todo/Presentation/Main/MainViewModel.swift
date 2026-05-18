@@ -20,14 +20,12 @@ enum TodoSection: String, CaseIterable {
 enum MainActiveSheet: Identifiable {
     case addTodo
     case editTodo(TodoEntity)
-    case actionMenu(TodoEntity)
     case datePicker
 
     var id: String {
         switch self {
         case .addTodo:           return "addTodo"
         case .editTodo(let t):   return "editTodo_\(t.id)"
-        case .actionMenu(let t): return "actionMenu_\(t.id)"
         case .datePicker:        return "datePicker"
         }
     }
@@ -44,12 +42,10 @@ final class MainViewModel: ObservableObject {
     @Published var toastMessage: String? = nil
     @Published var templates: [TemplateEntity] = []
     @Published var pendingTemplate: TemplateEntity? = nil
-    @Published var actionMenuRecentlyDismissed: Bool = false
     @Published private(set) var dayMemos: [MemoEntity] = []
     @Published private var collapsedByDate: [String: Set<String>] = [:]
 
     private var toastTask: Task<Void, Never>?
-    private var actionMenuDismissTask: Task<Void, Never>?
 
     // 섹션 접기 상태 영속화 (UserDefaults — 화면 선호도이므로 Realm 마이그레이션 회피)
     private static let collapsedDefaultsKey = "sectionCollapsedByDate.v1"
@@ -100,6 +96,16 @@ final class MainViewModel: ObservableObject {
         let today = cal.startOfDay(for: Date())
         let viewing = cal.startOfDay(for: selectedDate)
         return viewing < today
+    }
+
+    /// 상단 타이틀. 선택 날짜 기준 과거/오늘/미래 분기.
+    var headerTitle: String {
+        let cal = Calendar.current
+        let today = cal.startOfDay(for: Date())
+        let viewing = cal.startOfDay(for: selectedDate)
+        if viewing < today { return "과거에 한 일".localized() }
+        if viewing > today { return "미래에 할 일".localized() }
+        return "오늘의 할 일".localized()
     }
 
     // MARK: - Use Cases
@@ -209,18 +215,6 @@ final class MainViewModel: ObservableObject {
         }
     }
 
-    // MARK: - Action Menu Dismiss Guard
-
-    func onActionMenuDismissed() {
-        actionMenuDismissTask?.cancel()
-        actionMenuRecentlyDismissed = true
-        actionMenuDismissTask = Task { @MainActor in
-            try? await Task.sleep(nanoseconds: 400_000_000)
-            guard !Task.isCancelled else { return }
-            actionMenuRecentlyDismissed = false
-        }
-    }
-
     // MARK: - Toast
 
     func showToast(_ message: String) {
@@ -304,20 +298,20 @@ final class MainViewModel: ObservableObject {
         }
     }
 
-    func saveTemplate(text: String, emoji: String, importance: Importance) {
+    func saveTemplate(text: String, importance: Importance) {
         Task {
             do {
-                _ = try await addTemplateUseCase.execute(text: text, emoji: emoji, importance: importance)
+                _ = try await addTemplateUseCase.execute(text: text, importance: importance)
                 templates = try await fetchTemplatesUseCase.execute()
                 showToast("템플릿 저장 완료".localized())
             } catch { errorMessage = error.localizedDescription }
         }
     }
 
-    func updateTemplate(id: String, text: String, emoji: String, importance: Importance) {
+    func updateTemplate(id: String, text: String, importance: Importance) {
         Task {
             do {
-                try await updateTemplateUseCase.execute(id: id, text: text, emoji: emoji, importance: importance)
+                try await updateTemplateUseCase.execute(id: id, text: text, importance: importance)
                 templates = try await fetchTemplatesUseCase.execute()
             } catch { errorMessage = error.localizedDescription }
         }
@@ -343,38 +337,38 @@ final class MainViewModel: ObservableObject {
     func editTodo(
         id: String,
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) {
         Task {
             do {
                 try await editTodoUseCase.execute(
                     id: id,
                     text: text,
-                    emoji: emoji,
                     importance: importance,
                     targetTimeStart: targetTimeStart,
                     targetTimeEnd: targetTimeEnd,
                     isAllDay: isAllDay,
-                    notifyAt: notifyAt
+                    notifyAt: notifyAt,
+                    colorName: colorName
                 )
                 if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].text = text
-                    todos[idx].emoji = emoji
                     todos[idx].importance = importance
                     todos[idx].targetTimeStart = targetTimeStart
                     todos[idx].targetTimeEnd = targetTimeEnd
                     todos[idx].isAllDay = isAllDay
                     todos[idx].notifyAt = notifyAt
+                    todos[idx].colorName = colorName
                 }
                 // 알림 재설정: 기존 취소 후 새 시간 있으면 등록
                 NotificationManager.shared.cancel(todoId: id)
                 if let notifyAt {
-                    NotificationManager.shared.schedule(todoId: id, text: text, emoji: emoji, at: notifyAt)
+                    NotificationManager.shared.schedule(todoId: id, text: text, at: notifyAt)
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
@@ -385,29 +379,29 @@ final class MainViewModel: ObservableObject {
 
     func addTodo(
         text: String,
-        emoji: String,
         importance: Importance,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
-        notifyAt: Date?
+        notifyAt: Date?,
+        colorName: String
     ) {
         Task {
             do {
                 let newTodo = try await addTodoUseCase.execute(
                     text: text,
-                    emoji: emoji,
                     importance: importance,
                     targetDate: selectedDate,
                     targetTimeStart: targetTimeStart,
                     targetTimeEnd: targetTimeEnd,
                     isAllDay: isAllDay,
-                    notifyAt: notifyAt
+                    notifyAt: notifyAt,
+                    colorName: colorName
                 )
                 todos.append(newTodo)
                 await recordTodoAddedUseCase.execute()
                 if let notifyAt {
-                    NotificationManager.shared.schedule(todoId: newTodo.id, text: text, emoji: emoji, at: notifyAt)
+                    NotificationManager.shared.schedule(todoId: newTodo.id, text: text, at: notifyAt)
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
