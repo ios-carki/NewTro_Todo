@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MemoView: View {
     @ObservedObject var viewModel: MemoViewModel
-    @State private var isRangeExpanded: Bool = false
+    @State private var isRangePickerPresented: Bool = false
     @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
     // 뷰 모드 — 앱 재실행 후에도 유지되도록 AppStorage 사용. "postIt" | "list"
     @AppStorage("memoViewMode") private var viewModeRaw: String = MemoViewMode.postIt.rawValue
@@ -36,7 +36,19 @@ struct MemoView: View {
                 .padding(.top, 8)
         }
         .overlay {
-            if viewModel.isCreatePresented {
+            if isRangePickerPresented {
+                MemoRangePicker(
+                    initialFrom: viewModel.rangeFrom,
+                    initialTo: viewModel.rangeTo,
+                    onApply: { from, to in
+                        viewModel.rangeFrom = from
+                        viewModel.rangeTo = to
+                        viewModel.applyRangeFilter()
+                        isRangePickerPresented = false
+                    },
+                    onClose: { isRangePickerPresented = false }
+                )
+            } else if viewModel.isCreatePresented {
                 MemoCreateView(viewModel: viewModel)
             } else if viewModel.isFormPresented, let memo = viewModel.editingMemo {
                 MemoFormView(memo: memo, viewModel: viewModel)
@@ -76,16 +88,12 @@ struct MemoView: View {
         .padding(.vertical, 6)
     }
 
-    // MARK: - Control Panel (filter + sort + range)
+    // MARK: - Control Panel (filter + sort + view mode)
     private var controlPanel: some View {
         VStack(spacing: 8) {
             filterRow
             sortRow
             viewModeRow
-            if isRangeExpanded {
-                rangeRow
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-            }
         }
         .padding(10)
         .background(Color.cream)
@@ -109,9 +117,6 @@ struct MemoView: View {
         let isActive = viewModel.filterType == filter
         return Button {
             viewModel.selectFilter(filter)
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isRangeExpanded = false
-            }
         } label: {
             Text(filter.label)
                 .font(.galBold10())
@@ -126,21 +131,15 @@ struct MemoView: View {
     private var rangeChip: some View {
         let isActive = viewModel.isRangeFilterActive
         return Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                isRangeExpanded.toggle()
-            }
+            isRangePickerPresented = true
         } label: {
-            HStack(spacing: 3) {
-                Text("기간")
-                Text(isRangeExpanded ? "▲" : "▼")
-                    .font(.system(size: 8))
-            }
-            .font(.galBold10())
-            .foregroundColor(isActive ? .cream : .ink)
-            .padding(.horizontal, 8)
-            .frame(height: 26)
-            .background(isActive ? Color.ink : Color.panel)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+            Text("기간")
+                .font(.galBold10())
+                .foregroundColor(isActive ? .cream : .ink)
+                .padding(.horizontal, 8)
+                .frame(height: 26)
+                .background(isActive ? Color.ink : Color.panel)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
         }
     }
 
@@ -204,38 +203,6 @@ struct MemoView: View {
                 .frame(height: 22)
                 .background(isActive ? Color.sun : Color.panel)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
-        }
-    }
-
-    // MARK: - Range Row (inline fold-out)
-    private var rangeRow: some View {
-        HStack(spacing: 6) {
-            DatePicker("", selection: $viewModel.rangeFrom, displayedComponents: .date)
-                .labelsHidden()
-                .tint(.ink)
-
-            Text("~")
-                .font(.galBold11())
-                .foregroundColor(.ink)
-
-            DatePicker("", selection: $viewModel.rangeTo, displayedComponents: .date)
-                .labelsHidden()
-                .tint(.ink)
-
-            Spacer()
-
-            Button {
-                viewModel.applyRangeFilter()
-            } label: {
-                Text("APPLY")
-                    .font(.galBold11())
-                    .foregroundColor(.cream)
-                    .padding(.horizontal, 8)
-                    .frame(height: 26)
-                    .background(Color.grass)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
-                    .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
-            }
         }
     }
 
@@ -488,6 +455,344 @@ private struct DogEarShape: Shape {
         path.addLine(to: CGPoint(x: size, y: size))
         path.closeSubpath()
         return path
+    }
+}
+
+// MARK: - Memo Range Picker
+// 기간 칩 → 단일 달력 popup. 첫 탭 = 시작, 두 번째 탭 = 끝 (시작보다 앞 날짜면 자동 swap).
+// 두 날짜 모두 잡힌 상태에서 다시 탭하면 새 시작으로 리셋.
+private struct MemoRangePicker: View {
+    let initialFrom: Date
+    let initialTo: Date
+    let onApply: (Date, Date) -> Void
+    let onClose: () -> Void
+
+    @State private var pendingFrom: Date?
+    @State private var pendingTo: Date?
+    @State private var viewYear: Int
+    @State private var viewMonth: Int
+
+    init(
+        initialFrom: Date,
+        initialTo: Date,
+        onApply: @escaping (Date, Date) -> Void,
+        onClose: @escaping () -> Void
+    ) {
+        self.initialFrom = initialFrom
+        self.initialTo = initialTo
+        self.onApply = onApply
+        self.onClose = onClose
+        _pendingFrom = State(initialValue: initialFrom)
+        _pendingTo = State(initialValue: initialTo)
+        let cal = Calendar.current
+        _viewYear  = State(initialValue: cal.component(.year, from: initialFrom))
+        _viewMonth = State(initialValue: cal.component(.month, from: initialFrom))
+    }
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.4)
+                .ignoresSafeArea()
+                .onTapGesture { onClose() }
+
+            popupCard
+                .padding(.horizontal, 24)
+        }
+    }
+
+    private var popupCard: some View {
+        VStack(spacing: 0) {
+            titleBar
+            rangeLabelArea
+            calendarSection
+            applyButton
+        }
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
+    }
+
+    private var titleBar: some View {
+        HStack {
+            Text("기간 설정")
+                .font(.galBold13())
+                .foregroundColor(.ink)
+            Spacer()
+            Button { onClose() } label: {
+                Text("×")
+                    .font(.pressStart10())
+                    .foregroundColor(.ink)
+                    .frame(width: 22, height: 22)
+            }
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.sun)
+        .overlay(
+            Rectangle().fill(Color.ink).frame(height: 2),
+            alignment: .bottom
+        )
+    }
+
+    private var rangeLabelArea: some View {
+        HStack(spacing: 8) {
+            rangeLabel(title: "시작", date: pendingFrom)
+            Text("~")
+                .font(.galBold14())
+                .foregroundColor(.ink)
+            rangeLabel(title: "끝", date: pendingTo)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 10)
+        .overlay(
+            Rectangle().fill(Color.ink.opacity(0.2)).frame(height: 1),
+            alignment: .bottom
+        )
+    }
+
+    private func rangeLabel(title: String, date: Date?) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title.localized())
+                .font(.galBold9())
+                .foregroundColor(.shade)
+            Text(dateString(date))
+                .font(.pressStart9())
+                .foregroundColor(.ink)
+        }
+        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .background(Color.cream)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+    }
+
+    private func dateString(_ date: Date?) -> String {
+        guard let d = date else { return "----.--.--" }
+        let cal = Calendar.current
+        return String(
+            format: "%04d.%02d.%02d",
+            cal.component(.year, from: d),
+            cal.component(.month, from: d),
+            cal.component(.day, from: d)
+        )
+    }
+
+    private var calendarSection: some View {
+        VStack(spacing: 8) {
+            monthNav
+            weekdayHeader
+            dayGrid
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
+    }
+
+    private var monthNav: some View {
+        HStack(spacing: 0) {
+            Button { prevMonth() } label: {
+                Text("◀")
+                    .font(.pressStart12())
+                    .foregroundColor(.ink)
+                    .frame(width: 44, height: 34)
+                    .background(Color.cream)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+            }
+            Text(String(format: "%d.%02d", viewYear, viewMonth))
+                .font(.pressStart12())
+                .foregroundColor(.ink)
+                .frame(maxWidth: .infinity)
+                .frame(height: 34)
+                .background(Color.panel)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+            Button { nextMonth() } label: {
+                Text("▶")
+                    .font(.pressStart12())
+                    .foregroundColor(.ink)
+                    .frame(width: 44, height: 34)
+                    .background(Color.cream)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+            }
+        }
+    }
+
+    private var weekdayHeader: some View {
+        HStack(spacing: 0) {
+            ForEach(0..<7, id: \.self) { i in
+                Text(weekdayShort[i])
+                    .font(.galBold11())
+                    .foregroundColor(i == 0 ? .pixelRed : i == 6 ? .sky : .shade)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 2)
+            }
+        }
+    }
+
+    private var dayGrid: some View {
+        let cols = Array(repeating: GridItem(.flexible(), spacing: 2), count: 7)
+        return LazyVGrid(columns: cols, spacing: 2) {
+            ForEach(Array(cells.enumerated()), id: \.offset) { _, day in
+                if let d = day {
+                    RangeDayCell(
+                        day: d,
+                        isStart: isStart(d),
+                        isEnd: isEnd(d),
+                        isInRange: isInRange(d),
+                        weekday: weekdayOf(day: d),
+                        onTap: { selectDay(d) }
+                    )
+                } else {
+                    Color.clear.frame(height: 36)
+                }
+            }
+        }
+    }
+
+    private var applyButton: some View {
+        Button {
+            guard let from = pendingFrom, let to = pendingTo else { return }
+            onApply(from, to)
+        } label: {
+            Text("APPLY")
+                .font(.galBold14())
+                .foregroundColor(canApply ? .ink : .shade)
+                .frame(maxWidth: .infinity)
+                .frame(height: 42)
+                .background(canApply ? Color.grass : Color.shade.opacity(0.1))
+                .overlay(Rectangle().stroke(
+                    canApply ? Color.ink : Color.shade.opacity(0.4),
+                    lineWidth: 2
+                ))
+        }
+        .disabled(!canApply)
+        .padding(.horizontal, 12)
+        .padding(.bottom, 12)
+    }
+
+    private var canApply: Bool {
+        pendingFrom != nil && pendingTo != nil
+    }
+
+    // MARK: helpers
+    private var weekdayShort: [String] {
+        var cal = Calendar.current
+        cal.locale = Locale.current
+        let symbols = cal.veryShortStandaloneWeekdaySymbols
+        return symbols.count == 7 ? symbols : ["S", "M", "T", "W", "T", "F", "S"]
+    }
+
+    private var cells: [Int?] {
+        var comps = DateComponents()
+        comps.year = viewYear; comps.month = viewMonth; comps.day = 1
+        guard let first = Calendar.current.date(from: comps) else { return [] }
+        let offset = Calendar.current.component(.weekday, from: first) - 1
+        let daysCount = Calendar.current.range(of: .day, in: .month, for: first)!.count
+        return Array(repeating: nil, count: offset) + (1...daysCount).map { Optional($0) }
+    }
+
+    private func weekdayOf(day: Int) -> Int {
+        guard let date = dateFor(day: day) else { return 0 }
+        return Calendar.current.component(.weekday, from: date) - 1
+    }
+
+    private func dateFor(day: Int) -> Date? {
+        var comps = DateComponents()
+        comps.year = viewYear; comps.month = viewMonth; comps.day = day
+        return Calendar.current.date(from: comps)
+    }
+
+    private func sameDay(_ a: Date?, _ b: Date?) -> Bool {
+        guard let a = a, let b = b else { return false }
+        return Calendar.current.isDate(a, inSameDayAs: b)
+    }
+
+    private func isStart(_ day: Int) -> Bool {
+        sameDay(dateFor(day: day), pendingFrom)
+    }
+
+    private func isEnd(_ day: Int) -> Bool {
+        sameDay(dateFor(day: day), pendingTo)
+    }
+
+    private func isInRange(_ day: Int) -> Bool {
+        guard let from = pendingFrom, let to = pendingTo, let d = dateFor(day: day) else { return false }
+        let cal = Calendar.current
+        let f = cal.startOfDay(for: from)
+        let t = cal.startOfDay(for: to)
+        let x = cal.startOfDay(for: d)
+        return x >= f && x <= t
+    }
+
+    private func selectDay(_ day: Int) {
+        guard let date = dateFor(day: day) else { return }
+        if pendingFrom == nil {
+            pendingFrom = date
+        } else if pendingTo == nil {
+            if let from = pendingFrom,
+               Calendar.current.startOfDay(for: date) < Calendar.current.startOfDay(for: from) {
+                pendingTo = from
+                pendingFrom = date
+            } else {
+                pendingTo = date
+            }
+        } else {
+            pendingFrom = date
+            pendingTo = nil
+        }
+    }
+
+    private func prevMonth() {
+        if viewMonth == 1 { viewYear -= 1; viewMonth = 12 } else { viewMonth -= 1 }
+    }
+
+    private func nextMonth() {
+        if viewMonth == 12 { viewYear += 1; viewMonth = 1 } else { viewMonth += 1 }
+    }
+}
+
+private struct RangeDayCell: View {
+    let day: Int
+    let isStart: Bool
+    let isEnd: Bool
+    let isInRange: Bool
+    let weekday: Int
+    let onTap: () -> Void
+
+    private var isEndpoint: Bool { isStart || isEnd }
+
+    private var bgColor: Color {
+        if isEndpoint { return .peach }
+        if isInRange { return Color.peach.opacity(0.3) }
+        return .white
+    }
+
+    private var borderColor: Color {
+        if isEndpoint { return .peachDk }
+        if isInRange { return .ink.opacity(0.3) }
+        return .ink
+    }
+
+    private var borderWidth: CGFloat { isEndpoint ? 2.5 : 1.5 }
+
+    private var dayColor: Color {
+        if isEndpoint { return .ink }
+        switch weekday {
+        case 0: return .redDk
+        case 6: return Color(hex: "#3A7FC1")
+        default: return .ink
+        }
+    }
+
+    var body: some View {
+        Button(action: onTap) {
+            Text(String(format: "%02d", day))
+                .font(.pressStart9())
+                .foregroundColor(dayColor)
+                .frame(maxWidth: .infinity)
+                .frame(height: 36)
+                .background(bgColor)
+                .overlay(Rectangle().stroke(borderColor, lineWidth: borderWidth))
+        }
+        .buttonStyle(.plain)
     }
 }
 
