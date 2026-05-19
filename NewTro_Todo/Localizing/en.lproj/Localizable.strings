@@ -104,10 +104,10 @@
 "정렬" = "Sort";
 "최신순" = "Newest";
 "오래된 순" = "Oldest";
-"색상순" = "By Color";
 "보기" = "View";
 "포스트잇" = "Post-it";
 "리스트" = "List";
+"+%d줄" = "+%d more";
 
 // MARK: - Memo Create/Edit
 "+ 작성" = "+ Write";

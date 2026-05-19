@@ -264,6 +264,8 @@ struct MemoView: View {
             memos.enumerated().filter { $0.offset % count == col }.map(\.element)
         }
 
+        // 각 컬럼에 maxWidth: .infinity를 강제해 메모 개수가 1개여도
+        // 카드 너비가 N개 일때와 동일하게 유지되도록 함.
         return HStack(alignment: .top, spacing: 12) {
             ForEach(0..<count, id: \.self) { col in
                 VStack(spacing: 12) {
@@ -272,6 +274,7 @@ struct MemoView: View {
                             .onTapGesture { viewModel.openMemo(memo) }
                     }
                 }
+                .frame(maxWidth: .infinity, alignment: .top)
             }
         }
     }
@@ -344,45 +347,76 @@ private struct MemoCardView: View {
     }
 }
 
-// MARK: - Memo List Cell (horizontal strip, fixed height)
+// MARK: - Memo List Cell (left color strip + title/body/+N줄 + date stamp)
+// 셀 배경 = cream, 좌측 띠 = 메모 색상.
+// 첫 줄 = title (galBold14), 나머지 = body (galCondensed13).
+// 본문은 최대 2줄(전체 3줄)까지 노출, 초과 시 "+N줄" 레이블 노출.
 private struct MemoListCellView: View {
     let memo: MemoEntity
-    private let cornerSize: CGFloat = 14
-    private let cellHeight: CGFloat = 84
+    private let stripWidth: CGFloat = 8
+    private let bodyMaxLines: Int = 2
 
-    private var bodyText: String { memo.isWritten ? memo.note : "..." }
+    private var noteText: String { memo.isWritten ? memo.note : "..." }
+    private var lines: [String] { noteText.components(separatedBy: "\n") }
+    private var title: String { lines.first ?? "" }
+    private var bodyLines: [String] { Array(lines.dropFirst()) }
+    private var visibleBody: String {
+        bodyLines.prefix(bodyMaxLines).joined(separator: "\n")
+    }
+    private var hiddenLineCount: Int {
+        max(0, bodyLines.count - bodyMaxLines)
+    }
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
-            HStack(alignment: .top, spacing: 10) {
-                Text(bodyText)
-                    .font(.galCondensed13())
-                    .foregroundColor(.ink)
-                    .lineLimit(3)
-                    .truncationMode(.tail)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        HStack(spacing: 0) {
+            MemoColorPalette.color(for: memo.colorName)
+                .frame(width: stripWidth)
+                .overlay(
+                    Rectangle()
+                        .fill(Color.ink)
+                        .frame(width: 2),
+                    alignment: .trailing
+                )
 
-                Text(memoListDateLabel(memo.createdAt))
-                    .font(.pressStart8())
-                    .foregroundColor(.ink.opacity(0.75))
-                    .padding(.horizontal, 5)
-                    .padding(.vertical, 3)
-                    .background(Color.ink.opacity(0.06))
-                    .overlay(Rectangle().stroke(Color.ink.opacity(0.4), lineWidth: 1))
-                    .fixedSize()
-                    .padding(.top, 2)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.galBold14())
+                    .foregroundColor(.ink)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+
+                if !visibleBody.isEmpty {
+                    Text(visibleBody)
+                        .font(.galCondensed13())
+                        .foregroundColor(.ink.opacity(0.85))
+                        .lineLimit(bodyMaxLines)
+                        .truncationMode(.tail)
+                }
+
+                if hiddenLineCount > 0 {
+                    Text("+%d줄".localized(with: hiddenLineCount))
+                        .font(.galBold10())
+                        .foregroundColor(.shade)
+                }
+
+                HStack {
+                    Text(memoListDateLabel(memo.createdAt))
+                        .font(.pressStart8())
+                        .foregroundColor(.ink.opacity(0.85))
+                        .padding(.horizontal, 5)
+                        .padding(.vertical, 3)
+                        .background(MemoColorPalette.color(for: memo.colorName))
+                        .overlay(Rectangle().stroke(Color.ink.opacity(0.5), lineWidth: 1))
+                    Spacer(minLength: 0)
+                }
+                .padding(.top, 2)
             }
             .padding(10)
-            .padding(.trailing, cornerSize - 4)
-            .frame(height: cellHeight, alignment: .top)
-            .background(MemoColorPalette.color(for: memo.colorName))
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
-
-            DogEarShape(size: cornerSize)
-                .fill(Color.ink.opacity(0.25))
-                .frame(width: cornerSize, height: cornerSize)
+            .frame(maxWidth: .infinity, alignment: .topLeading)
         }
+        .background(Color.cream)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
     }
 }
 
