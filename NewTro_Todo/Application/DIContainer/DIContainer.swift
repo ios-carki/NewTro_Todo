@@ -71,9 +71,6 @@ final class DIContainer {
     func makeFetchWeeklyCompletionsUseCase() -> FetchWeeklyCompletionsUseCase {
         FetchWeeklyCompletionsUseCase(repository: todoRepository)
     }
-    func makeClaimChallengeUseCase() -> ClaimChallengeUseCase {
-        ClaimChallengeUseCase(repository: statsRepository)
-    }
     func makeRecordTodoAddedUseCase() -> RecordTodoAddedUseCase {
         RecordTodoAddedUseCase(repository: statsRepository)
     }
@@ -160,7 +157,8 @@ final class DIContainer {
             addTemplateUseCase: makeAddTemplateUseCase(),
             updateTemplateUseCase: makeUpdateTemplateUseCase(),
             deleteTemplateUseCase: makeDeleteTemplateUseCase(),
-            earnCoinsUseCase: makeEarnCoinsUseCase()
+            earnCoinsUseCase: makeEarnCoinsUseCase(),
+            fetchWalletUseCase: makeFetchWalletUseCase()
         )
     }
 
@@ -189,16 +187,14 @@ final class DIContainer {
             fetchUseCase: makeFetchMemosUseCase(),
             addUseCase: makeAddMemoUseCase(),
             updateUseCase: makeUpdateMemoUseCase(),
-            deleteUseCase: makeDeleteMemoUseCase(),
-            earnCoinsUseCase: makeEarnCoinsUseCase()
+            deleteUseCase: makeDeleteMemoUseCase()
         )
     }
 
     @MainActor func makeStatsViewModel() -> StatsViewModel {
         StatsViewModel(
             fetchStatsUseCase: makeFetchStatsUseCase(),
-            fetchWeeklyUseCase: makeFetchWeeklyCompletionsUseCase(),
-            claimChallengeUseCase: makeClaimChallengeUseCase()
+            fetchWeeklyUseCase: makeFetchWeeklyCompletionsUseCase()
         )
     }
 }

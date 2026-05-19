@@ -43,6 +43,7 @@ final class MainViewModel: ObservableObject {
     @Published var templates: [TemplateEntity] = []
     @Published var pendingTemplate: TemplateEntity? = nil
     @Published private(set) var dayMemos: [MemoEntity] = []
+    @Published private(set) var walletBalance: Int = 0
     @Published private var collapsedByDate: [String: Set<String>] = [:]
 
     private var toastTask: Task<Void, Never>?
@@ -60,15 +61,6 @@ final class MainViewModel: ObservableObject {
 
     var formattedDate: String { DateFormatter.dateToString(date: selectedDate) }
     var completedCount: Int { todos.filter(\.isCompleted).count }
-
-    /// HUD 동전 — 그 날 번 동전 (완료 Todo 가중치 + 작성된 메모 수)
-    var dayCoinCount: Int {
-        let todoCoins = todos.filter(\.isCompleted)
-            .map(\.importance.coinValue)
-            .reduce(0, +)
-        let memoCoins = dayMemos.filter(\.isWritten).count
-        return todoCoins + memoCoins
-    }
 
     /// HUD 하트 — 미루기 기능 제거 후 잠정 정의: "그 날 작성한 Todo 개수".
     /// 의미 재정의는 후속 PR에서 다시 다룸.
@@ -127,6 +119,7 @@ final class MainViewModel: ObservableObject {
     private let updateTemplateUseCase: any UpdateTemplateUseCaseProtocol
     private let deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
     private let earnCoinsUseCase: any EarnCoinsUseCaseProtocol
+    private let fetchWalletUseCase: any FetchWalletUseCaseProtocol
 
     init(
         fetchTodosUseCase: any FetchTodosUseCaseProtocol,
@@ -146,7 +139,8 @@ final class MainViewModel: ObservableObject {
         addTemplateUseCase: any AddTemplateUseCaseProtocol,
         updateTemplateUseCase: any UpdateTemplateUseCaseProtocol,
         deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol,
-        earnCoinsUseCase: any EarnCoinsUseCaseProtocol
+        earnCoinsUseCase: any EarnCoinsUseCaseProtocol,
+        fetchWalletUseCase: any FetchWalletUseCaseProtocol
     ) {
         self.fetchTodosUseCase = fetchTodosUseCase
         self.fetchMemosUseCase = fetchMemosUseCase
@@ -166,8 +160,16 @@ final class MainViewModel: ObservableObject {
         self.updateTemplateUseCase = updateTemplateUseCase
         self.deleteTemplateUseCase = deleteTemplateUseCase
         self.earnCoinsUseCase = earnCoinsUseCase
+        self.fetchWalletUseCase = fetchWalletUseCase
         loadCollapsedFromDefaults()
         loadTodos()
+        Task { await refreshWalletBalance() }
+    }
+
+    func refreshWalletBalance() async {
+        if let wallet = try? await fetchWalletUseCase.execute() {
+            walletBalance = wallet.balance
+        }
     }
 
     // MARK: - Section Collapse
@@ -437,13 +439,15 @@ final class MainViewModel: ObservableObject {
                             isPerfectDay: isPerfect,
                             date: selectedDate
                         )
-                        try? await earnCoinsUseCase.execute(reason: .todoCompleted(
-                            importance: todos[idx].importance
-                        ))
+                        try? await earnCoinsUseCase.execute(reason: .todoCompleted)
                         // 완료된 Todo의 알림은 발화 의미 없음. 회귀 방지를 위해 취소.
                         NotificationManager.shared.cancel(todoId: id)
+                    } else {
+                        // 완료 취소: 적립을 되돌려 잔액·누적이 "완료 안 했던" 상태로 복귀.
+                        try? await earnCoinsUseCase.revert(reason: .todoCompleted)
                     }
                     todos = Self.sorted(todos)
+                    await refreshWalletBalance()
                 }
                 WidgetCenter.shared.reloadAllTimelines()
             } catch {
