@@ -8,17 +8,22 @@ final class StatsViewModel: ObservableObject {
     @Published var stats: StatsEntity = StatsEntity()
     @Published var weeklyData: [Int] = Array(repeating: 0, count: 7)
     @Published var weeklyLabels: [String] = []
+    @Published private(set) var completedCount: Int = 0
+    @Published private(set) var totalCount: Int = 0
 
     // MARK: - UseCases
     private let fetchStatsUseCase: any FetchStatsUseCaseProtocol
     private let fetchWeeklyUseCase: any FetchWeeklyCompletionsUseCaseProtocol
+    private let fetchTodoCountsUseCase: any FetchTodoCountsUseCaseProtocol
 
     init(
         fetchStatsUseCase: any FetchStatsUseCaseProtocol,
-        fetchWeeklyUseCase: any FetchWeeklyCompletionsUseCaseProtocol
+        fetchWeeklyUseCase: any FetchWeeklyCompletionsUseCaseProtocol,
+        fetchTodoCountsUseCase: any FetchTodoCountsUseCaseProtocol
     ) {
         self.fetchStatsUseCase = fetchStatsUseCase
         self.fetchWeeklyUseCase = fetchWeeklyUseCase
+        self.fetchTodoCountsUseCase = fetchTodoCountsUseCase
         buildWeeklyLabels()
     }
 
@@ -29,11 +34,16 @@ final class StatsViewModel: ObservableObject {
             if let data = try? await fetchWeeklyUseCase.execute() {
                 weeklyData = data
             }
+            if let counts = try? await fetchTodoCountsUseCase.execute() {
+                completedCount = counts.completed
+                totalCount = counts.total
+            }
         }
     }
 
     // MARK: - Computed
     var weeklyMax: Int { max(weeklyData.max() ?? 1, 1) }
+    var incompleteCount: Int { max(0, totalCount - completedCount) }
 
     func perfectDays(for month: Date) -> Set<Int> {
         let cal = Calendar.current

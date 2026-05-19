@@ -6,18 +6,63 @@ struct StatsView: View {
     private let tabBarHeight: CGFloat = 113
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                weeklyChart
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
+        VStack(spacing: 0) {
+            header
+                .padding(.horizontal, 16)
+                .padding(.top, 8)
 
-                perfectCalendar
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, tabBarHeight + 16)
+            ScrollView {
+                VStack(spacing: 16) {
+                    countsPanel
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
+
+                    weeklyChart
+                        .padding(.horizontal, 16)
+
+                    perfectCalendar
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, tabBarHeight + 16)
+                }
             }
         }
         .onAppear { viewModel.loadStats() }
+    }
+
+    // MARK: - Header
+    private var header: some View {
+        HStack {
+            Text("통계")
+                .font(.galBold22())
+                .foregroundColor(.ink)
+            Spacer()
+        }
+        .padding(.vertical, 6)
+    }
+
+    // MARK: - Counts Panel
+    private var countsPanel: some View {
+        PixelPanel {
+            HStack(spacing: 12) {
+                countCell(title: "완료", value: viewModel.completedCount, accent: .grass)
+                countCell(title: "미완료", value: viewModel.incompleteCount, accent: .peachDk)
+            }
+        }
+    }
+
+    private func countCell(title: String, value: Int, accent: Color) -> some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.galBold11())
+                .foregroundColor(.shade)
+            Text("\(value)")
+                .font(.pressStart14())
+                .foregroundColor(accent)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
     }
 
     // MARK: - Weekly Chart

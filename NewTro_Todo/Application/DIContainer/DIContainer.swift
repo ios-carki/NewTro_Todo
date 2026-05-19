@@ -46,6 +46,9 @@ final class DIContainer {
     func makeFetchMonthOverviewUseCase() -> FetchMonthOverviewUseCase {
         FetchMonthOverviewUseCase(todoRepository: todoRepository, memoRepository: memoRepository)
     }
+    func makeFetchTodoCountsUseCase() -> FetchTodoCountsUseCase {
+        FetchTodoCountsUseCase(repository: todoRepository)
+    }
 
     // MARK: - UseCases: Memo
     func makeFetchMemosUseCase() -> FetchMemosUseCase {
@@ -194,7 +197,8 @@ final class DIContainer {
     @MainActor func makeStatsViewModel() -> StatsViewModel {
         StatsViewModel(
             fetchStatsUseCase: makeFetchStatsUseCase(),
-            fetchWeeklyUseCase: makeFetchWeeklyCompletionsUseCase()
+            fetchWeeklyUseCase: makeFetchWeeklyCompletionsUseCase(),
+            fetchTodoCountsUseCase: makeFetchTodoCountsUseCase()
         )
     }
 }
