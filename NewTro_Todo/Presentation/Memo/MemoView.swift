@@ -414,7 +414,8 @@ private struct MemoListCellView: View {
             .padding(10)
             .frame(maxWidth: .infinity, alignment: .topLeading)
         }
-        .background(Color.cream)
+        // 상단 controlPanel(cream)과 명확히 분리되도록 panel(#FFF7E8) 사용.
+        .background(Color.panel)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
     }

@@ -27,6 +27,7 @@ struct MemoCreateView: View {
     }
 
     // MARK: - Popup Card
+    // 색상 칩 선택은 titleBar 배경에만 반영. 본체는 panel(리스트 셀과 동일)로 고정.
     private var popupCard: some View {
         VStack(spacing: 0) {
             titleBar
@@ -34,7 +35,7 @@ struct MemoCreateView: View {
             colorRow
             actionButtons
         }
-        .background(MemoColorPalette.color(for: selectedColor))
+        .background(Color.panel)
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
     }
@@ -55,7 +56,7 @@ struct MemoCreateView: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
-        .background(Color.ink.opacity(0.12))
+        .background(MemoColorPalette.color(for: selectedColor))
         .overlay(
             Rectangle()
                 .fill(Color.ink)
@@ -70,13 +71,14 @@ struct MemoCreateView: View {
             UITextEditorWithToolbar(
                 text: $noteText,
                 requestFocus: $requestFocus,
-                backgroundColor: UIColor(MemoColorPalette.color(for: selectedColor))
+                backgroundColor: UIColor(Color.panel)
             )
             .frame(height: editorHeight)
 
             if noteText.isEmpty {
+                // 첫 줄은 title 폰트로 입력 시작 → placeholder도 동일 폰트로 정렬.
                 Text("오늘의 생각을 기록해보세요...")
-                    .font(.galBold13())
+                    .font(.galBold16())
                     .foregroundColor(.shade.opacity(0.6))
                     .padding(.horizontal, 14)
                     .padding(.vertical, 14)
@@ -170,28 +172,37 @@ struct MemoCreateView: View {
 }
 
 // MARK: - UITextView wrapper with keyboard inputAccessoryView
+// 첫 줄 = 타이틀(galBold16), 줄바꿈 이후 = 본문(galBold13)로 자동 전환. iOS 기본 메모앱과 동일 거동.
 private struct UITextEditorWithToolbar: UIViewRepresentable {
     @Binding var text: String
     @Binding var requestFocus: Bool
     let backgroundColor: UIColor
 
+    static let titleFont: UIFont = UIFont(name: "Galmuri11-Bold", size: 16) ?? .systemFont(ofSize: 16, weight: .bold)
+    static let bodyFont:  UIFont = UIFont(name: "Galmuri11-Bold", size: 13) ?? .systemFont(ofSize: 13)
+    static let inkColor:  UIColor = UIColor(Color.ink)
+
     func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
         textView.delegate = context.coordinator
-        textView.font = UIFont(name: "Galmuri11-Bold", size: 13) ?? .systemFont(ofSize: 13)
         textView.backgroundColor = backgroundColor
-        textView.textColor = UIColor(Color.ink)
+        textView.textColor = Self.inkColor
         // SwiftUI 오버레이 Placeholder(.padding 14)와 시작점을 일치시키기 위해
         // 기본 lineFragmentPadding(5pt)을 제거하고 inset을 14로 통일.
         textView.textContainerInset = UIEdgeInsets(top: 14, left: 14, bottom: 14, right: 14)
         textView.textContainer.lineFragmentPadding = 0
         textView.inputAccessoryView = makeAccessoryToolbar(coordinator: context.coordinator)
+        textView.typingAttributes = [.font: Self.titleFont, .foregroundColor: Self.inkColor]
+        Self.applyTitleBodyFonts(to: textView)
         return textView
     }
 
     func updateUIView(_ uiView: UITextView, context: Context) {
         if uiView.text != text {
+            let sel = uiView.selectedRange
             uiView.text = text
+            Self.applyTitleBodyFonts(to: uiView)
+            uiView.selectedRange = sel
         }
         uiView.backgroundColor = backgroundColor
 
@@ -199,6 +210,34 @@ private struct UITextEditorWithToolbar: UIViewRepresentable {
             uiView.becomeFirstResponder()
             DispatchQueue.main.async { self.requestFocus = false }
         }
+    }
+
+    static func applyTitleBodyFonts(to textView: UITextView) {
+        let raw = textView.text ?? ""
+        let ns = raw as NSString
+        let attr = NSMutableAttributedString(
+            string: raw,
+            attributes: [.font: bodyFont, .foregroundColor: inkColor]
+        )
+        let nlRange = ns.range(of: "\n")
+        let firstLineLen = nlRange.location == NSNotFound ? ns.length : nlRange.location
+        if firstLineLen > 0 {
+            attr.addAttribute(.font, value: titleFont, range: NSRange(location: 0, length: firstLineLen))
+        }
+        textView.attributedText = attr
+        updateTypingAttributes(for: textView)
+    }
+
+    static func updateTypingAttributes(for textView: UITextView) {
+        let raw = textView.text ?? ""
+        let ns = raw as NSString
+        let cursorPos = min(textView.selectedRange.location, ns.length)
+        let prefix = ns.substring(to: cursorPos)
+        let onFirstLine = !prefix.contains("\n")
+        textView.typingAttributes = [
+            .font: onFirstLine ? titleFont : bodyFont,
+            .foregroundColor: inkColor
+        ]
     }
 
     private func makeAccessoryToolbar(coordinator: Coordinator) -> UIToolbar {
@@ -235,7 +274,14 @@ private struct UITextEditorWithToolbar: UIViewRepresentable {
         init(_ parent: UITextEditorWithToolbar) { self.parent = parent }
 
         func textViewDidChange(_ textView: UITextView) {
+            let sel = textView.selectedRange
+            UITextEditorWithToolbar.applyTitleBodyFonts(to: textView)
+            textView.selectedRange = sel
             parent.text = textView.text
+        }
+
+        func textViewDidChangeSelection(_ textView: UITextView) {
+            UITextEditorWithToolbar.updateTypingAttributes(for: textView)
         }
 
         @objc func dismissKeyboard() {
