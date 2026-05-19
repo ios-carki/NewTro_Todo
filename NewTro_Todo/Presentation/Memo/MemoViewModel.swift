@@ -20,20 +20,17 @@ final class MemoViewModel: ObservableObject {
     private let addUseCase: any AddMemoUseCaseProtocol
     private let updateUseCase: any UpdateMemoUseCaseProtocol
     private let deleteUseCase: any DeleteMemoUseCaseProtocol
-    private let earnCoinsUseCase: any EarnCoinsUseCaseProtocol
 
     init(
         fetchUseCase: any FetchMemosUseCaseProtocol,
         addUseCase: any AddMemoUseCaseProtocol,
         updateUseCase: any UpdateMemoUseCaseProtocol,
-        deleteUseCase: any DeleteMemoUseCaseProtocol,
-        earnCoinsUseCase: any EarnCoinsUseCaseProtocol
+        deleteUseCase: any DeleteMemoUseCaseProtocol
     ) {
         self.fetchUseCase = fetchUseCase
         self.addUseCase = addUseCase
         self.updateUseCase = updateUseCase
         self.deleteUseCase = deleteUseCase
-        self.earnCoinsUseCase = earnCoinsUseCase
     }
 
     // MARK: - Computed
@@ -91,9 +88,6 @@ final class MemoViewModel: ObservableObject {
                 saved.colorName = colorName
                 saved.isWritten = !note.isEmpty
                 memos.insert(saved, at: 0)
-                if saved.isWritten {
-                    try? await earnCoinsUseCase.execute(reason: .memoCreated)
-                }
             } catch {
                 errorMessage = error.localizedDescription
             }
@@ -121,16 +115,12 @@ final class MemoViewModel: ObservableObject {
     func saveMemo(id: String, note: String, colorName: String) {
         Task {
             do {
-                let wasWritten = memos.first(where: { $0.id == id })?.isWritten ?? false
                 try await updateUseCase.execute(id: id, note: note, colorName: colorName)
                 let isWrittenAfter = !note.isEmpty
                 if let idx = memos.firstIndex(where: { $0.id == id }) {
                     memos[idx].note = note
                     memos[idx].colorName = colorName
                     memos[idx].isWritten = isWrittenAfter
-                }
-                if !wasWritten && isWrittenAfter {
-                    try? await earnCoinsUseCase.execute(reason: .memoCreated)
                 }
             } catch {
                 errorMessage = error.localizedDescription

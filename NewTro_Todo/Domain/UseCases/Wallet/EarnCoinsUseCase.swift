@@ -1,19 +1,18 @@
 import Foundation
 
 enum CoinEarnReason {
-    case todoCompleted(importance: Importance)
-    case memoCreated
+    case todoCompleted
 
     var amount: Int {
         switch self {
-        case .todoCompleted(let importance): return importance.coinValue
-        case .memoCreated:                    return 1
+        case .todoCompleted: return 1
         }
     }
 }
 
 protocol EarnCoinsUseCaseProtocol {
     func execute(reason: CoinEarnReason) async throws
+    func revert(reason: CoinEarnReason) async throws
 }
 
 final class EarnCoinsUseCase: EarnCoinsUseCaseProtocol {
@@ -23,5 +22,8 @@ final class EarnCoinsUseCase: EarnCoinsUseCaseProtocol {
     }
     func execute(reason: CoinEarnReason) async throws {
         try await repository.earn(amount: reason.amount)
+    }
+    func revert(reason: CoinEarnReason) async throws {
+        try await repository.revertEarn(amount: reason.amount)
     }
 }

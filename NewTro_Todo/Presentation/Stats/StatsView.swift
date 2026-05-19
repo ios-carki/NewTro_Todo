@@ -8,15 +8,9 @@ struct StatsView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                scorePanel
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-
-                statsGrid
-                    .padding(.horizontal, 16)
-
                 weeklyChart
                     .padding(.horizontal, 16)
+                    .padding(.top, 8)
 
                 perfectCalendar
                     .padding(.horizontal, 16)
@@ -24,75 +18,6 @@ struct StatsView: View {
             }
         }
         .onAppear { viewModel.loadStats() }
-    }
-
-    // MARK: - Score Panel
-    private var scorePanel: some View {
-        PixelPanel {
-            VStack(spacing: 8) {
-                HStack {
-                    Text("SCORE")
-                        .font(.pressStart9())
-                        .foregroundColor(.shade)
-                    Spacer()
-                    Text("LV.\(viewModel.stats.level)")
-                        .font(.pressStart12())
-                        .foregroundColor(.sun)
-                }
-
-                Text("\(viewModel.stats.totalScore)")
-                    .font(.pressStart34())
-                    .foregroundColor(.ink)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .minimumScaleFactor(0.5)
-
-                Text(viewModel.levelTitle)
-                    .font(.pressStart9())
-                    .foregroundColor(.pinkDk)
-
-                GeometryReader { geo in
-                    ZStack(alignment: .leading) {
-                        Rectangle().fill(Color.panel)
-                        Rectangle()
-                            .fill(Color.sun)
-                            .frame(width: geo.size.width * min(CGFloat(viewModel.stats.progressToNextLevel), 1))
-                            .animation(.easeInOut(duration: 0.4), value: viewModel.stats.progressToNextLevel)
-                    }
-                }
-                .frame(height: 14)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-
-                HStack {
-                    Spacer()
-                    Text("NEXT LV: \(viewModel.stats.nextLevelScore)")
-                        .font(.pressStart9())
-                        .foregroundColor(.shade)
-                }
-            }
-        }
-    }
-
-    // MARK: - Stats Grid
-    private var statsGrid: some View {
-        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-            statCell(label: "연속기록", value: "%d일".localized(with: viewModel.stats.currentStreak), icon: "flame.fill", color: .peach)
-            statCell(label: "완료",    value: "%d개".localized(with: viewModel.stats.totalCompleted), icon: "checkmark.circle.fill", color: .done)
-            statCell(label: "최장연속", value: "%d일".localized(with: viewModel.stats.longestStreak),  icon: "bolt.fill", color: .sun)
-            statCell(label: "퍼펙트",  value: "%d회".localized(with: viewModel.stats.totalPerfectDays), icon: "star.fill", color: .sun)
-        }
-    }
-
-    private func statCell(label: LocalizedStringKey, value: String, icon: String, color: Color) -> some View {
-        PixelPanel(bg: .panel, padding: 10) {
-            VStack(spacing: 4) {
-                HStack(spacing: 4) {
-                    Image(systemName: icon).font(.system(size: 10)).foregroundColor(color)
-                    Text(label).font(.pressStart9()).foregroundColor(.shade)
-                }
-                Text(value).font(.pressStart14()).foregroundColor(.ink).minimumScaleFactor(0.6)
-            }
-            .frame(maxWidth: .infinity)
-        }
     }
 
     // MARK: - Weekly Chart

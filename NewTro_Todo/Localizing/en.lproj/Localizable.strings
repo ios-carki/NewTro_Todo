@@ -19,7 +19,6 @@
 "미완료" = "Pending";
 "진행 중" = "In Progress";
 "선택됨" = "Selected";
-"수령하기" = "Claim";
 
 // MARK: - Screen Titles
 "메인" = "Main";
@@ -37,7 +36,6 @@
 "템플릿 편집" = "Edit Template";
 "템플릿 목록" = "Templates";
 "날짜 이동" = "Pick Date";
-"도전과제" = "Challenges";
 
 // MARK: - Tab Labels
 "할일" = "Todo";
@@ -73,18 +71,13 @@
 "불러오는 중…" = "Loading…";
 
 // MARK: - Stats Labels
-"연속기록" = "Streak";
-"최장연속" = "Best";
 "퍼펙트" = "Perfect";
-"할 일 수" = "Todos";
 
 // MARK: - Units (format)
 "%d일" = "%d days";
 "%d개" = "%d items";
 "%d회" = "%d times";
 "퍼펙트 %d회" = "%d Perfects";
-"연속 기록: %d일" = "Streak: %d days";
-"누적 완료: %d개" = "Total: %d";
 "%d/%d 해금" = "%d/%d unlocked";
 
 // MARK: - Settings
@@ -159,69 +152,30 @@
 "보유중" = "OWNED";
 "미보유" = "LOCKED";
 
-// MARK: - Challenge Categories
-"오늘의 도전" = "Daily Challenge";
-"연속 도전" = "Streak Challenge";
-"누적 도전" = "Cumulative Challenge";
-
-// MARK: - Challenge Titles & Descriptions
-"할일 만들기" = "Create a Todo";
-"오늘 할일을 1개 이상 작성해요" = "Write at least 1 todo today";
-"퍼펙트 클리어" = "Perfect Clear";
-"오늘 모든 할일을 완료해요" = "Finish all todos today";
-"오늘 할 일은 오늘" = "Today's Todos, Today";
-"오늘은 미루지 않고 마무리해요" = "Finish without postponing today";
-"3일 연속" = "3-Day Streak";
-"3일 연속 완료해요" = "Complete 3 days in a row";
-"7일 연속" = "7-Day Streak";
-"7일 연속 완료해요" = "Complete 7 days in a row";
-"14일 연속" = "14-Day Streak";
-"14일 연속 완료해요" = "Complete 14 days in a row";
-"21일 연속" = "21-Day Streak";
-"21일 연속 완료해요" = "Complete 21 days in a row";
-"한달 연속" = "30-Day Streak";
-"30일 연속 완료해요" = "Complete 30 days in a row";
-"60일 연속" = "60-Day Streak";
-"60일 연속 완료해요" = "Complete 60 days in a row";
-"100일 연속" = "100-Day Streak";
-"100일 연속 완료해요" = "Complete 100 days in a row";
-"첫 걸음" = "First Step";
-"할일을 처음으로 완료해요" = "Complete your first todo";
-"10개 완료" = "10 Completed";
-"할일을 누적 10개 완료해요" = "Complete 10 todos in total";
-"30개 완료" = "30 Completed";
-"할일을 누적 30개 완료해요" = "Complete 30 todos in total";
-"50개 완료" = "50 Completed";
-"할일을 누적 50개 완료해요" = "Complete 50 todos in total";
-"100개 완료" = "100 Completed";
-"할일을 누적 100개 완료해요" = "Complete 100 todos in total";
-"200개 완료" = "200 Completed";
-"할일을 누적 200개 완료해요" = "Complete 200 todos in total";
-"365개 완료" = "365 Completed";
-"할일을 누적 365개 완료해요" = "Complete 365 todos in total";
+// MARK: - Mascot Unlock Counts (unlockDescription)
+"5개 완료" = "Complete 5";
+"10개 완료" = "Complete 10";
+"25개 완료" = "Complete 25";
+"30개 완료" = "Complete 30";
+"50개 완료" = "Complete 50";
+"75개 완료" = "Complete 75";
+"100개 완료" = "Complete 100";
+"150개 완료" = "Complete 150";
+"200개 완료" = "Complete 200";
+"250개 완료" = "Complete 250";
+"365개 완료" = "Complete 365";
+"500개 완료" = "Complete 500";
+"1000개 완료" = "Complete 1000";
+"2000개 완료" = "Complete 2000";
+"퍼펙트 1회" = "1 Perfect Day";
 "퍼펙트 3회" = "3 Perfect Days";
-"퍼펙트 데이를 3회 달성해요" = "Achieve 3 perfect days";
 "퍼펙트 7회" = "7 Perfect Days";
-"퍼펙트 데이를 7회 달성해요" = "Achieve 7 perfect days";
 "퍼펙트 15회" = "15 Perfect Days";
-"퍼펙트 데이를 15회 달성해요" = "Achieve 15 perfect days";
 "퍼펙트 30회" = "30 Perfect Days";
-"퍼펙트 데이를 30회 달성해요" = "Achieve 30 perfect days";
 "퍼펙트 50회" = "50 Perfect Days";
-"퍼펙트 데이를 50회 달성해요" = "Achieve 50 perfect days";
-
-// MARK: - Achievements
-"시작이 반" = "Off to a Start";
-"첫 번째 할일 완료" = "Complete your first todo";
-"일주일 전사" = "Week Warrior";
-"7일 연속 완료" = "7-day streak";
-"하루 모든 할일 완료" = "All todos in a day";
-"100 돌파" = "Cleared 100";
-"누적 100개 완료" = "Complete 100 todos";
-"한달 마스터" = "Month Master";
-"30일 연속 완료" = "30-day streak";
-"레전드" = "Legend";
-"모든 업적 달성" = "All achievements unlocked";
+"퍼펙트 100회" = "100 Perfect Days";
+"퍼펙트 200회" = "200 Perfect Days";
+"퍼펙트 500회" = "500 Perfect Days";
 
 // MARK: - Character Names
 "핑코" = "Pinko";
@@ -259,32 +213,26 @@
 "보랏빛 향기. 우아한 완벽주의자." = "Lilac scent. An elegant perfectionist.";
 "빨간 고양이. 멈추지 않는 열정." = "Red cat. Unstoppable passion.";
 "주황빛 활기. 50개의 결실." = "Orange spark. The fruit of 50.";
-"검은 고양이. 묵묵한 21일의 동반자." = "Black cat. A silent 21-day companion.";
+"검은 고양이. 묵묵히 쌓아 올린 150의 동반자." = "Black cat. A silent companion built up over 150.";
 "차가운 결정. 흔들림 없는 마음." = "Frozen crystal. An unwavering heart.";
 "별빛 토끼. 반짝이는 100." = "Starlit bunny. A shining 100.";
-"하늘빛 솜털. 한 달을 함께 떠오른 친구." = "Sky-soft cloud. Floated with you for a month.";
+"하늘빛 솜털. 250개를 함께 떠오른 친구." = "Sky-soft cloud. Floated 250 alongside you.";
 "타오르는 고양이. 막을 수 없는 30회." = "Burning cat. Unstoppable 30 times.";
 "청량한 바다빛. 차곡차곡 200." = "Cool ocean blue. Steadily 200.";
 "초록빛 새내기. 작아도 멈추지 않아." = "Green rookie. Small, yet never stops.";
 "은은한 토끼. 고요한 50회의 헌신." = "Mellow bunny. A quiet 50-fold devotion.";
 "태양의 고양이. 1년의 결실." = "Solar cat. A year's harvest.";
-"일곱 빛깔의 전설. 100일의 증거." = "Seven-color legend. Proof of 100 days.";
-"첫 일주일의 빛. 어둠 끝의 라벤더." = "Light of the first week. Lavender at dawn.";
-"푸른 들의 토끼. 꾸준한 10주의 결실." = "Bunny of green fields. The fruit of 10 weeks.";
-"노을빛 고양이. 30주의 깊이." = "Sunset cat. The depth of 30 weeks.";
-"깊은 밤의 별. 50주를 모은 빛." = "Star of deep night. Light gathered over 50 weeks.";
-"시간을 모은 자. 100주의 전설." = "Keeper of time. A 100-week legend.";
+"일곱 빛깔의 전설. 1000개의 증거." = "Seven-color legend. Proof of 1000.";
+"첫 퍼펙트의 빛. 어둠 끝의 라벤더." = "Light of the first perfect. Lavender at dawn.";
+"푸른 들의 토끼. 꾸준한 100회의 결실." = "Bunny of green fields. A steady 100-fold harvest.";
+"노을빛 고양이. 200회의 깊이." = "Sunset cat. The depth of 200.";
+"깊은 밤의 별. 500회를 모은 빛." = "Star of deep night. Light gathered over 500.";
+"시간을 모은 자. 2000개의 전설." = "Keeper of time. A 2000-strong legend.";
 "빛과 어둠의 전설. 모두를 모은 자." = "Legend of light and dark. The one who gathered all.";
 
-// MARK: - Character Unlock Conditions
+// MARK: - Character Unlock Conditions (special)
 "기본 캐릭터" = "Default";
 "모든 캐릭터 해금" = "All characters unlocked";
-"30일 연속" = "30-day streak";
-"주간 퍼펙트 1회" = "1 weekly perfect";
-"주간 퍼펙트 10회" = "10 weekly perfects";
-"주간 퍼펙트 30회" = "30 weekly perfects";
-"주간 퍼펙트 50회" = "50 weekly perfects";
-"주간 퍼펙트 100회" = "100 weekly perfects";
 
 // MARK: - Repository Errors
 "데이터를 찾을 수 없습니다." = "Data not found.";

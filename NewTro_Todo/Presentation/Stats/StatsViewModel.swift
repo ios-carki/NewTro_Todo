@@ -12,16 +12,13 @@ final class StatsViewModel: ObservableObject {
     // MARK: - UseCases
     private let fetchStatsUseCase: any FetchStatsUseCaseProtocol
     private let fetchWeeklyUseCase: any FetchWeeklyCompletionsUseCaseProtocol
-    private let claimChallengeUseCase: any ClaimChallengeUseCaseProtocol
 
     init(
         fetchStatsUseCase: any FetchStatsUseCaseProtocol,
-        fetchWeeklyUseCase: any FetchWeeklyCompletionsUseCaseProtocol,
-        claimChallengeUseCase: any ClaimChallengeUseCaseProtocol
+        fetchWeeklyUseCase: any FetchWeeklyCompletionsUseCaseProtocol
     ) {
         self.fetchStatsUseCase = fetchStatsUseCase
         self.fetchWeeklyUseCase = fetchWeeklyUseCase
-        self.claimChallengeUseCase = claimChallengeUseCase
         buildWeeklyLabels()
     }
 
@@ -35,19 +32,7 @@ final class StatsViewModel: ObservableObject {
         }
     }
 
-    func claimChallenge(challengeId: String, points: Int) {
-        Task {
-            await claimChallengeUseCase.execute(challengeId: challengeId, points: points)
-            stats = await fetchStatsUseCase.execute()
-        }
-    }
-
     // MARK: - Computed
-    var levelTitle: String {
-        let titles = ["BEGINNER", "ROOKIE", "WORKER", "FIGHTER", "HERO", "LEGEND"]
-        return titles[min(stats.level, titles.count - 1)]
-    }
-
     var weeklyMax: Int { max(weeklyData.max() ?? 1, 1) }
 
     func perfectDays(for month: Date) -> Set<Int> {

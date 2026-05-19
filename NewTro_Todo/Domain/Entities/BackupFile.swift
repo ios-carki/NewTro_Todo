@@ -89,17 +89,13 @@ struct BackupPostponeEventRecord: Codable {
     var ordinalAtTime: Int
 }
 
-// 캐릭터·업적·진척 수치를 백업/복구하기 위한 스냅샷.
-// 일일 리셋 플래그(todayAddedTodo, todayPostponed, dailyCheckDate)는 디바이스 상태라 제외.
+// 캐릭터·진척 수치를 백업/복구하기 위한 스냅샷.
+// 일일 리셋 플래그(todayAddedTodo, dailyCheckDate)는 디바이스 상태라 제외.
+// v12에서 점수·streak·업적 시스템 폐기 → 관련 필드 제거. 옛 백업의 잔여 키는 Codable이 무시.
 struct BackupStatsRecord: Codable, Equatable {
-    var totalScore: Int
-    var currentStreak: Int
-    var longestStreak: Int
-    var totalCompleted: Int
     var totalPerfectDays: Int
     var lastActiveDate: Date?
     var unlockedCharacterIds: [String]
-    var earnedAchievementIds: [String]
     var perfectDayDateStrings: [String]
     var claimedChallengeIds: [String]
     // 백업 시점의 마스코트 선택. nil은 이전 버전 백업 호환용.
