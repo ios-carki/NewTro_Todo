@@ -41,7 +41,6 @@ final class MemoViewModel: ObservableObject {
         switch sortType {
         case .newest: return memos.sorted { $0.createdAt > $1.createdAt }
         case .oldest: return memos.sorted { $0.createdAt < $1.createdAt }
-        case .color:  return memos.sorted { $0.colorName < $1.colorName }
         }
     }
 
@@ -155,9 +154,21 @@ final class MemoViewModel: ObservableObject {
 enum MemoSortType: String, CaseIterable {
     case newest = "최신순"
     case oldest = "오래된 순"
-    case color  = "색상순"
 
     var displayName: String { rawValue.localized() }
+}
+
+// MARK: - View Mode
+enum MemoViewMode: String, CaseIterable {
+    case postIt = "postIt"
+    case list   = "list"
+
+    var displayName: String {
+        switch self {
+        case .postIt: return "포스트잇".localized()
+        case .list:   return "리스트".localized()
+        }
+    }
 }
 
 // MARK: - Filter label (presentation extension)
