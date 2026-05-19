@@ -459,11 +459,12 @@ private struct DogEarShape: Shape {
 }
 
 // MARK: - Memo Range Picker
-// 기간 칩 → 단일 달력 popup. 첫 탭 = 시작, 두 번째 탭 = 끝 (시작보다 앞 날짜면 자동 swap).
-// 두 날짜 모두 잡힌 상태에서 다시 탭하면 새 시작으로 리셋.
+// 기간 칩 → 단일 달력 popup. 매번 빈 상태로 시작.
+// 첫 탭 = 시작, 두 번째 탭 = 끝(시작보다 앞이면 swap), 세 번째 탭부터 새 시작으로 리셋.
+// 활성 단계는 시작/끝 라벨에 하이라이트로 표시.
 private struct MemoRangePicker: View {
-    let initialFrom: Date
-    let initialTo: Date
+    enum Step { case from, to }
+
     let onApply: (Date, Date) -> Void
     let onClose: () -> Void
 
@@ -478,15 +479,23 @@ private struct MemoRangePicker: View {
         onApply: @escaping (Date, Date) -> Void,
         onClose: @escaping () -> Void
     ) {
-        self.initialFrom = initialFrom
-        self.initialTo = initialTo
         self.onApply = onApply
         self.onClose = onClose
-        _pendingFrom = State(initialValue: initialFrom)
-        _pendingTo = State(initialValue: initialTo)
+        // 시작/끝은 항상 비운 상태로 열기 — 유저가 새로 잡는 액션이라는 뉘앙스.
+        // 초기 달력 월만 직전 필터값(initialFrom) 기준으로 정해 컨텍스트 유지.
+        _pendingFrom = State(initialValue: nil)
+        _pendingTo = State(initialValue: nil)
         let cal = Calendar.current
         _viewYear  = State(initialValue: cal.component(.year, from: initialFrom))
         _viewMonth = State(initialValue: cal.component(.month, from: initialFrom))
+    }
+
+    // 현재 사용자가 어떤 슬롯을 채울 차례인지.
+    // pendingFrom 비어있음 → from / 시작만 있음 → to / 둘 다 있음 → 다시 from(리셋 예고).
+    private var activeStep: Step {
+        if pendingFrom == nil { return .from }
+        if pendingTo == nil { return .to }
+        return .from
     }
 
     var body: some View {
@@ -535,13 +544,14 @@ private struct MemoRangePicker: View {
     }
 
     private var rangeLabelArea: some View {
-        HStack(spacing: 8) {
-            rangeLabel(title: "시작", date: pendingFrom)
+        HStack(spacing: 0) {
+            rangeLabel(title: "시작", date: pendingFrom, isActive: activeStep == .from)
+            Spacer(minLength: 8)
             Text("~")
                 .font(.galBold14())
                 .foregroundColor(.ink)
-            rangeLabel(title: "끝", date: pendingTo)
-            Spacer(minLength: 0)
+            Spacer(minLength: 8)
+            rangeLabel(title: "끝", date: pendingTo, isActive: activeStep == .to)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
@@ -551,19 +561,19 @@ private struct MemoRangePicker: View {
         )
     }
 
-    private func rangeLabel(title: String, date: Date?) -> some View {
+    private func rangeLabel(title: String, date: Date?, isActive: Bool) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title.localized())
                 .font(.galBold9())
-                .foregroundColor(.shade)
+                .foregroundColor(isActive ? .ink : .shade)
             Text(dateString(date))
                 .font(.pressStart9())
                 .foregroundColor(.ink)
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
-        .background(Color.cream)
-        .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+        .background(isActive ? Color.peach : Color.cream)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: isActive ? 2.5 : 1.5))
     }
 
     private func dateString(_ date: Date?) -> String {
@@ -641,7 +651,7 @@ private struct MemoRangePicker: View {
                         onTap: { selectDay(d) }
                     )
                 } else {
-                    Color.clear.frame(height: 36)
+                    Color.clear.aspectRatio(1, contentMode: .fit)
                 }
             }
         }
@@ -654,10 +664,10 @@ private struct MemoRangePicker: View {
         } label: {
             Text("APPLY")
                 .font(.galBold14())
-                .foregroundColor(canApply ? .ink : .shade)
+                .foregroundColor(canApply ? .cream : .shade)
                 .frame(maxWidth: .infinity)
                 .frame(height: 42)
-                .background(canApply ? Color.grass : Color.shade.opacity(0.1))
+                .background(canApply ? Color.peachDk : Color.panel)
                 .overlay(Rectangle().stroke(
                     canApply ? Color.ink : Color.shade.opacity(0.4),
                     lineWidth: 2
@@ -784,13 +794,15 @@ private struct RangeDayCell: View {
 
     var body: some View {
         Button(action: onTap) {
-            Text(String(format: "%02d", day))
-                .font(.pressStart9())
-                .foregroundColor(dayColor)
-                .frame(maxWidth: .infinity)
-                .frame(height: 36)
-                .background(bgColor)
-                .overlay(Rectangle().stroke(borderColor, lineWidth: borderWidth))
+            ZStack {
+                Rectangle()
+                    .fill(bgColor)
+                    .overlay(Rectangle().stroke(borderColor, lineWidth: borderWidth))
+                Text(String(format: "%02d", day))
+                    .font(.pressStart9())
+                    .foregroundColor(dayColor)
+            }
+            .aspectRatio(1, contentMode: .fit)
         }
         .buttonStyle(.plain)
     }
