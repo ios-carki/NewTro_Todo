@@ -690,13 +690,18 @@ private struct MemoRangePicker: View {
         return symbols.count == 7 ? symbols : ["S", "M", "T", "W", "T", "F", "S"]
     }
 
+    // 달마다 주 수가 4~6주로 달라져 popup 높이가 출렁이는 걸 막기 위해
+    // 항상 6행 × 7열 = 42칸으로 고정. 부족한 뒤쪽은 nil로 패딩.
     private var cells: [Int?] {
         var comps = DateComponents()
         comps.year = viewYear; comps.month = viewMonth; comps.day = 1
         guard let first = Calendar.current.date(from: comps) else { return [] }
         let offset = Calendar.current.component(.weekday, from: first) - 1
         let daysCount = Calendar.current.range(of: .day, in: .month, for: first)!.count
-        return Array(repeating: nil, count: offset) + (1...daysCount).map { Optional($0) }
+        let leading: [Int?] = Array(repeating: nil, count: offset)
+        let dayCells: [Int?] = (1...daysCount).map { Optional($0) }
+        let trailingCount = max(0, 42 - leading.count - dayCells.count)
+        return leading + dayCells + Array(repeating: nil, count: trailingCount)
     }
 
     private func weekdayOf(day: Int) -> Int {
