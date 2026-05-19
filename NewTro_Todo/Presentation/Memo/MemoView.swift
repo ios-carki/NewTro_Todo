@@ -437,7 +437,7 @@ private struct MemoTimestampStamp: View {
             .foregroundColor(.ink.opacity(0.7))
             .padding(.horizontal, 5)
             .padding(.vertical, 3)
-            .background(Color.ink.opacity(0.06))
+            .background(Color.panel)
             .overlay(Rectangle().stroke(Color.ink.opacity(0.4), lineWidth: 1))
             .fixedSize()
         }

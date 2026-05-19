@@ -143,23 +143,22 @@ struct MemoCreateView: View {
                 viewModel.createMemo(note: noteText, colorName: selectedColor)
                 dismiss()
             } label: {
-                HStack(spacing: 4) {
-                    Text("★")
-                        .font(.pressStart10())
-                    Text("저장")
-                        .font(.galBold11())
-                }
-                .foregroundColor(.ink)
-                .frame(maxWidth: .infinity)
-                .frame(height: 38)
-                .background(Color.ink.opacity(0.12))
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                Text("저장")
+                    .font(.galBold11())
+                    .foregroundColor(isSaveDisabled ? .shade : .ink)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 38)
+                    .background(isSaveDisabled ? Color.shade.opacity(0.1) : Color.peach)
+                    .overlay(Rectangle().stroke(isSaveDisabled ? Color.shade.opacity(0.4) : Color.ink, lineWidth: 2))
             }
-            .disabled(noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-            .opacity(noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? 0.5 : 1)
+            .disabled(isSaveDisabled)
         }
         .padding(.horizontal, 12)
         .padding(.bottom, 12)
+    }
+
+    private var isSaveDisabled: Bool {
+        noteText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     private func dismiss() {
@@ -178,8 +177,9 @@ private struct UITextEditorWithToolbar: UIViewRepresentable {
     @Binding var requestFocus: Bool
     let backgroundColor: UIColor
 
+    // body는 리스트 셀(galCondensed13)과 일관되도록 Galmuri11-Condensed 사용.
     static let titleFont: UIFont = UIFont(name: "Galmuri11-Bold", size: 16) ?? .systemFont(ofSize: 16, weight: .bold)
-    static let bodyFont:  UIFont = UIFont(name: "Galmuri11-Bold", size: 13) ?? .systemFont(ofSize: 13)
+    static let bodyFont:  UIFont = UIFont(name: "Galmuri11-Condensed", size: 13) ?? .systemFont(ofSize: 13)
     static let inkColor:  UIColor = UIColor(Color.ink)
 
     func makeUIView(context: Context) -> UITextView {

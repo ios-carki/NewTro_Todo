@@ -178,17 +178,13 @@ struct MemoFormView: View {
                 resignKeyboard()
                 viewModel.isFormPresented = false
             } label: {
-                HStack(spacing: 4) {
-                    Text("★")
-                        .font(.pressStart10())
-                    Text("저장")
-                        .font(.galBold11())
-                }
-                .foregroundColor(.ink)
-                .frame(maxWidth: .infinity)
-                .frame(height: 38)
-                .background(Color.ink.opacity(0.12))
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                Text("저장")
+                    .font(.galBold11())
+                    .foregroundColor(.ink)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 38)
+                    .background(Color.peach)
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
             }
         }
         .padding(.horizontal, 12)
@@ -253,8 +249,9 @@ private struct UIMemoEditor: UIViewRepresentable {
     let backgroundColor: UIColor
     var isEditable: Bool = true
 
+    // body는 리스트 셀(galCondensed13)과 일관되도록 Galmuri11-Condensed 사용.
     static let titleFont: UIFont = UIFont(name: "Galmuri11-Bold", size: 16) ?? .systemFont(ofSize: 16, weight: .bold)
-    static let bodyFont:  UIFont = UIFont(name: "Galmuri11-Bold", size: 13) ?? .systemFont(ofSize: 13)
+    static let bodyFont:  UIFont = UIFont(name: "Galmuri11-Condensed", size: 13) ?? .systemFont(ofSize: 13)
     static let inkColor:  UIColor = UIColor(Color.ink)
 
     func makeUIView(context: Context) -> UITextView {
