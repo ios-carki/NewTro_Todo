@@ -87,31 +87,41 @@ struct MemoCreateView: View {
         .padding(.top, 10)
     }
 
-    // MARK: - Color Row
+    // MARK: - Color Row (Todo와 동일 패턴: 도트 아이콘 + "색상" + 가용폭 균등 스와치)
     private var colorRow: some View {
         HStack(spacing: 8) {
-            Text("색:")
-                .font(.galBold10())
+            PixelArtView(
+                grid: PixelArtAssets.dotPaletteGrid,
+                palette: PixelArtAssets.dotPalettePalette,
+                scale: 2
+            )
+            Text("색상")
+                .font(.galBold14())
                 .foregroundColor(.ink)
 
-            ForEach(MemoColorPalette.all, id: \.name) { item in
-                Button {
-                    selectedColor = item.name
-                } label: {
-                    item.color
-                        .frame(width: 22, height: 22)
-                        .overlay(
-                            Rectangle().stroke(
-                                selectedColor == item.name ? Color.ink : Color.ink.opacity(0.3),
-                                lineWidth: selectedColor == item.name ? 2.5 : 1.5
+            HStack(spacing: 6) {
+                ForEach(MemoColorPalette.all, id: \.name) { item in
+                    Button {
+                        selectedColor = item.name
+                    } label: {
+                        let isSelected = selectedColor == item.name
+                        item.color
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 30)
+                            .overlay(
+                                Rectangle().stroke(
+                                    isSelected ? Color.ink : Color.ink.opacity(0.3),
+                                    lineWidth: isSelected ? 2.5 : 1.5
+                                )
                             )
-                        )
+                    }
+                    .buttonStyle(.plain)
                 }
             }
-            Spacer()
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 10)
+        .frame(minHeight: 36)
     }
 
     // MARK: - Action Buttons

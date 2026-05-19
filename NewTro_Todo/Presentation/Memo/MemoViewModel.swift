@@ -160,6 +160,19 @@ enum MemoSortType: String, CaseIterable {
     var displayName: String { rawValue.localized() }
 }
 
+// MARK: - View Mode
+enum MemoViewMode: String, CaseIterable {
+    case postIt = "postIt"
+    case list   = "list"
+
+    var displayName: String {
+        switch self {
+        case .postIt: return "포스트잇".localized()
+        case .list:   return "리스트".localized()
+        }
+    }
+}
+
 // MARK: - Filter label (presentation extension)
 extension MemoFilter {
     var label: String {

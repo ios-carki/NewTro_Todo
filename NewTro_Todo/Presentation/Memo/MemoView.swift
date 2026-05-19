@@ -4,7 +4,19 @@ struct MemoView: View {
     @ObservedObject var viewModel: MemoViewModel
     @State private var isRangeExpanded: Bool = false
     @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
+    // 뷰 모드 — 앱 재실행 후에도 유지되도록 AppStorage 사용. "postIt" | "list"
+    @AppStorage("memoViewMode") private var viewModeRaw: String = MemoViewMode.postIt.rawValue
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     private let tabBarHeight: CGFloat = 113
+
+    // 컴팩트 폭(iPhone 전체, iPad 1/2 split 등)은 2열, 레귤러 폭(iPad 풀스크린/2-3 split)은 3열.
+    private var columnCount: Int {
+        horizontalSizeClass == .regular ? 3 : 2
+    }
+
+    private var viewMode: MemoViewMode {
+        MemoViewMode(rawValue: viewModeRaw) ?? .postIt
+    }
 
     private var selectedCharInfo: FriendCharInfo {
         CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
@@ -69,6 +81,7 @@ struct MemoView: View {
         VStack(spacing: 8) {
             filterRow
             sortRow
+            viewModeRow
             if isRangeExpanded {
                 rangeRow
                     .transition(.opacity.combined(with: .move(edge: .top)))
@@ -165,6 +178,35 @@ struct MemoView: View {
         }
     }
 
+    // MARK: - View Mode Row
+    private var viewModeRow: some View {
+        HStack(spacing: 6) {
+            Text("보기")
+                .font(.galBold9())
+                .foregroundColor(.shade)
+
+            viewModeButton(.postIt)
+            viewModeButton(.list)
+
+            Spacer()
+        }
+    }
+
+    private func viewModeButton(_ mode: MemoViewMode) -> some View {
+        let isActive = viewMode == mode
+        return Button {
+            viewModeRaw = mode.rawValue
+        } label: {
+            Text(mode.displayName)
+                .font(.galBold9())
+                .foregroundColor(.ink)
+                .padding(.horizontal, 6)
+                .frame(height: 22)
+                .background(isActive ? Color.sun : Color.panel)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+        }
+    }
+
     // MARK: - Range Row (inline fold-out)
     private var rangeRow: some View {
         HStack(spacing: 6) {
@@ -197,36 +239,48 @@ struct MemoView: View {
         }
     }
 
-    // MARK: - Masonry Grid
+    // MARK: - Memo Grid (mode-aware)
     private var memoGrid: some View {
         ScrollView {
             if viewModel.displayedMemos.isEmpty {
                 emptyState.padding(.top, 60)
             } else {
-                masonryColumns
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, tabBarHeight + 16)
+                Group {
+                    switch viewMode {
+                    case .postIt: postItGrid
+                    case .list:   listColumn
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, tabBarHeight + 16)
             }
         }
     }
 
-    private var masonryColumns: some View {
+    private var postItGrid: some View {
         let memos = viewModel.displayedMemos
-        let leftMemos = memos.enumerated().filter { $0.offset % 2 == 0 }.map(\.element)
-        let rightMemos = memos.enumerated().filter { $0.offset % 2 == 1 }.map(\.element)
+        let count = columnCount
+        let columns: [[MemoEntity]] = (0..<count).map { col in
+            memos.enumerated().filter { $0.offset % count == col }.map(\.element)
+        }
 
         return HStack(alignment: .top, spacing: 12) {
-            VStack(spacing: 12) {
-                ForEach(leftMemos) { memo in
-                    MemoCardView(memo: memo)
-                        .onTapGesture { viewModel.openMemo(memo) }
+            ForEach(0..<count, id: \.self) { col in
+                VStack(spacing: 12) {
+                    ForEach(columns[col]) { memo in
+                        MemoCardView(memo: memo)
+                            .onTapGesture { viewModel.openMemo(memo) }
+                    }
                 }
             }
-            VStack(spacing: 12) {
-                ForEach(rightMemos) { memo in
-                    MemoCardView(memo: memo)
-                        .onTapGesture { viewModel.openMemo(memo) }
-                }
+        }
+    }
+
+    private var listColumn: some View {
+        VStack(spacing: 10) {
+            ForEach(viewModel.displayedMemos) { memo in
+                MemoListCellView(memo: memo)
+                    .onTapGesture { viewModel.openMemo(memo) }
             }
         }
     }
@@ -250,25 +304,35 @@ struct MemoView: View {
     }
 }
 
-// MARK: - Memo Card (dog-ear style)
+// MARK: - Memo Card (dog-ear style, fixed height)
 private struct MemoCardView: View {
     let memo: MemoEntity
     private let cornerSize: CGFloat = 18
+    // 카드 자체를 고정 높이로 — 본문 분량과 무관하게 동일 타일 크기.
+    // 짧은 메모는 위쪽 정렬 + 하단 여백, 긴 메모는 영역 내에서 자연 truncation(…).
+    private let cardHeight: CGFloat = 180
+    // 본문 영역 = cardHeight - 상하 padding(20) - timestamp 영역(~30) - 간격(8) ≈ 122pt
+    // galCondensed13 lineHeight ≈ 16pt → 7줄 안전 상한.
+    private let bodyLineLimit: Int = 7
+
+    private var bodyText: String { memo.isWritten ? memo.note : "..." }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
             VStack(alignment: .leading, spacing: 0) {
-                Text(memo.isWritten ? memo.note : "...")
+                Text(bodyText)
                     .font(.galCondensed13())
                     .foregroundColor(.ink)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(bodyLineLimit)
+                    .truncationMode(.tail)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
-                timestampStamp
+                MemoTimestampStamp(date: memo.createdAt)
                     .padding(.top, 8)
             }
             .padding(10)
             .padding(.trailing, cornerSize - 4)
+            .frame(height: cardHeight, alignment: .top)
             .background(MemoColorPalette.color(for: memo.colorName))
             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
             .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
@@ -278,9 +342,55 @@ private struct MemoCardView: View {
                 .frame(width: cornerSize, height: cornerSize)
         }
     }
+}
 
-    // MARK: - Timestamp Stamp
-    private var timestampStamp: some View {
+// MARK: - Memo List Cell (horizontal strip, fixed height)
+private struct MemoListCellView: View {
+    let memo: MemoEntity
+    private let cornerSize: CGFloat = 14
+    private let cellHeight: CGFloat = 84
+
+    private var bodyText: String { memo.isWritten ? memo.note : "..." }
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            HStack(alignment: .top, spacing: 10) {
+                Text(bodyText)
+                    .font(.galCondensed13())
+                    .foregroundColor(.ink)
+                    .lineLimit(3)
+                    .truncationMode(.tail)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+
+                Text(memoListDateLabel(memo.createdAt))
+                    .font(.pressStart8())
+                    .foregroundColor(.ink.opacity(0.75))
+                    .padding(.horizontal, 5)
+                    .padding(.vertical, 3)
+                    .background(Color.ink.opacity(0.06))
+                    .overlay(Rectangle().stroke(Color.ink.opacity(0.4), lineWidth: 1))
+                    .fixedSize()
+                    .padding(.top, 2)
+            }
+            .padding(10)
+            .padding(.trailing, cornerSize - 4)
+            .frame(height: cellHeight, alignment: .top)
+            .background(MemoColorPalette.color(for: memo.colorName))
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
+
+            DogEarShape(size: cornerSize)
+                .fill(Color.ink.opacity(0.25))
+                .frame(width: cornerSize, height: cornerSize)
+        }
+    }
+}
+
+// MARK: - Shared Timestamp Stamp
+private struct MemoTimestampStamp: View {
+    let date: Date
+
+    var body: some View {
         HStack {
             Spacer()
             VStack(alignment: .trailing, spacing: 1) {
@@ -300,18 +410,37 @@ private struct MemoCardView: View {
 
     private var dateLabel: String {
         let cal = Calendar.current
-        let y = cal.component(.year, from: memo.createdAt)
-        let m = cal.component(.month, from: memo.createdAt)
-        let d = cal.component(.day, from: memo.createdAt)
-        return String(format: "%04d.%02d.%02d", y, m, d)
+        return String(
+            format: "%04d.%02d.%02d",
+            cal.component(.year, from: date),
+            cal.component(.month, from: date),
+            cal.component(.day, from: date)
+        )
     }
 
     private var timeLabel: String {
         let cal = Calendar.current
-        let h = cal.component(.hour, from: memo.createdAt)
-        let mn = cal.component(.minute, from: memo.createdAt)
-        return String(format: "%02d:%02d", h, mn)
+        return String(
+            format: "%02d:%02d",
+            cal.component(.hour, from: date),
+            cal.component(.minute, from: date)
+        )
     }
+}
+
+// 편집 화면 타이틀 + 리스트 셀에서 공유하는 날짜 표시 규칙.
+// 오늘 작성 → "yyyy.MM.dd HH:mm", 이전 → "yyyy.MM.dd"
+func memoListDateLabel(_ date: Date) -> String {
+    let cal = Calendar.current
+    let y = cal.component(.year, from: date)
+    let m = cal.component(.month, from: date)
+    let d = cal.component(.day, from: date)
+    if cal.isDateInToday(date) {
+        let h = cal.component(.hour, from: date)
+        let mn = cal.component(.minute, from: date)
+        return String(format: "%04d.%02d.%02d %02d:%02d", y, m, d, h, mn)
+    }
+    return String(format: "%04d.%02d.%02d", y, m, d)
 }
 
 private struct DogEarShape: Shape {
