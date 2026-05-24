@@ -102,7 +102,7 @@ struct SettingsView: View {
                             Spacer(minLength: 0)
                             Text(viewModel.appVersion)
                                 .font(.pressStart10())
-                                .foregroundColor(.sun)
+                                .foregroundColor(.sunDk)
                         }
                     }
                 }
@@ -221,10 +221,10 @@ struct SettingsView: View {
                 VStack(alignment: .trailing, spacing: 6) {
                     Text(timeString(viewModel.effectiveMorningTime))
                         .font(.pressStart10())
-                        .foregroundColor(.sun)
+                        .foregroundColor(.sunDk)
                     Text(timeString(viewModel.effectiveMidnightTime))
                         .font(.pressStart10())
-                        .foregroundColor(.sun)
+                        .foregroundColor(.sunDk)
                 }
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
@@ -416,7 +416,7 @@ struct SettingsView: View {
                         Spacer()
                         Text("PLAY ▶")
                             .font(.pressStart9())
-                            .foregroundColor(.sun)
+                            .foregroundColor(.sunDk)
                     }
                     .contentShape(Rectangle())
                 }
