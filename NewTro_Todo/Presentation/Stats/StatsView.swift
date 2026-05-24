@@ -9,24 +9,30 @@ struct StatsView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                header
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
+            ZStack {
+                BackgroundSceneryView()
+                    .ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 16) {
-                        countsPanel
-                            .padding(.horizontal, 16)
-                            .padding(.top, 8)
+                VStack(spacing: 0) {
+                    header
+                        .padding(.horizontal, 16)
+                        .padding(.top, 8)
 
-                        weeklyChart
-                            .padding(.horizontal, 16)
+                    ScrollView {
+                        VStack(spacing: 16) {
+                            countsPanel
+                                .padding(.horizontal, 16)
+                                .padding(.top, 8)
 
-                        perfectCalendar
-                            .padding(.horizontal, 16)
-                            .padding(.bottom, tabBarHeight + 16)
+                            weeklyChart
+                                .padding(.horizontal, 16)
+
+                            perfectCalendar
+                                .padding(.horizontal, 16)
+                                .padding(.bottom, tabBarHeight + 16)
+                        }
                     }
+                    .scrollContentBackground(.hidden)
                 }
             }
             .navigationBarHidden(true)

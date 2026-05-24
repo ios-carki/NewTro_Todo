@@ -87,9 +87,11 @@ struct PerfectStampCalendar: View {
                 }
             }
         }
+        // 월별 주 수 차이로 높이가 흔들리지 않도록 6주(50pt 셀 × 6 + spacing 3 × 5) 고정.
+        .frame(height: 50 * 6 + 3 * 5)
     }
 
-    // 달력 하단에 "yyyy.mm → 투두 모두 완료 N회"
+    // 달력 하단에 "yyyy.mm → 하루 목표 달성 N회"
     private var completionLabel: some View {
         HStack(spacing: 6) {
             Text(monthLabel)
@@ -98,9 +100,9 @@ struct PerfectStampCalendar: View {
             Text("→")
                 .font(.pressStart9())
                 .foregroundColor(.shade)
-            Text("투두 모두 완료 %d회".localized(with: perfectDays.count))
+            Text("하루 목표 달성 %d회".localized(with: perfectDays.count))
                 .font(.pressStart9())
-                .foregroundColor(perfectDays.isEmpty ? .shade.opacity(0.5) : .sun)
+                .foregroundColor(perfectDays.isEmpty ? .shade.opacity(0.5) : .sunDk)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 6)
@@ -125,7 +127,10 @@ struct PerfectStampCalendar: View {
         guard let first = cal.date(from: comps),
               let count = cal.range(of: .day, in: .month, for: first)?.count else { return [] }
         let offset = cal.component(.weekday, from: first) - 1
-        return Array(repeating: nil, count: offset) + (1...count).map { Optional($0) }
+        let base: [Int?] = Array(repeating: nil, count: offset) + (1...count).map { Optional($0) }
+        // 월별 주 수 차이로 인한 그리드 높이 흔들림 방지: 항상 6주(42칸)로 패딩
+        let total = 42
+        return base.count >= total ? base : base + Array(repeating: nil, count: total - base.count)
     }
 
     private func weekdayOf(day: Int) -> Int {
@@ -170,7 +175,7 @@ private struct PerfectDayCell: View {
     }
 
     private var borderColor: Color {
-        if isPerfect { return .sun }
+        if isPerfect { return .sunDk }
         if isToday { return .pixelPink }
         return .ink
     }
@@ -194,13 +199,6 @@ private struct PerfectDayCell: View {
             Text(String(format: "%02d", day))
                 .font(.pressStart10())
                 .foregroundColor(dayColor)
-            if isPerfect {
-                Image(systemName: "star.fill")
-                    .font(.system(size: 7))
-                    .foregroundColor(.sun)
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                    .padding(3)
-            }
         }
         .frame(height: 50)
     }
