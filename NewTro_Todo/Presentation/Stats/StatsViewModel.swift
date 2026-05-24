@@ -13,12 +13,12 @@ final class StatsViewModel: ObservableObject {
 
     // MARK: - UseCases
     private let fetchStatsUseCase: any FetchStatsUseCaseProtocol
-    private let fetchWeeklyUseCase: any FetchWeeklyCompletionsUseCaseProtocol
+    private let fetchWeeklyUseCase: any FetchWeeklyTodoCountsUseCaseProtocol
     private let fetchTodoCountsUseCase: any FetchTodoCountsUseCaseProtocol
 
     init(
         fetchStatsUseCase: any FetchStatsUseCaseProtocol,
-        fetchWeeklyUseCase: any FetchWeeklyCompletionsUseCaseProtocol,
+        fetchWeeklyUseCase: any FetchWeeklyTodoCountsUseCaseProtocol,
         fetchTodoCountsUseCase: any FetchTodoCountsUseCaseProtocol
     ) {
         self.fetchStatsUseCase = fetchStatsUseCase

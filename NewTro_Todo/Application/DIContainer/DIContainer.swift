@@ -49,6 +49,9 @@ final class DIContainer {
     func makeFetchTodoCountsUseCase() -> FetchTodoCountsUseCase {
         FetchTodoCountsUseCase(repository: todoRepository)
     }
+    func makeFetchIncompleteTodosUseCase() -> FetchIncompleteTodosUseCase {
+        FetchIncompleteTodosUseCase(repository: todoRepository)
+    }
 
     // MARK: - UseCases: Memo
     func makeFetchMemosUseCase() -> FetchMemosUseCase {
@@ -71,8 +74,8 @@ final class DIContainer {
     func makeRecordTodoCompleteUseCase() -> RecordTodoCompleteUseCase {
         RecordTodoCompleteUseCase(repository: statsRepository)
     }
-    func makeFetchWeeklyCompletionsUseCase() -> FetchWeeklyCompletionsUseCase {
-        FetchWeeklyCompletionsUseCase(repository: todoRepository)
+    func makeFetchWeeklyTodoCountsUseCase() -> FetchWeeklyTodoCountsUseCase {
+        FetchWeeklyTodoCountsUseCase(repository: todoRepository)
     }
     func makeRecordTodoAddedUseCase() -> RecordTodoAddedUseCase {
         RecordTodoAddedUseCase(repository: statsRepository)
@@ -197,8 +200,14 @@ final class DIContainer {
     @MainActor func makeStatsViewModel() -> StatsViewModel {
         StatsViewModel(
             fetchStatsUseCase: makeFetchStatsUseCase(),
-            fetchWeeklyUseCase: makeFetchWeeklyCompletionsUseCase(),
+            fetchWeeklyUseCase: makeFetchWeeklyTodoCountsUseCase(),
             fetchTodoCountsUseCase: makeFetchTodoCountsUseCase()
+        )
+    }
+
+    @MainActor func makeIncompleteListViewModel() -> IncompleteListViewModel {
+        IncompleteListViewModel(
+            fetchUseCase: makeFetchIncompleteTodosUseCase()
         )
     }
 }
