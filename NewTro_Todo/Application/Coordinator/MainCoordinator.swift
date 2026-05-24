@@ -39,8 +39,7 @@ final class MainCoordinator: CoordinatorProtocol {
             memoVM: memoVM,
             statsVM: statsVM,
             settingsVM: settingsVM,
-            makeBackupLogVM: { di.makeBackupLogViewModel() },
-            makeIncompleteListVM: { di.makeIncompleteListViewModel() }
+            makeBackupLogVM: { di.makeBackupLogViewModel() }
         )
         let hostingVC = UIHostingController(rootView: container)
         navigationController.setViewControllers([hostingVC], animated: false)

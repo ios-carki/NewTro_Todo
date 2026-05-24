@@ -2,47 +2,37 @@ import SwiftUI
 
 struct StatsView: View {
     @ObservedObject var viewModel: StatsViewModel
-    let makeIncompleteListVM: @MainActor () -> IncompleteListViewModel
 
     @State private var calendarDate: Date = Date()
     private let tabBarHeight: CGFloat = 113
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                BackgroundSceneryView()
-                    .ignoresSafeArea()
+        ZStack {
+            BackgroundSceneryView()
+                .ignoresSafeArea()
 
-                VStack(spacing: 0) {
-                    header
-                        .padding(.horizontal, 16)
-                        .padding(.top, 8)
+            VStack(spacing: 0) {
+                header
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
 
-                    ScrollView {
-                        VStack(spacing: 16) {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        section(title: "투두") {
                             countsPanel
-                                .padding(.horizontal, 16)
-                                .padding(.top, 8)
-
-                            weeklyChart
-                                .padding(.horizontal, 16)
-
-                            perfectCalendar
-                                .padding(.horizontal, 16)
-                                .padding(.bottom, tabBarHeight + 16)
                         }
+                        section(title: "최근 7일") {
+                            weeklyChart
+                        }
+                        section(title: "퍼펙트 달력") {
+                            perfectCalendar
+                        }
+                        .padding(.bottom, tabBarHeight + 16)
                     }
-                    .scrollContentBackground(.hidden)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
                 }
-            }
-            .navigationBarHidden(true)
-            .navigationDestination(for: StatsRoute.self) { route in
-                switch route {
-                case .incompleteList:
-                    IncompleteListView(viewModel: makeIncompleteListVM())
-                case .incompleteDetail(let todo):
-                    IncompleteTodoDetailView(todo: todo)
-                }
+                .scrollContentBackground(.hidden)
             }
         }
         .onAppear { viewModel.loadStats() }
@@ -59,15 +49,27 @@ struct StatsView: View {
         .padding(.vertical, 6)
     }
 
+    // MARK: - Section wrapper
+    @ViewBuilder
+    private func section<Content: View>(
+        title: LocalizedStringKey,
+        @ViewBuilder content: () -> Content
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(title)
+                .font(.galBold14())
+                .foregroundColor(.ink)
+                .padding(.leading, 2)
+            content()
+        }
+    }
+
     // MARK: - Counts Panel
     private var countsPanel: some View {
         PixelPanel {
             HStack(alignment: .top, spacing: 12) {
                 completedCell
-                NavigationLink(value: StatsRoute.incompleteList) {
-                    incompleteCell
-                }
-                .buttonStyle(.plain)
+                incompleteCell
             }
         }
     }
@@ -94,15 +96,9 @@ struct StatsView: View {
 
     private var incompleteCell: some View {
         VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 4) {
-                Text("미완료")
-                    .font(.galBold11())
-                    .foregroundColor(.shade)
-                Spacer(minLength: 0)
-                Text("▶")
-                    .font(.pressStart8())
-                    .foregroundColor(.pixelRed)
-            }
+            Text("미완료")
+                .font(.galBold11())
+                .foregroundColor(.shade)
             Text("\(viewModel.incompleteCount)")
                 .font(.pressStart20())
                 .foregroundColor(.pixelRed)
@@ -118,12 +114,9 @@ struct StatsView: View {
         PixelPanel {
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
-                    Text("최근 7일")
-                        .font(.galBold11())
-                        .foregroundColor(.shade)
                     Spacer()
                     Text("작성된 Todo")
-                        .font(.pressStart8())
+                        .font(.galBold10())
                         .foregroundColor(.shade.opacity(0.7))
                 }
 
@@ -180,10 +173,4 @@ struct StatsView: View {
             isCurrentMonth: viewModel.isCurrentMonth(calendarDate)
         )
     }
-}
-
-// MARK: - Routes
-enum StatsRoute: Hashable {
-    case incompleteList
-    case incompleteDetail(TodoEntity)
 }

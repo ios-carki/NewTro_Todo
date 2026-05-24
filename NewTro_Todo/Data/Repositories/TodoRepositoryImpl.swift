@@ -179,15 +179,6 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         }
     }
 
-    func fetchIncompleteTodos() async throws -> [TodoEntity] {
-        try await MainActor.run {
-            let realm = try Realm()
-            return realm.objects(Todo.self)
-                .filter("isFinished == false")
-                .toArray()
-                .map { $0.toDomain() }
-        }
-    }
 }
 
 private extension Results {

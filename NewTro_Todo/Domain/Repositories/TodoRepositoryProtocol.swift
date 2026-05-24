@@ -31,5 +31,4 @@ protocol TodoRepositoryProtocol {
     func deleteAll() async throws
     func updateSortOrders(updates: [(id: String, sortOrder: Int)]) async throws
     func fetchTodoCounts() async throws -> (completed: Int, total: Int)
-    func fetchIncompleteTodos() async throws -> [TodoEntity]
 }

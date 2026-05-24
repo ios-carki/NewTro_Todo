@@ -24,7 +24,6 @@ struct RootTabContainerView: View {
     @ObservedObject var statsVM: StatsViewModel
     @ObservedObject var settingsVM: SettingsViewModel
     let makeBackupLogVM: @MainActor () -> BackupLogViewModel
-    let makeIncompleteListVM: @MainActor () -> IncompleteListViewModel
 
     // TodoAdd: SwiftUI .sheet 가 키보드 등장 시 .large 로 강제 승격되는 한계 때문에
     // ZStack 안에 NavigationView 단일 오버레이로 직접 그린다.
@@ -328,10 +327,7 @@ struct RootTabContainerView: View {
         case .memo:
             MemoView(viewModel: memoVM).id(memoTabId)
         case .stats:
-            StatsView(
-                viewModel: statsVM,
-                makeIncompleteListVM: makeIncompleteListVM
-            ).id(statsTabId)
+            StatsView(viewModel: statsVM).id(statsTabId)
         case .settings:
             SettingsView(
                 viewModel: settingsVM,
@@ -423,7 +419,6 @@ struct RootTabContainerView: View {
         memoVM: di.makeMemoViewModel(),
         statsVM: di.makeStatsViewModel(),
         settingsVM: di.makeSettingsViewModel(),
-        makeBackupLogVM: { di.makeBackupLogViewModel() },
-        makeIncompleteListVM: { di.makeIncompleteListViewModel() }
+        makeBackupLogVM: { di.makeBackupLogViewModel() }
     )
 }

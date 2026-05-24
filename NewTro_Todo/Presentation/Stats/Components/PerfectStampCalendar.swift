@@ -92,6 +92,7 @@ struct PerfectStampCalendar: View {
     }
 
     // 달력 하단에 "yyyy.mm → 하루 목표 달성 N회"
+    // pressStart 폰트는 한글 글리프가 없어서 시스템 폰트로 폴백되므로 한글 라벨은 galBold 사용.
     private var completionLabel: some View {
         HStack(spacing: 6) {
             Text(monthLabel)
@@ -101,7 +102,7 @@ struct PerfectStampCalendar: View {
                 .font(.pressStart9())
                 .foregroundColor(.shade)
             Text("하루 목표 달성 %d회".localized(with: perfectDays.count))
-                .font(.pressStart9())
+                .font(.galBold11())
                 .foregroundColor(perfectDays.isEmpty ? .shade.opacity(0.5) : .sunDk)
         }
         .frame(maxWidth: .infinity)
