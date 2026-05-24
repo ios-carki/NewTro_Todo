@@ -23,10 +23,9 @@ struct SettingsView: View {
                         VStack(spacing: 10) {
                             mascotPanel
                             settingsPanel
+                            tutorialPanel
                             notificationPanel
                             backupPanel
-                            tutorialPanel
-                            versionPanel
                             resetButton
                         }
                         .padding(.horizontal, 14)
@@ -94,13 +93,18 @@ struct SettingsView: View {
                     currentMascotPreview
                     VStack(alignment: .leading, spacing: 4) {
                         Text("내 마스코트")
-                            .font(.pressStart9())
+                            .font(.galBold11())
                             .foregroundColor(.shade)
-                        Text(LocalizedStringKey(currentCharInfo?.name ?? "핑코"))
-                            .font(.galBold16())
-                            .foregroundColor(.ink)
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Text(LocalizedStringKey(currentCharInfo?.name ?? "핑코"))
+                                .font(.galBold16())
+                                .foregroundColor(.ink)
+                            Spacer(minLength: 0)
+                            Text(viewModel.appVersion)
+                                .font(.pressStart10())
+                                .foregroundColor(.sun)
+                        }
                     }
-                    Spacer()
                 }
                 .padding(14)
 
@@ -343,7 +347,7 @@ struct SettingsView: View {
                         .font(.galBold14())
                         .foregroundColor(.ink)
                     Text(backupMetaLine)
-                        .font(.pressStart9())
+                        .font(.galBold10())
                         .foregroundColor(.shade)
                 }
                 Spacer()
@@ -423,15 +427,6 @@ struct SettingsView: View {
             .background(Color.white)
             .settingsHelpAnchor(SettingsHelpKey.tutorialReplay.rawValue)
         }
-    }
-
-    // MARK: - Version
-    private var versionPanel: some View {
-        Text("v\(viewModel.appVersion)")
-            .font(.pressStart12())
-            .foregroundColor(.shade)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
     }
 
     // MARK: - Inline Help

@@ -25,8 +25,8 @@ struct CoachmarkStep: Identifiable {
 
 enum CoachmarkSteps {
     static let main: [CoachmarkStep] = [
-        .init(id: "hud_coin",  title: "COIN",   message: "그 날 완료한 Todo로 모은 보상이야"),
-        .init(id: "hud_heart", title: "HEART",  message: "오늘 추가한 Todo만큼 차오르고, 미루면 줄어들어"),
+        .init(id: "hud_coin",  title: "COIN",   message: "완료한 Todo만큼 모이는 누적 보상이야"),
+        .init(id: "hud_heart", title: "HEART",  message: "오늘 추가한 Todo만큼 차올라"),
         .init(id: "warp",      title: "WARP",   message: "다른 날짜로 이동할 수 있어"),
         .init(id: "sort",      title: "SORT",   message: "Todo 순서를 직접 정렬해"),
         .init(id: "add_todo",  title: "+ TODO", message: "새 할 일을 추가하자")

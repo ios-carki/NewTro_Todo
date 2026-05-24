@@ -134,7 +134,7 @@
 // MARK: - Coach Mark
 "다른 날짜로 이동할 수 있어" = "Travel to another date";
 "새 할 일을 추가하자" = "Add a new todo";
-"그 날 완료한 Todo로 모은 보상이야" = "Rewards earned from todos you finished that day";
+"완료한 Todo만큼 모이는 누적 보상이야" = "Coins pile up as you complete todos";
 "오늘 추가한 Todo만큼 차올라" = "Fills as you add today's todos";
 "Todo 순서를 직접 정렬해" = "Reorder todos manually";
 "건너뛰기" = "Skip";

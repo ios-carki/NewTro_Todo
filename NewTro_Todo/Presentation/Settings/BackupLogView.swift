@@ -32,14 +32,23 @@ struct BackupLogView: View {
                     logList
                 }
             }
+
+            if viewModel.showCustomRangePicker {
+                PixelDateRangePopup(
+                    initialFrom: viewModel.customFrom,
+                    initialTo: viewModel.customTo,
+                    onApply: { from, to in
+                        viewModel.customFrom = from
+                        viewModel.customTo = to
+                        viewModel.confirmCustomRange()
+                    },
+                    onClose: { viewModel.cancelCustomRange() }
+                )
+            }
         }
         .navigationTitle("백업 로그")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear { viewModel.onAppear() }
-        .sheet(isPresented: $viewModel.showCustomRangePicker) {
-            customRangeSheet
-                .presentationDetents([.medium])
-        }
     }
 
     // MARK: - Retention Notice
@@ -83,7 +92,7 @@ struct BackupLogView: View {
                     .padding(.top, 2)
 
                 Text(LocalizedStringKey(candidate.titleKey))
-                    .font(.pressStart9())
+                    .font(.galBold10())
                     .foregroundColor(.ink)
                     .padding(.horizontal, 10)
                     .frame(height: 26)
@@ -115,26 +124,21 @@ struct BackupLogView: View {
 
     private var sortBar: some View {
         HStack(spacing: 8) {
-            if case let .custom(from, to) = viewModel.filter {
-                Text(customRangeLabel(from: from, to: to))
-                    .font(.pressStart9())
-                    .foregroundColor(.shade)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-            }
-            Spacer(minLength: 0)
-
             Button {
-                viewModel.toggleSortOrder()
+                withAnimation(.spring(response: 0.32, dampingFraction: 0.7)) {
+                    viewModel.toggleSortOrder()
+                }
             } label: {
                 HStack(spacing: 4) {
-                    Image(systemName: viewModel.sortOrder == .newest
-                          ? "arrow.down" : "arrow.up")
+                    Image(systemName: "arrow.down")
                         .font(.system(size: 10, weight: .bold))
                         .foregroundColor(.ink)
+                        .rotationEffect(.degrees(viewModel.sortOrder == .newest ? 0 : 180))
                     Text(LocalizedStringKey(viewModel.sortOrder.titleKey))
-                        .font(.galBold13())
+                        .font(.galBold11())
                         .foregroundColor(.ink)
+                        .id(viewModel.sortOrder)
+                        .transition(.opacity)
                 }
                 .padding(.horizontal, 10)
                 .frame(height: 26)
@@ -143,6 +147,16 @@ struct BackupLogView: View {
                 .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
             }
             .buttonStyle(.plain)
+
+            Spacer(minLength: 0)
+
+            if case let .custom(from, to) = viewModel.filter {
+                Text(customRangeLabel(from: from, to: to))
+                    .font(.pressStart9())
+                    .foregroundColor(.shade)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
         }
     }
 
@@ -214,7 +228,7 @@ struct BackupLogView: View {
                 .fill(Color.ink)
                 .frame(width: 6, height: 6)
             Text(formatSectionDate(date))
-                .font(.pressStart8())
+                .font(.galBold11())
                 .foregroundColor(.ink)
             Spacer()
         }
@@ -233,7 +247,7 @@ struct BackupLogView: View {
                     .font(.galBold13())
                     .foregroundColor(.ink)
                 Text(countsLine(entry.counts))
-                    .font(.pressStart9())
+                    .font(.galBold10())
                     .foregroundColor(.shade)
             }
 
@@ -245,73 +259,6 @@ struct BackupLogView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-    }
-
-    // MARK: - Custom Range Sheet
-
-    private var customRangeSheet: some View {
-        ZStack {
-            Color.panel.ignoresSafeArea()
-            VStack(spacing: 18) {
-                Text("기간 선택")
-                    .font(.galBold17())
-                    .foregroundColor(.ink)
-                    .padding(.top, 18)
-
-                VStack(spacing: 10) {
-                    rangeDatePickerRow(title: "시작", date: $viewModel.customFrom)
-                    rangeDatePickerRow(title: "끝", date: $viewModel.customTo)
-                }
-                .padding(14)
-                .background(Color.white)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
-                .padding(.horizontal, 18)
-
-                Spacer()
-
-                HStack(spacing: 10) {
-                    Button { viewModel.cancelCustomRange() } label: {
-                        Text("취소")
-                            .font(.galBold14())
-                            .foregroundColor(.ink)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 40)
-                            .background(Color.tile)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
-                    }
-                    .buttonStyle(.plain)
-
-                    Button { viewModel.confirmCustomRange() } label: {
-                        Text("확인")
-                            .font(.galBold14())
-                            .foregroundColor(.ink)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 40)
-                            .background(Color.peach)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(viewModel.customFrom > viewModel.customTo)
-                }
-                .padding(.horizontal, 18)
-                .padding(.bottom, 18)
-            }
-        }
-    }
-
-    private func rangeDatePickerRow(title: LocalizedStringKey, date: Binding<Date>) -> some View {
-        HStack {
-            Text(title)
-                .font(.galBold14())
-                .foregroundColor(.ink)
-                .frame(width: 40, alignment: .leading)
-            Spacer()
-            DatePicker("", selection: date, displayedComponents: .date)
-                .labelsHidden()
-        }
     }
 
     // MARK: - Formatting
