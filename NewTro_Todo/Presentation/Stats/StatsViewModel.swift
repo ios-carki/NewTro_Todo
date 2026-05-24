@@ -8,20 +8,22 @@ final class StatsViewModel: ObservableObject {
     @Published var stats: StatsEntity = StatsEntity()
     @Published var weeklyData: [Int] = Array(repeating: 0, count: 7)
     @Published var weeklyLabels: [String] = []
+    @Published private(set) var completedCount: Int = 0
+    @Published private(set) var totalCount: Int = 0
 
     // MARK: - UseCases
     private let fetchStatsUseCase: any FetchStatsUseCaseProtocol
-    private let fetchWeeklyUseCase: any FetchWeeklyCompletionsUseCaseProtocol
-    private let claimChallengeUseCase: any ClaimChallengeUseCaseProtocol
+    private let fetchWeeklyUseCase: any FetchWeeklyTodoCountsUseCaseProtocol
+    private let fetchTodoCountsUseCase: any FetchTodoCountsUseCaseProtocol
 
     init(
         fetchStatsUseCase: any FetchStatsUseCaseProtocol,
-        fetchWeeklyUseCase: any FetchWeeklyCompletionsUseCaseProtocol,
-        claimChallengeUseCase: any ClaimChallengeUseCaseProtocol
+        fetchWeeklyUseCase: any FetchWeeklyTodoCountsUseCaseProtocol,
+        fetchTodoCountsUseCase: any FetchTodoCountsUseCaseProtocol
     ) {
         self.fetchStatsUseCase = fetchStatsUseCase
         self.fetchWeeklyUseCase = fetchWeeklyUseCase
-        self.claimChallengeUseCase = claimChallengeUseCase
+        self.fetchTodoCountsUseCase = fetchTodoCountsUseCase
         buildWeeklyLabels()
     }
 
@@ -32,23 +34,16 @@ final class StatsViewModel: ObservableObject {
             if let data = try? await fetchWeeklyUseCase.execute() {
                 weeklyData = data
             }
-        }
-    }
-
-    func claimChallenge(challengeId: String, points: Int) {
-        Task {
-            await claimChallengeUseCase.execute(challengeId: challengeId, points: points)
-            stats = await fetchStatsUseCase.execute()
+            if let counts = try? await fetchTodoCountsUseCase.execute() {
+                completedCount = counts.completed
+                totalCount = counts.total
+            }
         }
     }
 
     // MARK: - Computed
-    var levelTitle: String {
-        let titles = ["BEGINNER", "ROOKIE", "WORKER", "FIGHTER", "HERO", "LEGEND"]
-        return titles[min(stats.level, titles.count - 1)]
-    }
-
     var weeklyMax: Int { max(weeklyData.max() ?? 1, 1) }
+    var incompleteCount: Int { max(0, totalCount - completedCount) }
 
     func perfectDays(for month: Date) -> Set<Int> {
         let cal = Calendar.current

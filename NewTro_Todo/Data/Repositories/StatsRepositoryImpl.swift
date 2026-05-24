@@ -1,18 +1,14 @@
 import Foundation
+import RealmSwift
 
 final class StatsRepositoryImpl: StatsRepositoryProtocol {
 
     private let defaults = UserDefaults.standard
 
     private enum Key {
-        static let totalScore         = "stats_totalScore"
-        static let currentStreak      = "stats_currentStreak"
-        static let longestStreak      = "stats_longestStreak"
-        static let totalCompleted     = "stats_totalCompleted"
         static let totalPerfectDays   = "stats_totalPerfectDays"
         static let lastActiveDate     = "stats_lastActiveDate"
         static let unlockedChars      = "stats_unlockedCharacters"
-        static let earnedAchievs      = "stats_earnedAchievements"
         static let perfectDayDates    = "stats_perfectDayDateStrings"
         static let claimedChallenges  = "stats_claimedChallengeIds"
         static let dailyCheckDate     = "stats_dailyCheckDate"
@@ -28,14 +24,9 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         if !unlocked.contains("pinko") { unlocked.insert("pinko", at: 0) }
 
         return StatsEntity(
-            totalScore:           defaults.integer(forKey: Key.totalScore),
-            currentStreak:        defaults.integer(forKey: Key.currentStreak),
-            longestStreak:        defaults.integer(forKey: Key.longestStreak),
-            totalCompleted:       defaults.integer(forKey: Key.totalCompleted),
             totalPerfectDays:     defaults.integer(forKey: Key.totalPerfectDays),
             lastActiveDate:       defaults.object(forKey: Key.lastActiveDate) as? Date,
             unlockedCharacterIds: unlocked,
-            earnedAchievementIds: (defaults.array(forKey: Key.earnedAchievs)     as? [String]) ?? [],
             perfectDayDateStrings:(defaults.array(forKey: Key.perfectDayDates)   as? [String]) ?? [],
             claimedChallengeIds:  (defaults.array(forKey: Key.claimedChallenges) as? [String]) ?? [],
             todayAddedTodo:       defaults.bool(forKey: Key.todayAddedTodo)
@@ -44,10 +35,7 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
 
     // MARK: - Record Completion
     func recordCompletion(wasPostponed: Bool, isPerfectDay: Bool, date: Date) async {
-        var score = defaults.integer(forKey: Key.totalScore)
-        score += wasPostponed ? 10 : 15
         if isPerfectDay {
-            score += 50
             defaults.set(defaults.integer(forKey: Key.totalPerfectDays) + 1, forKey: Key.totalPerfectDays)
             let dateStr = dayString(from: date)
             var perfectDates = (defaults.array(forKey: Key.perfectDayDates) as? [String]) ?? []
@@ -56,16 +44,8 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
                 defaults.set(perfectDates, forKey: Key.perfectDayDates)
             }
         }
-        defaults.set(score, forKey: Key.totalScore)
-        let total = defaults.integer(forKey: Key.totalCompleted) + 1
-        defaults.set(total, forKey: Key.totalCompleted)
-
-        let streak = updateStreak(date: date)
-        let bonus = defaults.integer(forKey: Key.totalScore) + min(streak, 50)
-        defaults.set(bonus, forKey: Key.totalScore)
-
-        checkUnlocks()
-        checkAchievements()
+        defaults.set(date, forKey: Key.lastActiveDate)
+        await checkUnlocks()
     }
 
     // MARK: - Record Todo Added
@@ -74,22 +54,11 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         defaults.set(true, forKey: Key.todayAddedTodo)
     }
 
-    // MARK: - Claim Challenge
-    func claimChallenge(id: String, points: Int) async {
-        var claimed = (defaults.array(forKey: Key.claimedChallenges) as? [String]) ?? []
-        guard !claimed.contains(id) else { return }
-        claimed.append(id)
-        defaults.set(claimed, forKey: Key.claimedChallenges)
-        let score = defaults.integer(forKey: Key.totalScore) + points
-        defaults.set(score, forKey: Key.totalScore)
-    }
-
     // MARK: - Reset
     func resetAll() async {
         // selectedCharacter도 함께 제거. 안 비우면 unlockedChars가 빈 상태에서
         // 선택값만 살아남아 "잠긴 캐릭터가 선택됨" 상태가 됨.
-        [Key.totalScore, Key.currentStreak, Key.longestStreak, Key.totalCompleted,
-         Key.totalPerfectDays, Key.lastActiveDate, Key.unlockedChars, Key.earnedAchievs,
+        [Key.totalPerfectDays, Key.lastActiveDate, Key.unlockedChars,
          Key.perfectDayDates, Key.claimedChallenges,
          Key.dailyCheckDate, Key.todayAddedTodo,
          Key.selectedCharacter]
@@ -103,14 +72,9 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         if !unlocked.contains("pinko") { unlocked.insert("pinko", at: 0) }
 
         return BackupStatsRecord(
-            totalScore:            defaults.integer(forKey: Key.totalScore),
-            currentStreak:         defaults.integer(forKey: Key.currentStreak),
-            longestStreak:         defaults.integer(forKey: Key.longestStreak),
-            totalCompleted:        defaults.integer(forKey: Key.totalCompleted),
             totalPerfectDays:      defaults.integer(forKey: Key.totalPerfectDays),
             lastActiveDate:        defaults.object(forKey: Key.lastActiveDate) as? Date,
             unlockedCharacterIds:  unlocked,
-            earnedAchievementIds:  (defaults.array(forKey: Key.earnedAchievs)     as? [String]) ?? [],
             perfectDayDateStrings: (defaults.array(forKey: Key.perfectDayDates)   as? [String]) ?? [],
             claimedChallengeIds:   (defaults.array(forKey: Key.claimedChallenges) as? [String]) ?? [],
             selectedCharacterId:   defaults.string(forKey: Key.selectedCharacter)
@@ -120,10 +84,6 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
     func restoreSnapshot(_ snapshot: BackupStatsRecord, mode: RestoreMode) async {
         switch mode {
         case .overwrite:
-            defaults.set(snapshot.totalScore,             forKey: Key.totalScore)
-            defaults.set(snapshot.currentStreak,          forKey: Key.currentStreak)
-            defaults.set(snapshot.longestStreak,          forKey: Key.longestStreak)
-            defaults.set(snapshot.totalCompleted,         forKey: Key.totalCompleted)
             defaults.set(snapshot.totalPerfectDays,       forKey: Key.totalPerfectDays)
             if let date = snapshot.lastActiveDate {
                 defaults.set(date, forKey: Key.lastActiveDate)
@@ -131,7 +91,6 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
                 defaults.removeObject(forKey: Key.lastActiveDate)
             }
             defaults.set(snapshot.unlockedCharacterIds,   forKey: Key.unlockedChars)
-            defaults.set(snapshot.earnedAchievementIds,   forKey: Key.earnedAchievs)
             defaults.set(snapshot.perfectDayDateStrings,  forKey: Key.perfectDayDates)
             defaults.set(snapshot.claimedChallengeIds,    forKey: Key.claimedChallenges)
 
@@ -144,10 +103,6 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
 
         case .merge:
             // 수치는 max — 둘 중 더 진척된 값 채택.
-            defaults.set(max(defaults.integer(forKey: Key.totalScore),       snapshot.totalScore),       forKey: Key.totalScore)
-            defaults.set(max(defaults.integer(forKey: Key.currentStreak),    snapshot.currentStreak),    forKey: Key.currentStreak)
-            defaults.set(max(defaults.integer(forKey: Key.longestStreak),    snapshot.longestStreak),    forKey: Key.longestStreak)
-            defaults.set(max(defaults.integer(forKey: Key.totalCompleted),   snapshot.totalCompleted),   forKey: Key.totalCompleted)
             defaults.set(max(defaults.integer(forKey: Key.totalPerfectDays), snapshot.totalPerfectDays), forKey: Key.totalPerfectDays)
 
             // lastActiveDate는 더 최근 값.
@@ -166,7 +121,6 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
 
             // 집합은 합집합.
             mergeUnion(key: Key.unlockedChars,     into: snapshot.unlockedCharacterIds)
-            mergeUnion(key: Key.earnedAchievs,     into: snapshot.earnedAchievementIds)
             mergeUnion(key: Key.perfectDayDates,   into: snapshot.perfectDayDateStrings)
             mergeUnion(key: Key.claimedChallenges, into: snapshot.claimedChallengeIds)
 
@@ -177,9 +131,8 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
             }
         }
 
-        // 복구된 수치 기준으로 추가 잠금 해제·업적 조건이 새로 충족될 수 있음.
-        checkUnlocks()
-        checkAchievements()
+        // 복구된 수치 기준으로 추가 잠금 해제 조건이 새로 충족될 수 있음.
+        await checkUnlocks()
     }
 
     private func mergeUnion(key: String, into incoming: [String]) {
@@ -201,89 +154,57 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         defaults.set(false, forKey: Key.todayAddedTodo)
     }
 
-    @discardableResult
-    private func updateStreak(date: Date) -> Int {
-        let cal = Calendar.current
-        let today = cal.startOfDay(for: date)
-        let lastDate = defaults.object(forKey: Key.lastActiveDate) as? Date
-        var streak = defaults.integer(forKey: Key.currentStreak)
-
-        if let last = lastDate {
-            let lastDay = cal.startOfDay(for: last)
-            if cal.isDate(lastDay, inSameDayAs: today) {
-                return streak
-            } else if let yesterday = cal.date(byAdding: .day, value: -1, to: today),
-                      cal.isDate(lastDay, inSameDayAs: yesterday) {
-                streak += 1
-            } else {
-                streak = 1
-            }
-        } else {
-            streak = 1
-        }
-        defaults.set(streak, forKey: Key.currentStreak)
-        defaults.set(date, forKey: Key.lastActiveDate)
-        defaults.set(max(defaults.integer(forKey: Key.longestStreak), streak), forKey: Key.longestStreak)
-        return streak
-    }
-
-    private func checkUnlocks() {
-        let total   = defaults.integer(forKey: Key.totalCompleted)
-        let streak  = defaults.integer(forKey: Key.currentStreak)
+    private func checkUnlocks() async {
         let perfect = defaults.integer(forKey: Key.totalPerfectDays)
+        let completed = await fetchCompletedTodoCount()
         var unlocked = (defaults.array(forKey: Key.unlockedChars) as? [String]) ?? []
 
+        // v12 마스코트 해금 매핑: 완료 카운트 / 퍼펙트 데이 카운트 기준.
+        // streak·점수 시스템이 사라지면서 streak/weekly perfect 기반 조건은 폐기.
         let conditions: [(String, Bool)] = [
-            ("bbiyak",    streak >= 3),
-            ("minty",     total >= 10),
-            ("bori",      streak >= 7),
+            ("bbiyak",    completed >= 5),
+            ("minty",     completed >= 10),
+            ("bori",      completed >= 25),
             ("hwanggeum", perfect >= 3),
-            ("blue",      total >= 30),
+            ("blue",      completed >= 30),
             ("lilac",     perfect >= 7),
-            ("red",       streak >= 14),
-            ("orange",    total >= 50),
-            ("obsidian",  streak >= 21),
+            ("red",       completed >= 75),
+            ("orange",    completed >= 50),
+            ("obsidian",  completed >= 150),
             ("snowflake", perfect >= 15),
-            ("star",      total >= 100),
-            ("cloud",     streak >= 30),
+            ("star",      completed >= 100),
+            ("cloud",     completed >= 250),
             ("flame",     perfect >= 30),
-            ("water",     total >= 200),
-            ("sprout",    streak >= 60),
+            ("water",     completed >= 200),
+            ("sprout",    completed >= 500),
             ("moon",      perfect >= 50),
-            ("suncat",    total >= 365),
-            ("rainbow",   streak >= 100),
+            ("suncat",    completed >= 365),
+            ("rainbow",   completed >= 1000),
+            ("dawn",      perfect >= 1),
+            ("leaf",      perfect >= 100),
+            ("sunset",    perfect >= 200),
+            ("galaxy",    perfect >= 500),
+            ("chrono",    completed >= 2000),
         ]
         for (id, cond) in conditions {
             if cond && !unlocked.contains(id) { unlocked.append(id) }
         }
-        if unlocked.filter({ $0 != "legend" }).count >= 19 && !unlocked.contains("legend") {
+        if unlocked.filter({ $0 != "legend" }).count >= 24 && !unlocked.contains("legend") {
             unlocked.append("legend")
         }
         defaults.set(unlocked, forKey: Key.unlockedChars)
     }
 
-    private func checkAchievements() {
-        let total   = defaults.integer(forKey: Key.totalCompleted)
-        let streak  = defaults.integer(forKey: Key.currentStreak)
-        let perfect = defaults.integer(forKey: Key.totalPerfectDays)
-        var earned  = (defaults.array(forKey: Key.earnedAchievs) as? [String]) ?? []
-
-        let conditions: [(String, Bool)] = [
-            ("first_todo",    total >= 1),
-            ("streak_3",      streak >= 3),
-            ("streak_7",      streak >= 7),
-            ("perfect_day",   perfect >= 1),
-            ("completed_100", total >= 100),
-            ("streak_30",     streak >= 30),
-            ("streak_365",    streak >= 365),
-        ]
-        for (id, cond) in conditions {
-            if cond && !earned.contains(id) { earned.append(id) }
+    private func fetchCompletedTodoCount() async -> Int {
+        // Realm I/O는 메인 스레드에서 처리. 통계 갱신은 frequent path가 아니라 비용 영향 적음.
+        await MainActor.run {
+            do {
+                let realm = try Realm(configuration: RealmConfiguration.configuration)
+                return realm.objects(Todo.self).filter("isFinished == true").count
+            } catch {
+                return 0
+            }
         }
-        if earned.filter({ $0 != "all_complete" }).count >= 7 && !earned.contains("all_complete") {
-            earned.append("all_complete")
-        }
-        defaults.set(earned, forKey: Key.earnedAchievs)
     }
 
     private func dayString(from date: Date) -> String {

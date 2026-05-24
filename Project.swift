@@ -147,5 +147,8 @@ let project = Project(
                 .target(name: "NewTro_Todo"),
             ]
         ),
-    ]
+    ],
+    // Runtime uses `String.localized()` extension — Tuist의 자동 생성 TuistStrings를 참조하지 않음.
+    // 또한 "시작" / "시작!" 처럼 트레일링 구두점만 다른 키들이 식별자 충돌을 일으키므로 strings 합성을 끔.
+    resourceSynthesizers: [.assets(), .fonts(), .plists()]
 )

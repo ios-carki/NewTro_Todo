@@ -170,6 +170,15 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             }
         }
     }
+
+    func fetchTodoCounts() async throws -> (completed: Int, total: Int) {
+        try await MainActor.run {
+            let realm = try Realm()
+            let all = realm.objects(Todo.self)
+            return (all.filter("isFinished == true").count, all.count)
+        }
+    }
+
 }
 
 private extension Results {

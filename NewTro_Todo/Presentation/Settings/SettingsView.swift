@@ -22,7 +22,6 @@ struct SettingsView: View {
                     ScrollView {
                         VStack(spacing: 10) {
                             mascotPanel
-                            achievementPanel
                             settingsPanel
                             notificationPanel
                             backupPanel
@@ -100,9 +99,6 @@ struct SettingsView: View {
                         Text(LocalizedStringKey(currentCharInfo?.name ?? "핑코"))
                             .font(.galBold16())
                             .foregroundColor(.ink)
-                        Text("LV.\(statsVM.stats.level) · \(statsVM.levelTitle)")
-                            .font(.pressStart9())
-                            .foregroundColor(.sun)
                     }
                     Spacer()
                 }
@@ -136,19 +132,6 @@ struct SettingsView: View {
 
     private var currentCharInfo: FriendCharInfo? {
         CharacterData.all.first { $0.id == viewModel.selectedCharacterId }
-    }
-
-    // MARK: - Achievement Panel
-    private var achievementPanel: some View {
-        PixelPanel(bg: .white, padding: 0) {
-            VStack(spacing: 0) {
-                NavigationLink {
-                    AchievementView(statsVM: statsVM)
-                } label: {
-                    settingRowNavigation(label: "도전과제", icon: "trophy.fill")
-                }
-            }
-        }
     }
 
     // MARK: - Settings Panel

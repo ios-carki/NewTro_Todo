@@ -46,6 +46,9 @@ final class DIContainer {
     func makeFetchMonthOverviewUseCase() -> FetchMonthOverviewUseCase {
         FetchMonthOverviewUseCase(todoRepository: todoRepository, memoRepository: memoRepository)
     }
+    func makeFetchTodoCountsUseCase() -> FetchTodoCountsUseCase {
+        FetchTodoCountsUseCase(repository: todoRepository)
+    }
 
     // MARK: - UseCases: Memo
     func makeFetchMemosUseCase() -> FetchMemosUseCase {
@@ -68,11 +71,8 @@ final class DIContainer {
     func makeRecordTodoCompleteUseCase() -> RecordTodoCompleteUseCase {
         RecordTodoCompleteUseCase(repository: statsRepository)
     }
-    func makeFetchWeeklyCompletionsUseCase() -> FetchWeeklyCompletionsUseCase {
-        FetchWeeklyCompletionsUseCase(repository: todoRepository)
-    }
-    func makeClaimChallengeUseCase() -> ClaimChallengeUseCase {
-        ClaimChallengeUseCase(repository: statsRepository)
+    func makeFetchWeeklyTodoCountsUseCase() -> FetchWeeklyTodoCountsUseCase {
+        FetchWeeklyTodoCountsUseCase(repository: todoRepository)
     }
     func makeRecordTodoAddedUseCase() -> RecordTodoAddedUseCase {
         RecordTodoAddedUseCase(repository: statsRepository)
@@ -160,7 +160,8 @@ final class DIContainer {
             addTemplateUseCase: makeAddTemplateUseCase(),
             updateTemplateUseCase: makeUpdateTemplateUseCase(),
             deleteTemplateUseCase: makeDeleteTemplateUseCase(),
-            earnCoinsUseCase: makeEarnCoinsUseCase()
+            earnCoinsUseCase: makeEarnCoinsUseCase(),
+            fetchWalletUseCase: makeFetchWalletUseCase()
         )
     }
 
@@ -189,16 +190,15 @@ final class DIContainer {
             fetchUseCase: makeFetchMemosUseCase(),
             addUseCase: makeAddMemoUseCase(),
             updateUseCase: makeUpdateMemoUseCase(),
-            deleteUseCase: makeDeleteMemoUseCase(),
-            earnCoinsUseCase: makeEarnCoinsUseCase()
+            deleteUseCase: makeDeleteMemoUseCase()
         )
     }
 
     @MainActor func makeStatsViewModel() -> StatsViewModel {
         StatsViewModel(
             fetchStatsUseCase: makeFetchStatsUseCase(),
-            fetchWeeklyUseCase: makeFetchWeeklyCompletionsUseCase(),
-            claimChallengeUseCase: makeClaimChallengeUseCase()
+            fetchWeeklyUseCase: makeFetchWeeklyTodoCountsUseCase(),
+            fetchTodoCountsUseCase: makeFetchTodoCountsUseCase()
         )
     }
 }
