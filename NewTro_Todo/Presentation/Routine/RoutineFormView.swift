@@ -40,25 +40,23 @@ struct RoutineFormView: View {
 
                 ScrollView(showsIndicators: false) {
                     VStack(spacing: 14) {
-                        groupHeader("루틴 설정")
                         sectionContainer { titleSection }
                         sectionContainer { dateRangeSection }
                         sectionContainer { repeatBlock }
 
                         groupDivider
 
-                        groupHeader("Todo 설정")
                         sectionContainer { colorSection }
                         sectionContainer { importanceSection }
 
                         if initial != nil, onDelete != nil {
                             deleteButton
                                 .padding(.top, 8)
+                                .padding(.horizontal, 16)
                         }
 
                         Spacer(minLength: 60)
                     }
-                    .padding(.horizontal, 16)
                     .padding(.top, 12)
                 }
             }
@@ -101,30 +99,17 @@ struct RoutineFormView: View {
         }
     }
 
-    // MARK: - Group header / divider
-    // 두 그룹 (루틴 설정 / Todo 설정) 사이 시각 분리.
-    private func groupHeader(_ text: LocalizedStringKey) -> some View {
-        HStack(spacing: 8) {
-            Rectangle()
-                .fill(Color.ink)
-                .frame(width: 12, height: 12)
-            Text(text)
-                .font(.galBold13())
-                .foregroundColor(.ink)
-            Spacer()
-        }
-        .padding(.horizontal, 2)
-    }
-
+    // MARK: - Divider
+    // 루틴 독립 필드(상단) 와 Todo 작성 필드(하단) 사이 시각 분리.
+    // 양옆 패딩 없이 화면 끝까지 붙도록 horizontal padding 없음.
     private var groupDivider: some View {
-        VStack(spacing: 0) {
-            Rectangle().fill(Color.ink).frame(height: 2)
-            Rectangle().fill(Color.ink.opacity(0.25)).frame(height: 2)
-        }
-        .padding(.vertical, 6)
+        Rectangle()
+            .fill(Color.ink.opacity(0.2))
+            .frame(height: 3)
     }
 
     // 각 섹션 행을 감싸는 컨테이너 — Todo 폼의 sectionContainer 와 동일 톤.
+    // horizontal 16 padding 은 sectionContainer 외곽에 둠 → divider 만 화면 끝까지 깔림.
     @ViewBuilder
     private func sectionContainer<V: View>(@ViewBuilder _ content: () -> V) -> some View {
         content()
@@ -132,34 +117,35 @@ struct RoutineFormView: View {
             .padding(.vertical, 10)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.ink.opacity(0.05))
+            .padding(.horizontal, 16)
     }
 
     // MARK: - Title (할일)
-    // Todo 입력 필드와 동일한 AutoFocusTextField 사용 → placeholder 색/폰트가 동일.
+    // Todo 작성 페이지의 textInputRow 와 동일 — 라벨 없이 placeholder + underline 만.
     private var titleSection: some View {
-        HStack(alignment: .top, spacing: 8) {
-            Text("할일")
-                .font(.galBold14())
-                .foregroundColor(.ink)
-                .padding(.top, 6)
-            VStack(spacing: 0) {
-                AutoFocusTextField(
-                    text: $title,
-                    placeholder: NSLocalizedString("할 일을 입력하세요", comment: "Routine title placeholder"),
-                    autoFocus: initial == nil,
-                    font: UIFont.boldFont(size: 14),
-                    textColor: UIColor(Color.ink),
-                    placeholderColor: UIColor(Color.ink).withAlphaComponent(0.4),
-                    accessibilityIdentifier: "routineTitleField",
-                    onSubmit: { true },
-                    charLimit: 100
-                )
-                .frame(minHeight: 34)
-                Rectangle()
-                    .fill(Color.ink.opacity(0.3))
-                    .frame(height: 1.5)
-            }
+        VStack(spacing: 0) {
+            AutoFocusTextField(
+                text: $title,
+                placeholder: NSLocalizedString("할 일을 입력하세요", comment: "Routine title placeholder"),
+                autoFocus: initial == nil,
+                font: UIFont.boldFont(size: 14),
+                textColor: UIColor(Color.ink),
+                placeholderColor: UIColor(Color.ink).withAlphaComponent(0.4),
+                accessibilityIdentifier: "routineTitleField",
+                onSubmit: { true },
+                charLimit: 100
+            )
+            .frame(height: titleFieldHeight, alignment: .topLeading)
+            .clipped()
+            Rectangle()
+                .fill(Color.ink.opacity(0.3))
+                .frame(height: 1.5)
         }
+    }
+
+    // Todo 의 singleLineHeight 와 동일 공식 — 비주얼 통일.
+    private var titleFieldHeight: CGFloat {
+        UIFont.boldFont(size: 14).lineHeight + 20
     }
 
     // MARK: - Date range (기간)
