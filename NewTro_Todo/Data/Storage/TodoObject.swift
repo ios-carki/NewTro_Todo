@@ -17,6 +17,9 @@ final class Todo: Object, ObjectKeyIdentifiable {
     @Persisted var completedAt: Date? = nil
     @Persisted var colorName: String = "yellow"
 
+    // 루틴이 만든 Todo 만 값을 가짐. 수동 생성 Todo 는 nil.
+    @Persisted var routineId: ObjectId? = nil
+
     @Persisted(primaryKey: true) var objectID: ObjectId
 
     convenience init(
@@ -33,7 +36,8 @@ final class Todo: Object, ObjectKeyIdentifiable {
         notifyAt: Date? = nil,
         sortOrder: Int = 0,
         completedAt: Date? = nil,
-        colorName: String = "yellow"
+        colorName: String = "yellow",
+        routineId: ObjectId? = nil
     ) {
         self.init()
         self.todo = todo
@@ -50,5 +54,6 @@ final class Todo: Object, ObjectKeyIdentifiable {
         self.sortOrder = sortOrder
         self.completedAt = completedAt
         self.colorName = colorName
+        self.routineId = routineId
     }
 }

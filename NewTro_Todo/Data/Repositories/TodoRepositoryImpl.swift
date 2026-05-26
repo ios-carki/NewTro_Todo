@@ -72,6 +72,7 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         id: String,
         text: String,
         importance: Importance,
+        targetDate: Date,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
@@ -83,9 +84,12 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             guard let todo = realm.objects(Todo.self)
                 .filter("objectID == %@", try ObjectId(string: id)).first
             else { throw RepositoryError.notFound }
+            let dayStart = Calendar.current.startOfDay(for: targetDate)
             try realm.write {
                 todo.todo = text
                 todo.importance = importance.rawValue
+                todo.targetDate = dayStart
+                todo.stringDate = DateFormatter.dateToString(date: dayStart)
                 todo.targetTimeStart = targetTimeStart
                 todo.targetTimeEnd = targetTimeEnd
                 todo.isAllDay = isAllDay
@@ -177,6 +181,64 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             let all = realm.objects(Todo.self)
             return (all.filter("isFinished == true").count, all.count)
         }
+    }
+
+    // MARK: - Routine support
+
+    @MainActor func addTodoFromRoutine(
+        routineId: String,
+        targetDate: Date,
+        text: String,
+        isAllDay: Bool,
+        targetTimeStart: Date?,
+        targetTimeEnd: Date?,
+        colorName: String
+    ) throws -> TodoEntity? {
+        guard let rid = try? ObjectId(string: routineId) else { return nil }
+        let realm = try Realm()
+        let dayStart = Calendar.current.startOfDay(for: targetDate)
+
+        // (routineId, targetDate) 중복이면 skip (idempotent).
+        if realm.objects(Todo.self)
+            .filter("routineId == %@ AND targetDate == %@", rid, dayStart)
+            .first != nil {
+            return nil
+        }
+
+        let minSortOrder: Int = realm.objects(Todo.self)
+            .filter("targetDate == %@", dayStart)
+            .min(ofProperty: "sortOrder") ?? 1
+        let dateStr = DateFormatter.dateToString(date: dayStart)
+        let todo = Todo(
+            todo: text,
+            favorite: false,
+            importance: Importance.none.rawValue,
+            regDate: Date(),
+            stringDate: dateStr,
+            targetDate: dayStart,
+            isFinished: false,
+            targetTimeStart: targetTimeStart,
+            targetTimeEnd: targetTimeEnd,
+            isAllDay: isAllDay,
+            notifyAt: nil,
+            sortOrder: minSortOrder - 1,
+            completedAt: nil,
+            colorName: colorName,
+            routineId: rid
+        )
+        try realm.write { realm.add(todo) }
+        return todo.toDomain()
+    }
+
+    @MainActor func deleteFutureIncompleteTodos(routineId: String, from: Date) throws {
+        guard let rid = try? ObjectId(string: routineId) else { return }
+        let realm = try Realm()
+        let dayStart = Calendar.current.startOfDay(for: from)
+        let targets = realm.objects(Todo.self)
+            .filter("routineId == %@ AND targetDate >= %@ AND isFinished == false",
+                    rid, dayStart)
+        guard !targets.isEmpty else { return }
+        try realm.write { realm.delete(targets) }
     }
 
 }

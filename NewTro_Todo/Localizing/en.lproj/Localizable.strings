@@ -281,3 +281,49 @@
 "지원하지 않는 버전의 백업 파일입니다.\n앱을 최신 버전으로 업데이트해주세요." = "This backup file isn't supported.\nPlease update the app to the latest version.";
 "백업 파일을 읽을 수 없어요." = "Couldn't read the backup file.";
 "복구를 완료하지 못했어요." = "Couldn't complete the restore.";
+
+// MARK: - Routine Tab
+"루틴" = "Routine";
+"루틴 추가" = "Add Routine";
+"루틴 수정" = "Edit Routine";
+"루틴 삭제" = "Delete Routine";
+"루틴 제목" = "Routine title";
+"루틴을 추가해보세요" = "Add your first routine";
+"+ 추가 버튼으로 시작!" = "Tap + Add to start!";
+"루틴을 삭제할까요?" = "Delete this routine?";
+"미래의 미완료 Todo 가 함께 제거됩니다." = "Future incomplete todos will be removed too.";
+"제목 없음" = "Untitled";
+
+// MARK: - Routine Form Sections
+"제목" = "Title";
+"색상" = "Color";
+"시작일" = "Start date";
+"종료일" = "End date";
+"반복" = "Repeat";
+"요일" = "Weekdays";
+"일자" = "Days";
+"월 선택" = "Month";
+"진행시각" = "Time";
+"종일" = "All-day";
+"마지막" = "Last";
+
+// MARK: - Routine Repeat Kinds
+"매일" = "Daily";
+"매주" = "Weekly";
+"격주" = "Biweekly";
+"매월" = "Monthly";
+"매년" = "Yearly";
+"마지막날" = "last day";
+"30일/31일이 없는 달에는 추가되지 않습니다" = "Won't appear in months without day 30 / 31";
+
+// MARK: - Weekdays (short)
+"일" = "Sun";
+"월" = "Mon";
+"화" = "Tue";
+"수" = "Wed";
+"목" = "Thu";
+"금" = "Fri";
+"토" = "Sat";
+
+// MARK: - Todo Due Helper
+"%@ 에 Todo가 추가됩니다" = "Adds the todo on %@";

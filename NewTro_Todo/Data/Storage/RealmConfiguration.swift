@@ -23,7 +23,9 @@ enum RealmConfiguration {
     //     Todo.emoji / TemplateObject.emoji 컬럼은 모델 정의에서 사라져 Realm 이 자동 drop
     // v12: Todo.colorName String 추가 (기본값 "yellow"). 리스트 행 배경색 사용자 지정.
     //     QuickNote 의 colorName 과 동일 팔레트(yellow/pink/mint/lavender/peach/sky) 공유.
-    static let schemaVersion: UInt64 = 12
+    // v13: RoutineObject 신규 테이블 추가. Todo.routineId ObjectId? 옵셔널 컬럼 추가.
+    //     기존 Todo 행은 routineId = nil 로 자동 초기화 (수동 생성 Todo 의미 유지).
+    static let schemaVersion: UInt64 = 13
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -181,5 +183,8 @@ enum RealmConfiguration {
                 }
             }
         }
+        // v13: RoutineObject 신규 테이블 + Todo.routineId 옵셔널 추가.
+        // 신규 옵셔널 컬럼은 Realm 이 자동 nil 백필. 별도 데이터 변환 없음 (lossless).
+        // RoutineObject 는 빈 테이블로 생성됨.
     }
 }

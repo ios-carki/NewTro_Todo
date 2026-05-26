@@ -48,8 +48,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
-        // Called as the scene transitions from the background to the foreground.
-        // Use this method to undo the changes made on entering the background.
+        // 누락된 루틴 Todo 를 따라잡는다 (오늘+horizonDays 까지 idempotent 생성).
+        Task { @MainActor in
+            appCoordinator?.materializeRoutines()
+        }
     }
 
     func sceneDidEnterBackground(_ scene: UIScene) {

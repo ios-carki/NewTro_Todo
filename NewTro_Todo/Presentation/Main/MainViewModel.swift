@@ -340,27 +340,35 @@ final class MainViewModel: ObservableObject {
         id: String,
         text: String,
         importance: Importance,
+        targetDate: Date,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
         notifyAt: Date?,
         colorName: String
     ) {
+        let newTargetDate = Calendar.current.startOfDay(for: targetDate)
         Task {
             do {
                 try await editTodoUseCase.execute(
                     id: id,
                     text: text,
                     importance: importance,
+                    targetDate: newTargetDate,
                     targetTimeStart: targetTimeStart,
                     targetTimeEnd: targetTimeEnd,
                     isAllDay: isAllDay,
                     notifyAt: notifyAt,
                     colorName: colorName
                 )
-                if let idx = todos.firstIndex(where: { $0.id == id }) {
+                let viewedDay = Calendar.current.startOfDay(for: selectedDate)
+                if newTargetDate != viewedDay {
+                    // 다른 날짜로 이동했으므로 현재 보고 있는 리스트에서 제거.
+                    todos.removeAll { $0.id == id }
+                } else if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].text = text
                     todos[idx].importance = importance
+                    todos[idx].targetDate = newTargetDate
                     todos[idx].targetTimeStart = targetTimeStart
                     todos[idx].targetTimeEnd = targetTimeEnd
                     todos[idx].isAllDay = isAllDay
@@ -382,25 +390,30 @@ final class MainViewModel: ObservableObject {
     func addTodo(
         text: String,
         importance: Importance,
+        targetDate: Date,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
         notifyAt: Date?,
         colorName: String
     ) {
+        let newTargetDate = Calendar.current.startOfDay(for: targetDate)
         Task {
             do {
                 let newTodo = try await addTodoUseCase.execute(
                     text: text,
                     importance: importance,
-                    targetDate: selectedDate,
+                    targetDate: newTargetDate,
                     targetTimeStart: targetTimeStart,
                     targetTimeEnd: targetTimeEnd,
                     isAllDay: isAllDay,
                     notifyAt: notifyAt,
                     colorName: colorName
                 )
-                todos.append(newTodo)
+                // 사용자가 보고 있는 날짜와 같을 때만 현재 리스트에 노출.
+                if newTargetDate == Calendar.current.startOfDay(for: selectedDate) {
+                    todos.append(newTodo)
+                }
                 await recordTodoAddedUseCase.execute()
                 if let notifyAt {
                     NotificationManager.shared.schedule(todoId: newTodo.id, text: text, at: notifyAt)

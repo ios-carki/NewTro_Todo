@@ -14,6 +14,7 @@ final class DIContainer {
         statsRepository: statsRepository,
         backupLogRepository: backupLogRepository
     )
+    private(set) lazy var routineRepository: any RoutineRepositoryProtocol = RoutineRepositoryImpl()
 
     // MARK: - UseCases: Todo
     func makeFetchTodosUseCase() -> FetchTodosUseCase {
@@ -120,6 +121,23 @@ final class DIContainer {
         ApplyDailyNotificationsUseCase(repository: localNotificationRepository)
     }
 
+    // MARK: - UseCases: Routine
+    func makeFetchRoutinesUseCase() -> FetchRoutinesUseCase {
+        FetchRoutinesUseCase(repository: routineRepository)
+    }
+    func makeAddRoutineUseCase() -> AddRoutineUseCase {
+        AddRoutineUseCase(repository: routineRepository)
+    }
+    func makeUpdateRoutineUseCase() -> UpdateRoutineUseCase {
+        UpdateRoutineUseCase(routineRepo: routineRepository, todoRepo: todoRepository)
+    }
+    func makeDeleteRoutineUseCase() -> DeleteRoutineUseCase {
+        DeleteRoutineUseCase(routineRepo: routineRepository, todoRepo: todoRepository)
+    }
+    func makeMaterializeRoutinesUseCase() -> MaterializeRoutinesUseCase {
+        MaterializeRoutinesUseCase(routineRepo: routineRepository, todoRepo: todoRepository)
+    }
+
     // MARK: - UseCases: Backup
     func makeCreateBackupUseCase() -> CreateBackupUseCase {
         CreateBackupUseCase(repository: backupRepository)
@@ -199,6 +217,16 @@ final class DIContainer {
             fetchStatsUseCase: makeFetchStatsUseCase(),
             fetchWeeklyUseCase: makeFetchWeeklyTodoCountsUseCase(),
             fetchTodoCountsUseCase: makeFetchTodoCountsUseCase()
+        )
+    }
+
+    @MainActor func makeRoutineViewModel() -> RoutineViewModel {
+        RoutineViewModel(
+            fetchUseCase: makeFetchRoutinesUseCase(),
+            addUseCase: makeAddRoutineUseCase(),
+            updateUseCase: makeUpdateRoutineUseCase(),
+            deleteUseCase: makeDeleteRoutineUseCase(),
+            materializeUseCase: makeMaterializeRoutinesUseCase()
         )
     }
 }

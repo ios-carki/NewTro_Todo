@@ -18,6 +18,7 @@ protocol TodoRepositoryProtocol {
         id: String,
         text: String,
         importance: Importance,
+        targetDate: Date,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
@@ -31,4 +32,19 @@ protocol TodoRepositoryProtocol {
     func deleteAll() async throws
     func updateSortOrders(updates: [(id: String, sortOrder: Int)]) async throws
     func fetchTodoCounts() async throws -> (completed: Int, total: Int)
+
+    // MARK: - Routine support
+    /// 루틴이 만든 Todo 를 idempotent 하게 추가. (routineId, targetDate) 중복 시 nil 반환.
+    @MainActor func addTodoFromRoutine(
+        routineId: String,
+        targetDate: Date,
+        text: String,
+        isAllDay: Bool,
+        targetTimeStart: Date?,
+        targetTimeEnd: Date?,
+        colorName: String
+    ) throws -> TodoEntity?
+
+    /// 해당 루틴이 만든 Todo 중 `from` (포함) 이후의 미완료 Todo 를 제거.
+    @MainActor func deleteFutureIncompleteTodos(routineId: String, from: Date) throws
 }

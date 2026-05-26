@@ -90,4 +90,12 @@ final class AppCoordinator: CoordinatorProtocol {
     private func remove(_ coordinator: (any CoordinatorProtocol)?) {
         childCoordinators.removeAll { $0 === coordinator }
     }
+
+    // 포어그라운드 진입 시 SceneDelegate 가 호출.
+    // 누락된 루틴 Todo 를 idempotent 하게 생성. 실패해도 앱 동작에는 영향 없음 (fire-and-forget).
+    @MainActor
+    func materializeRoutines() {
+        let useCase = diContainer.makeMaterializeRoutinesUseCase()
+        try? useCase.execute()
+    }
 }
