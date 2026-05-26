@@ -46,18 +46,9 @@ enum WidgetRealmReader {
     static func loadToday(date: Date = Date(), limit: Int = 6) -> WidgetTodayData {
         let dayStart = Calendar.current.startOfDay(for: date)
 
-        RealmConfiguration.logSchemaState(label: "Widget.loadToday")
-
-        do {
-            let realm = try Realm(configuration: RealmConfiguration.configuration)
-            return load(realm: realm, dayStart: dayStart, limit: limit)
-        } catch {
-            print("[Realm/Widget.loadToday] open FAILED: \(error)")
+        guard let realm = try? Realm(configuration: RealmConfiguration.configuration) else {
             return WidgetTodayData(date: dayStart, total: 0, done: 0, topItems: [], coinBalance: 0)
         }
-    }
-
-    private static func load(realm: Realm, dayStart: Date, limit: Int) -> WidgetTodayData {
 
         let todos = realm.objects(Todo.self)
             .filter("targetDate == %@", dayStart)

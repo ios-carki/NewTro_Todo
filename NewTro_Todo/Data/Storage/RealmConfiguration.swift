@@ -57,31 +57,11 @@ enum RealmConfiguration {
             try? FileManager.default.replaceItemAt(targetURL, withItemAt: legacyURL)
         }
 
-        logSchemaState(label: "App.setup")
-
         // 새 schemaVersion 첫 실행 시 마이그레이션 직전 백업 (사용자 데이터 보존 안전망).
         // 백업 파일이 이미 있으면 건너뛰어 한 번만 실행됨.
         backupIfNeeded()
 
         Realm.Configuration.defaultConfiguration = configuration
-    }
-
-    /// 디스크 schemaVersion vs 코드 schemaVersion 비교 출력 (진단용)
-    static func logSchemaState(label: String) {
-        guard let fileURL = appGroupURL else {
-            print("[Realm/\(label)] appGroupURL=nil — code=\(schemaVersion)")
-            return
-        }
-        guard FileManager.default.fileExists(atPath: fileURL.path) else {
-            print("[Realm/\(label)] code=\(schemaVersion), disk=NEW(no file) path=\(fileURL.path)")
-            return
-        }
-        do {
-            let diskVersion = try schemaVersionAtURL(fileURL)
-            print("[Realm/\(label)] code=\(schemaVersion), disk=\(diskVersion) path=\(fileURL.path)")
-        } catch {
-            print("[Realm/\(label)] code=\(schemaVersion), disk=READ_ERROR(\(error)) path=\(fileURL.path)")
-        }
     }
 
     private static func backupIfNeeded() {
@@ -95,7 +75,6 @@ enum RealmConfiguration {
     }
 
     private static let migrate: MigrationBlock = { migration, oldVersion in
-        print("[Realm/migrate] running: disk=\(oldVersion) → code=\(schemaVersion)")
         if oldVersion < 2 {
             migration.enumerateObjects(ofType: "Todo") { _, newObject in
                 if newObject?["todo"] == nil { newObject?["todo"] = "" }
