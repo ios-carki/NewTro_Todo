@@ -25,7 +25,11 @@ enum RealmConfiguration {
     //     QuickNote 의 colorName 과 동일 팔레트(yellow/pink/mint/lavender/peach/sky) 공유.
     // v13: RoutineObject 신규 테이블 추가. Todo.routineId ObjectId? 옵셔널 컬럼 추가.
     //     기존 Todo 행은 routineId = nil 로 자동 초기화 (수동 생성 Todo 의미 유지).
-    static let schemaVersion: UInt64 = 13
+    // v14: RoutineObject 정의 정리 (출시 전 내부 변경).
+    //     - 제거: isAllDay, targetTimeStart, targetTimeEnd  (Todo 폼의 진행시각 기획 폐기와 동기화)
+    //     - 추가: importance Int  (만들어질 각 Todo 의 중요도. 기본 0 = .none)
+    //     사라진 컬럼은 Realm 이 자동 drop, 신규 Int 컬럼은 default 0 으로 자동 백필. 무손실.
+    static let schemaVersion: UInt64 = 14
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -186,5 +190,10 @@ enum RealmConfiguration {
         // v13: RoutineObject 신규 테이블 + Todo.routineId 옵셔널 추가.
         // 신규 옵셔널 컬럼은 Realm 이 자동 nil 백필. 별도 데이터 변환 없음 (lossless).
         // RoutineObject 는 빈 테이블로 생성됨.
+
+        // v14: RoutineObject 컬럼 재구성 (출시 전 변경).
+        //   - 제거: isAllDay / targetTimeStart / targetTimeEnd → Realm 자동 drop
+        //   - 추가: importance Int → 기본 0 자동 백필 (.none)
+        // 모델 정의 변경만으로 Realm 이 schema diff 를 해결하므로 enumerate 불필요.
     }
 }
