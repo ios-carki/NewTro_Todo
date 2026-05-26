@@ -3,8 +3,9 @@ import SwiftUI
 struct MascotPickerView: View {
     @ObservedObject var settingsVM: SettingsViewModel
     @ObservedObject var statsVM: StatsViewModel
+    let onShowUnlockInfo: (FriendCharInfo) -> Void
 
-    @State private var unlockInfo: FriendCharInfo?
+    @Environment(\.dismiss) private var dismiss
     @State private var filter: MascotFilter = .all
 
     private let columns = [
@@ -16,13 +17,14 @@ struct MascotPickerView: View {
 
     var body: some View {
         ZStack {
-            Color.sky.ignoresSafeArea()
+            BackgroundSceneryView()
+                .ignoresSafeArea()
 
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
                         Text(unlockedSummary)
-                            .font(.pressStart9())
+                            .font(.galBold13())
                             .foregroundColor(.shade)
                         Spacer()
                     }
@@ -40,12 +42,28 @@ struct MascotPickerView: View {
         }
         .navigationTitle(Text("마스코트 변경"))
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { statsVM.loadStats() }
-        .overlay {
-            if let info = unlockInfo {
-                unlockInfoOverlay(info)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                closeButton
             }
         }
+        .onAppear { statsVM.loadStats() }
+    }
+
+    private var closeButton: some View {
+        Button {
+            dismiss()
+        } label: {
+            PixelArtView(
+                grid: PixelArtAssets.dotXGrid,
+                palette: PixelArtAssets.dotXPalette,
+                scale: 2
+            )
+            .frame(width: 32, height: 32)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("닫기"))
     }
 
     private var unlockedSummary: String {
@@ -184,7 +202,7 @@ struct MascotPickerView: View {
 
     private func portrait(info: FriendCharInfo) -> some View {
         ZStack {
-            Color.cream
+            Color.mascotTile
                 .frame(width: 76, height: 76)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
 
@@ -200,7 +218,7 @@ struct MascotPickerView: View {
     private func actionButtons(info: FriendCharInfo, isUnlocked: Bool, isSelected: Bool) -> some View {
         HStack(spacing: 4) {
             Button {
-                withAnimation(.easeInOut(duration: 0.15)) { unlockInfo = info }
+                presentUnlockInfo(info)
             } label: {
                 Text("획득방법")
                     .font(.galBold11())
@@ -256,18 +274,21 @@ struct MascotPickerView: View {
     }
 
     // MARK: - Unlock Info Popup
-    private func unlockInfoOverlay(_ info: FriendCharInfo) -> some View {
-        ZStack {
-            Color.black.opacity(0.55)
-                .ignoresSafeArea()
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    withAnimation(.easeOut(duration: 0.15)) { unlockInfo = nil }
-                }
+    private func presentUnlockInfo(_ info: FriendCharInfo) {
+        onShowUnlockInfo(info)
+    }
+}
 
+// MARK: - Unlock Info Card
+private struct UnlockInfoCard: View {
+    let info: FriendCharInfo
+    let onClose: () -> Void
+
+    var body: some View {
+        PixelPanel(bg: .cream, padding: 20) {
             VStack(spacing: 14) {
                 ZStack {
-                    Color.cream
+                    Color.mascotTile
                         .frame(width: 96, height: 96)
                         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                     PixelArtView(
@@ -287,7 +308,7 @@ struct MascotPickerView: View {
                     .padding(.horizontal, 12)
 
                 Text("획득 조건")
-                    .font(.pressStart9())
+                    .font(.galBold11())
                     .foregroundColor(.shade)
 
                 Text(LocalizedStringKey(info.unlockDescription))
@@ -296,11 +317,9 @@ struct MascotPickerView: View {
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, 8)
 
-                Button {
-                    withAnimation(.easeOut(duration: 0.15)) { unlockInfo = nil }
-                } label: {
+                Button(action: onClose) {
                     Text("확인")
-                        .font(.pressStart9())
+                        .font(.galBold14())
                         .foregroundColor(.cream)
                         .padding(.horizontal, 24)
                         .frame(height: 32)
@@ -310,12 +329,38 @@ struct MascotPickerView: View {
                 .buttonStyle(.plain)
                 .padding(.top, 4)
             }
-            .padding(20)
-            .background(Color.panel)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
-            .padding(.horizontal, 40)
-            .transition(.opacity)
+        }
+    }
+}
+
+// MARK: - Cover Wrapper
+// fullScreenCover 안에서 NavigationView 를 감싸 dim+팝업이 nav bar 위에 오버레이되도록 하는 컨테이너.
+// 팝업 상태(unlockInfoTarget)를 여기서 소유하고 자식에 콜백으로 전달.
+struct MascotPickerCover: View {
+    @ObservedObject var settingsVM: SettingsViewModel
+    @ObservedObject var statsVM: StatsViewModel
+    @State private var unlockInfoTarget: FriendCharInfo?
+
+    var body: some View {
+        NavigationView {
+            MascotPickerView(
+                settingsVM: settingsVM,
+                statsVM: statsVM,
+                onShowUnlockInfo: { unlockInfoTarget = $0 }
+            )
+        }
+        .navigationViewStyle(.stack)
+        .overlay {
+            if let target = unlockInfoTarget {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture { unlockInfoTarget = nil }
+
+                    UnlockInfoCard(info: target, onClose: { unlockInfoTarget = nil })
+                        .padding(.horizontal, 32)
+                }
+            }
         }
     }
 }

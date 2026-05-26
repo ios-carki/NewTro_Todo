@@ -35,15 +35,9 @@ struct PixelDateRangePopup: View {
         return .from
     }
 
+    // dim 은 호스트(PopupCenter)가 그린다. 여기는 카드만 반환.
     var body: some View {
-        ZStack {
-            Color.black.opacity(0.4)
-                .ignoresSafeArea()
-                .onTapGesture { onClose() }
-
-            popupCard
-                .padding(.horizontal, 24)
-        }
+        popupCard
     }
 
     private var popupCard: some View {
@@ -154,12 +148,24 @@ struct PixelDateRangePopup: View {
             Button { nextMonth() } label: {
                 Text("▶")
                     .font(.pressStart12())
-                    .foregroundColor(.ink)
+                    .foregroundColor(isAtCurrentMonth ? .shade.opacity(0.4) : .ink)
                     .frame(width: 44, height: 34)
                     .background(Color.cream)
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+                    .overlay(Rectangle().stroke(
+                        isAtCurrentMonth ? Color.shade.opacity(0.4) : Color.ink,
+                        lineWidth: 1.5
+                    ))
             }
+            .disabled(isAtCurrentMonth)
         }
+    }
+
+    // 미래 월은 백업로그/메모 어디서 사용되든 의미가 없어서 현재 월에서 next 비활성.
+    private var isAtCurrentMonth: Bool {
+        let now = Date()
+        let cal = Calendar.current
+        return cal.component(.year, from: now) == viewYear
+            && cal.component(.month, from: now) == viewMonth
     }
 
     private var weekdayHeader: some View {
@@ -296,6 +302,7 @@ struct PixelDateRangePopup: View {
     }
 
     private func nextMonth() {
+        guard !isAtCurrentMonth else { return }
         if viewMonth == 12 { viewYear += 1; viewMonth = 1 } else { viewMonth += 1 }
     }
 }

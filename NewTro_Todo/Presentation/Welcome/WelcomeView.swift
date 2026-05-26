@@ -8,8 +8,6 @@ struct WelcomeView: View {
     @State private var blinkVisible = true
     @State private var mascotX: CGFloat = -60
     @State private var mascotBobY: CGFloat = 0
-    @State private var coinBobY: CGFloat = 0
-    @State private var starBobY: CGFloat = 0
 
     private var selectedCharInfo: FriendCharInfo {
         CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
@@ -21,32 +19,20 @@ struct WelcomeView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                SkyBackgroundView()
-                distantHills(geo: geo)
+                // 걷는 마스코트를 foreground 슬롯에 주입 — 부쉬 layer 보다 아래로 그려져
+                // 우측 부쉬를 지날 때 마스코트가 가려진다.
+                BackgroundSceneryView { geo in
+                    PixelArtView(
+                        grid: PixelArtAssets.characterGrid(type: selectedCharInfo.gridType),
+                        palette: selectedCharInfo.palette,
+                        scale: 3
+                    )
+                    .offset(y: mascotBobY)
+                    .position(x: mascotX, y: geo.size.height - 100)
+                }
 
                 titleBlock
                     .position(x: geo.size.width / 2, y: geo.size.height * 0.42)
-
-                PixelArtView(grid: PixelArtAssets.coinGrid, palette: PixelArtAssets.coinPalette, scale: 3)
-                    .offset(y: coinBobY)
-                    .position(x: geo.size.width - 55, y: geo.size.height - 105)
-
-                PixelArtView(grid: PixelArtAssets.starGrid, palette: PixelArtAssets.starPalette, scale: 2)
-                    .offset(y: starBobY)
-                    .position(x: 75, y: geo.size.height - 130)
-
-                PixelArtView(grid: PixelArtAssets.bushGrid, palette: PixelArtAssets.bushPalette, scale: 3)
-                    .position(x: geo.size.width - 55, y: geo.size.height - 58)
-
-                GroundStripView()
-
-                PixelArtView(
-                    grid: PixelArtAssets.characterGrid(type: selectedCharInfo.gridType),
-                    palette: selectedCharInfo.palette,
-                    scale: 3
-                )
-                .offset(y: mascotBobY)
-                .position(x: mascotX, y: geo.size.height - 64)
             }
             .contentShape(Rectangle())
             .onTapGesture { onTap?() }
@@ -106,24 +92,8 @@ struct WelcomeView: View {
         .padding(.horizontal, 24)
     }
 
-    // MARK: - Distant Hills
-    private func distantHills(geo: GeometryProxy) -> some View {
-        ZStack {
-            Ellipse()
-                .fill(Color.grassDk.opacity(0.5))
-                .frame(width: 200, height: 90)
-                .position(x: 80, y: geo.size.height - 70)
-            Ellipse()
-                .fill(Color.grassDk.opacity(0.5))
-                .frame(width: 230, height: 100)
-                .position(x: geo.size.width - 70, y: geo.size.height - 75)
-        }
-    }
-
     // MARK: - Bob Animations
     private func startBobAnimations() {
         withAnimation(.easeInOut(duration: 0.45).repeatForever(autoreverses: true)) { mascotBobY = -4 }
-        withAnimation(.easeInOut(duration: 0.4).repeatForever(autoreverses: true))  { coinBobY = -5 }
-        withAnimation(.easeInOut(duration: 0.55).repeatForever(autoreverses: true)) { starBobY = -4 }
     }
 }

@@ -2,7 +2,7 @@ import SwiftUI
 
 struct MemoView: View {
     @ObservedObject var viewModel: MemoViewModel
-    @State private var isRangePickerPresented: Bool = false
+    @EnvironmentObject private var popupCenter: PopupCenter
     @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
     // 뷰 모드 — 앱 재실행 후에도 유지되도록 AppStorage 사용. "postIt" | "list"
     @AppStorage("memoViewMode") private var viewModeRaw: String = MemoViewMode.postIt.rawValue
@@ -36,24 +36,13 @@ struct MemoView: View {
                 .padding(.top, 8)
         }
         .overlay {
-            if isRangePickerPresented {
-                PixelDateRangePopup(
-                    initialFrom: viewModel.rangeFrom,
-                    initialTo: viewModel.rangeTo,
-                    onApply: { from, to in
-                        viewModel.rangeFrom = from
-                        viewModel.rangeTo = to
-                        viewModel.applyRangeFilter()
-                        isRangePickerPresented = false
-                    },
-                    onClose: { isRangePickerPresented = false }
-                )
-            } else if viewModel.isCreatePresented {
+            if viewModel.isCreatePresented {
                 MemoCreateView(viewModel: viewModel)
             } else if viewModel.isFormPresented, let memo = viewModel.editingMemo {
                 MemoFormView(memo: memo, viewModel: viewModel)
             }
         }
+        .overlay(alignment: .bottom) { FloatingTabBar() }
         .alert("오류", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }
@@ -131,7 +120,7 @@ struct MemoView: View {
     private var rangeChip: some View {
         let isActive = viewModel.isRangeFilterActive
         return Button {
-            isRangePickerPresented = true
+            presentRangePicker()
         } label: {
             Text("기간")
                 .font(.galBold10())
@@ -140,6 +129,22 @@ struct MemoView: View {
                 .frame(height: 26)
                 .background(isActive ? Color.ink : Color.panel)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+        }
+    }
+
+    private func presentRangePicker() {
+        popupCenter.present {
+            PixelDateRangePopup(
+                initialFrom: viewModel.rangeFrom,
+                initialTo: viewModel.rangeTo,
+                onApply: { from, to in
+                    viewModel.rangeFrom = from
+                    viewModel.rangeTo = to
+                    viewModel.applyRangeFilter()
+                    popupCenter.dismiss()
+                },
+                onClose: { popupCenter.dismiss() }
+            )
         }
     }
 

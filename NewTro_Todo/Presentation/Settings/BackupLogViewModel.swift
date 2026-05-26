@@ -44,9 +44,8 @@ final class BackupLogViewModel: ObservableObject {
     @Published private(set) var allLogs: [BackupLogEntry] = []
     @Published var filter: Filter = .all
     @Published var sortOrder: SortOrder = .newest
-    @Published var showCustomRangePicker: Bool = false
 
-    // 커스텀 기간 선택용 임시 상태 (시트에서만 편집, 확정 시 filter로 반영)
+    // 커스텀 기간 선택용 임시 상태 (popup 에서만 편집, 확정 시 filter 로 반영)
     @Published var customFrom: Date = Calendar.current.startOfDay(for: Date())
     @Published var customTo: Date = Date()
 
@@ -77,13 +76,12 @@ final class BackupLogViewModel: ObservableObject {
     }
 
     func selectFilter(_ filter: Filter) {
+        // custom 칩 진입 시 popup 의 초기 범위만 준비. popup 띄우기는 View 가 popupCenter 로 처리.
         if case .custom = filter {
-            // "기간" 탭: 시트 띄워서 범위 입력 받기
             let now = Date()
             let weekAgo = Calendar.current.date(byAdding: .day, value: -7, to: now) ?? now
             customFrom = Calendar.current.startOfDay(for: weekAgo)
             customTo = now
-            showCustomRangePicker = true
         } else {
             self.filter = filter
         }
@@ -95,11 +93,6 @@ final class BackupLogViewModel: ObservableObject {
         // to 는 해당 일 23:59:59.999 까지 포함
         let to = cal.date(bySettingHour: 23, minute: 59, second: 59, of: customTo) ?? customTo
         filter = .custom(from: from, to: to)
-        showCustomRangePicker = false
-    }
-
-    func cancelCustomRange() {
-        showCustomRangePicker = false
     }
 
     func toggleSortOrder() {

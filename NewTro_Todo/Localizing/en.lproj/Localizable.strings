@@ -153,20 +153,20 @@
 "미보유" = "LOCKED";
 
 // MARK: - Mascot Unlock Counts (unlockDescription)
-"5개 완료" = "Complete 5";
-"10개 완료" = "Complete 10";
-"25개 완료" = "Complete 25";
-"30개 완료" = "Complete 30";
-"50개 완료" = "Complete 50";
-"75개 완료" = "Complete 75";
-"100개 완료" = "Complete 100";
-"150개 완료" = "Complete 150";
-"200개 완료" = "Complete 200";
-"250개 완료" = "Complete 250";
-"365개 완료" = "Complete 365";
-"500개 완료" = "Complete 500";
-"1000개 완료" = "Complete 1000";
-"2000개 완료" = "Complete 2000";
+"투두 5개 완료" = "Complete 5 Todos";
+"투두 10개 완료" = "Complete 10 Todos";
+"투두 25개 완료" = "Complete 25 Todos";
+"투두 30개 완료" = "Complete 30 Todos";
+"투두 50개 완료" = "Complete 50 Todos";
+"투두 75개 완료" = "Complete 75 Todos";
+"투두 100개 완료" = "Complete 100 Todos";
+"투두 150개 완료" = "Complete 150 Todos";
+"투두 200개 완료" = "Complete 200 Todos";
+"투두 250개 완료" = "Complete 250 Todos";
+"투두 365개 완료" = "Complete 365 Todos";
+"투두 500개 완료" = "Complete 500 Todos";
+"투두 1000개 완료" = "Complete 1000 Todos";
+"투두 2000개 완료" = "Complete 2000 Todos";
 "퍼펙트 1회" = "1 Perfect Day";
 "퍼펙트 3회" = "3 Perfect Days";
 "퍼펙트 7회" = "7 Perfect Days";

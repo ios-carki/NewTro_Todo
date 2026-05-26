@@ -5,19 +5,20 @@ enum AppTab: Equatable {
 }
 
 struct RootTabContainerView: View {
-    @State private var selectedTab: AppTab = .todo
+    // 탭 선택/리셋 상태는 TabBarController 가 단일 소유.
+    // 각 탭 view 가 자기 내부에서 FloatingTabBar 를 .overlay 로 렌더하므로
+    // NavigationView push 시 push 된 화면이 자연스럽게 탭바를 덮는다.
+    @StateObject private var tabController = TabBarController()
     // UIHostingController가 UINavigationController에 직접 올라가므로
     // ZStack은 safe area 없이 물리적 전체 화면을 채움 → safe area 값을 직접 읽어야 함
     @State private var safeAreaBottom: CGFloat = 34
 
-    // 같은 탭 재선택 시 NavigationView를 재생성해 root까지 pop
-    @State private var todoTabId     = UUID()
-    @State private var memoTabId     = UUID()
-    @State private var statsTabId    = UUID()
-    @State private var settingsTabId = UUID()
-
     @AppStorage("hasSeenTodoOnboarding") private var hasSeenOnboarding: Bool = false
     @State private var showCoachmark: Bool = false
+
+    // 모든 탭에서 공용 popup 호스트. dim 이 nav bar / tab bar / safe area 까지 덮어야 하기 때문에
+    // 각 화면의 .overlay 가 아니라 루트 ZStack 의 zIndex 위에 단일 인스턴스로 렌더링한다.
+    @StateObject private var popupCenter = PopupCenter()
 
     @ObservedObject var mainVM: MainViewModel
     @ObservedObject var memoVM: MemoViewModel
@@ -52,21 +53,24 @@ struct RootTabContainerView: View {
             .ignoresSafeArea()
 
             tabContent
+                .environmentObject(popupCenter)
+                .environmentObject(tabController)
 
-            VStack {
-                Spacer()
-                GroundStripView(height: 64)
-            }
-            .ignoresSafeArea(edges: .bottom)
+            // 공용 Popup 레이어. dim 이 tabBar / safe area 까지 모두 덮음. 카드 영역만 터치 가능.
+            if let popup = popupCenter.item {
+                ZStack {
+                    Color.black.opacity(0.55)
+                        .ignoresSafeArea()
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            if popup.dismissOnBackgroundTap { popupCenter.dismiss() }
+                        }
 
-            VStack {
-                Spacer()
-                floatingTabBar
-                    .clipped()
-                    .padding(.horizontal, 14)
-                    .padding(.bottom, 16)
+                    popup.view
+                        .padding(.horizontal, 24)
+                }
+                .zIndex(50)
             }
-            .ignoresSafeArea(edges: .bottom)
 
             // TodoAdd 오버레이 — compact/expanded morph
             // dim 과 panel 을 별도 zIndex 레이어로 분리. NavigationView 미사용 → 합성 dim 두꺼움 회피.
@@ -181,7 +185,7 @@ struct RootTabContainerView: View {
             if !newValue { hasSeenOnboarding = true }
         }
         .onReceive(NotificationCenter.default.publisher(for: .replayTodoCoachmark)) { _ in
-            selectedTab = .todo
+            tabController.selected = .todo
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 showCoachmark = true
             }
@@ -321,94 +325,21 @@ struct RootTabContainerView: View {
 
     @ViewBuilder
     private var tabContent: some View {
-        switch selectedTab {
+        switch tabController.selected {
         case .todo:
-            MainView(viewModel: mainVM).id(todoTabId)
+            MainView(viewModel: mainVM).id(tabController.todoTabId)
         case .memo:
-            MemoView(viewModel: memoVM).id(memoTabId)
+            MemoView(viewModel: memoVM).id(tabController.memoTabId)
         case .stats:
-            StatsView(viewModel: statsVM).id(statsTabId)
+            StatsView(viewModel: statsVM).id(tabController.statsTabId)
         case .settings:
             SettingsView(
                 viewModel: settingsVM,
                 statsVM: statsVM,
                 makeBackupLogVM: makeBackupLogVM
             )
-            .id(settingsTabId)
+            .id(tabController.settingsTabId)
         }
-    }
-
-    // MARK: - Floating Tab Bar Panel
-
-    private var floatingTabBar: some View {
-        HStack(spacing: 0) {
-            tabItem(.todo,     label: "할일", sfSymbol: "checkmark.square.fill")
-            tabItem(.memo,     label: "메모", sfSymbol: "pencil")
-            tabItem(.stats,    label: "통계", sfSymbol: "chart.bar.fill")
-            tabItem(.settings, label: "설정", sfSymbol: "gearshape.fill")
-        }
-        .frame(height: 62)
-        .background(Color.panel)
-        .overlay(Rectangle().stroke(Color.ink, lineWidth: 3))
-        .background(Rectangle().fill(Color.ink).offset(x: 4, y: 4))
-    }
-
-    // MARK: - Tab Reset
-
-    private func resetTab(_ tab: AppTab) {
-        switch tab {
-        case .todo:     todoTabId = UUID()
-        case .memo:     memoTabId = UUID()
-        case .stats:    statsTabId = UUID()
-        case .settings: settingsTabId = UUID()
-        }
-    }
-
-    // MARK: - Tab Item
-
-    private func tabItem(_ tab: AppTab, label: LocalizedStringKey, sfSymbol: String) -> some View {
-        let isActive = selectedTab == tab
-        return Button {
-            if isActive {
-                resetTab(tab)
-            } else {
-                selectedTab = tab
-            }
-        } label: {
-            VStack(spacing: 5) {
-                Spacer(minLength: 0)
-
-                if isActive {
-                    ZStack {
-                        Rectangle()
-                            .fill(Color.ink)
-                            .frame(width: 38, height: 30)
-                            .offset(x: 2, y: 2)
-                        Rectangle()
-                            .fill(Color.sun)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .frame(width: 38, height: 30)
-                        Image(systemName: sfSymbol)
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(.ink)
-                    }
-                } else {
-                    Image(systemName: sfSymbol)
-                        .font(.system(size: 14, weight: .regular))
-                        .foregroundColor(.shade)
-                        .frame(width: 38, height: 30)
-                }
-
-                Text(label)
-                    .font(.galBold14())
-                    .foregroundColor(isActive ? .ink : .shade)
-                    .lineLimit(1)
-
-                Spacer(minLength: 0)
-            }
-            .frame(maxWidth: .infinity)
-        }
-        .buttonStyle(.plain)
     }
 }
 

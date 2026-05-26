@@ -55,7 +55,6 @@ final class SettingsViewModel: ObservableObject {
     @Published private(set) var midnightMinute: Int
 
     @Published var showPermissionDeniedAlert = false
-    @Published var showResetConfirm = false
     @Published var isMascotBobbing = false
 
     // MARK: - Backup / Restore State
@@ -342,7 +341,11 @@ final class SettingsViewModel: ObservableObject {
     }
 
     var isCustomNotificationTimes: Bool {
-        morningMode == .custom || midnightMode == .custom
+        let m = effectiveMorningTime
+        let n = effectiveMidnightTime
+        let morningMatchesDefault = m.hour == Self.morningDefault.hour && m.minute == Self.morningDefault.minute
+        let midnightMatchesDefault = n.hour == Self.midnightDefault.hour && n.minute == Self.midnightDefault.minute
+        return !(morningMatchesDefault && midnightMatchesDefault)
     }
 
     var appVersion: String {
@@ -355,10 +358,6 @@ final class SettingsViewModel: ObservableObject {
     }
 
     // MARK: - Reset
-    func confirmReset() {
-        showResetConfirm = true
-    }
-
     func resetAllData() {
         Task {
             do {

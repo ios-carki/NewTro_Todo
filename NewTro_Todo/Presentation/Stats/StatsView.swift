@@ -35,6 +35,7 @@ struct StatsView: View {
                 .scrollContentBackground(.hidden)
             }
         }
+        .overlay(alignment: .bottom) { FloatingTabBar() }
         .onAppear { viewModel.loadStats() }
     }
 
@@ -67,9 +68,12 @@ struct StatsView: View {
     // MARK: - Counts Panel
     private var countsPanel: some View {
         PixelPanel {
-            HStack(alignment: .top, spacing: 12) {
-                completedCell
-                incompleteCell
+            VStack(spacing: 12) {
+                HStack(alignment: .top, spacing: 12) {
+                    completedCell
+                    incompleteCell
+                }
+                perfectCell
             }
         }
     }
@@ -107,6 +111,28 @@ struct StatsView: View {
         .padding(12)
         .background(Color.panel)
         .overlay(Rectangle().stroke(Color.pixelRed, lineWidth: 1.5))
+    }
+
+    private var perfectCell: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "star.fill")
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(.sun)
+            Text("퍼펙트")
+                .font(.galBold11())
+                .foregroundColor(.shade)
+            Spacer()
+            Text("\(viewModel.stats.totalPerfectDays)")
+                .font(.pressStart14())
+                .foregroundColor(.ink)
+            Text("회")
+                .font(.galBold11())
+                .foregroundColor(.shade)
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity)
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.sun, lineWidth: 1.5))
     }
 
     // MARK: - Weekly Chart
