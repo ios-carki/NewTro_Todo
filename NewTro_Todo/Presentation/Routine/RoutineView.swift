@@ -18,15 +18,23 @@ struct RoutineView: View {
             content
                 .padding(.top, 8)
         }
-        .overlay {
-            if viewModel.isCreatePresented {
-                RoutineFormView(
-                    initial: nil,
-                    onSave: { entity in viewModel.saveCreated(entity) },
-                    onDelete: nil,
-                    onCancel: { viewModel.dismissForm() }
-                )
-            } else if viewModel.isFormPresented, let routine = viewModel.editingRoutine {
+        .overlay(alignment: .bottom) { FloatingTabBar() }
+        .fullScreenCover(isPresented: Binding(
+            get: { viewModel.isCreatePresented },
+            set: { if !$0 { viewModel.dismissForm() } }
+        )) {
+            RoutineFormView(
+                initial: nil,
+                onSave: { entity in viewModel.saveCreated(entity) },
+                onDelete: nil,
+                onCancel: { viewModel.dismissForm() }
+            )
+        }
+        .fullScreenCover(isPresented: Binding(
+            get: { viewModel.isFormPresented && viewModel.editingRoutine != nil },
+            set: { if !$0 { viewModel.dismissForm() } }
+        )) {
+            if let routine = viewModel.editingRoutine {
                 RoutineFormView(
                     initial: routine,
                     onSave: { entity in viewModel.saveEdited(entity) },
@@ -35,7 +43,6 @@ struct RoutineView: View {
                 )
             }
         }
-        .overlay(alignment: .bottom) { FloatingTabBar() }
         .alert("오류", isPresented: Binding(
             get: { viewModel.errorMessage != nil },
             set: { if !$0 { viewModel.errorMessage = nil } }

@@ -98,8 +98,8 @@ struct RoutineFormView: View {
     // MARK: - Title
     private var titleSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            sectionLabel("제목")
-            TextField("루틴 제목".localized(), text: $title)
+            sectionLabel("할일")
+            TextField("할 일을 입력하세요".localized(), text: $title)
                 .font(.galCondensed16())
                 .foregroundColor(.ink)
                 .padding(10)
@@ -145,7 +145,8 @@ struct RoutineFormView: View {
                 if startDatePickerOpen {
                     PixelDateWheel(
                         date: $startDate,
-                        mode: .date
+                        mode: .date,
+                        minimumDate: Calendar.current.startOfDay(for: Date())
                     )
                     .onChange(of: startDate) { newValue in
                         if newValue > endDate {
