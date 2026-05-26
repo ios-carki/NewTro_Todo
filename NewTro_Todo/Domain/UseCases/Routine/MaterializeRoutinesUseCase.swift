@@ -38,15 +38,11 @@ final class MaterializeRoutinesUseCase: MaterializeRoutinesUseCaseProtocol {
             var cursor = from
             while cursor <= to {
                 if matches(routine, on: cursor) {
-                    let start = combine(date: cursor, time: routine.targetTimeStart, cal: cal)
-                    let end   = combine(date: cursor, time: routine.targetTimeEnd, cal: cal)
                     _ = try todoRepo.addTodoFromRoutine(
                         routineId: routine.id,
                         targetDate: cursor,
                         text: routine.title,
-                        isAllDay: routine.isAllDay,
-                        targetTimeStart: start,
-                        targetTimeEnd: end,
+                        importance: routine.importance,
                         colorName: routine.colorName
                     )
                 }
@@ -122,19 +118,5 @@ final class MaterializeRoutinesUseCase: MaterializeRoutinesUseCaseProtocol {
     private func startOfWeek(of date: Date, cal: Calendar) -> Date {
         let comps = cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: date)
         return cal.date(from: comps) ?? date
-    }
-
-    // 시각만 의미 있는 routine.targetTimeStart/End 를 targetDate 와 결합해
-    // "그 날짜의 그 시각" Date 를 만든다. time 이 nil 이면 nil.
-    @MainActor
-    private func combine(date: Date, time: Date?, cal: Calendar) -> Date? {
-        guard let time else { return nil }
-        let t = cal.dateComponents([.hour, .minute, .second], from: time)
-        return cal.date(
-            bySettingHour: t.hour ?? 0,
-            minute: t.minute ?? 0,
-            second: t.second ?? 0,
-            of: date
-        )
     }
 }

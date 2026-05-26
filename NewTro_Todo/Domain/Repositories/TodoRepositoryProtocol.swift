@@ -39,9 +39,7 @@ protocol TodoRepositoryProtocol {
         routineId: String,
         targetDate: Date,
         text: String,
-        isAllDay: Bool,
-        targetTimeStart: Date?,
-        targetTimeEnd: Date?,
+        importance: Importance,
         colorName: String
     ) throws -> TodoEntity?
 

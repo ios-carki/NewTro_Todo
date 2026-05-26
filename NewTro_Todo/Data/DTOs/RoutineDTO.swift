@@ -6,6 +6,7 @@ extension RoutineObject {
         let kind = RoutineRepeatKind(rawValue: repeatKind) ?? .daily
         let mDays: [RoutineDay] = monthDays.compactMap { RoutineDay(rawValue: $0) }
         let yDay: RoutineDay? = yearDay > 0 ? RoutineDay(rawValue: yearDay) : nil
+        let imp = Importance(rawValue: importance) ?? .none
 
         return RoutineEntity(
             id: objectID.stringValue,
@@ -17,9 +18,7 @@ extension RoutineObject {
             monthDays: mDays,
             yearMonth: yearMonth,
             yearDay: yDay,
-            isAllDay: isAllDay,
-            targetTimeStart: targetTimeStart,
-            targetTimeEnd: targetTimeEnd,
+            importance: imp,
             colorName: colorName,
             createdAt: createdAt,
             updatedAt: updatedAt
@@ -41,9 +40,7 @@ extension RoutineEntity {
         obj.monthDays.append(objectsIn: monthDays.map { $0.rawValue })
         obj.yearMonth = yearMonth
         obj.yearDay = yearDay?.rawValue ?? 0
-        obj.isAllDay = isAllDay
-        obj.targetTimeStart = targetTimeStart
-        obj.targetTimeEnd = targetTimeEnd
+        obj.importance = importance.rawValue
         obj.colorName = colorName
         obj.createdAt = createdAt
         obj.updatedAt = updatedAt

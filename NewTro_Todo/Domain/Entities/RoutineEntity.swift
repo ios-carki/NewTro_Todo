@@ -45,12 +45,10 @@ struct RoutineEntity: Identifiable, Equatable {
     var yearMonth: Int          // 1~12, 0 = 미설정
     var yearDay: RoutineDay?
 
-    // 진행 시각 (시각만 의미, 날짜는 무시)
-    var isAllDay: Bool
-    var targetTimeStart: Date?
-    var targetTimeEnd: Date?
-
+    // 만들어지는 Todo 한 건 한 건에 그대로 적용될 값
+    var importance: Importance
     var colorName: String
+
     var createdAt: Date
     var updatedAt: Date
 }

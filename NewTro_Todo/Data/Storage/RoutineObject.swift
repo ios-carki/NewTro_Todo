@@ -22,11 +22,8 @@ final class RoutineObject: Object, ObjectKeyIdentifiable {
     @Persisted var yearMonth: Int = 0
     @Persisted var yearDay: Int = 0
 
-    // 진행 시각 (시각만 의미. materialize 시 각 targetDate 와 결합)
-    @Persisted var isAllDay: Bool = false
-    @Persisted var targetTimeStart: Date? = nil
-    @Persisted var targetTimeEnd: Date? = nil
-
+    // materialize 시 각 Todo 에 그대로 복사될 값
+    @Persisted var importance: Int = 0
     @Persisted var colorName: String = "yellow"
 
     @Persisted var createdAt: Date = Date()

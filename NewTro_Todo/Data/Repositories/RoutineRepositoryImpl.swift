@@ -31,9 +31,7 @@ final class RoutineRepositoryImpl: RoutineRepositoryProtocol {
         obj.monthDays.append(objectsIn: entity.monthDays.map { $0.rawValue })
         obj.yearMonth = entity.yearMonth
         obj.yearDay = entity.yearDay?.rawValue ?? 0
-        obj.isAllDay = entity.isAllDay
-        obj.targetTimeStart = entity.targetTimeStart
-        obj.targetTimeEnd = entity.targetTimeEnd
+        obj.importance = entity.importance.rawValue
         obj.colorName = entity.colorName
         let now = Date()
         obj.createdAt = now
@@ -60,9 +58,7 @@ final class RoutineRepositoryImpl: RoutineRepositoryProtocol {
             obj.monthDays.append(objectsIn: entity.monthDays.map { $0.rawValue })
             obj.yearMonth = entity.yearMonth
             obj.yearDay = entity.yearDay?.rawValue ?? 0
-            obj.isAllDay = entity.isAllDay
-            obj.targetTimeStart = entity.targetTimeStart
-            obj.targetTimeEnd = entity.targetTimeEnd
+            obj.importance = entity.importance.rawValue
             obj.colorName = entity.colorName
             obj.updatedAt = Date()
         }

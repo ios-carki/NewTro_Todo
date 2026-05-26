@@ -1,7 +1,11 @@
 import SwiftUI
+import UIKit
 
-// 루틴 생성 / 수정 폼. RoutineView 가 .overlay 로 띄움.
-// initial == nil → 신규 생성, initial != nil → 수정 (좌측 삭제 버튼 노출).
+// 루틴 생성 / 수정 폼.
+// 두 그룹으로 분리:
+//   [루틴 설정]   : 할일(텍스트), 기간(시작~종료), 반복(daily/weekly/...)
+//   [Todo 설정]   : 색상, 중요도  (만들어질 각 Todo 에 그대로 복사됨)
+// 시간/알림은 루틴 폼에 두지 않는다 (Todo 폼에서도 진행시각 기획이 폐기됨).
 struct RoutineFormView: View {
     let initial: RoutineEntity?
     let onSave: (RoutineEntity) -> Void
@@ -17,9 +21,7 @@ struct RoutineFormView: View {
     @State private var monthDays: Set<Int> = []     // 1~31, 32=last
     @State private var yearMonth: Int = 0           // 1~12
     @State private var yearDay: Int = 0             // 1~31, 32=last
-    @State private var isAllDay: Bool = true
-    @State private var targetTimeStart: Date = defaultStartTime()
-    @State private var targetTimeEnd: Date = defaultEndTime()
+    @State private var importance: Importance = .none
     @State private var colorName: String = "yellow"
 
     // 인라인 펼침 토글
@@ -36,21 +38,25 @@ struct RoutineFormView: View {
                     .padding(.horizontal, 12)
                     .padding(.top, 6)
 
-                ScrollView {
+                ScrollView(showsIndicators: false) {
                     VStack(spacing: 14) {
-                        titleSection
-                        colorSection
-                        dateRangeSection
-                        repeatKindSection
-                        repeatSubForm
-                        timeSection
+                        groupHeader("루틴 설정")
+                        sectionContainer { titleSection }
+                        sectionContainer { dateRangeSection }
+                        sectionContainer { repeatBlock }
+
+                        groupDivider
+
+                        groupHeader("Todo 설정")
+                        sectionContainer { colorSection }
+                        sectionContainer { importanceSection }
 
                         if initial != nil, onDelete != nil {
                             deleteButton
                                 .padding(.top, 8)
                         }
 
-                        Spacer(minLength: 80)
+                        Spacer(minLength: 60)
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
@@ -95,43 +101,68 @@ struct RoutineFormView: View {
         }
     }
 
-    // MARK: - Title
-    private var titleSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            sectionLabel("할일")
-            TextField("할 일을 입력하세요".localized(), text: $title)
-                .font(.galCondensed16())
+    // MARK: - Group header / divider
+    // 두 그룹 (루틴 설정 / Todo 설정) 사이 시각 분리.
+    private func groupHeader(_ text: LocalizedStringKey) -> some View {
+        HStack(spacing: 8) {
+            Rectangle()
+                .fill(Color.ink)
+                .frame(width: 12, height: 12)
+            Text(text)
+                .font(.galBold13())
                 .foregroundColor(.ink)
-                .padding(10)
-                .background(Color.tile)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+            Spacer()
         }
+        .padding(.horizontal, 2)
     }
 
-    // MARK: - Color
-    private var colorSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            sectionLabel("색상")
-            HStack(spacing: 8) {
-                ForEach(MemoColorPalette.all, id: \.name) { item in
-                    Button {
-                        colorName = item.name
-                    } label: {
-                        let isActive = colorName == item.name
-                        Rectangle()
-                            .fill(item.color)
-                            .frame(width: 32, height: 32)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: isActive ? 3 : 2))
-                    }
-                    .buttonStyle(.plain)
-                }
-                Spacer()
+    private var groupDivider: some View {
+        VStack(spacing: 0) {
+            Rectangle().fill(Color.ink).frame(height: 2)
+            Rectangle().fill(Color.ink.opacity(0.25)).frame(height: 2)
+        }
+        .padding(.vertical, 6)
+    }
+
+    // 각 섹션 행을 감싸는 컨테이너 — Todo 폼의 sectionContainer 와 동일 톤.
+    @ViewBuilder
+    private func sectionContainer<V: View>(@ViewBuilder _ content: () -> V) -> some View {
+        content()
+            .padding(.horizontal, 12)
+            .padding(.vertical, 10)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Color.ink.opacity(0.05))
+    }
+
+    // MARK: - Title (할일)
+    // Todo 입력 필드와 동일한 AutoFocusTextField 사용 → placeholder 색/폰트가 동일.
+    private var titleSection: some View {
+        HStack(alignment: .top, spacing: 8) {
+            Text("할일")
+                .font(.galBold14())
+                .foregroundColor(.ink)
+                .padding(.top, 6)
+            VStack(spacing: 0) {
+                AutoFocusTextField(
+                    text: $title,
+                    placeholder: NSLocalizedString("할 일을 입력하세요", comment: "Routine title placeholder"),
+                    autoFocus: initial == nil,
+                    font: UIFont.boldFont(size: 14),
+                    textColor: UIColor(Color.ink),
+                    placeholderColor: UIColor(Color.ink).withAlphaComponent(0.4),
+                    accessibilityIdentifier: "routineTitleField",
+                    onSubmit: { true },
+                    charLimit: 100
+                )
+                .frame(minHeight: 34)
+                Rectangle()
+                    .fill(Color.ink.opacity(0.3))
+                    .frame(height: 1.5)
             }
         }
     }
 
-    // MARK: - Date range
+    // MARK: - Date range (기간)
     private var dateRangeSection: some View {
         VStack(alignment: .leading, spacing: 6) {
             sectionLabel("기간")
@@ -191,8 +222,15 @@ struct RoutineFormView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - Repeat kind chips
-    private var repeatKindSection: some View {
+    // MARK: - Repeat block (반복 + sub-form)
+    private var repeatBlock: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            repeatKindRow
+            repeatSubForm
+        }
+    }
+
+    private var repeatKindRow: some View {
         VStack(alignment: .leading, spacing: 6) {
             sectionLabel("반복")
             HStack(spacing: 6) {
@@ -248,7 +286,6 @@ struct RoutineFormView: View {
         }
     }
 
-    // weekly / biweekly 공용 — 요일 7개 칩 (다중 선택). 1=일 ... 7=토.
     private var weeklyPicker: some View {
         VStack(alignment: .leading, spacing: 6) {
             sectionLabel("요일")
@@ -280,7 +317,6 @@ struct RoutineFormView: View {
         .buttonStyle(.plain)
     }
 
-    // monthly — 1~31 + 마지막날 (32). 7열 그리드.
     private var monthlyPicker: some View {
         VStack(alignment: .leading, spacing: 6) {
             sectionLabel("일자")
@@ -312,7 +348,6 @@ struct RoutineFormView: View {
         .buttonStyle(.plain)
     }
 
-    // yearly — 월(1~12) 그리드 + 일(1~31, 마지막날) 그리드.
     private var yearlyPicker: some View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 6) {
@@ -370,42 +405,86 @@ struct RoutineFormView: View {
         .buttonStyle(.plain)
     }
 
-    // MARK: - Time section
-    private var timeSection: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            HStack {
-                sectionLabel("진행시각")
-                Spacer()
-                Text("종일".localized())
-                    .font(.galBold13())
-                    .foregroundColor(.shade)
-                PxSwitch(isOn: isAllDay) {
-                    withAnimation(.easeInOut(duration: 0.2)) { isAllDay.toggle() }
-                }
-            }
-            if !isAllDay {
-                VStack(spacing: 8) {
-                    timeRow(label: "시작", date: $targetTimeStart)
-                    timeRow(label: "끝", date: $targetTimeEnd)
+    // MARK: - Color (Todo 폼과 동일 디자인)
+    private var colorSection: some View {
+        HStack(spacing: 8) {
+            PixelArtView(
+                grid: PixelArtAssets.dotPaletteGrid,
+                palette: PixelArtAssets.dotPalettePalette,
+                scale: 2
+            )
+            Text("색상")
+                .font(.galBold14())
+                .foregroundColor(.ink)
+
+            HStack(spacing: 6) {
+                ForEach(MemoColorPalette.all, id: \.name) { item in
+                    Button {
+                        colorName = item.name
+                    } label: {
+                        let isSelected = colorName == item.name
+                        item.color
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 30)
+                            .overlay(
+                                Rectangle().stroke(
+                                    isSelected ? Color.ink : Color.ink.opacity(0.3),
+                                    lineWidth: isSelected ? 2.5 : 1.5
+                                )
+                            )
+                    }
+                    .buttonStyle(.plain)
                 }
             }
         }
+        .frame(minHeight: 36)
     }
 
-    private func timeRow(label: LocalizedStringKey, date: Binding<Date>) -> some View {
-        HStack {
+    // MARK: - Importance (Todo 폼과 동일 디자인)
+    private var importanceSection: some View {
+        HStack(spacing: 8) {
+            PixelArtView(
+                grid: PixelArtAssets.dotBarsGrid,
+                palette: PixelArtAssets.dotBarsPalette,
+                scale: 2
+            )
+            Text("중요도")
+                .font(.galBold14())
+                .foregroundColor(.ink)
+            Spacer()
+            HStack(spacing: 6) {
+                importanceChip(.none,   label: "낮음")
+                importanceChip(.medium, label: "보통")
+                importanceChip(.high,   label: "높음")
+            }
+        }
+        .frame(minHeight: 36)
+    }
+
+    private func importanceChip(_ imp: Importance, label: LocalizedStringKey) -> some View {
+        let isSelected = importance == imp
+        let chipBg: Color = switch imp {
+        case .none:   .grassLt
+        case .medium: .sunLt
+        case .high:   .redLt
+        }
+        let selectedTextColor: Color = switch imp {
+        case .none:   .grassDk
+        case .medium: .sunDk
+        case .high:   .redDk
+        }
+        return Button {
+            importance = imp
+        } label: {
             Text(label)
                 .font(.galBold13())
-                .foregroundColor(.shade)
-                .frame(width: 36, alignment: .leading)
-            DatePicker("", selection: date, displayedComponents: .hourAndMinute)
-                .labelsHidden()
-                .datePickerStyle(.compact)
+                .foregroundColor(isSelected ? selectedTextColor : .ink)
+                .padding(.horizontal, 10)
+                .frame(height: 32)
+                .background(isSelected ? chipBg : Color.cream)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
         }
-        .padding(.horizontal, 12)
-        .frame(height: 44)
-        .background(Color.cream)
-        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .buttonStyle(.plain)
     }
 
     // MARK: - Delete button
@@ -458,18 +537,9 @@ struct RoutineFormView: View {
         )
     }
 
-    private static func defaultStartTime() -> Date {
-        Calendar.current.date(bySettingHour: 9, minute: 0, second: 0, of: Date()) ?? Date()
-    }
-
-    private static func defaultEndTime() -> Date {
-        Calendar.current.date(bySettingHour: 10, minute: 0, second: 0, of: Date()) ?? Date()
-    }
-
     // 신규 진입 시 + initial 변경 시 호출. State 초기화.
     private func hydrateFromInitial() {
         guard let r = initial else {
-            // 신규 — weekly 기본값으로 오늘 요일 시드
             let todayWd = Calendar.current.component(.weekday, from: Date())
             weekdays = [todayWd]
             return
@@ -482,13 +552,10 @@ struct RoutineFormView: View {
         monthDays = Set(r.monthDays.map(\.rawValue))
         yearMonth = r.yearMonth
         yearDay = r.yearDay?.rawValue ?? 0
-        isAllDay = r.isAllDay
-        if let s = r.targetTimeStart { targetTimeStart = s }
-        if let e = r.targetTimeEnd { targetTimeEnd = e }
+        importance = r.importance
         colorName = r.colorName
     }
 
-    // 반복 종류 전환 시 그 종류에 맞는 기본값 시드 (이미 채워져 있으면 유지).
     private func seedDefaultsForKind(_ kind: RoutineRepeatKind) {
         let cal = Calendar.current
         switch kind {
@@ -514,10 +581,6 @@ struct RoutineFormView: View {
         let mDays: [RoutineDay] = monthDays.sorted().compactMap { RoutineDay(rawValue: $0) }
         let yDay: RoutineDay? = yearDay > 0 ? RoutineDay(rawValue: yearDay) : nil
 
-        // 진행시각은 시각만 의미. materialize 시 targetDate 와 결합되므로 그대로 전달.
-        let resolvedStart: Date? = isAllDay ? nil : targetTimeStart
-        let resolvedEnd: Date? = isAllDay ? nil : targetTimeEnd
-
         let now = Date()
         let entity = RoutineEntity(
             id: initial?.id ?? "",
@@ -529,9 +592,7 @@ struct RoutineFormView: View {
             monthDays: mDays,
             yearMonth: (repeatKind == .yearly) ? yearMonth : 0,
             yearDay: (repeatKind == .yearly) ? yDay : nil,
-            isAllDay: isAllDay,
-            targetTimeStart: resolvedStart,
-            targetTimeEnd: resolvedEnd,
+            importance: importance,
             colorName: colorName,
             createdAt: initial?.createdAt ?? now,
             updatedAt: now

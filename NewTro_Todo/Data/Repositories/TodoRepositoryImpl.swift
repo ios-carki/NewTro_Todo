@@ -189,9 +189,7 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         routineId: String,
         targetDate: Date,
         text: String,
-        isAllDay: Bool,
-        targetTimeStart: Date?,
-        targetTimeEnd: Date?,
+        importance: Importance,
         colorName: String
     ) throws -> TodoEntity? {
         guard let rid = try? ObjectId(string: routineId) else { return nil }
@@ -212,14 +210,14 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         let todo = Todo(
             todo: text,
             favorite: false,
-            importance: Importance.none.rawValue,
+            importance: importance.rawValue,
             regDate: Date(),
             stringDate: dateStr,
             targetDate: dayStart,
             isFinished: false,
-            targetTimeStart: targetTimeStart,
-            targetTimeEnd: targetTimeEnd,
-            isAllDay: isAllDay,
+            targetTimeStart: nil,
+            targetTimeEnd: nil,
+            isAllDay: false,
             notifyAt: nil,
             sortOrder: minSortOrder - 1,
             completedAt: nil,
