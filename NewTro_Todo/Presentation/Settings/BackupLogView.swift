@@ -1,16 +1,14 @@
 import SwiftUI
 
 struct BackupLogView: View {
-    @StateObject private var viewModel: BackupLogViewModel
-
-    // iOS 15 NavigationLink는 destination을 eagerly 평가하므로 autoclosure 로 lazy 초기화.
-    init(viewModel: @autoclosure @escaping () -> BackupLogViewModel) {
-        _viewModel = StateObject(wrappedValue: viewModel())
-    }
+    @ObservedObject var viewModel: BackupLogViewModel
+    @Environment(\.dismiss) private var dismiss
+    let onShowRangePicker: () -> Void
 
     var body: some View {
         ZStack {
-            Color.sky.ignoresSafeArea()
+            BackgroundSceneryView()
+                .ignoresSafeArea()
 
             VStack(spacing: 0) {
                 retentionNotice
@@ -35,11 +33,28 @@ struct BackupLogView: View {
         }
         .navigationTitle("백업 로그")
         .navigationBarTitleDisplayMode(.inline)
-        .onAppear { viewModel.onAppear() }
-        .sheet(isPresented: $viewModel.showCustomRangePicker) {
-            customRangeSheet
-                .presentationDetents([.medium])
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                closeButton
+            }
         }
+        .onAppear { viewModel.onAppear() }
+    }
+
+    private var closeButton: some View {
+        Button {
+            dismiss()
+        } label: {
+            PixelArtView(
+                grid: PixelArtAssets.dotXGrid,
+                palette: PixelArtAssets.dotXPalette,
+                scale: 2
+            )
+            .frame(width: 32, height: 32)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("닫기"))
     }
 
     // MARK: - Retention Notice
@@ -75,6 +90,9 @@ struct BackupLogView: View {
         let isActive = isCurrentFilter(candidate)
         return Button {
             viewModel.selectFilter(candidate)
+            if case .custom = candidate {
+                onShowRangePicker()
+            }
         } label: {
             ZStack(alignment: .topLeading) {
                 Rectangle()
@@ -83,7 +101,7 @@ struct BackupLogView: View {
                     .padding(.top, 2)
 
                 Text(LocalizedStringKey(candidate.titleKey))
-                    .font(.pressStart9())
+                    .font(.galBold10())
                     .foregroundColor(.ink)
                     .padding(.horizontal, 10)
                     .frame(height: 26)
@@ -115,26 +133,21 @@ struct BackupLogView: View {
 
     private var sortBar: some View {
         HStack(spacing: 8) {
-            if case let .custom(from, to) = viewModel.filter {
-                Text(customRangeLabel(from: from, to: to))
-                    .font(.pressStart9())
-                    .foregroundColor(.shade)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.7)
-            }
-            Spacer(minLength: 0)
-
             Button {
-                viewModel.toggleSortOrder()
+                withAnimation(.spring(response: 0.32, dampingFraction: 0.7)) {
+                    viewModel.toggleSortOrder()
+                }
             } label: {
                 HStack(spacing: 4) {
-                    Image(systemName: viewModel.sortOrder == .newest
-                          ? "arrow.down" : "arrow.up")
+                    Image(systemName: "arrow.down")
                         .font(.system(size: 10, weight: .bold))
                         .foregroundColor(.ink)
+                        .rotationEffect(.degrees(viewModel.sortOrder == .newest ? 0 : 180))
                     Text(LocalizedStringKey(viewModel.sortOrder.titleKey))
-                        .font(.galBold13())
+                        .font(.galBold11())
                         .foregroundColor(.ink)
+                        .id(viewModel.sortOrder)
+                        .transition(.opacity)
                 }
                 .padding(.horizontal, 10)
                 .frame(height: 26)
@@ -143,6 +156,16 @@ struct BackupLogView: View {
                 .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
             }
             .buttonStyle(.plain)
+
+            Spacer(minLength: 0)
+
+            if case let .custom(from, to) = viewModel.filter {
+                Text(customRangeLabel(from: from, to: to))
+                    .font(.pressStart9())
+                    .foregroundColor(.shade)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
         }
     }
 
@@ -156,17 +179,25 @@ struct BackupLogView: View {
     // MARK: - Empty State
 
     private var emptyState: some View {
-        VStack(spacing: 14) {
-            Spacer()
-            PixelArtView(
-                grid: emptyChestGrid,
-                palette: emptyChestPalette,
-                scale: 5
-            )
-            Text("데이터 백업 로그가 없어요")
-                .font(.galBold14())
-                .foregroundColor(.shade)
-            Spacer()
+        VStack(spacing: 12) {
+            PixelPanel(bg: .cream, padding: 16) {
+                VStack(spacing: 10) {
+                    PixelArtView(
+                        grid: emptyChestGrid,
+                        palette: emptyChestPalette,
+                        scale: 5
+                    )
+                    Text("데이터 백업 로그가 없어요")
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                    Text("설정에서 데이터를 백업해보세요!")
+                        .font(.galBold11())
+                        .foregroundColor(.shade.opacity(0.7))
+                }
+                .frame(maxWidth: .infinity)
+            }
+            .padding(.horizontal, 16)
+            .padding(.top, 40)
             Spacer()
         }
         .frame(maxWidth: .infinity)
@@ -214,7 +245,7 @@ struct BackupLogView: View {
                 .fill(Color.ink)
                 .frame(width: 6, height: 6)
             Text(formatSectionDate(date))
-                .font(.pressStart8())
+                .font(.galBold11())
                 .foregroundColor(.ink)
             Spacer()
         }
@@ -233,7 +264,7 @@ struct BackupLogView: View {
                     .font(.galBold13())
                     .foregroundColor(.ink)
                 Text(countsLine(entry.counts))
-                    .font(.pressStart9())
+                    .font(.galBold10())
                     .foregroundColor(.shade)
             }
 
@@ -245,73 +276,6 @@ struct BackupLogView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
-    }
-
-    // MARK: - Custom Range Sheet
-
-    private var customRangeSheet: some View {
-        ZStack {
-            Color.panel.ignoresSafeArea()
-            VStack(spacing: 18) {
-                Text("기간 선택")
-                    .font(.galBold17())
-                    .foregroundColor(.ink)
-                    .padding(.top, 18)
-
-                VStack(spacing: 10) {
-                    rangeDatePickerRow(title: "시작", date: $viewModel.customFrom)
-                    rangeDatePickerRow(title: "끝", date: $viewModel.customTo)
-                }
-                .padding(14)
-                .background(Color.white)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
-                .padding(.horizontal, 18)
-
-                Spacer()
-
-                HStack(spacing: 10) {
-                    Button { viewModel.cancelCustomRange() } label: {
-                        Text("취소")
-                            .font(.galBold14())
-                            .foregroundColor(.ink)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 40)
-                            .background(Color.tile)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
-                    }
-                    .buttonStyle(.plain)
-
-                    Button { viewModel.confirmCustomRange() } label: {
-                        Text("확인")
-                            .font(.galBold14())
-                            .foregroundColor(.ink)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 40)
-                            .background(Color.peach)
-                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
-                            .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(viewModel.customFrom > viewModel.customTo)
-                }
-                .padding(.horizontal, 18)
-                .padding(.bottom, 18)
-            }
-        }
-    }
-
-    private func rangeDatePickerRow(title: LocalizedStringKey, date: Binding<Date>) -> some View {
-        HStack {
-            Text(title)
-                .font(.galBold14())
-                .foregroundColor(.ink)
-                .frame(width: 40, alignment: .leading)
-            Spacer()
-            DatePicker("", selection: date, displayedComponents: .date)
-                .labelsHidden()
-        }
     }
 
     // MARK: - Formatting
@@ -337,6 +301,50 @@ struct BackupLogView: View {
     private func countsLine(_ c: BackupCounts) -> String {
         let template = "할일 %d · 메모 %d · 템플릿 %d".localized()
         return String(format: template, c.todo, c.quickNote, c.template)
+    }
+}
+
+// MARK: - Cover Wrapper
+// fullScreenCover 안에서 NavigationView 를 감싸 dim+팝업이 nav bar 위에 오버레이되도록 하는 컨테이너.
+// 팝업 상태와 VM 을 여기서 소유하고 자식에 ObservedObject + 콜백으로 내려줌.
+struct BackupLogCover: View {
+    @StateObject private var viewModel: BackupLogViewModel
+    @State private var showRangePicker = false
+
+    init(makeVM: @escaping @MainActor () -> BackupLogViewModel) {
+        _viewModel = StateObject(wrappedValue: makeVM())
+    }
+
+    var body: some View {
+        NavigationView {
+            BackupLogView(
+                viewModel: viewModel,
+                onShowRangePicker: { showRangePicker = true }
+            )
+        }
+        .navigationViewStyle(.stack)
+        .overlay {
+            if showRangePicker {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture { showRangePicker = false }
+
+                    PixelDateRangePopup(
+                        initialFrom: viewModel.customFrom,
+                        initialTo: viewModel.customTo,
+                        onApply: { from, to in
+                            viewModel.customFrom = from
+                            viewModel.customTo = to
+                            viewModel.confirmCustomRange()
+                            showRangePicker = false
+                        },
+                        onClose: { showRangePicker = false }
+                    )
+                    .padding(.horizontal, 24)
+                }
+            }
+        }
     }
 }
 

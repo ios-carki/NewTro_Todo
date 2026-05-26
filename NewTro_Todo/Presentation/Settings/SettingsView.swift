@@ -6,73 +6,70 @@ struct SettingsView: View {
     @ObservedObject var statsVM: StatsViewModel
     let makeBackupLogVM: @MainActor () -> BackupLogViewModel
 
+    @EnvironmentObject private var popupCenter: PopupCenter
     @State private var openHelp: SettingsHelpKey?
     @State private var showTimeSheet = false
+    @State private var showMascotPicker = false
+    @State private var showBackupLog = false
 
     var body: some View {
-        NavigationView {
-            ZStack(alignment: .bottom) {
-                BackgroundSceneryView().ignoresSafeArea()
+        ZStack(alignment: .bottom) {
+            VStack(spacing: 0) {
+                header
+                    .padding(.horizontal, 14)
+                    .padding(.top, 8)
 
-                VStack(spacing: 0) {
-                    header
-                        .padding(.horizontal, 14)
-                        .padding(.top, 8)
-
-                    ScrollView {
-                        VStack(spacing: 10) {
-                            mascotPanel
-                            settingsPanel
-                            notificationPanel
-                            backupPanel
-                            tutorialPanel
-                            versionPanel
-                            resetButton
-                        }
-                        .padding(.horizontal, 14)
-                        .padding(.top, 10)
-                        .padding(.bottom, 120)
+                ScrollView {
+                    VStack(spacing: 10) {
+                        mascotPanel
+                        settingsPanel
+                        tutorialPanel
+                        notificationPanel
+                        backupPanel
+                        resetButton
                     }
-                }
-
-            }
-            .sheet(isPresented: $viewModel.showExportPicker) {
-                if let url = viewModel.pendingExportURL {
-                    ExportDocumentPicker(url: url) { saved in
-                        viewModel.handleExportResult(saved: saved)
-                    }
-                    .ignoresSafeArea()
+                    .padding(.horizontal, 14)
+                    .padding(.top, 10)
+                    .padding(.bottom, 120)
                 }
             }
-            .sheet(isPresented: $viewModel.showImportPicker) {
-                ImportDocumentPicker(
-                    onPicked: { url in viewModel.handleImportPicked(url: url) },
-                    onCancel: { viewModel.showImportPicker = false }
-                )
+        }
+        .overlay(alignment: .bottom) { FloatingTabBar() }
+        .sheet(isPresented: $viewModel.showExportPicker) {
+            if let url = viewModel.pendingExportURL {
+                ExportDocumentPicker(url: url) { saved in
+                    viewModel.handleExportResult(saved: saved)
+                }
                 .ignoresSafeArea()
             }
-            .overlayPreferenceValue(SettingsHelpAnchorKey.self) { anchors in
-                helpOverlay(anchors: anchors)
-            }
-            .alert("데이터 초기화", isPresented: $viewModel.showResetConfirm) {
-                Button("취소", role: .cancel) {}
-                Button("초기화", role: .destructive) { viewModel.resetAllData() }
-            } message: {
-                Text("모든 할일과 메모가 삭제됩니다. 계속하시겠어요?")
-            }
-            .alert("알림 권한이 꺼져 있어요", isPresented: $viewModel.showPermissionDeniedAlert) {
-                Button("취소", role: .cancel) {}
-                Button("설정 열기") {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                }
-            } message: {
-                Text("설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요.")
-            }
-            .onAppear { viewModel.refreshNotificationStateOnAppear() }
         }
-        .navigationViewStyle(.stack)
+        .sheet(isPresented: $viewModel.showImportPicker) {
+            ImportDocumentPicker(
+                onPicked: { url in viewModel.handleImportPicked(url: url) },
+                onCancel: { viewModel.showImportPicker = false }
+            )
+            .ignoresSafeArea()
+        }
+        .fullScreenCover(isPresented: $showMascotPicker) {
+            MascotPickerCover(settingsVM: viewModel, statsVM: statsVM)
+        }
+        .fullScreenCover(isPresented: $showBackupLog) {
+            BackupLogCover(makeVM: makeBackupLogVM)
+        }
+        .overlayPreferenceValue(SettingsHelpAnchorKey.self) { anchors in
+            helpOverlay(anchors: anchors)
+        }
+        .alert("알림 권한이 꺼져 있어요", isPresented: $viewModel.showPermissionDeniedAlert) {
+            Button("취소", role: .cancel) {}
+            Button("설정 열기") {
+                if let url = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(url)
+                }
+            }
+        } message: {
+            Text("설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요.")
+        }
+        .onAppear { viewModel.refreshNotificationStateOnAppear() }
     }
 
     // MARK: - Header
@@ -94,23 +91,30 @@ struct SettingsView: View {
                     currentMascotPreview
                     VStack(alignment: .leading, spacing: 4) {
                         Text("내 마스코트")
-                            .font(.pressStart9())
+                            .font(.galBold11())
                             .foregroundColor(.shade)
-                        Text(LocalizedStringKey(currentCharInfo?.name ?? "핑코"))
-                            .font(.galBold16())
-                            .foregroundColor(.ink)
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
+                            Text(LocalizedStringKey(currentCharInfo?.name ?? "핑코"))
+                                .font(.galBold16())
+                                .foregroundColor(.ink)
+                            Spacer(minLength: 0)
+                            Text(viewModel.appVersion)
+                                .font(.pressStart10())
+                                .foregroundColor(.sunDk)
+                        }
                     }
-                    Spacer()
                 }
                 .padding(14)
 
                 Divider().background(Color.ink.opacity(0.2)).padding(.horizontal, 14)
 
-                NavigationLink {
-                    MascotPickerView(settingsVM: viewModel, statsVM: statsVM)
+                Button {
+                    showMascotPicker = true
                 } label: {
                     settingRowNavigation(label: "마스코트 변경", icon: "person.fill")
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -217,10 +221,10 @@ struct SettingsView: View {
                 VStack(alignment: .trailing, spacing: 6) {
                     Text(timeString(viewModel.effectiveMorningTime))
                         .font(.pressStart10())
-                        .foregroundColor(.sun)
+                        .foregroundColor(.sunDk)
                     Text(timeString(viewModel.effectiveMidnightTime))
                         .font(.pressStart10())
-                        .foregroundColor(.sun)
+                        .foregroundColor(.sunDk)
                 }
                 Image(systemName: "chevron.right")
                     .font(.system(size: 12))
@@ -306,8 +310,8 @@ struct SettingsView: View {
     }
 
     private var backupLogRow: some View {
-        NavigationLink {
-            BackupLogView(viewModel: makeBackupLogVM())
+        Button {
+            showBackupLog = true
         } label: {
             HStack(spacing: 12) {
                 Image(systemName: "clock.arrow.circlepath")
@@ -343,7 +347,7 @@ struct SettingsView: View {
                         .font(.galBold14())
                         .foregroundColor(.ink)
                     Text(backupMetaLine)
-                        .font(.pressStart9())
+                        .font(.galBold10())
                         .foregroundColor(.shade)
                 }
                 Spacer()
@@ -412,7 +416,7 @@ struct SettingsView: View {
                         Spacer()
                         Text("PLAY ▶")
                             .font(.pressStart9())
-                            .foregroundColor(.sun)
+                            .foregroundColor(.sunDk)
                     }
                     .contentShape(Rectangle())
                 }
@@ -423,15 +427,6 @@ struct SettingsView: View {
             .background(Color.white)
             .settingsHelpAnchor(SettingsHelpKey.tutorialReplay.rawValue)
         }
-    }
-
-    // MARK: - Version
-    private var versionPanel: some View {
-        Text("v\(viewModel.appVersion)")
-            .font(.pressStart12())
-            .foregroundColor(.shade)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 16)
     }
 
     // MARK: - Inline Help
@@ -509,7 +504,7 @@ struct SettingsView: View {
 
     // MARK: - Reset Button
     private var resetButton: some View {
-        Button { viewModel.confirmReset() } label: {
+        Button { presentResetConfirm() } label: {
             Text("모든 데이터 초기화")
                 .font(.galBold14())
                 .foregroundColor(.white)
@@ -519,6 +514,75 @@ struct SettingsView: View {
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                 .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
         }
+    }
+
+    // 파괴적 액션이라 배경 탭 dismiss 막음. 취소/초기화 명시 선택만 허용.
+    private func presentResetConfirm() {
+        popupCenter.present(dismissOnBackgroundTap: false) {
+            ResetConfirmCard(
+                onCancel: { popupCenter.dismiss() },
+                onConfirm: {
+                    popupCenter.dismiss()
+                    viewModel.resetAllData()
+                }
+            )
+        }
+    }
+}
+
+// MARK: - Reset Confirm Card
+private struct ResetConfirmCard: View {
+    let onCancel: () -> Void
+    let onConfirm: () -> Void
+
+    var body: some View {
+        VStack(spacing: 14) {
+            Text("데이터 초기화")
+                .font(.galBold16())
+                .foregroundColor(.ink)
+
+            Rectangle()
+                .fill(Color.ink.opacity(0.25))
+                .frame(height: 1)
+                .padding(.horizontal, 4)
+
+            Text("모든 할일과 메모가 삭제됩니다.\n계속하시겠어요?")
+                .font(.galBold13())
+                .foregroundColor(.shade)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 10) {
+                Button(action: onCancel) {
+                    Text("취소")
+                        .font(.galBold13())
+                        .foregroundColor(.ink)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.plain)
+
+                Button(action: onConfirm) {
+                    Text("초기화")
+                        .font(.galBold13())
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.pixelRed)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.top, 4)
+        }
+        .padding(20)
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
     }
 }
 

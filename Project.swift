@@ -16,6 +16,9 @@ let project = Project(
             bundleId: "com.jun.NewTro-Todo",
             deploymentTargets: .iOS("16.0"),
             infoPlist: .extendingDefault(with: [
+                // Build settings의 MARKETING_VERSION / CURRENT_PROJECT_VERSION을 참조 — Project.swift가 단일 출처.
+                "CFBundleShortVersionString": .string("$(MARKETING_VERSION)"),
+                "CFBundleVersion": .string("$(CURRENT_PROJECT_VERSION)"),
                 // 콜드 스타트 시 검은 깜빡임 제거 — Splash 첫 프레임의 .sky(#7CC7F0)와 동일한 색 에셋을 깔아둠.
                 "UILaunchScreen": .dictionary([
                     "UIColorName": .string("LaunchSky"),
@@ -83,6 +86,10 @@ let project = Project(
             settings: .settings(
                 base: [
                     "DEVELOPMENT_TEAM": "48S4T8HCYX",
+                    // 앱 스토어 표시 마케팅 버전. 새 릴리스 때 올리고 commit.
+                    "MARKETING_VERSION": "2.0.0",
+                    // 동일 마케팅 버전 내 재업로드 시 +1 (심사 리젝션 재업로드 등).
+                    "CURRENT_PROJECT_VERSION": "1",
                 ]
             )
         ),
@@ -95,6 +102,8 @@ let project = Project(
             bundleId: "com.jun.NewTro-Todo.NewtroWidget",
             deploymentTargets: .iOS("16.0"),
             infoPlist: .extendingDefault(with: [
+                "CFBundleShortVersionString": .string("$(MARKETING_VERSION)"),
+                "CFBundleVersion": .string("$(CURRENT_PROJECT_VERSION)"),
                 "UIAppFonts": .array([
                     .string("Galmuri11-Bold.ttf"),
                     .string("Galmuri11-Condensed.ttf"),
@@ -131,6 +140,9 @@ let project = Project(
             settings: .settings(
                 base: [
                     "DEVELOPMENT_TEAM": "48S4T8HCYX",
+                    // 위젯은 메인앱과 동일한 버전이어야 함 (다르면 App Store 리젝).
+                    "MARKETING_VERSION": "2.0.0",
+                    "CURRENT_PROJECT_VERSION": "1",
                 ]
             )
         ),

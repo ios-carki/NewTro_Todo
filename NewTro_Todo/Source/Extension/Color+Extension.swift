@@ -102,6 +102,12 @@ extension Color {
     static let done         = Color(hex: "#7FD37F")
     static let doneDk       = Color(hex: "#3E8C48")
 
+    // Mascot card portrait tile — 노란 캐릭터(.sun)와 분리되도록 cream(#FFE9B0)을 피한 쿨톤 라일락
+    static let mascotTile   = Color(hex: "#E8E0F8")
+
+    // 볼터치/눈 반짝임용 분홍 — 마스코트 캐릭터 디테일에 사용
+    static let blush        = Color(hex: "#F9C5D2")
+
     // Legacy aliases
     static let placeHolderC    = Color(hex: "#929292")
     static let mainBackGroundC = Color(hex: "#7CC7F0")

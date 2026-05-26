@@ -83,14 +83,14 @@ enum PixelArtAssets {
         "1": .cream,
     ]
 
-    // MARK: - Bush (12×6)
+    // MARK: - Bush (22×6) — 잔디 위 우측 가로로 긴 hedge. 3개 bump 패턴.
     static let bushGrid: [String] = [
-        "...11..11...",
-        "..1221122122",
-        ".122222222221",
-        "122222222222",
-        "122222222222",
-        "333333333333",
+        "....11....11....11....",
+        "...1221221221221221...",
+        ".12222222222222222221.",
+        "1222222222222222222222",
+        "1222222222222222222222",
+        "3333333333333333333333",
     ]
     static let bushPalette: [Character: Color] = [
         "1": .ink, "2": .grass, "3": .grassDk,
@@ -236,6 +236,23 @@ enum PixelArtAssets {
     ]
     static let dotChevronRightPalette: [Character: Color] = [
         "1": .shade,
+    ]
+
+    // MARK: - Home (9×9) — 하위 화면 nav bar trailing 에서 탭 루트로 pop 하는 버튼 아이콘.
+    // ink 단색 라인아트 — 지붕 외곽 + 처마(roof base) + 벽 + 문(아치) + 바닥.
+    static let dotHomeGrid: [String] = [
+        "....1....",
+        "...1.1...",
+        "..1...1..",
+        ".1.....1.",
+        "111111111",
+        "1.......1",
+        "1..111..1",
+        "1..1.1..1",
+        "1111.1111",
+    ]
+    static let dotHomePalette: [Character: Color] = [
+        "1": .ink,
     ]
 
     // MARK: - Arrow Up-Down (5×7) — used for SORT button label
@@ -392,13 +409,29 @@ enum PixelArtAssets {
         "...1..1...",
     ]
 
-    enum CharacterGridType { case a, b, c }
+    // Grid D: cute legendary. 둥근 귀 + 큰 눈 + 코 + 볼터치 + 발.
+    // Palette keys: 1=outline, 2=face, 3=eye, 4=nose/feet, 5=blush
+    static let charGridD: [String] = [
+        ".1......1.",
+        "121....121",
+        "1221111221",
+        "1222222221",
+        "1235445321",
+        "1233223321",
+        "1252332521",
+        ".12222221.",
+        "..144441..",
+        "...1..1...",
+    ]
+
+    enum CharacterGridType { case a, b, c, d }
 
     static func characterGrid(type: CharacterGridType) -> [String] {
         switch type {
         case .a: return charGridA
         case .b: return charGridB
         case .c: return charGridC
+        case .d: return charGridD
         }
     }
 }

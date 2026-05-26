@@ -14,7 +14,7 @@ struct SplashView: View {
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .bottom) {
-                SkyBackgroundView()
+                BackgroundSceneryView()
 
                 VStack(spacing: 12) {
                     PixelArtView(
@@ -37,8 +37,6 @@ struct SplashView: View {
                     }
                 }
                 .position(x: geo.size.width / 2, y: geo.size.height * 0.45)
-
-                GroundStripView()
             }
         }
         .ignoresSafeArea()

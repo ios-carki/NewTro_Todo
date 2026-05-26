@@ -46,6 +46,7 @@ struct MainView: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .overlay(alignment: .bottom) { FloatingTabBar() }
         // .addTodo / .editTodo 는 RootTabContainerView 의 인라인 패널 + .fullScreenCover 로 라우팅.
         // 여기서는 .datePicker 만 SwiftUI .sheet 로 처리.
         .sheet(item: nonTodoAddActiveSheetBinding) { sheet in
