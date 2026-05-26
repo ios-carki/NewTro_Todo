@@ -120,6 +120,7 @@ let project = Project(
                 "NewTro_Todo/Data/Storage/QuickNoteObject.swift",
                 "NewTro_Todo/Data/Storage/TemplateObject.swift",
                 "NewTro_Todo/Data/Storage/WalletObject.swift",
+                "NewTro_Todo/Data/Storage/RoutineObject.swift",
                 "NewTro_Todo/Data/Storage/RealmConfiguration.swift",
                 "NewTro_Todo/Source/Extension/DateFormat+Extension.swift",
                 "NewTro_Todo/Source/Extension/Date+Extension.swift",

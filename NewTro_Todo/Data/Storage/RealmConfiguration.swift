@@ -194,6 +194,14 @@ enum RealmConfiguration {
         // v14: RoutineObject 컬럼 재구성 (출시 전 변경).
         //   - 제거: isAllDay / targetTimeStart / targetTimeEnd → Realm 자동 drop
         //   - 추가: importance Int → 기본 0 자동 백필 (.none)
-        // 모델 정의 변경만으로 Realm 이 schema diff 를 해결하므로 enumerate 불필요.
+        // 모델 정의 변경만으로 Realm 이 schema diff 를 해결하지만, App vs Widget 의
+        // 스키마 동기 타이밍 차이로 신규 컬럼 미초기화 케이스를 본 적이 있어 명시 백필을 둠.
+        if oldVersion < 14 {
+            migration.enumerateObjects(ofType: "RoutineObject") { _, newObject in
+                if newObject?["importance"] == nil {
+                    newObject?["importance"] = 0
+                }
+            }
+        }
     }
 }
