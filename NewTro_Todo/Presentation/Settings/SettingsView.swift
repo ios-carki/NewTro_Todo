@@ -59,15 +59,13 @@ struct SettingsView: View {
         .overlayPreferenceValue(SettingsHelpAnchorKey.self) { anchors in
             helpOverlay(anchors: anchors)
         }
-        .alert("알림 권한이 꺼져 있어요", isPresented: $viewModel.showPermissionDeniedAlert) {
-            Button("취소", role: .cancel) {}
-            Button("설정 열기") {
-                if let url = URL(string: UIApplication.openSettingsURLString) {
-                    UIApplication.shared.open(url)
-                }
-            }
-        } message: {
-            Text("설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요.")
+        // VM 의 showPermissionDeniedAlert 가 true 로 깜빡일 때마다 커스텀 팝업을 띄운다.
+        // (시스템 .alert 는 앱 디자인 톤과 어긋나므로 PopupCenter 카드로 대체)
+        // 플래그는 즉시 false 로 소비 → 팝업 자체의 dismiss/cancel/confirm 시 별도 리셋 불필요.
+        .onChange(of: viewModel.showPermissionDeniedAlert) { isShown in
+            guard isShown else { return }
+            viewModel.showPermissionDeniedAlert = false
+            presentPermissionDeniedPopup()
         }
         .onAppear {
             viewModel.refreshNotificationStateOnAppear()
@@ -127,13 +125,15 @@ struct SettingsView: View {
     }
 
     // 마스코트 섹션 우상단의 지갑 잔액 칩. 메인 HUD 와 동일한 coin pixel + ×count 포맷.
+    // 텍스트 색은 .ink — 패널 bg(.cream) 과 sun 톤은 모두 노랑 계열이라 묻혔다.
+    // (메인 HUD 는 어두운 grass/peach 위라 .sun 으로 OK).
     // 클릭 액션 없음 — 단순 표시.
     private var walletCoinChip: some View {
         HStack(spacing: 4) {
             PixelArtView(grid: PixelArtAssets.coinGrid, palette: PixelArtAssets.coinPalette, scale: 1.6)
             Text("×\(viewModel.walletBalance)")
                 .font(.pressStart10())
-                .foregroundColor(.sun)
+                .foregroundColor(.ink)
         }
     }
 
@@ -229,6 +229,23 @@ struct SettingsView: View {
             withAnimation(.easeOut(duration: 0.2)) {
                 viewModel.requestEnableNotifications()
             }
+        }
+    }
+
+    // 알림 권한이 거부된 상태에서 OFF→ON 탭 시 띄우는 안내 팝업.
+    // "설정 열기" 만 시스템 Settings 앱 알림 화면으로 이동. 취소/dim 은 단순 닫힘.
+    // (시스템 .alert 대체 — 앱 디자인 톤 통일)
+    private func presentPermissionDeniedPopup() {
+        popupCenter.present(dismissOnBackgroundTap: true) {
+            PermissionDeniedCard(
+                onCancel: { popupCenter.dismiss() },
+                onOpenSettings: {
+                    popupCenter.dismiss()
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            )
         }
     }
 
@@ -572,6 +589,66 @@ struct SettingsView: View {
                 }
             )
         }
+    }
+}
+
+// MARK: - Permission Denied Card
+//
+// 시스템 .alert 대체. 알림 권한이 denied 인 상태에서 OFF→ON 토글 시 노출.
+// "설정 열기" 만 실제 액션 (시스템 Settings 앱 알림 화면 진입), 취소는 단순 닫힘.
+// 디자인은 다른 confirm card 와 동일 — panel + ink stroke + 3px 그림자 + peach 액션.
+private struct PermissionDeniedCard: View {
+    let onCancel: () -> Void
+    let onOpenSettings: () -> Void
+
+    var body: some View {
+        VStack(spacing: 14) {
+            Text("알림 권한이 꺼져 있어요")
+                .font(.galBold16())
+                .foregroundColor(.ink)
+
+            Rectangle()
+                .fill(Color.ink.opacity(0.25))
+                .frame(height: 1)
+                .padding(.horizontal, 4)
+
+            Text("설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요.")
+                .font(.galBold13())
+                .foregroundColor(.shade)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 10) {
+                Button(action: onCancel) {
+                    Text("취소")
+                        .font(.galBold13())
+                        .foregroundColor(.ink)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.plain)
+
+                Button(action: onOpenSettings) {
+                    Text("설정 열기")
+                        .font(.galBold13())
+                        .foregroundColor(.ink)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.peach)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.top, 4)
+        }
+        .padding(20)
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
     }
 }
 

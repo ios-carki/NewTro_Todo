@@ -12,7 +12,14 @@ final class TabBarController: ObservableObject {
     @Published var statsTabId    = UUID()
     @Published var settingsTabId = UUID()
 
+    // 코치마크/튜토리얼 등 모달성 오버레이가 활성일 때 true.
+    // true 일 동안 사용자 탭 입력은 무시 — 코치마크가 등장하기 직전 0.6초 delay 구간에서
+    // 빠르게 다른 탭을 눌러 빠져나가던 버그를 방지하기 위한 게이트.
+    // (직접 `selected = ...` 할당은 그대로 허용 — 시스템/replay 트리거가 자유롭게 라우팅 가능)
+    @Published var inputBlocked: Bool = false
+
     func selectOrReset(_ tab: AppTab) {
+        guard !inputBlocked else { return }
         if selected == tab {
             resetTab(tab)
         } else {
@@ -46,6 +53,8 @@ struct FloatingTabBar: View {
             tabBar
                 .padding(.horizontal, 14)
                 .padding(.bottom, 16)
+                // 코치마크 active 동안 시각 press 피드백도 차단 (탭 라우팅 차단은 controller 단에서).
+                .allowsHitTesting(!controller.inputBlocked)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea(edges: .bottom)
