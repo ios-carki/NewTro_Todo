@@ -73,6 +73,9 @@ final class SettingsViewModel: ObservableObject {
     var onResetComplete: (() -> Void)?
     var onRestoreComplete: (() -> Void)?
 
+    // MARK: - Wallet (마스코트 섹션 우상단 표시용)
+    @Published private(set) var walletBalance: Int = 0
+
     private let clearAllDataUseCase: any ClearAllDataUseCaseProtocol
     private let checkPermissionUseCase: any CheckNotificationPermissionUseCaseProtocol
     private let requestPermissionUseCase: any RequestNotificationPermissionUseCaseProtocol
@@ -81,6 +84,7 @@ final class SettingsViewModel: ObservableObject {
     private let restoreBackupUseCase: any RestoreBackupUseCaseProtocol
     private let peekBackupHeaderUseCase: any PeekBackupHeaderUseCaseProtocol
     private let recordBackupLogUseCase: any RecordBackupLogUseCaseProtocol
+    private let fetchWalletUseCase: any FetchWalletUseCaseProtocol
 
     // 백업 성공 시 RecordBackupLog 에 넘길 엔트리.
     // exportBackup이 파일에 합성 포함시킨 엔트리와 동일 id를 써야 merge 복구 시 중복 안 됨.
@@ -94,7 +98,8 @@ final class SettingsViewModel: ObservableObject {
         createBackupUseCase: any CreateBackupUseCaseProtocol,
         restoreBackupUseCase: any RestoreBackupUseCaseProtocol,
         peekBackupHeaderUseCase: any PeekBackupHeaderUseCaseProtocol,
-        recordBackupLogUseCase: any RecordBackupLogUseCaseProtocol
+        recordBackupLogUseCase: any RecordBackupLogUseCaseProtocol,
+        fetchWalletUseCase: any FetchWalletUseCaseProtocol
     ) {
         self.clearAllDataUseCase = clearAllDataUseCase
         self.checkPermissionUseCase = checkNotificationPermissionUseCase
@@ -104,6 +109,7 @@ final class SettingsViewModel: ObservableObject {
         self.restoreBackupUseCase = restoreBackupUseCase
         self.peekBackupHeaderUseCase = peekBackupHeaderUseCase
         self.recordBackupLogUseCase = recordBackupLogUseCase
+        self.fetchWalletUseCase = fetchWalletUseCase
 
         let ud = UserDefaults.standard
         self.welcomeOnLaunch     = ud.bool(forKey: "showWelcomeOnLaunch")
@@ -122,13 +128,35 @@ final class SettingsViewModel: ObservableObject {
     }
 
     // MARK: - Notification Public API
-    func toggleNotifications() {
-        if notificationsEnabled {
-            notificationsEnabled = false
-            persistEnabled()
-            reapplyNotifications()
-        } else {
-            Task { await enableNotifications() }
+    //
+    // ON→OFF 는 파괴적(스케줄된 알림 전체 cancel)이므로 즉시 토글하지 않는다.
+    // View 가 PxSwitch 의 ON 탭을 감지하면 확인 팝업을 띄우고, 사용자가 명시적으로
+    // 확인을 눌렀을 때만 `disableNotifications()` 가 호출돼 실제로 OFF + cancel 한다.
+    // 취소·dim 탭은 VM 상태를 건드리지 않으므로 스위치는 ON 으로 유지된다.
+    //
+    // OFF→ON 은 `requestEnableNotifications()` 가 권한 상태에 따라 분기:
+    //   - notDetermined → 시스템 권한 요청 → 허용 시 ON
+    //   - authorized    → 즉시 ON
+    //   - denied        → `showPermissionDeniedAlert` 로 설정 앱 유도
+    func requestEnableNotifications() {
+        guard !notificationsEnabled else { return }
+        Task { await enableNotifications() }
+    }
+
+    func disableNotifications() {
+        guard notificationsEnabled else { return }
+        notificationsEnabled = false
+        persistEnabled()
+        reapplyNotifications()
+    }
+
+    // 설정 탭 진입 시 마스코트 섹션 우상단에 노출되는 잔액을 메인 탭과 동기화.
+    // 실패해도 UI 동작에 영향 없음 (기본 0 유지).
+    func refreshWalletBalance() {
+        Task {
+            if let wallet = try? await fetchWalletUseCase.execute() {
+                walletBalance = wallet.balance
+            }
         }
     }
 

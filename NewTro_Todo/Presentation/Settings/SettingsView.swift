@@ -69,7 +69,10 @@ struct SettingsView: View {
         } message: {
             Text("설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요.")
         }
-        .onAppear { viewModel.refreshNotificationStateOnAppear() }
+        .onAppear {
+            viewModel.refreshNotificationStateOnAppear()
+            viewModel.refreshWalletBalance()
+        }
     }
 
     // MARK: - Header
@@ -90,9 +93,13 @@ struct SettingsView: View {
                 HStack(spacing: 12) {
                     currentMascotPreview
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("내 마스코트")
-                            .font(.galBold11())
-                            .foregroundColor(.shade)
+                        HStack(spacing: 6) {
+                            Text("내 마스코트")
+                                .font(.galBold11())
+                                .foregroundColor(.shade)
+                            Spacer(minLength: 0)
+                            walletCoinChip
+                        }
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text(LocalizedStringKey(currentCharInfo?.name ?? "핑코"))
                                 .font(.galBold16())
@@ -116,6 +123,17 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.plain)
             }
+        }
+    }
+
+    // 마스코트 섹션 우상단의 지갑 잔액 칩. 메인 HUD 와 동일한 coin pixel + ×count 포맷.
+    // 클릭 액션 없음 — 단순 표시.
+    private var walletCoinChip: some View {
+        HStack(spacing: 4) {
+            PixelArtView(grid: PixelArtAssets.coinGrid, palette: PixelArtAssets.coinPalette, scale: 1.6)
+            Text("×\(viewModel.walletBalance)")
+                .font(.pressStart10())
+                .foregroundColor(.sun)
         }
     }
 
@@ -195,13 +213,40 @@ struct SettingsView: View {
                 .foregroundColor(.ink)
             Spacer()
             PxSwitch(isOn: viewModel.notificationsEnabled) {
-                withAnimation(.easeOut(duration: 0.2)) {
-                    viewModel.toggleNotifications()
-                }
+                handleNotificationSwitchTap()
             }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
+    }
+
+    // ON 일 때 탭 → 확인 팝업, 확인 누른 경우에만 실제 OFF (취소/dim 탭은 ON 유지).
+    // OFF 일 때 탭 → 권한 확인 후 ON. 권한 거부 상태면 기존 alert 로 설정 앱 유도.
+    private func handleNotificationSwitchTap() {
+        if viewModel.notificationsEnabled {
+            presentDisableNotificationsConfirm()
+        } else {
+            withAnimation(.easeOut(duration: 0.2)) {
+                viewModel.requestEnableNotifications()
+            }
+        }
+    }
+
+    // 알림 끄기 확정 팝업.
+    // dim 탭으로도 닫히지만 (`dismissOnBackgroundTap: true`), 닫혀도 VM 상태는 건드리지
+    // 않으므로 스위치는 ON 으로 유지됨. 확인 버튼만 실제 OFF + 스케줄 cancel 트리거.
+    private func presentDisableNotificationsConfirm() {
+        popupCenter.present(dismissOnBackgroundTap: true) {
+            DisableNotificationsConfirmCard(
+                onCancel: { popupCenter.dismiss() },
+                onConfirm: {
+                    popupCenter.dismiss()
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        viewModel.disableNotifications()
+                    }
+                }
+            )
+        }
     }
 
     private var notificationTimeCell: some View {
@@ -527,6 +572,66 @@ struct SettingsView: View {
                 }
             )
         }
+    }
+}
+
+// MARK: - Disable Notifications Confirm Card
+//
+// 알림 OFF 액션이 파괴적(예약된 모든 알림 cancel)임을 명시. 디자인은 ResetConfirmCard 와
+// 동일한 panel + ink stroke + drop shadow 패턴. 확인 버튼 톤은 peachDk — 알림 OFF 는
+// 데이터 파괴가 아니므로 pixelRed(파괴) 와 구분.
+private struct DisableNotificationsConfirmCard: View {
+    let onCancel: () -> Void
+    let onConfirm: () -> Void
+
+    var body: some View {
+        VStack(spacing: 14) {
+            Text("알림 끄기")
+                .font(.galBold16())
+                .foregroundColor(.ink)
+
+            Rectangle()
+                .fill(Color.ink.opacity(0.25))
+                .frame(height: 1)
+                .padding(.horizontal, 4)
+
+            Text("할 일 알림을 비롯한 모든 알림이 더 이상 표시되지 않아요.\n그래도 끄시겠어요?")
+                .font(.galBold13())
+                .foregroundColor(.shade)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 10) {
+                Button(action: onCancel) {
+                    Text("취소")
+                        .font(.galBold13())
+                        .foregroundColor(.ink)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.plain)
+
+                Button(action: onConfirm) {
+                    Text("끄기")
+                        .font(.galBold13())
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.peachDk)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.top, 4)
+        }
+        .padding(20)
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
     }
 }
 

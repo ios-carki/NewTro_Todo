@@ -259,6 +259,11 @@
 "설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요." = "Turn on notifications in Settings to receive daily reminders.";
 "설정 열기" = "Open Settings";
 
+// Disable notifications confirm popup
+"알림 끄기" = "Turn off notifications";
+"할 일 알림을 비롯한 모든 알림이 더 이상 표시되지 않아요.\n그래도 끄시겠어요?" = "All notifications, including Todo reminders, will be paused.\nTurn them off?";
+"끄기" = "Turn off";
+
 "오전" = "AM";
 "오후" = "PM";
 
