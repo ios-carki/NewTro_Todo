@@ -177,16 +177,24 @@ struct RootTabContainerView: View {
         .navigationBarHidden(true)
         .onAppear {
             if !hasSeenOnboarding {
+                // 코치마크 표시 전 0.6초 동안 사용자가 다른 탭을 눌러 빠져나가던 버그 방지.
+                // 탭바 입력을 즉시 차단해 두고, 코치마크가 dismiss 될 때 풀어준다.
+                tabController.inputBlocked = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                     showCoachmark = true
                 }
             }
         }
         .onChange(of: showCoachmark) { newValue in
-            if !newValue { hasSeenOnboarding = true }
+            if !newValue {
+                hasSeenOnboarding = true
+                tabController.inputBlocked = false
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .replayTodoCoachmark)) { _ in
             tabController.selected = .todo
+            // replay 도 동일하게 진입 직전 0.2초 동안 탭 차단.
+            tabController.inputBlocked = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                 showCoachmark = true
             }

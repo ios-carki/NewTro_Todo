@@ -59,17 +59,18 @@ struct SettingsView: View {
         .overlayPreferenceValue(SettingsHelpAnchorKey.self) { anchors in
             helpOverlay(anchors: anchors)
         }
-        .alert("알림 권한이 꺼져 있어요", isPresented: $viewModel.showPermissionDeniedAlert) {
-            Button("취소", role: .cancel) {}
-            Button("설정 열기") {
-                if let url = URL(string: UIApplication.openSettingsURLString) {
-                    UIApplication.shared.open(url)
-                }
-            }
-        } message: {
-            Text("설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요.")
+        // VM 의 showPermissionDeniedAlert 가 true 로 깜빡일 때마다 커스텀 팝업을 띄운다.
+        // (시스템 .alert 는 앱 디자인 톤과 어긋나므로 PopupCenter 카드로 대체)
+        // 플래그는 즉시 false 로 소비 → 팝업 자체의 dismiss/cancel/confirm 시 별도 리셋 불필요.
+        .onChange(of: viewModel.showPermissionDeniedAlert) { isShown in
+            guard isShown else { return }
+            viewModel.showPermissionDeniedAlert = false
+            presentPermissionDeniedPopup()
         }
-        .onAppear { viewModel.refreshNotificationStateOnAppear() }
+        .onAppear {
+            viewModel.refreshNotificationStateOnAppear()
+            viewModel.refreshWalletBalance()
+        }
     }
 
     // MARK: - Header
@@ -90,9 +91,13 @@ struct SettingsView: View {
                 HStack(spacing: 12) {
                     currentMascotPreview
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("내 마스코트")
-                            .font(.galBold11())
-                            .foregroundColor(.shade)
+                        HStack(spacing: 6) {
+                            Text("내 마스코트")
+                                .font(.galBold11())
+                                .foregroundColor(.shade)
+                            Spacer(minLength: 0)
+                            walletCoinChip
+                        }
                         HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text(LocalizedStringKey(currentCharInfo?.name ?? "핑코"))
                                 .font(.galBold16())
@@ -116,6 +121,19 @@ struct SettingsView: View {
                 }
                 .buttonStyle(.plain)
             }
+        }
+    }
+
+    // 마스코트 섹션 우상단의 지갑 잔액 칩. 메인 HUD 와 동일한 coin pixel + ×count 포맷.
+    // 텍스트 색은 .ink — 패널 bg(.cream) 과 sun 톤은 모두 노랑 계열이라 묻혔다.
+    // (메인 HUD 는 어두운 grass/peach 위라 .sun 으로 OK).
+    // 클릭 액션 없음 — 단순 표시.
+    private var walletCoinChip: some View {
+        HStack(spacing: 4) {
+            PixelArtView(grid: PixelArtAssets.coinGrid, palette: PixelArtAssets.coinPalette, scale: 1.6)
+            Text("×\(viewModel.walletBalance)")
+                .font(.pressStart10())
+                .foregroundColor(.ink)
         }
     }
 
@@ -195,13 +213,57 @@ struct SettingsView: View {
                 .foregroundColor(.ink)
             Spacer()
             PxSwitch(isOn: viewModel.notificationsEnabled) {
-                withAnimation(.easeOut(duration: 0.2)) {
-                    viewModel.toggleNotifications()
-                }
+                handleNotificationSwitchTap()
             }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
+    }
+
+    // ON 일 때 탭 → 확인 팝업, 확인 누른 경우에만 실제 OFF (취소/dim 탭은 ON 유지).
+    // OFF 일 때 탭 → 권한 확인 후 ON. 권한 거부 상태면 기존 alert 로 설정 앱 유도.
+    private func handleNotificationSwitchTap() {
+        if viewModel.notificationsEnabled {
+            presentDisableNotificationsConfirm()
+        } else {
+            withAnimation(.easeOut(duration: 0.2)) {
+                viewModel.requestEnableNotifications()
+            }
+        }
+    }
+
+    // 알림 권한이 거부된 상태에서 OFF→ON 탭 시 띄우는 안내 팝업.
+    // "설정 열기" 만 시스템 Settings 앱 알림 화면으로 이동. 취소/dim 은 단순 닫힘.
+    // (시스템 .alert 대체 — 앱 디자인 톤 통일)
+    private func presentPermissionDeniedPopup() {
+        popupCenter.present(dismissOnBackgroundTap: true) {
+            PermissionDeniedCard(
+                onCancel: { popupCenter.dismiss() },
+                onOpenSettings: {
+                    popupCenter.dismiss()
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+            )
+        }
+    }
+
+    // 알림 끄기 확정 팝업.
+    // dim 탭으로도 닫히지만 (`dismissOnBackgroundTap: true`), 닫혀도 VM 상태는 건드리지
+    // 않으므로 스위치는 ON 으로 유지됨. 확인 버튼만 실제 OFF + 스케줄 cancel 트리거.
+    private func presentDisableNotificationsConfirm() {
+        popupCenter.present(dismissOnBackgroundTap: true) {
+            DisableNotificationsConfirmCard(
+                onCancel: { popupCenter.dismiss() },
+                onConfirm: {
+                    popupCenter.dismiss()
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        viewModel.disableNotifications()
+                    }
+                }
+            )
+        }
     }
 
     private var notificationTimeCell: some View {
@@ -527,6 +589,126 @@ struct SettingsView: View {
                 }
             )
         }
+    }
+}
+
+// MARK: - Permission Denied Card
+//
+// 시스템 .alert 대체. 알림 권한이 denied 인 상태에서 OFF→ON 토글 시 노출.
+// "설정 열기" 만 실제 액션 (시스템 Settings 앱 알림 화면 진입), 취소는 단순 닫힘.
+// 디자인은 다른 confirm card 와 동일 — panel + ink stroke + 3px 그림자 + peach 액션.
+private struct PermissionDeniedCard: View {
+    let onCancel: () -> Void
+    let onOpenSettings: () -> Void
+
+    var body: some View {
+        VStack(spacing: 14) {
+            Text("알림 권한이 꺼져 있어요")
+                .font(.galBold16())
+                .foregroundColor(.ink)
+
+            Rectangle()
+                .fill(Color.ink.opacity(0.25))
+                .frame(height: 1)
+                .padding(.horizontal, 4)
+
+            Text("설정 앱에서 알림을 켜야 매일 알림을 받을 수 있어요.")
+                .font(.galBold13())
+                .foregroundColor(.shade)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 10) {
+                Button(action: onCancel) {
+                    Text("취소")
+                        .font(.galBold13())
+                        .foregroundColor(.ink)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.plain)
+
+                Button(action: onOpenSettings) {
+                    Text("설정 열기")
+                        .font(.galBold13())
+                        .foregroundColor(.ink)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.peach)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.top, 4)
+        }
+        .padding(20)
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
+    }
+}
+
+// MARK: - Disable Notifications Confirm Card
+//
+// 알림 OFF 액션이 파괴적(예약된 모든 알림 cancel)임을 명시. 디자인은 ResetConfirmCard 와
+// 동일한 panel + ink stroke + drop shadow 패턴. 확인 버튼 톤은 peachDk — 알림 OFF 는
+// 데이터 파괴가 아니므로 pixelRed(파괴) 와 구분.
+private struct DisableNotificationsConfirmCard: View {
+    let onCancel: () -> Void
+    let onConfirm: () -> Void
+
+    var body: some View {
+        VStack(spacing: 14) {
+            Text("알림 끄기")
+                .font(.galBold16())
+                .foregroundColor(.ink)
+
+            Rectangle()
+                .fill(Color.ink.opacity(0.25))
+                .frame(height: 1)
+                .padding(.horizontal, 4)
+
+            Text("할 일 알림을 비롯한 모든 알림이 더 이상 표시되지 않아요.\n그래도 끄시겠어요?")
+                .font(.galBold13())
+                .foregroundColor(.shade)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 10) {
+                Button(action: onCancel) {
+                    Text("취소")
+                        .font(.galBold13())
+                        .foregroundColor(.ink)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.cream)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.plain)
+
+                Button(action: onConfirm) {
+                    Text("끄기")
+                        .font(.galBold13())
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 36)
+                        .background(Color.peachDk)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.top, 4)
+        }
+        .padding(20)
+        .background(Color.panel)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 3, y: 3))
     }
 }
 

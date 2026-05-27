@@ -202,7 +202,8 @@ final class DIContainer {
             createBackupUseCase: makeCreateBackupUseCase(),
             restoreBackupUseCase: makeRestoreBackupUseCase(),
             peekBackupHeaderUseCase: makePeekBackupHeaderUseCase(),
-            recordBackupLogUseCase: makeRecordBackupLogUseCase()
+            recordBackupLogUseCase: makeRecordBackupLogUseCase(),
+            fetchWalletUseCase: makeFetchWalletUseCase()
         )
     }
 
