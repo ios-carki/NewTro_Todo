@@ -1,4 +1,5 @@
 import Foundation
+import RealmSwift
 
 extension Todo {
     func toDomain() -> TodoEntity {
@@ -16,7 +17,8 @@ extension Todo {
             notifyAt: notifyAt,
             sortOrder: sortOrder,
             completedAt: completedAt,
-            colorName: colorName
+            colorName: colorName,
+            routineId: routineId?.stringValue
         )
     }
 }
@@ -38,7 +40,8 @@ extension TodoEntity {
             notifyAt: notifyAt,
             sortOrder: sortOrder,
             completedAt: completedAt,
-            colorName: colorName
+            colorName: colorName,
+            routineId: routineId.flatMap { try? ObjectId(string: $0) }
         )
     }
 }

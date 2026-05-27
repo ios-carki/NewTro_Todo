@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum AppTab: Equatable {
-    case todo, memo, stats, settings
+    case todo, memo, routine, stats, settings
 }
 
 struct RootTabContainerView: View {
@@ -24,6 +24,7 @@ struct RootTabContainerView: View {
     @ObservedObject var memoVM: MemoViewModel
     @ObservedObject var statsVM: StatsViewModel
     @ObservedObject var settingsVM: SettingsViewModel
+    @ObservedObject var routineVM: RoutineViewModel
     let makeBackupLogVM: @MainActor () -> BackupLogViewModel
 
     // TodoAdd: SwiftUI .sheet 가 키보드 등장 시 .large 로 강제 승격되는 한계 때문에
@@ -293,6 +294,7 @@ struct RootTabContainerView: View {
     private func saveFromTodoAdd() {
         guard !todoFormState.isEmpty else { return }
         let trimmed = todoFormState.trimmedText
+        let targetDate = todoFormState.resolvedTargetDate(fallback: mainVM.selectedDate)
         let targetTimeStart = todoFormState.resolvedTargetTimeStart
         let notifyAt = todoFormState.resolvedNotifyAt
 
@@ -301,6 +303,7 @@ struct RootTabContainerView: View {
                 id: todo.id,
                 text: trimmed,
                 importance: todoFormState.importance,
+                targetDate: targetDate,
                 targetTimeStart: targetTimeStart,
                 targetTimeEnd: nil,
                 isAllDay: false,
@@ -311,6 +314,7 @@ struct RootTabContainerView: View {
             mainVM.addTodo(
                 text: trimmed,
                 importance: todoFormState.importance,
+                targetDate: targetDate,
                 targetTimeStart: targetTimeStart,
                 targetTimeEnd: nil,
                 isAllDay: false,
@@ -330,6 +334,8 @@ struct RootTabContainerView: View {
             MainView(viewModel: mainVM).id(tabController.todoTabId)
         case .memo:
             MemoView(viewModel: memoVM).id(tabController.memoTabId)
+        case .routine:
+            RoutineView(viewModel: routineVM).id(tabController.routineTabId)
         case .stats:
             StatsView(viewModel: statsVM).id(tabController.statsTabId)
         case .settings:
@@ -350,6 +356,7 @@ struct RootTabContainerView: View {
         memoVM: di.makeMemoViewModel(),
         statsVM: di.makeStatsViewModel(),
         settingsVM: di.makeSettingsViewModel(),
+        routineVM: di.makeRoutineViewModel(),
         makeBackupLogVM: { di.makeBackupLogViewModel() }
     )
 }

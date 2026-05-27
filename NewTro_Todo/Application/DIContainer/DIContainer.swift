@@ -14,6 +14,13 @@ final class DIContainer {
         statsRepository: statsRepository,
         backupLogRepository: backupLogRepository
     )
+    private(set) lazy var routineRepository: any RoutineRepositoryProtocol = RoutineRepositoryImpl()
+
+    // MaterializeRoutinesUseCase 는 in-memory 커서를 보유한다.
+    // RoutineViewModel / MainViewModel / SceneDelegate 가 같은 인스턴스를 공유해야
+    // 캐싱이 일관되게 동작하므로 lazy 싱글톤으로 둔다.
+    private(set) lazy var materializeRoutinesUseCase: any MaterializeRoutinesUseCaseProtocol =
+        MaterializeRoutinesUseCase(routineRepo: routineRepository, todoRepo: todoRepository)
 
     // MARK: - UseCases: Todo
     func makeFetchTodosUseCase() -> FetchTodosUseCase {
@@ -48,6 +55,9 @@ final class DIContainer {
     }
     func makeFetchTodoCountsUseCase() -> FetchTodoCountsUseCase {
         FetchTodoCountsUseCase(repository: todoRepository)
+    }
+    func makeFetchPastIncompleteCountUseCase() -> FetchPastIncompleteCountUseCase {
+        FetchPastIncompleteCountUseCase(repository: todoRepository)
     }
 
     // MARK: - UseCases: Memo
@@ -120,6 +130,23 @@ final class DIContainer {
         ApplyDailyNotificationsUseCase(repository: localNotificationRepository)
     }
 
+    // MARK: - UseCases: Routine
+    func makeFetchRoutinesUseCase() -> FetchRoutinesUseCase {
+        FetchRoutinesUseCase(repository: routineRepository)
+    }
+    func makeAddRoutineUseCase() -> AddRoutineUseCase {
+        AddRoutineUseCase(repository: routineRepository)
+    }
+    func makeUpdateRoutineUseCase() -> UpdateRoutineUseCase {
+        UpdateRoutineUseCase(routineRepo: routineRepository, todoRepo: todoRepository)
+    }
+    func makeDeleteRoutineUseCase() -> DeleteRoutineUseCase {
+        DeleteRoutineUseCase(routineRepo: routineRepository, todoRepo: todoRepository)
+    }
+    func makeMaterializeRoutinesUseCase() -> any MaterializeRoutinesUseCaseProtocol {
+        materializeRoutinesUseCase
+    }
+
     // MARK: - UseCases: Backup
     func makeCreateBackupUseCase() -> CreateBackupUseCase {
         CreateBackupUseCase(repository: backupRepository)
@@ -161,7 +188,8 @@ final class DIContainer {
             updateTemplateUseCase: makeUpdateTemplateUseCase(),
             deleteTemplateUseCase: makeDeleteTemplateUseCase(),
             earnCoinsUseCase: makeEarnCoinsUseCase(),
-            fetchWalletUseCase: makeFetchWalletUseCase()
+            fetchWalletUseCase: makeFetchWalletUseCase(),
+            materializeRoutinesUseCase: makeMaterializeRoutinesUseCase()
         )
     }
 
@@ -198,7 +226,18 @@ final class DIContainer {
         StatsViewModel(
             fetchStatsUseCase: makeFetchStatsUseCase(),
             fetchWeeklyUseCase: makeFetchWeeklyTodoCountsUseCase(),
-            fetchTodoCountsUseCase: makeFetchTodoCountsUseCase()
+            fetchTodoCountsUseCase: makeFetchTodoCountsUseCase(),
+            fetchPastIncompleteCountUseCase: makeFetchPastIncompleteCountUseCase()
+        )
+    }
+
+    @MainActor func makeRoutineViewModel() -> RoutineViewModel {
+        RoutineViewModel(
+            fetchUseCase: makeFetchRoutinesUseCase(),
+            addUseCase: makeAddRoutineUseCase(),
+            updateUseCase: makeUpdateRoutineUseCase(),
+            deleteUseCase: makeDeleteRoutineUseCase(),
+            materializeUseCase: makeMaterializeRoutinesUseCase()
         )
     }
 }

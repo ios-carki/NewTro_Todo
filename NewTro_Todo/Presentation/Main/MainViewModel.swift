@@ -13,6 +13,7 @@ struct DayPreviewStats: Equatable {
 
 enum TodoSection: String, CaseIterable {
     case favorites
+    case routine
     case todo
     case done
 }
@@ -120,6 +121,7 @@ final class MainViewModel: ObservableObject {
     private let deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol
     private let earnCoinsUseCase: any EarnCoinsUseCaseProtocol
     private let fetchWalletUseCase: any FetchWalletUseCaseProtocol
+    private let materializeRoutinesUseCase: any MaterializeRoutinesUseCaseProtocol
 
     init(
         fetchTodosUseCase: any FetchTodosUseCaseProtocol,
@@ -140,7 +142,8 @@ final class MainViewModel: ObservableObject {
         updateTemplateUseCase: any UpdateTemplateUseCaseProtocol,
         deleteTemplateUseCase: any DeleteTemplateUseCaseProtocol,
         earnCoinsUseCase: any EarnCoinsUseCaseProtocol,
-        fetchWalletUseCase: any FetchWalletUseCaseProtocol
+        fetchWalletUseCase: any FetchWalletUseCaseProtocol,
+        materializeRoutinesUseCase: any MaterializeRoutinesUseCaseProtocol
     ) {
         self.fetchTodosUseCase = fetchTodosUseCase
         self.fetchMemosUseCase = fetchMemosUseCase
@@ -161,9 +164,36 @@ final class MainViewModel: ObservableObject {
         self.deleteTemplateUseCase = deleteTemplateUseCase
         self.earnCoinsUseCase = earnCoinsUseCase
         self.fetchWalletUseCase = fetchWalletUseCase
+        self.materializeRoutinesUseCase = materializeRoutinesUseCase
         loadCollapsedFromDefaults()
         loadTodos()
         Task { await refreshWalletBalance() }
+    }
+
+    // MARK: - Routine materialize 보장
+    //
+    // 루틴이 만든 Todo 는 디스크에 미리 생성된 행만 읽기 경로에서 보인다.
+    // 콜드 스타트 materialize 는 60일 horizon 까지만 만들기 때문에,
+    // 사용자가 그 너머의 날짜/달로 이동하면 빈 화면이 보일 수 있다.
+    // 이 메서드를 loadTodos / fetchMonthOverview 진입 직전에 호출해
+    // 해당 시점까지 영구 캐시를 확장한다 (idempotent + in-memory 커서로 비용 최소).
+    private func ensureMaterialized(through date: Date) {
+        try? materializeRoutinesUseCase.execute(through: date)
+    }
+
+    private func endOfMonth(year: Int, month: Int) -> Date? {
+        let cal = Calendar.current
+        guard let monthStart = cal.date(from: DateComponents(year: year, month: month, day: 1)),
+              let nextMonth = cal.date(byAdding: .month, value: 1, to: monthStart),
+              let lastDay = cal.date(byAdding: .day, value: -1, to: nextMonth) else { return nil }
+        return cal.startOfDay(for: lastDay)
+    }
+
+    /// 해당 (year, month) 가 이미 루틴 materialize 캐시에 포함됐는지.
+    /// 캘린더 nav 버튼 비활성화 결정용 (콜드 미스에만 잠금).
+    func isMonthMaterialized(year: Int, month: Int) -> Bool {
+        guard let monthEnd = endOfMonth(year: year, month: month) else { return false }
+        return materializeRoutinesUseCase.isMaterialized(through: monthEnd)
     }
 
     func refreshWalletBalance() async {
@@ -242,6 +272,9 @@ final class MainViewModel: ObservableObject {
 
     // MARK: - Todo Actions
     func loadTodos() {
+        // 선택 날짜가 기본 horizon(오늘+60일) 밖이면 그 날짜까지 루틴을 materialize 한다.
+        // 같은 horizon 재호출은 in-memory 커서로 즉시 no-op.
+        ensureMaterialized(through: selectedDate)
         do {
             todos = try fetchTodosUseCase.execute(targetDate: selectedDate)
         } catch {
@@ -272,6 +305,20 @@ final class MainViewModel: ObservableObject {
 
     // MARK: - Date Picker Sheet 보조 조회
     func fetchMonthOverview(year: Int, month: Int) async -> [Int: DayContent] {
+        // 캘린더가 이동한 월의 마지막 날까지 루틴 Todo 가 미리 생성돼 있어야
+        // dayContent 도트 / 프리뷰 카운트가 정확하게 표시된다.
+        // executeAsync 는 매 N 일마다 메인스레드를 양보 + cancel 검사를 하므로,
+        // 사용자가 빠르게 월을 넘겨 picker 가 이전 Task 를 cancel 하면
+        // 진행 중인 materialize 도 즉시 중단된다.
+        if let monthEnd = endOfMonth(year: year, month: month) {
+            do {
+                try await materializeRoutinesUseCase.executeAsync(through: monthEnd)
+            } catch is CancellationError {
+                return [:]
+            } catch {
+                // materialize 실패해도 fetch 는 시도 (기존에 만든 분만이라도 표시).
+            }
+        }
         do {
             let overview = try await fetchMonthOverviewUseCase.execute(year: year, month: month)
             return overview.dayContent
@@ -281,6 +328,7 @@ final class MainViewModel: ObservableObject {
     }
 
     func fetchDayPreviewStats(for date: Date) async -> DayPreviewStats {
+        ensureMaterialized(through: date)
         let todos: [TodoEntity] = (try? fetchTodosUseCase.execute(targetDate: date)) ?? []
         // FetchMemosUseCase의 .range는 to에 +1일 정규화를 적용하므로 같은 날짜를 양쪽에 넘긴다.
         let memos: [MemoEntity] = (try? await fetchMemosUseCase.execute(filter: .range(from: date, to: date))) ?? []
@@ -340,27 +388,35 @@ final class MainViewModel: ObservableObject {
         id: String,
         text: String,
         importance: Importance,
+        targetDate: Date,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
         notifyAt: Date?,
         colorName: String
     ) {
+        let newTargetDate = Calendar.current.startOfDay(for: targetDate)
         Task {
             do {
                 try await editTodoUseCase.execute(
                     id: id,
                     text: text,
                     importance: importance,
+                    targetDate: newTargetDate,
                     targetTimeStart: targetTimeStart,
                     targetTimeEnd: targetTimeEnd,
                     isAllDay: isAllDay,
                     notifyAt: notifyAt,
                     colorName: colorName
                 )
-                if let idx = todos.firstIndex(where: { $0.id == id }) {
+                let viewedDay = Calendar.current.startOfDay(for: selectedDate)
+                if newTargetDate != viewedDay {
+                    // 다른 날짜로 이동했으므로 현재 보고 있는 리스트에서 제거.
+                    todos.removeAll { $0.id == id }
+                } else if let idx = todos.firstIndex(where: { $0.id == id }) {
                     todos[idx].text = text
                     todos[idx].importance = importance
+                    todos[idx].targetDate = newTargetDate
                     todos[idx].targetTimeStart = targetTimeStart
                     todos[idx].targetTimeEnd = targetTimeEnd
                     todos[idx].isAllDay = isAllDay
@@ -382,25 +438,30 @@ final class MainViewModel: ObservableObject {
     func addTodo(
         text: String,
         importance: Importance,
+        targetDate: Date,
         targetTimeStart: Date?,
         targetTimeEnd: Date?,
         isAllDay: Bool,
         notifyAt: Date?,
         colorName: String
     ) {
+        let newTargetDate = Calendar.current.startOfDay(for: targetDate)
         Task {
             do {
                 let newTodo = try await addTodoUseCase.execute(
                     text: text,
                     importance: importance,
-                    targetDate: selectedDate,
+                    targetDate: newTargetDate,
                     targetTimeStart: targetTimeStart,
                     targetTimeEnd: targetTimeEnd,
                     isAllDay: isAllDay,
                     notifyAt: notifyAt,
                     colorName: colorName
                 )
-                todos.append(newTodo)
+                // 사용자가 보고 있는 날짜와 같을 때만 현재 리스트에 노출.
+                if newTargetDate == Calendar.current.startOfDay(for: selectedDate) {
+                    todos.append(newTodo)
+                }
                 await recordTodoAddedUseCase.execute()
                 if let notifyAt {
                     NotificationManager.shared.schedule(todoId: newTodo.id, text: text, at: notifyAt)
@@ -460,24 +521,38 @@ final class MainViewModel: ObservableObject {
     func reorderFavorites(from source: IndexSet, to destination: Int) {
         var favorites = todos.filter { !$0.isCompleted && $0.isFavorite }
         favorites.move(fromOffsets: source, toOffset: destination)
-        applyIncompleteReorder(favorites: favorites, nonFavorites: nil)
+        applyIncompleteReorder(favorites: favorites)
     }
 
-    /// 일반(즐겨찾기 아님) 그룹 내에서만 순서 재배치
+    /// 루틴(자동 생성) 그룹 내에서만 순서 재배치
+    func reorderRoutines(from source: IndexSet, to destination: Int) {
+        var routines = todos.filter { !$0.isCompleted && !$0.isFavorite && $0.routineId != nil }
+        routines.move(fromOffsets: source, toOffset: destination)
+        applyIncompleteReorder(routines: routines)
+    }
+
+    /// 일반(즐겨찾기/루틴 아님) 그룹 내에서만 순서 재배치
     func reorderNonFavorites(from source: IndexSet, to destination: Int) {
-        var nonFavorites = todos.filter { !$0.isCompleted && !$0.isFavorite }
+        var nonFavorites = todos.filter { !$0.isCompleted && !$0.isFavorite && $0.routineId == nil }
         nonFavorites.move(fromOffsets: source, toOffset: destination)
-        applyIncompleteReorder(favorites: nil, nonFavorites: nonFavorites)
+        applyIncompleteReorder(nonFavorites: nonFavorites)
     }
 
-    /// 한쪽 그룹의 새 배열을 받아 todos 전체 순서 + sortOrder 영속화
-    private func applyIncompleteReorder(favorites: [TodoEntity]?, nonFavorites: [TodoEntity]?) {
+    /// 한쪽 그룹의 새 배열을 받아 todos 전체 순서 + sortOrder 영속화.
+    /// 그룹 순서: 즐겨찾기 → 루틴 → 일반. enumerated 인덱스가 전체에 걸쳐 단조 증가해야
+    /// 같은 sortOrder 가 그룹간에 겹치지 않는다.
+    private func applyIncompleteReorder(
+        favorites: [TodoEntity]? = nil,
+        routines: [TodoEntity]? = nil,
+        nonFavorites: [TodoEntity]? = nil
+    ) {
         let favs = favorites ?? todos.filter { !$0.isCompleted && $0.isFavorite }
-        let nonFavs = nonFavorites ?? todos.filter { !$0.isCompleted && !$0.isFavorite }
+        let rts = routines ?? todos.filter { !$0.isCompleted && !$0.isFavorite && $0.routineId != nil }
+        let nonFavs = nonFavorites ?? todos.filter { !$0.isCompleted && !$0.isFavorite && $0.routineId == nil }
         let completed = todos.filter { $0.isCompleted }
-        todos = favs + nonFavs + completed
+        todos = favs + rts + nonFavs + completed
 
-        let combined = favs + nonFavs
+        let combined = favs + rts + nonFavs
         let updates = combined.enumerated().map { (idx, todo) in (id: todo.id, sortOrder: idx) }
         Task {
             do {

@@ -32,6 +32,15 @@ final class TodoFormState: ObservableObject {
         hasReminder ? reminderDate : nil
     }
 
+    /// 폼의 기한 입력을 Todo 의 실제 등장 날짜(`targetDate`) 로 변환.
+    /// hasDueDate=false 인 경우 호출자가 들고 있는 현재 캘린더 날짜(selectedDate) 를 사용.
+    func resolvedTargetDate(fallback: Date) -> Date {
+        let cal = Calendar.current
+        return hasDueDate
+            ? cal.startOfDay(for: dueDate)
+            : cal.startOfDay(for: fallback)
+    }
+
     func reset(for todo: TodoEntity?) {
         editingTodo = todo
         text = ""
@@ -49,13 +58,10 @@ final class TodoFormState: ObservableObject {
         importance = todo.importance
         colorName = todo.colorName
 
-        if let start = todo.targetTimeStart {
-            hasDueDate = true
-            dueDate = Calendar.current.startOfDay(for: start)
-            dueChip = Self.detectChip(for: dueDate)
-        } else {
-            hasDueDate = false
-        }
+        // 모든 Todo 는 targetDate 를 가진다 — 이를 폼의 dueDate 로 표시.
+        hasDueDate = true
+        dueDate = Calendar.current.startOfDay(for: todo.targetDate)
+        dueChip = Self.detectChip(for: dueDate)
 
         if let notify = todo.notifyAt {
             hasReminder = true

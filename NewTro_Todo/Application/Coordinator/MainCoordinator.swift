@@ -10,6 +10,7 @@ final class MainCoordinator: CoordinatorProtocol {
     private var memoVM: MemoViewModel?
     private var statsVM: StatsViewModel?
     private var settingsVM: SettingsViewModel?
+    private var routineVM: RoutineViewModel?
 
     init(navigationController: UINavigationController, diContainer: DIContainer) {
         self.navigationController = navigationController
@@ -24,6 +25,7 @@ final class MainCoordinator: CoordinatorProtocol {
         let memoVM     = diContainer.makeMemoViewModel()
         let statsVM    = diContainer.makeStatsViewModel()
         let settingsVM = diContainer.makeSettingsViewModel()
+        let routineVM  = diContainer.makeRoutineViewModel()
 
         settingsVM.onResetComplete   = { [weak self] in self?.restartApp() }
         settingsVM.onRestoreComplete = { [weak self] in self?.restartApp() }
@@ -32,6 +34,11 @@ final class MainCoordinator: CoordinatorProtocol {
         self.memoVM     = memoVM
         self.statsVM    = statsVM
         self.settingsVM = settingsVM
+        self.routineVM  = routineVM
+
+        // 콜드 스타트 시점에 누락된 루틴 Todo 따라잡기 (실패해도 앱 진입에 영향 없음)
+        let materialize = diContainer.makeMaterializeRoutinesUseCase()
+        try? materialize.execute()
 
         let di = diContainer
         let container = RootTabContainerView(
@@ -39,6 +46,7 @@ final class MainCoordinator: CoordinatorProtocol {
             memoVM: memoVM,
             statsVM: statsVM,
             settingsVM: settingsVM,
+            routineVM: routineVM,
             makeBackupLogVM: { di.makeBackupLogViewModel() }
         )
         let hostingVC = UIHostingController(rootView: container)

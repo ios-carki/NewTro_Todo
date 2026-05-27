@@ -8,6 +8,7 @@ final class TabBarController: ObservableObject {
     @Published var selected: AppTab = .todo
     @Published var todoTabId     = UUID()
     @Published var memoTabId     = UUID()
+    @Published var routineTabId  = UUID()
     @Published var statsTabId    = UUID()
     @Published var settingsTabId = UUID()
 
@@ -23,6 +24,7 @@ final class TabBarController: ObservableObject {
         switch tab {
         case .todo:     todoTabId = UUID()
         case .memo:     memoTabId = UUID()
+        case .routine:  routineTabId = UUID()
         case .stats:    statsTabId = UUID()
         case .settings: settingsTabId = UUID()
         }
@@ -53,6 +55,7 @@ struct FloatingTabBar: View {
         HStack(spacing: 0) {
             tabItem(.todo,     label: "할일", sfSymbol: "checkmark.square.fill")
             tabItem(.memo,     label: "메모", sfSymbol: "pencil")
+            tabItem(.routine,  label: "루틴", sfSymbol: "repeat")
             tabItem(.stats,    label: "통계", sfSymbol: "chart.bar.fill")
             tabItem(.settings, label: "설정", sfSymbol: "gearshape.fill")
         }

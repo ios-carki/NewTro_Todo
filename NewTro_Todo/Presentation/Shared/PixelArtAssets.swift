@@ -176,6 +176,23 @@ enum PixelArtAssets {
         "1": .ink,
     ]
 
+    // MARK: - Info Bang (8×8) — 기한 안내 helper row inline 아이콘. "!" 모양.
+    // Todo 가 실제로 어느 날짜에 등록될지 알려주는 helper 옆에 붙는다.
+    // peach 톤으로 "주의/안내" 의 가벼운 강조를 준다.
+    static let dotInfoGrid: [String] = [
+        "..1111..",
+        "..1111..",
+        "..1111..",
+        "..1111..",
+        "..1111..",
+        "........",
+        "..1111..",
+        "..1111..",
+    ]
+    static let dotInfoPalette: [Character: Color] = [
+        "1": .peachDk,
+    ]
+
     // MARK: - Color Wheel (8×8) — 색상 row inline 아이콘.
     // 원형 ink 외곽 + 3 sectors (좌상=red, 우상=yellow, 하반=green) 으로 분할.
     // 다른 ink 아이콘과 톤이 다르지만 "색상 선택" 메타포를 색 자체로 표현.

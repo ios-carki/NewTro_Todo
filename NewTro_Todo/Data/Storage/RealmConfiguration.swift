@@ -23,7 +23,17 @@ enum RealmConfiguration {
     //     Todo.emoji / TemplateObject.emoji 컬럼은 모델 정의에서 사라져 Realm 이 자동 drop
     // v12: Todo.colorName String 추가 (기본값 "yellow"). 리스트 행 배경색 사용자 지정.
     //     QuickNote 의 colorName 과 동일 팔레트(yellow/pink/mint/lavender/peach/sky) 공유.
-    static let schemaVersion: UInt64 = 12
+    // v13: RoutineObject 신규 테이블 추가. Todo.routineId ObjectId? 옵셔널 컬럼 추가.
+    //     기존 Todo 행은 routineId = nil 로 자동 초기화 (수동 생성 Todo 의미 유지).
+    // v14: RoutineObject 정의 정리 (출시 전 내부 변경).
+    //     - 제거: isAllDay, targetTimeStart, targetTimeEnd  (Todo 폼의 진행시각 기획 폐기와 동기화)
+    //     - 추가: importance Int  (만들어질 각 Todo 의 중요도. 기본 0 = .none)
+    //     사라진 컬럼은 Realm 이 자동 drop, 신규 Int 컬럼은 default 0 으로 자동 백필. 무손실.
+    // v15: Todo.targetDate / Todo.routineId 에 인덱스 추가.
+    //     루틴 영구 캐시 도입으로 디스크 Todo 행 수가 (5루틴×10년 = ~18K) 규모까지 자랄 수 있어,
+    //     filter("targetDate == ...") / filter("routineId == ... AND targetDate == ...") 가
+    //     O(log n) 으로 안정되도록 인덱스 부여. 데이터 변환 없음 (인덱스 추가만, 무손실).
+    static let schemaVersion: UInt64 = 15
     private static let appGroupIdentifier = "group.carki.NewTro_Todo"
 
     static var appGroupURL: URL? {
@@ -178,6 +188,22 @@ enum RealmConfiguration {
             migration.enumerateObjects(ofType: "Todo") { _, newObject in
                 if newObject?["colorName"] == nil {
                     newObject?["colorName"] = "yellow"
+                }
+            }
+        }
+        // v13: RoutineObject 신규 테이블 + Todo.routineId 옵셔널 추가.
+        // 신규 옵셔널 컬럼은 Realm 이 자동 nil 백필. 별도 데이터 변환 없음 (lossless).
+        // RoutineObject 는 빈 테이블로 생성됨.
+
+        // v14: RoutineObject 컬럼 재구성 (출시 전 변경).
+        //   - 제거: isAllDay / targetTimeStart / targetTimeEnd → Realm 자동 drop
+        //   - 추가: importance Int → 기본 0 자동 백필 (.none)
+        // 모델 정의 변경만으로 Realm 이 schema diff 를 해결하지만, App vs Widget 의
+        // 스키마 동기 타이밍 차이로 신규 컬럼 미초기화 케이스를 본 적이 있어 명시 백필을 둠.
+        if oldVersion < 14 {
+            migration.enumerateObjects(ofType: "RoutineObject") { _, newObject in
+                if newObject?["importance"] == nil {
+                    newObject?["importance"] = 0
                 }
             }
         }

@@ -108,6 +108,17 @@ extension Color {
     // 볼터치/눈 반짝임용 분홍 — 마스코트 캐릭터 디테일에 사용
     static let blush        = Color(hex: "#F9C5D2")
 
+    // Todo 리스트 섹션 헤더 — 각 섹션이 시각적으로 구분되도록 4가지 색 칩.
+    // 모든 텍스트는 충분한 명도 대비를 확보 (WCAG AA 이상).
+    static let sectionStarBg     = Color(hex: "#FFD93D")  // 즐겨찾기: 골드
+    static let sectionStarInk    = Color(hex: "#3D2A00")
+    static let sectionRoutineBg  = Color(hex: "#C9B6F8")  // 루틴: 라벤더
+    static let sectionRoutineInk = Color(hex: "#2D1B5C")
+    static let sectionTodoBg     = Color(hex: "#FFB174")  // 할 일: 피치
+    static let sectionTodoInk    = Color(hex: "#5C2E00")
+    static let sectionDoneBg     = Color(hex: "#8FD99E")  // 완료: 민트
+    static let sectionDoneInk    = Color(hex: "#1B4D26")
+
     // Legacy aliases
     static let placeHolderC    = Color(hex: "#929292")
     static let mainBackGroundC = Color(hex: "#7CC7F0")

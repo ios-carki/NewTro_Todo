@@ -440,7 +440,35 @@ struct TodoAddOverlayContent: View {
                     ))
                 }
             }
+
+            dueTargetHelperRow
         }
+    }
+
+    // 기한 라벨이 실제 등록 날짜로 작용함을 안내. hasDueDate 여부에 따라 dueDate 또는 selectedDate 기준.
+    private var dueTargetHelperRow: some View {
+        let target = formState.hasDueDate ? formState.dueDate : viewModel.selectedDate
+        return HStack(spacing: 6) {
+            PixelArtView(
+                grid: PixelArtAssets.dotInfoGrid,
+                palette: PixelArtAssets.dotInfoPalette,
+                scale: 2
+            )
+            Text("%@ 에 Todo가 추가됩니다".localized(with: helperTargetDateLabel(target)))
+                .font(.galBold11())
+                .foregroundColor(.shade)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+            Spacer(minLength: 0)
+        }
+        .padding(.top, 2)
+    }
+
+    private func helperTargetDateLabel(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.locale = Locale.current
+        f.dateFormat = "yyyy-MM-dd (E)"
+        return f.string(from: date)
     }
 
     private func dueDateInlineLabel(_ date: Date) -> String {

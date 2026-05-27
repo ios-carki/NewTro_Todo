@@ -120,6 +120,7 @@ let project = Project(
                 "NewTro_Todo/Data/Storage/QuickNoteObject.swift",
                 "NewTro_Todo/Data/Storage/TemplateObject.swift",
                 "NewTro_Todo/Data/Storage/WalletObject.swift",
+                "NewTro_Todo/Data/Storage/RoutineObject.swift",
                 "NewTro_Todo/Data/Storage/RealmConfiguration.swift",
                 "NewTro_Todo/Source/Extension/DateFormat+Extension.swift",
                 "NewTro_Todo/Source/Extension/Date+Extension.swift",
@@ -147,6 +148,23 @@ let project = Project(
             )
         ),
 
+        // MARK: - Unit Test Target
+        .target(
+            name: "NewTro_TodoTests",
+            destinations: .iOS,
+            product: .unitTests,
+            bundleId: "com.jun.NewTro-Todo.Tests",
+            deploymentTargets: .iOS("16.0"),
+            sources: ["NewTro_TodoTests/**/*.swift"],
+            dependencies: [
+                .target(name: "NewTro_Todo"),
+                .package(product: "RealmSwift"),
+            ],
+            settings: .settings(
+                base: ["DEVELOPMENT_TEAM": "48S4T8HCYX"]
+            )
+        ),
+
         // MARK: - UI Test Target
         .target(
             name: "NewTro_TodoUITests",
@@ -157,7 +175,10 @@ let project = Project(
             sources: ["NewTro_TodoUITests/**/*.swift"],
             dependencies: [
                 .target(name: "NewTro_Todo"),
-            ]
+            ],
+            settings: .settings(
+                base: ["DEVELOPMENT_TEAM": "48S4T8HCYX"]
+            )
         ),
     ],
     // Runtime uses `String.localized()` extension — Tuist의 자동 생성 TuistStrings를 참조하지 않음.

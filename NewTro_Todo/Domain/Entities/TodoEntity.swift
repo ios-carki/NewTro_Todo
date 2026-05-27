@@ -15,4 +15,5 @@ struct TodoEntity: Identifiable {
     var sortOrder: Int
     var completedAt: Date?
     var colorName: String
+    var routineId: String?
 }
