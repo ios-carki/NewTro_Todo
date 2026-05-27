@@ -441,7 +441,22 @@ enum PixelArtAssets {
         "...1..1...",
     ]
 
-    enum CharacterGridType { case a, b, c, d }
+    // Grid E: 왕관 마스코트. 3 spike crown + ruby 보석. 코인 해금 전용 마스코트용.
+    // Palette keys: 1=outline, 2=face, 3=eye, 4=body, 5=gem
+    static let charGridE: [String] = [
+        "..1.1.1...",
+        ".11515111.",
+        ".11111111.",
+        "..122221..",
+        ".12222221.",
+        ".12232321.",
+        ".12525521.",
+        "..122221..",
+        ".14444441.",
+        "...1..1...",
+    ]
+
+    enum CharacterGridType { case a, b, c, d, e }
 
     static func characterGrid(type: CharacterGridType) -> [String] {
         switch type {
@@ -449,6 +464,7 @@ enum PixelArtAssets {
         case .b: return charGridB
         case .c: return charGridC
         case .d: return charGridD
+        case .e: return charGridE
         }
     }
 }

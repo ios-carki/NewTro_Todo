@@ -4,6 +4,8 @@ struct MascotPickerView: View {
     @ObservedObject var settingsVM: SettingsViewModel
     @ObservedObject var statsVM: StatsViewModel
     let onShowUnlockInfo: (FriendCharInfo) -> Void
+    // 코인 결제 흐름. 잠긴 코인 마스코트의 "해금" 버튼 탭 시 호출되어 confirm 카드를 띄움.
+    let onConfirmUnlock: (FriendCharInfo) -> Void
 
     @Environment(\.dismiss) private var dismiss
     @State private var filter: MascotFilter = .all
@@ -27,6 +29,7 @@ struct MascotPickerView: View {
                             .font(.galBold13())
                             .foregroundColor(.shade)
                         Spacer()
+                        walletChip
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 12)
@@ -47,7 +50,10 @@ struct MascotPickerView: View {
                 closeButton
             }
         }
-        .onAppear { statsVM.loadStats() }
+        .onAppear {
+            statsVM.loadStats()
+            settingsVM.refreshWalletBalance()
+        }
     }
 
     private var closeButton: some View {
@@ -69,6 +75,23 @@ struct MascotPickerView: View {
     private var unlockedSummary: String {
         let unlocked = statsVM.stats.unlockedCharacterIds.count
         return String(format: "%d/%d 해금".localized(), unlocked, CharacterData.all.count)
+    }
+
+    // 코인 마스코트 해금 가능 여부 판단용. 잔액을 상단에 항상 노출해 UX 단서를 줌.
+    private var walletChip: some View {
+        HStack(spacing: 4) {
+            PixelArtView(grid: PixelArtAssets.coinGrid,
+                         palette: PixelArtAssets.coinPalette,
+                         scale: 1.6)
+            Text("×\(settingsVM.walletBalance)")
+                .font(.pressStart10())
+                .foregroundColor(.ink)
+        }
+        .padding(.horizontal, 8)
+        .frame(height: 26)
+        .background(Color.cream)
+        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+        .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
     }
 
     // MARK: - Filter
@@ -163,14 +186,16 @@ struct MascotPickerView: View {
     private func mascotCard(_ info: FriendCharInfo) -> some View {
         let isUnlocked = statsVM.stats.unlockedCharacterIds.contains(info.id)
         let isSelected = settingsVM.selectedCharacterId == info.id
+        // 코인 해금 마스코트는 잠겨 있어도 이름/설명을 미리 공개해 무엇을 사는지 보이게 한다.
+        let revealsText = isUnlocked || info.unlockCost != nil
 
         return PixelPanel(bg: isSelected ? selectedCardBg : .panel, padding: 10) {
             VStack(spacing: 8) {
                 portrait(info: info)
 
-                Text(isUnlocked ? LocalizedStringKey(info.name) : LocalizedStringKey("???"))
+                Text(revealsText ? LocalizedStringKey(info.name) : LocalizedStringKey("???"))
                     .font(.galBold16())
-                    .foregroundColor(isUnlocked ? .ink : .shade.opacity(0.5))
+                    .foregroundColor(revealsText ? .ink : .shade.opacity(0.5))
                     .lineLimit(1)
 
                 Rectangle()
@@ -178,9 +203,9 @@ struct MascotPickerView: View {
                     .frame(height: 1)
                     .padding(.horizontal, 4)
 
-                Text(isUnlocked ? LocalizedStringKey(info.description) : LocalizedStringKey("???"))
+                Text(revealsText ? LocalizedStringKey(info.description) : LocalizedStringKey("???"))
                     .font(.galBold11())
-                    .foregroundColor(isUnlocked ? .shade : .shade.opacity(0.4))
+                    .foregroundColor(revealsText ? .shade : .shade.opacity(0.4))
                     .multilineTextAlignment(.center)
                     .lineLimit(3)
                     .fixedSize(horizontal: false, vertical: true)
@@ -257,6 +282,8 @@ struct MascotPickerView: View {
                     }
                     .buttonStyle(.plain)
                 }
+            } else if let cost = info.unlockCost {
+                coinUnlockButton(cost: cost, info: info)
             } else {
                 HStack(spacing: 4) {
                     Image(systemName: "lock.fill")
@@ -271,6 +298,33 @@ struct MascotPickerView: View {
                 .overlay(Rectangle().stroke(Color.ink.opacity(0.3), lineWidth: 1.5))
             }
         }
+    }
+
+    // 잠긴 코인 마스코트의 해금 CTA. 잔액 충분 → sun bg 액티브 / 부족 → 흐릿한 disabled.
+    @ViewBuilder
+    private func coinUnlockButton(cost: Int, info: FriendCharInfo) -> some View {
+        let canAfford = settingsVM.walletBalance >= cost
+
+        Button {
+            guard canAfford else { return }
+            onConfirmUnlock(info)
+        } label: {
+            HStack(spacing: 3) {
+                PixelArtView(grid: PixelArtAssets.coinGrid,
+                             palette: PixelArtAssets.coinPalette,
+                             scale: 1.2)
+                Text("\(cost)")
+                    .font(.pressStart9())
+                    .foregroundColor(canAfford ? .ink : .shade.opacity(0.6))
+            }
+            .frame(maxWidth: .infinity)
+            .frame(height: 28)
+            .background(canAfford ? Color.sun : Color.cream.opacity(0.4))
+            .overlay(Rectangle().stroke(canAfford ? Color.ink : Color.ink.opacity(0.3),
+                                        lineWidth: 1.5))
+        }
+        .buttonStyle(.plain)
+        .disabled(!canAfford)
     }
 
     // MARK: - Unlock Info Popup
@@ -311,11 +365,37 @@ private struct UnlockInfoCard: View {
                     .font(.galBold11())
                     .foregroundColor(.shade)
 
-                Text(LocalizedStringKey(info.unlockDescription))
-                    .font(.galBold14())
-                    .foregroundColor(.ink)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 8)
+                // 코인 마스코트는 "N 코인으로 잠금 해제" 형태로 가격을 직접 표시.
+                // 통계 기반 마스코트는 unlockDescription 키 그대로 (예: "투두 5개 완료").
+                if let cost = info.unlockCost {
+                    Text(String(format: "%d 코인으로 잠금 해제".localized(), cost))
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 8)
+                } else {
+                    Text(LocalizedStringKey(info.unlockDescription))
+                        .font(.galBold14())
+                        .foregroundColor(.ink)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 8)
+                }
+
+                // 코인 마스코트는 가격 칩으로 시각적 강조 추가.
+                if let cost = info.unlockCost {
+                    HStack(spacing: 6) {
+                        PixelArtView(grid: PixelArtAssets.coinGrid,
+                                     palette: PixelArtAssets.coinPalette,
+                                     scale: 1.6)
+                        Text("×\(cost)")
+                            .font(.pressStart12())
+                            .foregroundColor(.ink)
+                    }
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 6)
+                    .background(Color.sun.opacity(0.6))
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+                }
 
                 Button(action: onClose) {
                     Text("확인")
@@ -333,20 +413,119 @@ private struct UnlockInfoCard: View {
     }
 }
 
+// MARK: - Mascot Unlock Confirm Card
+// 코인 결제로 마스코트를 해금하기 직전 사용자 확인 카드.
+private struct MascotUnlockConfirmCard: View {
+    let info: FriendCharInfo
+    let balance: Int
+    let isUnlocking: Bool
+    let onCancel: () -> Void
+    let onConfirm: () -> Void
+
+    var body: some View {
+        PixelPanel(bg: .cream, padding: 20) {
+            VStack(spacing: 12) {
+                ZStack {
+                    Color.mascotTile
+                        .frame(width: 96, height: 96)
+                        .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                    PixelArtView(
+                        grid: PixelArtAssets.characterGrid(type: info.gridType),
+                        palette: info.palette,
+                        scale: 7
+                    )
+                }
+
+                Text(LocalizedStringKey(info.name))
+                    .font(.galBold16())
+                    .foregroundColor(.ink)
+
+                Rectangle()
+                    .fill(Color.ink.opacity(0.25))
+                    .frame(height: 1)
+                    .padding(.horizontal, 12)
+
+                if let cost = info.unlockCost {
+                    HStack(spacing: 6) {
+                        PixelArtView(grid: PixelArtAssets.coinGrid,
+                                     palette: PixelArtAssets.coinPalette,
+                                     scale: 1.8)
+                        Text("×\(cost)")
+                            .font(.pressStart12())
+                            .foregroundColor(.ink)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.sun.opacity(0.6))
+                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
+                }
+
+                Text("코인을 사용해 해금하시겠어요?")
+                    .font(.galBold13())
+                    .foregroundColor(.ink)
+                    .multilineTextAlignment(.center)
+
+                HStack(spacing: 4) {
+                    Text("보유")
+                        .font(.galBold11())
+                        .foregroundColor(.shade)
+                    PixelArtView(grid: PixelArtAssets.coinGrid,
+                                 palette: PixelArtAssets.coinPalette,
+                                 scale: 1.2)
+                    Text("×\(balance)")
+                        .font(.pressStart9())
+                        .foregroundColor(.shade)
+                }
+                .padding(.top, 2)
+
+                HStack(spacing: 10) {
+                    Button(action: onCancel) {
+                        Text("취소")
+                            .font(.galBold14())
+                            .foregroundColor(.ink)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 32)
+                            .background(Color.cream)
+                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isUnlocking)
+
+                    Button(action: onConfirm) {
+                        Text(isUnlocking ? "해금중..." : "해금")
+                            .font(.galBold14())
+                            .foregroundColor(.cream)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 32)
+                            .background(Color.peachDk)
+                            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(isUnlocking)
+                }
+                .padding(.top, 6)
+            }
+        }
+    }
+}
+
 // MARK: - Cover Wrapper
 // fullScreenCover 안에서 NavigationView 를 감싸 dim+팝업이 nav bar 위에 오버레이되도록 하는 컨테이너.
-// 팝업 상태(unlockInfoTarget)를 여기서 소유하고 자식에 콜백으로 전달.
+// 팝업 상태(unlockInfoTarget / unlockConfirmTarget)를 여기서 소유하고 자식에 콜백으로 전달.
 struct MascotPickerCover: View {
     @ObservedObject var settingsVM: SettingsViewModel
     @ObservedObject var statsVM: StatsViewModel
     @State private var unlockInfoTarget: FriendCharInfo?
+    @State private var unlockConfirmTarget: FriendCharInfo?
+    @State private var isUnlocking: Bool = false
 
     var body: some View {
         NavigationView {
             MascotPickerView(
                 settingsVM: settingsVM,
                 statsVM: statsVM,
-                onShowUnlockInfo: { unlockInfoTarget = $0 }
+                onShowUnlockInfo: { unlockInfoTarget = $0 },
+                onConfirmUnlock: { unlockConfirmTarget = $0 }
             )
         }
         .navigationViewStyle(.stack)
@@ -361,6 +540,44 @@ struct MascotPickerCover: View {
                         .padding(.horizontal, 32)
                 }
             }
+            if let target = unlockConfirmTarget {
+                ZStack {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            // 트랜잭션 중에는 dim 탭으로 닫지 못하게 막아 중복 처리 방지.
+                            if !isUnlocking { unlockConfirmTarget = nil }
+                        }
+
+                    MascotUnlockConfirmCard(
+                        info: target,
+                        balance: settingsVM.walletBalance,
+                        isUnlocking: isUnlocking,
+                        onCancel: { unlockConfirmTarget = nil },
+                        onConfirm: { performUnlock(info: target) }
+                    )
+                    .padding(.horizontal, 32)
+                }
+            }
+        }
+    }
+
+    // 코인 차감 → unlocked 집합 추가 → walletBalance 새로고침 → statsVM 새로고침 → 자동 선택까지.
+    // 자동 선택: 갓 해금한 마스코트는 곧바로 적용해서 "획득했어요" 분위기를 만든다.
+    private func performUnlock(info: FriendCharInfo) {
+        guard let cost = info.unlockCost else { return }
+        guard !isUnlocking else { return }
+        isUnlocking = true
+        Task {
+            do {
+                try await settingsVM.unlockMascot(id: info.id, cost: cost)
+                statsVM.loadStats()
+                settingsVM.selectedCharacterId = info.id
+            } catch {
+                // 잔액 부족 등 방어 경로. UI 단에서 이미 disabled 처리되므로 정상 흐름에선 발생하지 않음.
+            }
+            unlockConfirmTarget = nil
+            isUnlocking = false
         }
     }
 }

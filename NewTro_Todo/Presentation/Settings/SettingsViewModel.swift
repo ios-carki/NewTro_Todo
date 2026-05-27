@@ -85,6 +85,7 @@ final class SettingsViewModel: ObservableObject {
     private let peekBackupHeaderUseCase: any PeekBackupHeaderUseCaseProtocol
     private let recordBackupLogUseCase: any RecordBackupLogUseCaseProtocol
     private let fetchWalletUseCase: any FetchWalletUseCaseProtocol
+    private let unlockMascotUseCase: any UnlockMascotUseCaseProtocol
 
     // 백업 성공 시 RecordBackupLog 에 넘길 엔트리.
     // exportBackup이 파일에 합성 포함시킨 엔트리와 동일 id를 써야 merge 복구 시 중복 안 됨.
@@ -99,7 +100,8 @@ final class SettingsViewModel: ObservableObject {
         restoreBackupUseCase: any RestoreBackupUseCaseProtocol,
         peekBackupHeaderUseCase: any PeekBackupHeaderUseCaseProtocol,
         recordBackupLogUseCase: any RecordBackupLogUseCaseProtocol,
-        fetchWalletUseCase: any FetchWalletUseCaseProtocol
+        fetchWalletUseCase: any FetchWalletUseCaseProtocol,
+        unlockMascotUseCase: any UnlockMascotUseCaseProtocol
     ) {
         self.clearAllDataUseCase = clearAllDataUseCase
         self.checkPermissionUseCase = checkNotificationPermissionUseCase
@@ -110,6 +112,7 @@ final class SettingsViewModel: ObservableObject {
         self.peekBackupHeaderUseCase = peekBackupHeaderUseCase
         self.recordBackupLogUseCase = recordBackupLogUseCase
         self.fetchWalletUseCase = fetchWalletUseCase
+        self.unlockMascotUseCase = unlockMascotUseCase
 
         let ud = UserDefaults.standard
         self.welcomeOnLaunch     = ud.bool(forKey: "showWelcomeOnLaunch")
@@ -158,6 +161,17 @@ final class SettingsViewModel: ObservableObject {
                 walletBalance = wallet.balance
             }
         }
+    }
+
+    // MARK: - Mascot Coin Unlock
+    //
+    // 코인으로 마스코트 해금. spend 가 잔액 부족 시 throw → 호출자가 인지하고 UI 처리.
+    // 성공 시 walletBalance 새로고침. unlocked 목록은 picker 가 statsVM 을 통해 별도 새로고침.
+    // 호출자는 잔액이 cost 이상인지 미리 검증하고 호출하는 게 정상 경로이며,
+    // 이 메서드의 throw 는 race condition 등 방어 케이스.
+    func unlockMascot(id: String, cost: Int) async throws {
+        try await unlockMascotUseCase.execute(mascotId: id, cost: cost)
+        refreshWalletBalance()
     }
 
     func refreshNotificationStateOnAppear() {
