@@ -12,28 +12,45 @@ struct PixelCalendarPicker: View {
     var minimumDate: Date? = nil
     var externalDate: Date? = nil
     var monthOverviewProvider: ((Int, Int) async -> [Int: DayContent])? = nil
+    /// (year, month) 가 이미 캐시(루틴 materialize 완료) 됐는지 동기 체크. nil 이면 항상 콜드 미스로 간주.
+    /// 콜드 미스일 때만 nav 버튼을 잠그고 cached hit 은 즉시 통과시킨다.
+    var cacheCheck: ((Int, Int) -> Bool)? = nil
     var onHeaderTap: (() -> Void)? = nil
+    /// isLoading 토글을 외부로 알림 → 시트의 하단 버튼/dismiss 잠금 결정에 사용.
+    var onLoadingChange: ((Bool) -> Void)? = nil
 
-    @State private var viewYear: Int
-    @State private var viewMonth: Int
+    /// year*100 + month. 단일 @State 로 통합해서, 12→1 월처럼 year 와 month 가 동시에 바뀔 때도
+    /// 한 프레임에 두 번 onChange 가 발화하지 않도록 한다.
+    /// ("onChange(of: Int) action tried to update multiple times per frame" 경고 방지)
+    @State private var viewYearMonth: Int
     @State private var dayContent: [Int: DayContent] = [:]
+    @State private var reloadTask: Task<Void, Never>? = nil
+    @State private var isLoading: Bool = false
+
+    private var viewYear: Int  { viewYearMonth / 100 }
+    private var viewMonth: Int { viewYearMonth % 100 }
 
     init(
         initialDate: Date = Date(),
         minimumDate: Date? = nil,
         externalDate: Date? = nil,
         monthOverviewProvider: ((Int, Int) async -> [Int: DayContent])? = nil,
+        cacheCheck: ((Int, Int) -> Bool)? = nil,
         onHeaderTap: (() -> Void)? = nil,
+        onLoadingChange: ((Bool) -> Void)? = nil,
         onDateSelected: @escaping (Date) -> Void
     ) {
         let cal = Calendar.current
         let base = externalDate ?? initialDate
-        _viewYear  = State(initialValue: cal.component(.year,  from: base))
-        _viewMonth = State(initialValue: cal.component(.month, from: base))
+        let y = cal.component(.year,  from: base)
+        let m = cal.component(.month, from: base)
+        _viewYearMonth = State(initialValue: y * 100 + m)
         self.minimumDate   = minimumDate
         self.externalDate  = externalDate
         self.monthOverviewProvider = monthOverviewProvider
+        self.cacheCheck = cacheCheck
         self.onHeaderTap = onHeaderTap
+        self.onLoadingChange = onLoadingChange
         self.onDateSelected = onDateSelected
     }
 
@@ -47,13 +64,14 @@ struct PixelCalendarPicker: View {
                 .padding(.top, 10)
         }
         .onAppear { reloadOverview() }
-        .onChange(of: viewYear) { _ in reloadOverview() }
-        .onChange(of: viewMonth) { _ in reloadOverview() }
+        .onChange(of: viewYearMonth) { _ in reloadOverview() }
+        .onChange(of: isLoading) { newValue in onLoadingChange?(newValue) }
         .onChange(of: externalDate) { newDate in
             guard let d = newDate else { return }
             let cal = Calendar.current
-            viewYear  = cal.component(.year,  from: d)
-            viewMonth = cal.component(.month, from: d)
+            let y = cal.component(.year,  from: d)
+            let m = cal.component(.month, from: d)
+            viewYearMonth = y * 100 + m
         }
     }
 
@@ -69,6 +87,8 @@ struct PixelCalendarPicker: View {
                     .background(Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
             }
+            .disabled(isLoading)
+            .opacity(isLoading ? 0.5 : 1)
 
             HStack(spacing: 6) {
                 Text(monthTitle)
@@ -84,8 +104,10 @@ struct PixelCalendarPicker: View {
             .frame(height: 46)
             .background(Color.panel)
             .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            .opacity(isLoading ? 0.5 : 1)
             .contentShape(Rectangle())
-            .onTapGesture { onHeaderTap?() }
+            // isLoading 동안 wheel picker 진입도 막아, 로딩 중 또 다른 점프가 큐잉되는 걸 방지.
+            .onTapGesture { if !isLoading { onHeaderTap?() } }
 
             Button { nextMonth() } label: {
                 Text("▶")
@@ -95,6 +117,8 @@ struct PixelCalendarPicker: View {
                     .background(Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
             }
+            .disabled(isLoading)
+            .opacity(isLoading ? 0.5 : 1)
         }
         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
     }
@@ -107,6 +131,34 @@ struct PixelCalendarPicker: View {
                 weekdayHeader
                 dayGrid
             }
+        }
+        .overlay(loadingOverlay)
+    }
+
+    /// 콜드 미스 materialize 중에 캘린더 그리드 위로 떠오르는 픽셀 톤 로딩 카드.
+    /// isLoading 이 false 일 땐 EmptyView 라 hit-test/시각 영향 없음.
+    @ViewBuilder
+    private var loadingOverlay: some View {
+        if isLoading {
+            ZStack {
+                Color.white.opacity(0.7)
+                VStack(spacing: 0) {
+                    PixelPanel(bg: .cream, padding: 14) {
+                        HStack(spacing: 8) {
+                            Text("LOADING")
+                                .font(.pressStart12())
+                                .foregroundColor(.ink)
+                            PulsingDots()
+                        }
+                    }
+                    .background(
+                        Rectangle()
+                            .fill(Color.ink)
+                            .offset(x: 3, y: 3)
+                    )
+                }
+            }
+            .transition(.opacity)
         }
     }
 
@@ -195,21 +247,43 @@ struct PixelCalendarPicker: View {
     }
 
     private func prevMonth() {
-        if viewMonth == 1 { viewYear -= 1; viewMonth = 12 } else { viewMonth -= 1 }
+        // year/month 동시 갱신을 한 번의 state 쓰기로 묶어 onChange 가 한 번만 발화하게 한다.
+        if viewMonth == 1 {
+            viewYearMonth = (viewYear - 1) * 100 + 12
+        } else {
+            viewYearMonth -= 1
+        }
     }
 
     private func nextMonth() {
-        if viewMonth == 12 { viewYear += 1; viewMonth = 1 } else { viewMonth += 1 }
+        if viewMonth == 12 {
+            viewYearMonth = (viewYear + 1) * 100 + 1
+        } else {
+            viewYearMonth += 1
+        }
     }
 
     private func reloadOverview() {
+        // 이전 in-flight 작업은 폐기 (빠른 클릭으로 누적되는 materialize 호출 방지).
+        reloadTask?.cancel()
         guard let provider = monthOverviewProvider else { return }
         let y = viewYear, m = viewMonth
-        Task {
+
+        // 캐시 히트면 로딩 상태 없이 즉시 진행 (버튼 비활성화 깜빡임 방지).
+        let isColdMiss = (cacheCheck?(y, m) == false)
+        if isColdMiss { isLoading = true }
+
+        reloadTask = Task {
             let map = await provider(y, m)
+            if Task.isCancelled { return }
             await MainActor.run {
-                guard y == self.viewYear, m == self.viewMonth else { return }
+                // race: provider 가 끝나기 전에 사용자가 또 월을 넘긴 경우 결과 폐기.
+                guard y == self.viewYear, m == self.viewMonth else {
+                    if isColdMiss { self.isLoading = false }
+                    return
+                }
                 self.dayContent = map
+                if isColdMiss { self.isLoading = false }
             }
         }
     }
@@ -353,5 +427,24 @@ private struct FoldEdgeShape: Shape {
         p.move(to: CGPoint(x: rect.minX, y: rect.minY))
         p.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
         return p
+    }
+}
+
+// MARK: - Loading indicator
+// 헤더 옆 작은 점멸 "..." — 콜드 미스 materialize 중에만 등장.
+// view 가 사라지면 repeatForever 애니메이션도 자동 정리됨.
+private struct PulsingDots: View {
+    @State private var pulse = false
+
+    var body: some View {
+        Text("...")
+            .font(.pressStart10())
+            .foregroundColor(.ink)
+            .opacity(pulse ? 1 : 0.25)
+            .onAppear {
+                withAnimation(.easeInOut(duration: 0.55).repeatForever(autoreverses: true)) {
+                    pulse = true
+                }
+            }
     }
 }

@@ -41,6 +41,13 @@
 "할일" = "Todo";
 "메모" = "Notes";
 
+// MARK: - Todo List Section Headers / Actions
+"할 일" = "TODO";
+"즐겨찾기" = "STAR";
+"달력" = "WARP";
+"순서" = "SORT";
+"+ 할 일" = "+ Todo";
+
 // MARK: - Main / Empty States
 "오늘의 할 일" = "Today's Todos";
 "과거에 한 일" = "Past Todos";

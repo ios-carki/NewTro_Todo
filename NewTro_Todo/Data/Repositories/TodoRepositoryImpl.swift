@@ -178,8 +178,24 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
     func fetchTodoCounts() async throws -> (completed: Int, total: Int) {
         try await MainActor.run {
             let realm = try Realm()
-            let all = realm.objects(Todo.self)
-            return (all.filter("isFinished == true").count, all.count)
+            // 오늘까지 등장한 Todo 만 카운트. 미래 routine materialize 분 제외.
+            // targetDate < 내일 자정 = targetDate <= 오늘.
+            let cal = Calendar.current
+            let today = cal.startOfDay(for: Date())
+            let tomorrow = cal.date(byAdding: .day, value: 1, to: today) ?? today
+            let scope = realm.objects(Todo.self).filter("targetDate < %@", tomorrow)
+            return (scope.filter("isFinished == true").count, scope.count)
+        }
+    }
+
+    func fetchPastIncompleteCount() async throws -> Int {
+        try await MainActor.run {
+            let realm = try Realm()
+            let today = Calendar.current.startOfDay(for: Date())
+            // targetDate < today → 오늘 자정 미만 (= 어제까지). 오늘/미래는 제외.
+            return realm.objects(Todo.self)
+                .filter("targetDate < %@ AND isFinished == false", today)
+                .count
         }
     }
 
@@ -226,6 +242,68 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         )
         try realm.write { realm.add(todo) }
         return todo.toDomain()
+    }
+
+    @MainActor func addTodosFromRoutine(
+        routineId: String,
+        dates: [Date],
+        text: String,
+        importance: Importance,
+        colorName: String
+    ) throws -> Int {
+        guard let rid = try? ObjectId(string: routineId) else { return 0 }
+        guard !dates.isEmpty else { return 0 }
+        let cal = Calendar.current
+        let realm = try Realm()
+
+        // 1) 입력 날짜 정규화 + 중복 제거 (같은 청크 안에서도 같은 날 두 번 들어오지 않게)
+        var seen = Set<Date>()
+        let normalized: [Date] = dates.compactMap { d in
+            let day = cal.startOfDay(for: d)
+            return seen.insert(day).inserted ? day : nil
+        }
+        guard !normalized.isEmpty else { return 0 }
+
+        // 2) 이번 청크 날짜 범위에서 이미 존재하는 (routineId, targetDate) 일괄 조회 → Set
+        //    매 날짜마다 .first 쿼리를 도는 대신 한 번의 IN 쿼리로 묶어 N→1 쿼리로 절감.
+        let existing = realm.objects(Todo.self)
+            .filter("routineId == %@ AND targetDate IN %@", rid, normalized)
+        var existingSet = Set<Date>()
+        for t in existing { existingSet.insert(t.targetDate) }
+
+        let toInsert = normalized.filter { !existingSet.contains($0) }
+        guard !toInsert.isEmpty else { return 0 }
+
+        // 3) 청크의 모든 insert 를 단일 트랜잭션으로 묶음. 에러 발생 시 Realm 이 자동 롤백.
+        try realm.write {
+            for dayStart in toInsert {
+                // 같은 날짜에 이미 존재하는 Todo 들의 최소 sortOrder 보다 1 작게 두어
+                // 루틴 Todo 가 사용자 수동 Todo 보다 위에 노출되는 정책 유지.
+                let minSortOrder: Int = realm.objects(Todo.self)
+                    .filter("targetDate == %@", dayStart)
+                    .min(ofProperty: "sortOrder") ?? 1
+                let dateStr = DateFormatter.dateToString(date: dayStart)
+                let todo = Todo(
+                    todo: text,
+                    favorite: false,
+                    importance: importance.rawValue,
+                    regDate: Date(),
+                    stringDate: dateStr,
+                    targetDate: dayStart,
+                    isFinished: false,
+                    targetTimeStart: nil,
+                    targetTimeEnd: nil,
+                    isAllDay: false,
+                    notifyAt: nil,
+                    sortOrder: minSortOrder - 1,
+                    completedAt: nil,
+                    colorName: colorName,
+                    routineId: rid
+                )
+                realm.add(todo)
+            }
+        }
+        return toInsert.count
     }
 
     @MainActor func deleteFutureIncompleteTodos(routineId: String, from: Date) throws {

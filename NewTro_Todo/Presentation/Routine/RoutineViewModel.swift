@@ -62,6 +62,8 @@ final class RoutineViewModel: ObservableObject {
     func saveCreated(_ entity: RoutineEntity) {
         do {
             _ = try addUseCase.execute(entity)
+            // 신규 루틴 추가 → 기존 캐시 무효화 후 재 materialize.
+            materializeUseCase.reset()
             try materializeUseCase.execute()
             loadRoutines()
             WidgetCenter.shared.reloadAllTimelines()
@@ -74,6 +76,8 @@ final class RoutineViewModel: ObservableObject {
     func saveEdited(_ entity: RoutineEntity) {
         do {
             _ = try updateUseCase.execute(entity)
+            // 미래 분 일괄 삭제 후 새 조건으로 재 materialize 필요.
+            materializeUseCase.reset()
             try materializeUseCase.execute()
             loadRoutines()
             WidgetCenter.shared.reloadAllTimelines()
@@ -86,6 +90,8 @@ final class RoutineViewModel: ObservableObject {
     func delete(id: String) {
         do {
             try deleteUseCase.execute(id: id)
+            // 다른 루틴 추가/수정 시 fresh sweep 보장을 위해 커서 무효화.
+            materializeUseCase.reset()
             loadRoutines()
             WidgetCenter.shared.reloadAllTimelines()
         } catch {

@@ -60,6 +60,9 @@ struct MainView: View {
                     dayStatsProvider: { date in
                         await viewModel.fetchDayPreviewStats(for: date)
                     },
+                    monthCacheCheck: { y, m in
+                        viewModel.isMonthMaterialized(year: y, month: m)
+                    },
                     onDateConfirmed: { date in
                         viewModel.navigateToDate(date)
                     }
@@ -128,10 +131,10 @@ struct MainView: View {
                 Spacer()
 
                 Button { viewModel.presentDatePicker() } label: {
-                    Text("WARP")
-                        .font(.pressStart9())
+                    Text("달력")
+                        .font(.galBold13())
                         .foregroundColor(.ink)
-                        .padding(.horizontal, 6)
+                        .padding(.horizontal, 14)
                         .frame(height: 34)
                         .background(Color.cream)
                         .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
@@ -151,8 +154,8 @@ struct MainView: View {
                                 palette: PixelArtAssets.smallCheckPalette,
                                 scale: 2
                             )
-                            Text("DONE")
-                                .font(.pressStart9())
+                            Text("완료")
+                                .font(.galBold11())
                                 .foregroundColor(.ink)
                         } else {
                             PixelArtView(
@@ -160,24 +163,24 @@ struct MainView: View {
                                 palette: PixelArtAssets.arrowUpDownPalette,
                                 scale: 2
                             )
-                            Text("SORT")
-                                .font(.pressStart9())
+                            Text("순서")
+                                .font(.galBold11())
                                 .foregroundColor(.ink)
                         }
                     }
                     .padding(.horizontal, 6)
                     .frame(height: 34)
-                    .background(editMode == .active ? Color.grass.opacity(0.4) : Color.cream)
+                    .background(editMode == .active ? Color.sun : Color.cream)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                     .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
                 }
                 .coachmarkAnchor("sort")
 
                 Button { viewModel.presentAddTodo() } label: {
-                    Text("+ Todo")
-                        .font(.pressStart9())
+                    Text("+ 할 일")
+                        .font(.galBold13())
                         .foregroundColor(viewModel.isViewingPastDate ? .shade.opacity(0.5) : .ink)
-                        .padding(.horizontal, 8)
+                        .padding(.horizontal, 10)
                         .frame(height: 34)
                         .background(viewModel.isViewingPastDate ? Color.panel : Color.pixelPink)
                         .overlay(Rectangle().stroke(viewModel.isViewingPastDate ? Color.ink.opacity(0.3) : Color.ink, lineWidth: 2))
@@ -197,8 +200,13 @@ struct MainView: View {
     private var favoriteIncompleteTodos: [TodoEntity] {
         viewModel.todos.filter { !$0.isCompleted && $0.isFavorite }
     }
+    /// 루틴이 만든 미완료 Todo. 즐겨찾기 미체크 분만 — 즐겨찾기는 별도 섹션 우선.
+    private var routineIncompleteTodos: [TodoEntity] {
+        viewModel.todos.filter { !$0.isCompleted && !$0.isFavorite && $0.routineId != nil }
+    }
+    /// 일반 미완료 Todo. 즐겨찾기/루틴 모두 아님.
     private var nonFavoriteIncompleteTodos: [TodoEntity] {
-        viewModel.todos.filter { !$0.isCompleted && !$0.isFavorite }
+        viewModel.todos.filter { !$0.isCompleted && !$0.isFavorite && $0.routineId == nil }
     }
     private var completedTodos: [TodoEntity] {
         viewModel.todos.filter { $0.isCompleted }
@@ -214,7 +222,7 @@ struct MainView: View {
                 List {
                     if !favoriteIncompleteTodos.isEmpty {
                         Section {
-                            sectionDivider("★ STAR", section: .favorites)
+                            sectionDivider("즐겨찾기", section: .favorites, bg: .sectionStarBg, fg: .sectionStarInk)
                             if !isSectionCollapsed(.favorites) {
                                 ForEach(favoriteIncompleteTodos, id: \.id) { todo in
                                     todoRow(todo)
@@ -227,9 +235,24 @@ struct MainView: View {
                         .listSectionSeparator(.hidden)
                     }
 
+                    if !routineIncompleteTodos.isEmpty {
+                        Section {
+                            sectionDivider("루틴", section: .routine, bg: .sectionRoutineBg, fg: .sectionRoutineInk)
+                            if !isSectionCollapsed(.routine) {
+                                ForEach(routineIncompleteTodos, id: \.id) { todo in
+                                    todoRow(todo)
+                                }
+                                .onMove { from, to in
+                                    viewModel.reorderRoutines(from: from, to: to)
+                                }
+                            }
+                        }
+                        .listSectionSeparator(.hidden)
+                    }
+
                     if !nonFavoriteIncompleteTodos.isEmpty {
                         Section {
-                            sectionDivider("TODO", section: .todo)
+                            sectionDivider("할 일", section: .todo, bg: .sectionTodoBg, fg: .sectionTodoInk)
                             if !isSectionCollapsed(.todo) {
                                 ForEach(nonFavoriteIncompleteTodos, id: \.id) { todo in
                                     todoRow(todo)
@@ -244,7 +267,7 @@ struct MainView: View {
 
                     if !completedTodos.isEmpty {
                         Section {
-                            sectionDivider("DONE", section: .done)
+                            sectionDivider("완료", section: .done, bg: .sectionDoneBg, fg: .sectionDoneInk)
                             if !isSectionCollapsed(.done) {
                                 ForEach(completedTodos, id: \.id) { todo in
                                     todoRow(todo)
@@ -281,7 +304,12 @@ struct MainView: View {
             .listRowSeparator(.hidden)
     }
 
-    private func sectionDivider(_ title: String, section: TodoSection) -> some View {
+    private func sectionDivider(
+        _ title: LocalizedStringKey,
+        section: TodoSection,
+        bg: Color,
+        fg: Color
+    ) -> some View {
         let collapsed = viewModel.isCollapsed(section)
         let editing = editMode == .active
         return HStack(spacing: 0) {
@@ -292,15 +320,15 @@ struct MainView: View {
             } label: {
                 HStack(spacing: 6) {
                     Text(title)
-                        .font(.pressStart9())
+                        .font(.galBold13())
                     Text(collapsed ? "▶" : "▼")
                         .font(.pressStart9())
                         .opacity(editing ? 0.35 : 1)
                 }
-                .foregroundColor(.ink)
-                .padding(.horizontal, 8)
-                .frame(height: 24)
-                .background(Color.cream)
+                .foregroundColor(fg)
+                .padding(.horizontal, 10)
+                .frame(height: 26)
+                .background(bg)
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
                 .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
             }

@@ -136,15 +136,13 @@ struct StatsView: View {
     }
 
     // MARK: - Weekly Chart
+
+    private let weeklyChartBarHeight: CGFloat = 60
+
     private var weeklyChart: some View {
         PixelPanel {
             VStack(alignment: .leading, spacing: 10) {
-                HStack {
-                    Spacer()
-                    Text("작성된 Todo")
-                        .font(.galBold10())
-                        .foregroundColor(.shade.opacity(0.7))
-                }
+                weeklyLegend
 
                 HStack(alignment: .bottom, spacing: 4) {
                     ForEach(0..<7, id: \.self) { i in
@@ -165,29 +163,67 @@ struct StatsView: View {
         }
     }
 
+    private var weeklyLegend: some View {
+        HStack(spacing: 12) {
+            legendSwatch(color: .grass, label: "완료")
+            legendSwatch(color: .pixelRed, label: "미완료")
+            Spacer()
+        }
+    }
+
+    private func legendSwatch(color: Color, label: LocalizedStringKey) -> some View {
+        HStack(spacing: 5) {
+            Rectangle()
+                .fill(color)
+                .frame(width: 9, height: 9)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
+            Text(label)
+                .font(.galBold10())
+                .foregroundColor(.shade)
+        }
+    }
+
     private func countLabel(index: Int) -> some View {
-        let count = index < viewModel.weeklyData.count ? viewModel.weeklyData[index] : 0
-        return Text("\(count)")
+        let total = index < viewModel.weeklyData.count ? viewModel.weeklyData[index].total : 0
+        return Text("\(total)")
             .font(.pressStart8())
-            .foregroundColor(count == 0 ? .shade.opacity(0.4) : (index == 6 ? .ink : .shade))
+            .foregroundColor(total == 0 ? .shade.opacity(0.4) : (index == 6 ? .ink : .shade))
             .frame(height: 10)
     }
 
     private func barColumn(index: Int) -> some View {
-        let count = index < viewModel.weeklyData.count ? viewModel.weeklyData[index] : 0
-        let ratio = CGFloat(count) / CGFloat(viewModel.weeklyMax)
-        let barH = max(ratio * 60, count > 0 ? 4 : 2)
-        let barColor: Color = index == 6 ? .grass : .done
+        let counts = index < viewModel.weeklyData.count
+            ? viewModel.weeklyData[index]
+            : WeeklyDayCounts(completed: 0, incomplete: 0)
 
         return ZStack(alignment: .bottom) {
-            Rectangle().fill(Color.panel).frame(height: 60)
-            Rectangle()
-                .fill(barColor)
-                .frame(height: barH)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
+            Rectangle().fill(Color.panel).frame(height: weeklyChartBarHeight)
+
+            if counts.isEmpty {
+                // 작성된 Todo 없음 — 회색 베이스 라인.
+                Rectangle()
+                    .fill(Color.shade.opacity(0.3))
+                    .frame(height: 2)
+            } else {
+                HStack(alignment: .bottom, spacing: 2) {
+                    bar(count: counts.completed, color: .grass)
+                    bar(count: counts.incomplete, color: .pixelRed)
+                }
+            }
         }
-        .frame(height: 60)
+        .frame(height: weeklyChartBarHeight)
         .overlay(Rectangle().stroke(Color.ink.opacity(0.2), lineWidth: 1))
+    }
+
+    /// 한 색 막대 한 개. count == 0 면 매우 얕은 베이스 라인(stub) 만 그려 페어를 시각적으로 유지.
+    private func bar(count: Int, color: Color) -> some View {
+        let ratio = CGFloat(count) / CGFloat(viewModel.weeklyMax)
+        let h: CGFloat = count > 0 ? max(ratio * weeklyChartBarHeight, 4) : 2
+        return Rectangle()
+            .fill(count > 0 ? color : Color.shade.opacity(0.25))
+            .frame(maxWidth: .infinity)
+            .frame(height: h)
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: count > 0 ? 1 : 0))
     }
 
     // MARK: - Perfect Stamp Calendar

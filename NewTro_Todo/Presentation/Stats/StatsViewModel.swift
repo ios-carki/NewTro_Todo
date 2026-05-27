@@ -6,24 +6,32 @@ final class StatsViewModel: ObservableObject {
 
     // MARK: - State
     @Published var stats: StatsEntity = StatsEntity()
-    @Published var weeklyData: [Int] = Array(repeating: 0, count: 7)
+    @Published var weeklyData: [WeeklyDayCounts] = Array(
+        repeating: WeeklyDayCounts(completed: 0, incomplete: 0), count: 7
+    )
     @Published var weeklyLabels: [String] = []
     @Published private(set) var completedCount: Int = 0
     @Published private(set) var totalCount: Int = 0
+    /// "이미 지난 날 중 완료 못 한 Todo" 개수. 오늘/미래는 제외.
+    /// 루틴이 미래로 미리 만들어둔 Todo 가 카운트에 섞이지 않게 별도 쿼리로 가져온다.
+    @Published private(set) var incompleteCount: Int = 0
 
     // MARK: - UseCases
     private let fetchStatsUseCase: any FetchStatsUseCaseProtocol
     private let fetchWeeklyUseCase: any FetchWeeklyTodoCountsUseCaseProtocol
     private let fetchTodoCountsUseCase: any FetchTodoCountsUseCaseProtocol
+    private let fetchPastIncompleteCountUseCase: any FetchPastIncompleteCountUseCaseProtocol
 
     init(
         fetchStatsUseCase: any FetchStatsUseCaseProtocol,
         fetchWeeklyUseCase: any FetchWeeklyTodoCountsUseCaseProtocol,
-        fetchTodoCountsUseCase: any FetchTodoCountsUseCaseProtocol
+        fetchTodoCountsUseCase: any FetchTodoCountsUseCaseProtocol,
+        fetchPastIncompleteCountUseCase: any FetchPastIncompleteCountUseCaseProtocol
     ) {
         self.fetchStatsUseCase = fetchStatsUseCase
         self.fetchWeeklyUseCase = fetchWeeklyUseCase
         self.fetchTodoCountsUseCase = fetchTodoCountsUseCase
+        self.fetchPastIncompleteCountUseCase = fetchPastIncompleteCountUseCase
         buildWeeklyLabels()
     }
 
@@ -38,12 +46,18 @@ final class StatsViewModel: ObservableObject {
                 completedCount = counts.completed
                 totalCount = counts.total
             }
+            if let past = try? await fetchPastIncompleteCountUseCase.execute() {
+                incompleteCount = past
+            }
         }
     }
 
     // MARK: - Computed
-    var weeklyMax: Int { max(weeklyData.max() ?? 1, 1) }
-    var incompleteCount: Int { max(0, totalCount - completedCount) }
+    /// 7일 칸 중 가장 큰 (완료 또는 미완료) 값. 막대 높이 비율 계산용. 0 이어도 분모 1 보장.
+    var weeklyMax: Int {
+        let m = weeklyData.flatMap { [$0.completed, $0.incomplete] }.max() ?? 1
+        return max(m, 1)
+    }
 
     func perfectDays(for month: Date) -> Set<Int> {
         let cal = Calendar.current
