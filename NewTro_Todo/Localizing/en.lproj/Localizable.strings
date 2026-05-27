@@ -241,6 +241,26 @@
 "기본 캐릭터" = "Default";
 "모든 캐릭터 해금" = "All characters unlocked";
 
+// MARK: - Coin-Unlock Mascots (Gem Series)
+"왕관이" = "Royale";
+"루비" = "Ruby";
+"에메랄드" = "Emerald";
+"사파이어" = "Sapphire";
+"다이아" = "Diamond";
+"흑진주" = "Onyx";
+"황금 왕관의 친구. 노력의 결실로 모셔온 귀빈." = "A friend in a golden crown. A noble guest invited by your effort.";
+"붉은 보석의 친구. 정열을 두른 귀빈." = "A friend of crimson jewels. A guest cloaked in passion.";
+"초록 보석의 친구. 영원을 약속한 귀빈." = "A friend of green jewels. A guest who promises eternity.";
+"푸른 보석의 친구. 깊은 바다의 귀빈." = "A friend of blue jewels. A guest from the deep sea.";
+"투명한 빛의 친구. 결정처럼 빛나는 귀빈." = "A friend of clear light. A guest shining like crystal.";
+"어둠 속 진주의 친구. 비밀스러운 귀빈." = "A pearl in the dark. A guest of secrets.";
+"보석함에서 데려올 수 있어요" = "Can be adopted from the jewel chest";
+"%d 코인으로 잠금 해제" = "Unlock with %d coins";
+"코인을 사용해 해금하시겠어요?" = "Spend coins to unlock?";
+"보유" = "Owned";
+"해금" = "Unlock";
+"해금중..." = "Unlocking...";
+
 // MARK: - Repository Errors
 "데이터를 찾을 수 없습니다." = "Data not found.";
 "잘못된 데이터 식별자입니다." = "Invalid data identifier.";

@@ -54,6 +54,16 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         defaults.set(true, forKey: Key.todayAddedTodo)
     }
 
+    // MARK: - Unlock Character (coin purchase path)
+    // 코인 해금된 마스코트를 unlocked 집합에 추가. spend 가 선행되어 잔액 차감된 뒤 호출됨.
+    // 통계 조건 기반 해금과 같은 저장소(Key.unlockedChars)를 공유해서 picker UI가 일괄 표시.
+    func unlockCharacter(id: String) async {
+        var unlocked = (defaults.array(forKey: Key.unlockedChars) as? [String]) ?? []
+        guard !unlocked.contains(id) else { return }
+        unlocked.append(id)
+        defaults.set(unlocked, forKey: Key.unlockedChars)
+    }
+
     // MARK: - Reset
     func resetAll() async {
         // selectedCharacter도 함께 제거. 안 비우면 unlockedChars가 빈 상태에서
@@ -189,7 +199,12 @@ final class StatsRepositoryImpl: StatsRepositoryProtocol {
         for (id, cond) in conditions {
             if cond && !unlocked.contains(id) { unlocked.append(id) }
         }
-        if unlocked.filter({ $0 != "legend" }).count >= 24 && !unlocked.contains("legend") {
+        // legend 는 "모든 통계 기반 캐릭터" 해금 시 등장.
+        // 코인 결제 트랙(보석 시리즈)은 별도 경로이므로 legend 카운트에서 제외.
+        // CharacterData 의 unlockCost != nil 마스코트 id 와 동기화 유지.
+        let coinPurchasedIds: Set<String> = ["royale", "ruby", "emerald", "sapphire", "diamond", "onyx"]
+        let statBasedUnlocked = unlocked.filter { $0 != "legend" && !coinPurchasedIds.contains($0) }
+        if statBasedUnlocked.count >= 24 && !unlocked.contains("legend") {
             unlocked.append("legend")
         }
         defaults.set(unlocked, forKey: Key.unlockedChars)

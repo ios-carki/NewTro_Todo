@@ -508,13 +508,16 @@ struct SettingsView: View {
 
     @ViewBuilder
     private func helpOverlay(anchors: [String: Anchor<CGRect>]) -> some View {
+        // GeometryReader 자체에 ignoresSafeArea 를 걸어야 dim 이 상·하단 safe area 까지 덮인다.
+        // Rectangle 한 곳에만 ignoresSafeArea 를 두면 부모 GeometryReader 가 safe area 에 갇혀
+        // 시각적으로는 안전영역에서 잘리게 됨. anchorPreference 좌표는 화면 절대 위치라
+        // GeometryReader 가 확장돼도 helpCard 위치는 일치한다.
         GeometryReader { geo in
             if let key = openHelp, let anchor = anchors[key.rawValue] {
                 let rect = geo[anchor]
                 ZStack(alignment: .topLeading) {
                     Rectangle()
                         .fill(Color.black.opacity(0.55))
-                        .ignoresSafeArea()
                         .reverseMask {
                             Rectangle()
                                 .frame(width: rect.width, height: rect.height)
@@ -532,6 +535,7 @@ struct SettingsView: View {
                 .transition(.opacity)
             }
         }
+        .ignoresSafeArea()
     }
 
     private func helpCard(for key: SettingsHelpKey) -> some View {

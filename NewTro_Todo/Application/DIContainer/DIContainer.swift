@@ -109,6 +109,10 @@ final class DIContainer {
     func makeFetchWalletUseCase() -> FetchWalletUseCase {
         FetchWalletUseCase(repository: walletRepository)
     }
+    func makeUnlockMascotUseCase() -> UnlockMascotUseCase {
+        UnlockMascotUseCase(walletRepository: walletRepository,
+                            statsRepository: statsRepository)
+    }
 
     // MARK: - UseCases: Settings
     func makeClearAllDataUseCase() -> ClearAllDataUseCase {
@@ -203,7 +207,8 @@ final class DIContainer {
             restoreBackupUseCase: makeRestoreBackupUseCase(),
             peekBackupHeaderUseCase: makePeekBackupHeaderUseCase(),
             recordBackupLogUseCase: makeRecordBackupLogUseCase(),
-            fetchWalletUseCase: makeFetchWalletUseCase()
+            fetchWalletUseCase: makeFetchWalletUseCase(),
+            unlockMascotUseCase: makeUnlockMascotUseCase()
         )
     }
 

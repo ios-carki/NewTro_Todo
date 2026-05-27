@@ -9,6 +9,24 @@ struct FriendCharInfo: Identifiable {
     let unlockDescription: String
     let gridType: CharacterGridType
     let palette: [Swift.Character: Color]
+    // 코인으로 해금되는 마스코트만 값을 가짐. nil = 통계 조건(완료/퍼펙트) 기반 해금.
+    let unlockCost: Int?
+
+    init(id: String,
+         name: String,
+         description: String,
+         unlockDescription: String,
+         gridType: CharacterGridType,
+         palette: [Swift.Character: Color],
+         unlockCost: Int? = nil) {
+        self.id = id
+        self.name = name
+        self.description = description
+        self.unlockDescription = unlockDescription
+        self.gridType = gridType
+        self.palette = palette
+        self.unlockCost = unlockCost
+    }
 }
 
 enum CharacterData {
@@ -167,5 +185,71 @@ enum CharacterData {
             "4": .sun,
             "5": .blush,
         ]),
+        // ───────────────────────────────────────────────────────────────────
+        // 26~31. Grid E 보석 시리즈 — 코인 해금 트랙. 통계 기반 해금(legend 포함)과 완전 분리.
+        // 가격은 500 → 4000 의 progression. 1 todo = 1 coin 이므로 흑진주(4000)는 충분히 hard.
+        // 코인 마스코트 id 는 StatsRepositoryImpl.coinPurchasedIds 와 동기화 유지.
+        // ───────────────────────────────────────────────────────────────────
+
+        // 26. 왕관이 — 500 코인 (Grid E royale, gold face + royal purple + ruby gems)
+        FriendCharInfo(id: "royale", name: "왕관이",
+            description: "황금 왕관의 친구. 노력의 결실로 모셔온 귀빈.",
+            unlockDescription: "보석함에서 데려올 수 있어요", gridType: .e, palette: [
+            "1": .ink,
+            "2": Color(hex: "#FFD700"),
+            "3": .ink,
+            "4": Color(hex: "#9B30FF"),
+            "5": Color(hex: "#FF3366"),
+        ], unlockCost: 500),
+        // 27. 루비 — 800 코인 (Grid E, red face + crimson body + bright ruby gems)
+        FriendCharInfo(id: "ruby", name: "루비",
+            description: "붉은 보석의 친구. 정열을 두른 귀빈.",
+            unlockDescription: "보석함에서 데려올 수 있어요", gridType: .e, palette: [
+            "1": .ink,
+            "2": Color(hex: "#FFCCCC"),
+            "3": .ink,
+            "4": Color(hex: "#C8102E"),
+            "5": Color(hex: "#FF1744"),
+        ], unlockCost: 800),
+        // 28. 에메랄드 — 1200 코인 (Grid E, mint face + deep green body + emerald gems)
+        FriendCharInfo(id: "emerald", name: "에메랄드",
+            description: "초록 보석의 친구. 영원을 약속한 귀빈.",
+            unlockDescription: "보석함에서 데려올 수 있어요", gridType: .e, palette: [
+            "1": .ink,
+            "2": Color(hex: "#D4F5E0"),
+            "3": .ink,
+            "4": Color(hex: "#0E7C3A"),
+            "5": Color(hex: "#00C853"),
+        ], unlockCost: 1200),
+        // 29. 사파이어 — 1800 코인 (Grid E, soft sky face + deep navy body + sapphire gems)
+        FriendCharInfo(id: "sapphire", name: "사파이어",
+            description: "푸른 보석의 친구. 깊은 바다의 귀빈.",
+            unlockDescription: "보석함에서 데려올 수 있어요", gridType: .e, palette: [
+            "1": .ink,
+            "2": Color(hex: "#CCE0FF"),
+            "3": .ink,
+            "4": Color(hex: "#0B3D91"),
+            "5": Color(hex: "#1E88E5"),
+        ], unlockCost: 1800),
+        // 30. 다이아 — 2500 코인 (Grid E, near-white face + silver body + diamond gems)
+        FriendCharInfo(id: "diamond", name: "다이아",
+            description: "투명한 빛의 친구. 결정처럼 빛나는 귀빈.",
+            unlockDescription: "보석함에서 데려올 수 있어요", gridType: .e, palette: [
+            "1": .ink,
+            "2": Color(hex: "#F0F8FF"),
+            "3": .ink,
+            "4": Color(hex: "#B0BEC5"),
+            "5": Color(hex: "#80DEEA"),
+        ], unlockCost: 2500),
+        // 31. 흑진주 — 4000 코인 (Grid E, dim face + jet-black body + obsidian gems)
+        FriendCharInfo(id: "onyx", name: "흑진주",
+            description: "어둠 속 진주의 친구. 비밀스러운 귀빈.",
+            unlockDescription: "보석함에서 데려올 수 있어요", gridType: .e, palette: [
+            "1": .ink,
+            "2": Color(hex: "#888899"),
+            "3": .cream,
+            "4": Color(hex: "#1A1A22"),
+            "5": Color(hex: "#7B61FF"),
+        ], unlockCost: 4000),
     ]
 }
