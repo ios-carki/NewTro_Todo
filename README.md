@@ -56,7 +56,7 @@
 | 아키텍처 | Clean Architecture + MVVM + Coordinator + DI Container |
 | 비동기 | async/await (기본), Combine (UI 바인딩/스트림) |
 | 영속성 | Realm (realm-swift v20) |
-| 백엔드 SDK | Firebase — Messaging(푸시), Crashlytics(크래시 리포팅) |
+| 백엔드 SDK | Firebase — Crashlytics(크래시 리포팅) |
 | 프로젝트 관리 | Tuist (멀티모듈 / 프로젝트 생성) |
 
 ## 🏛 Architecture
@@ -126,8 +126,8 @@ xcodebuild -workspace NewTro_Todo.xcworkspace -scheme NewTro_Todo \
 ## 🔐 보안
 
 이 앱은 **사용자 데이터를 클라우드에 저장하지 않습니다** — 모든 Todo/메모는 기기
-내부 Realm DB 에만 존재합니다. Firebase 사용 범위는 **푸시 알림(FCM)** 과
-**크래시 리포팅(Crashlytics)** 으로 한정됩니다 (Firestore/Auth/Storage 미사용).
+내부 Realm DB 에만 존재합니다. Firebase 사용 범위는 **크래시 리포팅(Crashlytics)**
+하나로 한정됩니다 (FCM·Firestore·Auth·Storage 미사용).
 
 `GoogleService-Info.plist` 의 iOS 키는 앱 번들에 동봉돼 배포되는 식별자라
 암호학적 비밀이 아니며, 추적 제외는 노출 최소화 목적입니다. 키 오남용 방지는
