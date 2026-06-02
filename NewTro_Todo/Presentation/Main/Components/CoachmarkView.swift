@@ -92,8 +92,9 @@ struct CoachmarkOverlay: View {
             Spacer()
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
+                    // 제목도 다국어 — Press Start 2P 는 한글/CJK 미지원이라 Galmuri 볼드로 렌더.
                     Text(LocalizedStringKey(step.title))
-                        .font(.pressStart12())
+                        .font(.galBold20())
                         .foregroundColor(.ink)
                     Spacer()
                     Text("\(stepIndex + 1) / \(steps.count)")

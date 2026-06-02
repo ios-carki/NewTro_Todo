@@ -382,3 +382,10 @@
 "500개 완료" = "500 completed";
 "1000개 완료" = "1000 completed";
 "2000개 완료" = "2000 completed";
+
+// MARK: - Coachmark titles
+"COIN" = "Coin";
+"HEART" = "Heart";
+"WARP" = "Date Jump";
+"SORT" = "Reorder";
+"+ TODO" = "Add Todo";
