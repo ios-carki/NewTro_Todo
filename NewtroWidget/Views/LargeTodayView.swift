@@ -31,18 +31,33 @@ struct LargeTodayView: View {
                     .padding(.top, 8)
                     .padding(.horizontal, 16)
 
-                VStack(spacing: 5) {
-                    ForEach(rows) { item in
-                        TodoRow(item: item, fontSize: 12)
+                if data.total == 0 {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        VStack(spacing: 8) {
+                            MiniMascot(scale: 3.2)
+                            Text("오늘은 할 일이 없어요")
+                                .font(.galBold16())
+                                .foregroundColor(.shade)
+                        }
+                        Spacer()
                     }
-                    ForEach(0..<emptySlots, id: \.self) { _ in
-                        TodoRow.placeholder(fontSize: 12)
+                    Spacer()
+                } else {
+                    VStack(spacing: 5) {
+                        ForEach(rows) { item in
+                            TodoRow(item: item, fontSize: 12)
+                        }
+                        ForEach(0..<emptySlots, id: \.self) { _ in
+                            TodoRow.placeholder(fontSize: 12)
+                        }
                     }
-                }
-                .padding(.top, 12)
-                .padding(.horizontal, 14)
+                    .padding(.top, 12)
+                    .padding(.horizontal, 14)
 
-                Spacer(minLength: 0)
+                    Spacer(minLength: 0)
+                }
 
                 bottomStats
                     .padding(.horizontal, 14)
