@@ -389,3 +389,37 @@
 "WARP" = "Date Jump";
 "SORT" = "Reorder";
 "+ TODO" = "Add Todo";
+
+// MARK: - Hardcoded UI strings (audit fix)
+"Todo를 삭제합니다" = "Delete this todo";
+"삭제된 Todo는 복구가 불가능합니다" = "Deleted todos can't be recovered";
+"기한 없음" = "No due date";
+"날짜 선택" = "Select date";
+"다음주" = "Next week";
+"직접 설정" = "Custom";
+"세부 항목" = "Details";
+"알림 시각" = "Reminder time";
+"선택" = "Select";
+"편집" = "Edit";
+"메모 편집" = "Edit Note";
+"새 템플릿 만들기" = "New Template";
+"새 템플릿으로 추가할 할 일을 작성해주세요" = "Write a task to save as a template";
+"데이터 백업 로그" = "Backup Log";
+"백업 로그" = "Backup Log";
+"데이터 백업 로그가 없어요" = "No backup logs yet";
+"설정에서 데이터를 백업해보세요!" = "Back up your data in Settings!";
+"최근 30개 로그만 보여집니다" = "Showing the latest 30 logs";
+"모든 할일과 메모가 삭제됩니다.\n계속하시겠어요?" = "All todos and notes will be deleted.\nContinue?";
+"오늘 할 일" = "Today's tasks";
+"할 일 수" = "Tasks";
+"투두" = "Todos";
+"최근 7일" = "Last 7 days";
+"퍼펙트 달력" = "Perfect Calendar";
+"회" = "times";
+"7일" = "7 days";
+"30일" = "30 days";
+"년" = "";
+"%d월" = "Month %d";
+"하루 목표 달성 %d회" = "Daily goal met %d times";
+"뉴트로 투두" = "NewTro Todo";
+"오늘 작성된 Todo를 한 눈에 확인 해보세요!" = "See today's todos at a glance!";
