@@ -423,3 +423,14 @@
 "하루 목표 달성 %d회" = "Daily goal met %d times";
 "뉴트로 투두" = "NewTro Todo";
 "오늘 작성된 Todo를 한 눈에 확인 해보세요!" = "See today's todos at a glance!";
+
+// MARK: - Legend char / widget samples / dates
+"레전드" = "Legend";
+"모두를 모은 자. 전설의 친구." = "The one who gathered them all. A legendary friend.";
+"운동 30분" = "Workout 30 min";
+"우유 사러 가기" = "Buy milk";
+"도트 공부" = "Pixel art practice";
+"책 한 챕터" = "Read a chapter";
+"화분 물주기" = "Water the plant";
+"%@ 까지" = "Until %@";
+"%@로 이동" = "Go to %@";
