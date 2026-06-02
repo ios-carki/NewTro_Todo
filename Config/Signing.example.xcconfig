@@ -1,0 +1,15 @@
+// 서명·식별 설정 템플릿.
+//
+// 사용법:
+//   cp Config/Signing.example.xcconfig Config/Signing.xcconfig
+//   그런 다음 아래 값을 본인 Apple Developer 계정 정보로 채운다.
+//   (Config/Signing.xcconfig 는 .gitignore 로 추적 제외됨)
+//
+// 이 값들이 없으면 빌드/서명이 되지 않으므로, 클론한 코드를 그대로
+// App Store 에 올릴 수 없다. 코드 열람·학습은 가능하지만 동일 앱 출시는 막힌다.
+
+// Apple Developer 팀 ID (Membership → Team ID, 10자 영숫자)
+NEWTRO_DEVELOPMENT_TEAM = YOUR_TEAM_ID
+
+// 앱 번들 식별자 (본인 소유 도메인 기반 역방향 표기 권장)
+NEWTRO_BUNDLE_ID = com.example.newtro-todo

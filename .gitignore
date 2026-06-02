@@ -30,3 +30,8 @@ Tuist/Package.resolved
 # 위해 추적 제외. 신규 클론 시 Firebase 콘솔에서 각자 내려받아 NewTro_Todo/ 에 배치.
 # 실제 방어는 API 키 제한 + App Check + Security Rules 로 서버 측에서 수행.
 GoogleService-Info.plist
+!GoogleService-Info.example.plist
+
+# 서명·식별 정보 (DEVELOPMENT_TEAM / 번들 ID) — 로컬 전용. 절대 커밋 금지.
+# 신규 클론은 Config/Signing.example.xcconfig 를 복사해 자신의 값을 채운다.
+Config/Signing.xcconfig

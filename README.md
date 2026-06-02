@@ -12,7 +12,59 @@
 
 ***
 
+> ⚠️ **이 저장소는 열람·학습·참고 목적으로 공개**되어 있으며 오픈소스가 아닙니다.
+> 개인 식별·서명 정보와 Firebase 설정은 포함돼 있지 않아 **클론한 코드를 그대로
+> 빌드해 App Store 에 출시할 수 없으며**, 라이선스상으로도 복제·재배포·출시가
+> 금지됩니다. → [LICENSE](LICENSE)
+
+## ⚙️ 빌드 설정 (Setup)
+
+빌드하려면 본인 소유의 값을 직접 채워야 합니다.
+
+**1. 서명·번들 ID**
+```bash
+cp Config/Signing.example.xcconfig Config/Signing.xcconfig
+```
+| 키 | 설명 |
+|----|------|
+| `NEWTRO_DEVELOPMENT_TEAM` | Apple Developer 팀 ID (10자 영숫자) |
+| `NEWTRO_BUNDLE_ID` | 본인 소유 번들 식별자 (예: `com.yourname.newtro-todo`) |
+
+이 파일은 `.gitignore` 로 추적 제외되며, 없으면 `tuist generate` 가 실패합니다.
+
+**2. Firebase**
+[Firebase Console](https://console.firebase.google.com) 에서 iOS 앱 등록 후 발급된
+`GoogleService-Info.plist` 를 `NewTro_Todo/` 에 저장합니다. (템플릿:
+`NewTro_Todo/GoogleService-Info.example.plist`, 실제 파일은 추적 제외)
+
+**3. 생성 & 빌드**
+```bash
+tuist install            # 최초 1회 / SPM 패키지 변경 시
+tuist generate --no-open
+xcodebuild -workspace NewTro_Todo.xcworkspace -scheme NewTro_Todo \
+  -destination 'platform=iOS Simulator,name=iPhone 16'
+```
+
+## 🔐 보안
+
+앱 백엔드(Firebase) 보안은 설정 파일을 숨겨서가 아니라 **서버 측 통제**(API 키
+번들 ID 제한 · App Check · Firestore/Storage Security Rules)로 유지합니다.
+`GoogleService-Info.plist` 의 iOS 키는 앱 번들에 동봉되는 식별자라 암호학적
+비밀이 아니며, 추적 제외는 노출 최소화 목적입니다.
+
+## 🚀 버전 관리 / 출시
+
+출시 버전 규칙은 [RELEASING.md](RELEASING.md), 변경 이력은
+[CHANGELOG.md](CHANGELOG.md) 를 참고하세요.
+
+***
+
 # 📱 About Project
+
+> 아래는 최초 출시(UIKit/MVC) 시점의 기록입니다. 현재 코드는 SwiftUI + Clean
+> Architecture 로 리팩토링 중입니다 (스택: SwiftUI · Realm v20 · Firebase ·
+> Tuist · iOS 16+). 자세한 규칙은 [CLAUDE.md](CLAUDE.md) 참고.
+
 **Realm DB를 활용**하여 사용자 **Todo 데이터의 영속성을 유지**시키고, App Depth를 낮추어 **하나의 뷰 안에서 사용자 Todo DB CRUD가 가능**한 **자체 제작 도트아트 테마 기반의 UI를 활용한 Todo앱**입니다. 
 
 부가적인 기능으로는 하루마다 간단한 메모를 작성할 수 있는 **퀵메모,** 달력을 통한 **날짜이동**과 선택한 날짜에 작성된 **Todo 개수 확인**, **Todo 중요도에 따른 텍스트 컬러 변환**, **Todo 완료 및 미루기**, **영어 대응**, **로컬 노티**, **사용자 Todo 데이터 초기화**가 있습니다.
