@@ -33,6 +33,9 @@ struct BackupLogView: View {
         }
         .navigationTitle("백업 로그")
         .navigationBarTitleDisplayMode(.inline)
+        // 네비바를 투명 처리 — 뒤의 BackgroundSceneryView(하늘 그라데이션)가 그대로 비쳐
+        // 단색 네비바와 그라데이션 배경 사이 미세한 색 띠(이음새)를 제거. 앱 배경과 완전히 동일.
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 closeButton
