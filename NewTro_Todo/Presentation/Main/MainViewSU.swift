@@ -218,6 +218,7 @@ struct MainView: View {
                 ScrollView {
                     emptyState.padding(.top, 40).padding(.horizontal, 16)
                 }
+                .clipAboveGround()
             } else {
                 List {
                     if !favoriteIncompleteTodos.isEmpty {
@@ -277,13 +278,14 @@ struct MainView: View {
                         .listSectionSeparator(.hidden)
                     }
 
-                    Color.clear.frame(height: 160)
+                    Color.clear.frame(height: TabSceneLayout.contentBottomMargin)
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
                         .listRowInsets(EdgeInsets())
                 }
                 .listStyle(.plain)
                 .environment(\.editMode, $editMode)
+                .clipAboveGround()
             }
         }
         .padding(.top, 8)

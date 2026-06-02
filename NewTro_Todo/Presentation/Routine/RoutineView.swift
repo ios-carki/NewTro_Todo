@@ -3,7 +3,6 @@ import SwiftUI
 struct RoutineView: View {
     @ObservedObject var viewModel: RoutineViewModel
     @AppStorage("selectedCharacterId") private var selectedCharacterId: String = "pinko"
-    private let tabBarHeight: CGFloat = 113
 
     private var selectedCharInfo: FriendCharInfo {
         CharacterData.all.first { $0.id == selectedCharacterId } ?? CharacterData.all[0]
@@ -82,6 +81,7 @@ struct RoutineView: View {
             ScrollView {
                 emptyState.padding(.top, 60)
             }
+            .clipAboveGround()
         } else {
             ScrollView {
                 VStack(spacing: 12) {
@@ -91,8 +91,9 @@ struct RoutineView: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.bottom, tabBarHeight + 16)
+                .padding(.bottom, TabSceneLayout.contentBottomMargin)
             }
+            .clipAboveGround()
         }
     }
 

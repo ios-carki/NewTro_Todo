@@ -4,7 +4,6 @@ struct StatsView: View {
     @ObservedObject var viewModel: StatsViewModel
 
     @State private var calendarDate: Date = Date()
-    private let tabBarHeight: CGFloat = 113
 
     var body: some View {
         ZStack {
@@ -27,12 +26,13 @@ struct StatsView: View {
                         section(title: "퍼펙트 달력") {
                             perfectCalendar
                         }
-                        .padding(.bottom, tabBarHeight + 16)
                     }
                     .padding(.horizontal, 16)
                     .padding(.top, 8)
+                    .padding(.bottom, TabSceneLayout.contentBottomMargin)
                 }
                 .scrollContentBackground(.hidden)
+                .clipAboveGround()
             }
         }
         .overlay(alignment: .bottom) { FloatingTabBar() }

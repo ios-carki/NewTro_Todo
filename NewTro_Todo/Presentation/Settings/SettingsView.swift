@@ -30,8 +30,9 @@ struct SettingsView: View {
                     }
                     .padding(.horizontal, 14)
                     .padding(.top, 10)
-                    .padding(.bottom, 120)
+                    .padding(.bottom, TabSceneLayout.contentBottomMargin)
                 }
+                .clipAboveGround()
             }
         }
         .overlay(alignment: .bottom) { FloatingTabBar() }
