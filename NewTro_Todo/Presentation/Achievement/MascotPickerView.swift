@@ -39,9 +39,10 @@ struct MascotPickerView: View {
 
                     mascotContent
                         .padding(.horizontal, 12)
-                        .padding(.bottom, 120)
+                        .padding(.bottom, TabSceneLayout.contentBottomMargin)
                 }
             }
+            .clipAboveGround()
         }
         .navigationTitle(Text("마스코트 변경"))
         .navigationBarTitleDisplayMode(.inline)

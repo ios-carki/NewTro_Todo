@@ -214,8 +214,9 @@ struct BackupLogView: View {
             }
             .padding(.horizontal, 14)
             .padding(.top, 10)
-            .padding(.bottom, 80)
+            .padding(.bottom, TabSceneLayout.contentBottomMargin)
         }
+        .clipAboveGround()
     }
 
     private func sectionView(_ section: BackupLogViewModel.Section) -> some View {
