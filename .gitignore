@@ -19,6 +19,9 @@ Derived/
 # SPM
 .swiftpm/
 Tuist/.build/
+# SPM 의존성 lock — Tuist 가 generate 시 재생성하므로 추적하지 않음
+.package.resolved
+Tuist/Package.resolved
 
 # macOS
 .DS_Store

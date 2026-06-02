@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 
 import FirebaseCore
+import FirebaseCrashlytics
 import FirebaseMessaging
 import RealmSwift
 
@@ -26,8 +27,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         //로컬노티 딜리게이트
         UNUserNotificationCenter.current().delegate = self
 
-        //파이어베이스 초기화 코드
+        //파이어베이스 초기화 코드 — Crashlytics 도 이 시점에 signal handler 자동 등록.
         FirebaseApp.configure()
+
+        // 개발 중 force unwrap / fatalError / SwiftUI preview 크래시까지 콘솔에 누적되면
+        // 실제 사용자 크래시를 묻어버리므로 DEBUG 빌드에서는 수집을 끈다.
+        // Release 빌드(아카이브 / TestFlight / App Store)에서는 활성.
+#if DEBUG
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
+#else
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(true)
+#endif
 
         //알림 시스템에 앱을 등록
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]

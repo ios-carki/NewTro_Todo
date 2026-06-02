@@ -2,7 +2,6 @@
 import PackageDescription
 
 #if TUIST
-import ProjectDescriptionHelpers
 import ProjectDescription
 
 let packageSettings = PackageSettings(
@@ -20,5 +19,7 @@ let packageSettings = PackageSettings(
 
 let package = Package(
     name: "PackageSettings",
-    dependencies: []
+    dependencies: [
+        .package(url: "https://github.com/realm/realm-swift.git", exact: "20.0.4"),
+    ]
 )
