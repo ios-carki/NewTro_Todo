@@ -4,7 +4,10 @@ let project = Project(
     name: "NewTro_Todo",
     organizationName: "Carki",
     packages: [
-        .remote(url: "https://github.com/realm/realm-swift.git", requirement: .exact("10.30.0")),
+        // Realm 은 Tuist/Package.swift 의 .external 통합으로 이전.
+        // (네이티브 SPM 참조로는 realm-core/s2geometry 의 C++ 빌드 플래그를 주입할 수 없어
+        //  Xcode 26 의 is_pod 특수화 하드 에러를 못 막기 때문 — Tuist 가 패키지 프로젝트를
+        //  생성하는 .external 방식이라야 PackageSettings.targetSettings 가 적용된다.)
         .remote(url: "https://github.com/firebase/firebase-ios-sdk", requirement: .upToNextMajor(from: "9.6.0")),
     ],
     targets: [
@@ -78,9 +81,29 @@ let project = Project(
                 "NewTro_Todo/GoogleService-Info.plist",
             ],
             entitlements: .file(path: "NewTro_Todo/NewTro_Todo.entitlements"),
+            scripts: [
+                // Crashlytics 가 심볼릭 스택트레이스를 보여주려면 빌드 산출물의 dSYM 을
+                // 매 빌드마다 Firebase 서버로 업로드해야 한다. firebase-ios-sdk 가 제공하는
+                // run 스크립트가 GoogleService-Info.plist 의 GOOGLE_APP_ID 를 자동 인식.
+                // outputPaths 가 없으면 Xcode 가 증분 분석을 못 해 매 빌드 실행한다고 경고하는데,
+                // dSYM 업로드는 원래 매 빌드 실행이 정상이므로 의도적으로 명시한다.
+                .post(
+                    script: #""${BUILD_DIR%/Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run""#,
+                    name: "Crashlytics: Upload dSYM",
+                    inputPaths: [
+                        "${DWARF_DSYM_FOLDER_PATH}/${DWARF_DSYM_FILE_NAME}/Contents/Resources/DWARF/${TARGET_NAME}",
+                        "$(SRCROOT)/$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+                    ],
+                    basedOnDependencyAnalysis: false
+                ),
+            ],
             dependencies: [
-                .package(product: "RealmSwift"),
+                .external(name: "RealmSwift"),
+                // Realm v20: Object 베이스 클래스 RealmSwiftObject 는 ObjC `Realm` 프레임워크에
+                // 있어 RealmSwift 만 링크하면 위젯/익스텐션에서 심볼 미해결로 링크 실패한다.
+                .external(name: "Realm"),
                 .package(product: "FirebaseMessaging"),
+                .package(product: "FirebaseCrashlytics"),
                 .target(name: "NewtroWidget"),
             ],
             settings: .settings(
@@ -90,6 +113,9 @@ let project = Project(
                     "MARKETING_VERSION": "2.0.0",
                     // 동일 마케팅 버전 내 재업로드 시 +1 (심사 리젝션 재업로드 등).
                     "CURRENT_PROJECT_VERSION": "1",
+                    // 디버그 빌드(시뮬레이터·실기기 개발)에서는 dSYM 을 매번 만들지 않으면
+                    // 업로드 스크립트가 실패하므로 DWARF with dSYM 으로 고정.
+                    "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
                 ]
             )
         ),
@@ -136,7 +162,10 @@ let project = Project(
             ],
             entitlements: .file(path: "NewtroWidgetExtension.entitlements"),
             dependencies: [
-                .package(product: "RealmSwift"),
+                .external(name: "RealmSwift"),
+                // Realm v20: Object 베이스 클래스 RealmSwiftObject 는 ObjC `Realm` 프레임워크에
+                // 있어 RealmSwift 만 링크하면 위젯/익스텐션에서 심볼 미해결로 링크 실패한다.
+                .external(name: "Realm"),
             ],
             settings: .settings(
                 base: [
@@ -158,7 +187,10 @@ let project = Project(
             sources: ["NewTro_TodoTests/**/*.swift"],
             dependencies: [
                 .target(name: "NewTro_Todo"),
-                .package(product: "RealmSwift"),
+                .external(name: "RealmSwift"),
+                // Realm v20: Object 베이스 클래스 RealmSwiftObject 는 ObjC `Realm` 프레임워크에
+                // 있어 RealmSwift 만 링크하면 위젯/익스텐션에서 심볼 미해결로 링크 실패한다.
+                .external(name: "Realm"),
             ],
             settings: .settings(
                 base: ["DEVELOPMENT_TEAM": "48S4T8HCYX"]

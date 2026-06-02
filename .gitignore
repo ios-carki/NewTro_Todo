@@ -19,9 +19,14 @@ Derived/
 # SPM
 .swiftpm/
 Tuist/.build/
+# SPM 의존성 lock — Tuist 가 generate 시 재생성하므로 추적하지 않음
+.package.resolved
+Tuist/Package.resolved
 
 # macOS
 .DS_Store
 
-# Credentials (절대 커밋 금지)
+# Firebase 클라이언트 설정 — 비밀은 아니나(앱 번들에 동봉) public 레포 노출 최소화를
+# 위해 추적 제외. 신규 클론 시 Firebase 콘솔에서 각자 내려받아 NewTro_Todo/ 에 배치.
+# 실제 방어는 API 키 제한 + App Check + Security Rules 로 서버 측에서 수행.
 GoogleService-Info.plist
