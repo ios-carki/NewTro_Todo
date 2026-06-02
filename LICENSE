@@ -1,0 +1,37 @@
+Copyright (c) 2026 Carki. All Rights Reserved.
+
+이 저장소(NewTro Todo)의 소스 코드, 디자인 에셋, 문서 등 모든 구성요소에 대한
+저작권은 저작권자에게 있습니다.
+
+본 저장소는 학습·열람·참고 목적으로 공개(public)되어 있을 뿐이며, 오픈소스가
+아닙니다. 아래 행위는 저작권자의 사전 서면 동의 없이 일절 허용되지 않습니다.
+
+  - 본 코드(전부 또는 일부)의 복제, 수정, 2차적 저작물 작성
+  - 재배포, 배포, 전송, 공중 송신
+  - 상업적/비상업적 이용 및 앱 마켓(App Store 등) 출시
+  - 코드·에셋·디자인을 자신의 제품에 통합하는 행위
+
+GitHub 이용약관에 따른 fork 및 view 기능 사용은 위 제한과 별개로 GitHub
+플랫폼 내에서 허용됩니다. 다만 fork 한 코드를 위 금지 행위에 사용하는 것은
+허용되지 않습니다.
+
+본 소프트웨어는 "있는 그대로(AS IS)" 제공되며, 명시적이든 묵시적이든 어떠한
+종류의 보증도 하지 않습니다. 저작권자는 본 소프트웨어의 사용으로 인해 발생하는
+어떠한 손해에 대해서도 책임지지 않습니다.
+
+문의: github.com/ios-carki/NewTro_Todo
+
+---
+
+Copyright (c) 2026 Carki. All Rights Reserved.
+
+All source code, design assets, and documentation in this repository (NewTro
+Todo) are the property of the copyright holder.
+
+This repository is made public for viewing and reference purposes only; it is
+NOT open source. The following are strictly prohibited without the prior
+written consent of the copyright holder: copying, modifying, creating
+derivative works, redistribution, commercial or non-commercial use, and
+publishing to any app marketplace (including the App Store).
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.

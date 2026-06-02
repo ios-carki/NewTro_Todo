@@ -4,19 +4,28 @@ let project = Project(
     name: "NewTro_Todo",
     organizationName: "Carki",
     packages: [
-        // Realm 은 Tuist/Package.swift 의 .external 통합으로 이전.
-        // (네이티브 SPM 참조로는 realm-core/s2geometry 의 C++ 빌드 플래그를 주입할 수 없어
-        //  Xcode 26 의 is_pod 특수화 하드 에러를 못 막기 때문 — Tuist 가 패키지 프로젝트를
-        //  생성하는 .external 방식이라야 PackageSettings.targetSettings 가 적용된다.)
+        // Realm 은 Tuist/Package.swift 의 .external 통합으로 이전 (Xcode 26 is_pod 빌드 에러 회피).
+        // Firebase 는 native .remote 유지 — .external 로 옮기면 Crashlytics 만 써도 Firestore 가
+        // 끌고 오는 gRPC/abseil/protobuf 그래프를 Tuist 가 디코딩하지 못해 generate 가 깨진다.
+        // (Firebase 는 is_pod 문제도 없어 native SPM 으로 정상 빌드됨.)
         .remote(url: "https://github.com/firebase/firebase-ios-sdk", requirement: .upToNextMajor(from: "9.6.0")),
     ],
+    // 서명·식별 정보(DEVELOPMENT_TEAM / 번들 ID)는 public 레포에 두지 않는다.
+    // 추적 제외된 Config/Signing.xcconfig 에서 NEWTRO_DEVELOPMENT_TEAM / NEWTRO_BUNDLE_ID 를 주입.
+    // 신규 클론은 Config/Signing.example.xcconfig 를 복사해 자신의 값을 채워야 빌드/서명된다.
+    settings: .settings(
+        configurations: [
+            .debug(name: "Debug", xcconfig: "Config/Signing.xcconfig"),
+            .release(name: "Release", xcconfig: "Config/Signing.xcconfig"),
+        ]
+    ),
     targets: [
         // MARK: - App Target
         .target(
             name: "NewTro_Todo",
             destinations: .iOS,
             product: .app,
-            bundleId: "com.jun.NewTro-Todo",
+            bundleId: "$(NEWTRO_BUNDLE_ID)",
             deploymentTargets: .iOS("16.0"),
             infoPlist: .extendingDefault(with: [
                 // Build settings의 MARKETING_VERSION / CURRENT_PROJECT_VERSION을 참조 — Project.swift가 단일 출처.
@@ -49,7 +58,6 @@ let project = Project(
                         ]),
                     ]),
                 ]),
-                "UIBackgroundModes": .array([.string("remote-notification")]),
                 "UTExportedTypeDeclarations": .array([
                     .dictionary([
                         "UTTypeIdentifier": .string("com.carki.newtro.backup"),
@@ -102,13 +110,12 @@ let project = Project(
                 // Realm v20: Object 베이스 클래스 RealmSwiftObject 는 ObjC `Realm` 프레임워크에
                 // 있어 RealmSwift 만 링크하면 위젯/익스텐션에서 심볼 미해결로 링크 실패한다.
                 .external(name: "Realm"),
-                .package(product: "FirebaseMessaging"),
                 .package(product: "FirebaseCrashlytics"),
                 .target(name: "NewtroWidget"),
             ],
             settings: .settings(
                 base: [
-                    "DEVELOPMENT_TEAM": "48S4T8HCYX",
+                    "DEVELOPMENT_TEAM": "$(NEWTRO_DEVELOPMENT_TEAM)",
                     // 앱 스토어 표시 마케팅 버전. 새 릴리스 때 올리고 commit.
                     "MARKETING_VERSION": "2.0.0",
                     // 동일 마케팅 버전 내 재업로드 시 +1 (심사 리젝션 재업로드 등).
@@ -125,7 +132,7 @@ let project = Project(
             name: "NewtroWidget",
             destinations: .iOS,
             product: .appExtension,
-            bundleId: "com.jun.NewTro-Todo.NewtroWidget",
+            bundleId: "$(NEWTRO_BUNDLE_ID).NewtroWidget",
             deploymentTargets: .iOS("16.0"),
             infoPlist: .extendingDefault(with: [
                 "CFBundleShortVersionString": .string("$(MARKETING_VERSION)"),
@@ -169,7 +176,7 @@ let project = Project(
             ],
             settings: .settings(
                 base: [
-                    "DEVELOPMENT_TEAM": "48S4T8HCYX",
+                    "DEVELOPMENT_TEAM": "$(NEWTRO_DEVELOPMENT_TEAM)",
                     // 위젯은 메인앱과 동일한 버전이어야 함 (다르면 App Store 리젝).
                     "MARKETING_VERSION": "2.0.0",
                     "CURRENT_PROJECT_VERSION": "1",
@@ -182,7 +189,7 @@ let project = Project(
             name: "NewTro_TodoTests",
             destinations: .iOS,
             product: .unitTests,
-            bundleId: "com.jun.NewTro-Todo.Tests",
+            bundleId: "$(NEWTRO_BUNDLE_ID).Tests",
             deploymentTargets: .iOS("16.0"),
             sources: ["NewTro_TodoTests/**/*.swift"],
             dependencies: [
@@ -193,7 +200,7 @@ let project = Project(
                 .external(name: "Realm"),
             ],
             settings: .settings(
-                base: ["DEVELOPMENT_TEAM": "48S4T8HCYX"]
+                base: ["DEVELOPMENT_TEAM": "$(NEWTRO_DEVELOPMENT_TEAM)"]
             )
         ),
 
@@ -202,14 +209,14 @@ let project = Project(
             name: "NewTro_TodoUITests",
             destinations: .iOS,
             product: .uiTests,
-            bundleId: "com.jun.NewTro-Todo.UITests",
+            bundleId: "$(NEWTRO_BUNDLE_ID).UITests",
             deploymentTargets: .iOS("16.0"),
             sources: ["NewTro_TodoUITests/**/*.swift"],
             dependencies: [
                 .target(name: "NewTro_Todo"),
             ],
             settings: .settings(
-                base: ["DEVELOPMENT_TEAM": "48S4T8HCYX"]
+                base: ["DEVELOPMENT_TEAM": "$(NEWTRO_DEVELOPMENT_TEAM)"]
             )
         ),
     ],

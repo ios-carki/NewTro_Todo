@@ -10,7 +10,6 @@ import SwiftUI
 
 import FirebaseCore
 import FirebaseCrashlytics
-import FirebaseMessaging
 import RealmSwift
 
 
@@ -39,27 +38,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(true)
 #endif
 
-        //알림 시스템에 앱을 등록
+        // 로컬 알림 권한 요청 (원격 푸시/FCM 미사용 — 알림은 전부 로컬 스케줄)
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
         UNUserNotificationCenter.current().requestAuthorization(
             options: authOptions,
             completionHandler: { _, _ in }
         )
 
-        application.registerForRemoteNotifications()
-        
-        //메시지 대리자 설정
-        Messaging.messaging().delegate = self
-        
-        //현재 등록된 토큰 가져오기
-        Messaging.messaging().token { token, error in
-          if let error = error {
-            print("Error fetching FCM registration token: \(error)")
-          } else if let token = token {
-            print("FCM registration token: \(token)")
-          }
-        }
-        
         let appearance = UINavigationBarAppearance()
         appearance.configureWithOpaqueBackground()
         appearance.backgroundColor = UIColor.mainBackGroundColor
@@ -107,71 +92,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
-// MARK: - [노티피케이션 알림 딜리게이트 추가]
+// MARK: - 로컬 알림 딜리게이트
 extension AppDelegate: UNUserNotificationCenterDelegate {
-    
-    //파베 메시징
-    func application(application: UIApplication,
-                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-      Messaging.messaging().apnsToken = deviceToken
-    }
-    
-    // [앱이 foreground 상태 일 때, 알림이 온 경우]
+
+    // 앱이 foreground 상태일 때 로컬 알림이 도착한 경우 — 배너/사운드로 노출
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        print("")
-        print("===============================")
-        print("[AppDelegate >> willPresent :: 앱 포그라운드 상태 푸시 알림 확인]")
-        //print("[userInfo :: \(notification.request.content.userInfo)]")
-        print("===============================")
-        print("")
-        
-        // [completionHandler : 푸시 알림 상태창 표시]
         completionHandler([.banner, .list, .badge, .sound])
     }
 
-    // [앱이 background 상태 일 때, 알림이 온 경우]
+    // 사용자가 로컬 알림을 탭한 경우
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
-
-        print("")
-        print("===============================")
-        print("[AppDelegate >> didReceive :: 앱 백그라운드 상태 푸시 알림 확인]")
-        print("===============================")
-        print("")
-        
-        //파베 유저 푸시클릭 확인
-        print("사용자가 푸시를 클릭했습니다.")
-        
-        let userInfo = response.notification.request.content.userInfo
-        
-        if userInfo[AnyHashable("sesac")] as? String == "project" {
-            print("SESAC PROJECT")
-        } else {
-            print("NOTHING")
-        }
-
-        // [completionHandler : 푸시 알림 상태창 표시]
         completionHandler()
     }
-}
-
-extension AppDelegate: MessagingDelegate {
-    
-    //토큰 갱신 모니터링: 토큰 정보가 언제 바뀔까?
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
-      print("Firebase registration token🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊🦊: \(String(describing: fcmToken))")
-
-      let dataDict: [String: String] = ["token": fcmToken ?? ""]
-      NotificationCenter.default.post(
-        name: Notification.Name("FCMToken"),
-        object: nil,
-        userInfo: dataDict
-      )
-      // TODO: If necessary send token to application server.
-      // Note: This callback is fired at each app startup and whenever a new token is generated.
-    }
-
 }
