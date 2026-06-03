@@ -7,7 +7,8 @@ struct BackupLogView: View {
 
     var body: some View {
         ZStack {
-            BackgroundSceneryView()
+            // 탭바가 없는 모달이라 흙 영역을 한 단 줄여 어색함 완화.
+            BackgroundSceneryView(groundHeight: TabSceneLayout.modalGroundHeight)
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
@@ -33,9 +34,10 @@ struct BackupLogView: View {
         }
         .navigationTitle("백업 로그")
         .navigationBarTitleDisplayMode(.inline)
-        // 네비바를 투명 처리 — 뒤의 BackgroundSceneryView(하늘 그라데이션)가 그대로 비쳐
-        // 단색 네비바와 그라데이션 배경 사이 미세한 색 띠(이음새)를 제거. 앱 배경과 완전히 동일.
-        .toolbarBackground(.hidden, for: .navigationBar)
+        // 네비바 배경을 배경화면 상단과 같은 하늘색(.sky)으로 채움. 투명일 때 스크롤 콘텐츠가
+        // 네비 영역에 비치던 문제 해결.
+        .toolbarBackground(Color.sky, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 closeButton
@@ -219,7 +221,7 @@ struct BackupLogView: View {
             .padding(.top, 10)
             .padding(.bottom, TabSceneLayout.contentBottomMargin)
         }
-        .clipAboveGround()
+        .clipAboveGround(groundHeight: TabSceneLayout.modalGroundHeight)
     }
 
     private func sectionView(_ section: BackupLogViewModel.Section) -> some View {

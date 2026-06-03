@@ -265,20 +265,27 @@ struct SkyBackgroundView: View {
 // WelcomeView 의 걷는 마스코트가 부쉬에 가려야 자연스러우므로 이 슬롯에 마스코트를 넣음.
 struct BackgroundSceneryView: View {
     var animateClouds: Bool = false
+    // ground(잔디+흙) 총 높이. 기본 100(잔디 22 + 흙 78). 탭바 없는 모달 화면 등에서
+    // 흙이 너무 두껍게 노출돼 어색하면 더 작은 값을 넘겨 흙 영역을 줄인다.
+    var groundHeight: CGFloat = 100
     var foreground: ((GeometryProxy) -> AnyView)?
 
-    init(animateClouds: Bool = false) {
+    init(animateClouds: Bool = false, groundHeight: CGFloat = 100) {
         self.animateClouds = animateClouds
+        self.groundHeight = groundHeight
         self.foreground = nil
     }
 
-    init<V: View>(animateClouds: Bool = false, @ViewBuilder foreground: @escaping (GeometryProxy) -> V) {
+    init<V: View>(animateClouds: Bool = false, groundHeight: CGFloat = 100, @ViewBuilder foreground: @escaping (GeometryProxy) -> V) {
         self.animateClouds = animateClouds
+        self.groundHeight = groundHeight
         self.foreground = { geo in AnyView(foreground(geo)) }
     }
 
     var body: some View {
-        GeometryReader { geo in
+        // ground 를 줄이면 산·코인·별·부쉬도 같은 만큼(drop) 아래로 내려 ground 와의 정렬을 유지.
+        let drop = 100 - groundHeight
+        return GeometryReader { geo in
             ZStack(alignment: .bottom) {
                 SkyBackgroundView(animateClouds: animateClouds)
 
@@ -286,26 +293,25 @@ struct BackgroundSceneryView: View {
                 DistantMountain()
                     .fill(Color.grassDk.opacity(0.5))
                     .frame(width: 230, height: 140)
-                    .position(x: 80, y: geo.size.height - 95)
+                    .position(x: 80, y: geo.size.height - 95 + drop)
                 DistantMountain()
                     .fill(Color.grassDk.opacity(0.5))
                     .frame(width: 270, height: 150)
-                    .position(x: geo.size.width - 80, y: geo.size.height - 100)
+                    .position(x: geo.size.width - 80, y: geo.size.height - 100 + drop)
 
                 // 흙+잔디 베이스 — 산보다 위 z-order. 산의 base 가 자연스럽게 흙에 묻힘.
-                // height 100 = 잔디 22 + 흙 78. 탭바 top edge(physical bottom + 78pt) 와 흙 top 이 정렬되어
-                // 잔디 섹션이 탭바 위로 온전히 노출됨.
-                GroundStripView(height: 100)
+                // 기본 height 100 = 잔디 22 + 흙 78. (탭 화면은 흙 78 이 탭바에 가려 잔디만 노출)
+                GroundStripView(height: groundHeight)
                     .frame(maxWidth: .infinity)
-                    .frame(height: 100)
+                    .frame(height: groundHeight)
 
                 // 코인 (우상단)
                 PixelArtView(grid: PixelArtAssets.coinGrid, palette: PixelArtAssets.coinPalette, scale: 3)
-                    .position(x: geo.size.width - 55, y: geo.size.height - 141)
+                    .position(x: geo.size.width - 55, y: geo.size.height - 141 + drop)
 
                 // 별 (좌상단)
                 PixelArtView(grid: PixelArtAssets.starGrid, palette: PixelArtAssets.starPalette, scale: 2)
-                    .position(x: 75, y: geo.size.height - 166)
+                    .position(x: 75, y: geo.size.height - 166 + drop)
 
                 // foreground 슬롯 — 부쉬 보다 아래 layer
                 if let foreground { foreground(geo) }
@@ -313,7 +319,7 @@ struct BackgroundSceneryView: View {
                 // 부쉬 (잔디 위 우측, 우측 가장자리에 딱 붙음) — 최상단 layer.
                 // bushGrid 22×6, scale 3 → 66×18pt. center.x = width - 33 으로 우측 edge 정렬.
                 PixelArtView(grid: PixelArtAssets.bushGrid, palette: PixelArtAssets.bushPalette, scale: 3)
-                    .position(x: geo.size.width - 33, y: geo.size.height - 89)
+                    .position(x: geo.size.width - 33, y: geo.size.height - 89 + drop)
             }
         }
     }

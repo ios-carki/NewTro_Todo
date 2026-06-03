@@ -8,6 +8,9 @@ import SwiftUI
 enum TabSceneLayout {
     /// 바닥 장식(잔디 22 + 흙 78) 총 높이. 스크롤은 이 선(잔디 윗변)에서 잘린다.
     static let groundHeight: CGFloat = 100
+    /// 탭바가 없는 모달 화면(마스코트 선택·백업 로그)용 ground 높이.
+    /// 흙 78 이 그대로 노출되면 두껍게 어색해 한 단 줄임(잔디 22 + 흙 ~50).
+    static let modalGroundHeight: CGFloat = 72
     /// 마지막 콘텐츠가 잔디에 닿지 않도록 주는 약간의 하단 여백.
     static let contentBottomMargin: CGFloat = 16
 }
@@ -15,9 +18,10 @@ enum TabSceneLayout {
 extension View {
     /// List/ScrollView 등 스크롤 컨테이너에 적용. 안전영역과 무관하게 물리 하단 기준
     /// `groundHeight` 만큼 위(잔디 윗변)에서 스크롤 프레임을 잘라 기기별로 일관되게 동작한다.
-    func clipAboveGround() -> some View {
+    /// 모달 화면처럼 ground 를 줄인 경우 같은 값을 넘겨 클립선을 맞춘다.
+    func clipAboveGround(groundHeight: CGFloat = TabSceneLayout.groundHeight) -> some View {
         self
-            .padding(.bottom, TabSceneLayout.groundHeight)
+            .padding(.bottom, groundHeight)
             .ignoresSafeArea(.container, edges: .bottom)
     }
 }
