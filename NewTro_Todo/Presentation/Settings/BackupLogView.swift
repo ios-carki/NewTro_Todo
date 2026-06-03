@@ -42,6 +42,12 @@ struct BackupLogView: View {
             ToolbarItem(placement: .navigationBarLeading) {
                 closeButton
             }
+            // 전역 네비 타이틀 색(inkC) 대신 이 화면은 검은색으로 직접 렌더.
+            ToolbarItem(placement: .principal) {
+                Text("백업 로그")
+                    .font(.galBold17())
+                    .foregroundColor(.black)
+            }
         }
         .onAppear { viewModel.onAppear() }
     }
