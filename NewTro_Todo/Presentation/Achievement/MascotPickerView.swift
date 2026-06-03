@@ -198,8 +198,9 @@ struct MascotPickerView: View {
     private func mascotCard(_ info: FriendCharInfo) -> some View {
         let isUnlocked = statsVM.stats.unlockedCharacterIds.contains(info.id)
         let isSelected = settingsVM.selectedCharacterId == info.id
-        // 코인 해금 마스코트는 잠겨 있어도 이름/설명을 미리 공개해 무엇을 사는지 보이게 한다.
-        let revealsText = isUnlocked || info.unlockCost != nil
+        // 잠긴 마스코트는 통일성을 위해 이름/설명을 모두 ??? 로 가린다.
+        // (코인 해금 마스코트도 업적 해금과 동일하게 처리 — 초상화 픽셀아트만 노출)
+        let revealsText = isUnlocked
 
         return PixelPanel(bg: isSelected ? selectedCardBg : .panel, padding: 10) {
             VStack(spacing: 8) {
