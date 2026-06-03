@@ -394,21 +394,7 @@ private struct UnlockInfoCard: View {
                         .padding(.horizontal, 8)
                 }
 
-                // 코인 마스코트는 가격 칩으로 시각적 강조 추가.
-                if let cost = info.unlockCost {
-                    HStack(spacing: 6) {
-                        PixelArtView(grid: PixelArtAssets.coinGrid,
-                                     palette: PixelArtAssets.coinPalette,
-                                     scale: 1.6)
-                        Text("×\(cost)")
-                            .font(.pressStart12())
-                            .foregroundColor(.ink)
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(Color.sun.opacity(0.6))
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
-                }
+                // 코인 칩 제거: 위 "N 코인으로 잠금 해제" 타이틀과 중복되어 정보가 겹침.
 
                 Button(action: onClose) {
                     Text("확인")
