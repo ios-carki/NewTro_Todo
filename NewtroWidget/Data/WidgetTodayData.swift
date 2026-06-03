@@ -30,11 +30,11 @@ struct WidgetTodayData {
         total: 5,
         done: 2,
         topItems: [
-            .init(id: "1", text: "운동 30분",   importance: 1, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
-            .init(id: "2", text: "우유 사러 가기", importance: 0, done: true,  targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
-            .init(id: "3", text: "도트 공부",   importance: 2, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
-            .init(id: "4", text: "책 한 챕터",  importance: 0, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
-            .init(id: "5", text: "화분 물주기", importance: 0, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false)
+            .init(id: "1", text: NSLocalizedString("운동 30분", comment: ""),   importance: 1, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "2", text: NSLocalizedString("우유 사러 가기", comment: ""), importance: 0, done: true,  targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "3", text: NSLocalizedString("도트 공부", comment: ""),   importance: 2, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "4", text: NSLocalizedString("책 한 챕터", comment: ""),  importance: 0, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false),
+            .init(id: "5", text: NSLocalizedString("화분 물주기", comment: ""), importance: 0, done: false, targetTimeStart: nil, targetTimeEnd: nil, isAllDay: false)
         ],
         coinBalance: 12
     )

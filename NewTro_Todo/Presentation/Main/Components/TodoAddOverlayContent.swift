@@ -474,8 +474,9 @@ struct TodoAddOverlayContent: View {
     private func dueDateInlineLabel(_ date: Date) -> String {
         let f = DateFormatter()
         f.locale = Locale.current
-        f.dateFormat = "yyyy.MM.dd(EEE)"
-        return f.string(from: date) + " 까지"
+        f.setLocalizedDateFormatFromTemplate("yMMMdEEE")
+        // "<날짜> 까지" 의 접미사도 언어별로 위치가 달라 포맷 키로 처리.
+        return "%@ 까지".localized(with: f.string(from: date))
     }
 
     private var dueChipsRow: some View {

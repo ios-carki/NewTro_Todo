@@ -23,17 +23,32 @@ struct MediumListView: View {
                     .padding(.top, 10)
                     .padding(.horizontal, 14)
 
-                VStack(spacing: 4) {
-                    ForEach(rows) { item in
-                        TodoRow(item: item, fontSize: 11)
+                if data.total == 0 {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        VStack(spacing: 6) {
+                            MiniMascot(scale: 2.6)
+                            Text("오늘은 할 일이 없어요")
+                                .font(.galCondensed13())
+                                .foregroundColor(.shade)
+                        }
+                        Spacer()
                     }
-                    ForEach(0..<emptySlots, id: \.self) { _ in
-                        TodoRow.placeholder(fontSize: 11)
+                    Spacer(minLength: 18)
+                } else {
+                    VStack(spacing: 4) {
+                        ForEach(rows) { item in
+                            TodoRow(item: item, fontSize: 11)
+                        }
+                        ForEach(0..<emptySlots, id: \.self) { _ in
+                            TodoRow.placeholder(fontSize: 11)
+                        }
                     }
-                }
-                .padding(.horizontal, 12)
+                    .padding(.horizontal, 12)
 
-                Spacer(minLength: 14)
+                    Spacer(minLength: 14)
+                }
             }
 
             VStack(spacing: 0) {

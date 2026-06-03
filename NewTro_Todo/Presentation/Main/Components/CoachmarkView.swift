@@ -92,8 +92,9 @@ struct CoachmarkOverlay: View {
             Spacer()
             VStack(alignment: .leading, spacing: 10) {
                 HStack {
+                    // 제목도 다국어 — Press Start 2P 는 한글/CJK 미지원이라 Galmuri 볼드로 렌더.
                     Text(LocalizedStringKey(step.title))
-                        .font(.pressStart12())
+                        .font(.galBold20())
                         .foregroundColor(.ink)
                     Spacer()
                     Text("\(stepIndex + 1) / \(steps.count)")
@@ -171,7 +172,12 @@ struct CoachmarkOverlay: View {
         withAnimation(.easeOut(duration: 0.25)) {
             isActive = false
         }
-        stepIndex = 0
+        // stepIndex 리셋을 페이드아웃 이후로 미룬다. 즉시 0 으로 되돌리면 사라지는 0.25s 동안
+        // 첫 스텝(코인 설명)이 잠깐 다시 보였다 사라지는 깜빡임이 생긴다.
+        // 마지막 스텝을 그대로 유지한 채 페이드아웃 → 다음 표시 때 0 부터 시작.
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            stepIndex = 0
+        }
     }
 }
 

@@ -13,29 +13,40 @@ struct SmallTodayView: View {
                     .padding(.top, 12)
                     .padding(.horizontal, 12)
 
-                Spacer().frame(height: 8)
-
-                Text("오늘 할 일")
-                    .font(.galCondensed13())
-                    .foregroundColor(.ink)
-                    .padding(.horizontal, 12)
-
-                HStack(alignment: .firstTextBaseline, spacing: 4) {
-                    Text("\(data.done)")
-                        .font(.pressStart28())
-                        .foregroundColor(.ink)
-                    Text("/\(data.total)")
-                        .font(.pressStart14())
+                if data.total == 0 {
+                    Spacer()
+                    Text("오늘은 할 일이 없어요")
+                        .font(.galCondensed13())
                         .foregroundColor(.shade)
-                }
-                .padding(.top, 2)
-                .padding(.horizontal, 12)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .padding(.horizontal, 12)
+                    Spacer()
+                        .frame(height: 44)
+                } else {
+                    Spacer().frame(height: 8)
 
-                Spacer()
+                    Text("오늘 할 일")
+                        .font(.galCondensed13())
+                        .foregroundColor(.ink)
+                        .padding(.horizontal, 12)
 
-                PixelProgressBar(progress: data.progress, height: 14)
+                    HStack(alignment: .firstTextBaseline, spacing: 4) {
+                        Text("\(data.done)")
+                            .font(.pressStart28())
+                            .foregroundColor(.ink)
+                        Text("/\(data.total)")
+                            .font(.pressStart14())
+                            .foregroundColor(.shade)
+                    }
+                    .padding(.top, 2)
                     .padding(.horizontal, 12)
-                    .padding(.bottom, 44)
+
+                    Spacer()
+
+                    PixelProgressBar(progress: data.progress, height: 14)
+                        .padding(.horizontal, 12)
+                        .padding(.bottom, 44)
+                }
             }
 
             VStack {

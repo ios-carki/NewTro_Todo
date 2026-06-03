@@ -7,7 +7,6 @@ struct MemoView: View {
     // 뷰 모드 — 앱 재실행 후에도 유지되도록 AppStorage 사용. "postIt" | "list"
     @AppStorage("memoViewMode") private var viewModeRaw: String = MemoViewMode.postIt.rawValue
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-    private let tabBarHeight: CGFloat = 113
 
     // 컴팩트 폭(iPhone 전체, iPad 1/2 split 등)은 2열, 레귤러 폭(iPad 풀스크린/2-3 split)은 3열.
     private var columnCount: Int {
@@ -224,9 +223,10 @@ struct MemoView: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.bottom, tabBarHeight + 16)
+                .padding(.bottom, TabSceneLayout.contentBottomMargin)
             }
         }
+        .clipAboveGround()
     }
 
     private var postItGrid: some View {

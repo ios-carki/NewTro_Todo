@@ -1,5 +1,31 @@
 import SwiftUI
 
+// MARK: - 바닥 장식(잔디+흙) 위 스크롤 클립
+// BackgroundSceneryView 의 GroundStripView(높이 100 = 잔디 22 + 흙 78)는 물리 하단에 고정으로 깔린다.
+// 각 탭의 스크롤은 리스트 배경이 투명이라, 프레임이 물리 하단까지 내려와 있으면
+// 스크롤 도중 콘텐츠가 잔디/흙 위로 지나가 보인다. 아래 모디파이어로 스크롤 프레임을
+// "잔디 윗변"에서 잘라 콘텐츠가 바닥 장식·탭바 위로 넘어오지 않게 한다.
+enum TabSceneLayout {
+    /// 바닥 장식(잔디 22 + 흙 78) 총 높이. 스크롤은 이 선(잔디 윗변)에서 잘린다.
+    static let groundHeight: CGFloat = 100
+    /// 탭바가 없는 모달 화면(마스코트 선택·백업 로그)용 ground 높이.
+    /// 흙 78 이 그대로 노출되면 두껍게 어색해 한 단 줄임(잔디 22 + 흙 ~50).
+    static let modalGroundHeight: CGFloat = 72
+    /// 마지막 콘텐츠가 잔디에 닿지 않도록 주는 약간의 하단 여백.
+    static let contentBottomMargin: CGFloat = 16
+}
+
+extension View {
+    /// List/ScrollView 등 스크롤 컨테이너에 적용. 안전영역과 무관하게 물리 하단 기준
+    /// `groundHeight` 만큼 위(잔디 윗변)에서 스크롤 프레임을 잘라 기기별로 일관되게 동작한다.
+    /// 모달 화면처럼 ground 를 줄인 경우 같은 값을 넘겨 클립선을 맞춘다.
+    func clipAboveGround(groundHeight: CGFloat = TabSceneLayout.groundHeight) -> some View {
+        self
+            .padding(.bottom, groundHeight)
+            .ignoresSafeArea(.container, edges: .bottom)
+    }
+}
+
 // 탭 선택/리셋 상태를 보유. RootTabContainerView 가 @StateObject 로 소유하고
 // 각 탭 콘텐츠에 @EnvironmentObject 로 주입한다. FloatingTabBar 가 이 상태를 읽고 쓰며
 // 탭 컨테이너는 selected 변화를 관찰해 화면을 전환한다.

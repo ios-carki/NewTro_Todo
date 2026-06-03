@@ -255,9 +255,11 @@ struct DatePickerSheetView: View {
     }
 
     private var specificDateLabel: String {
-        let cal = Calendar.current
-        let comps = cal.dateComponents([.year, .month, .day], from: selectedDate)
-        return "\(comps.year ?? 0)년 \(comps.month ?? 0)월 \(comps.day ?? 0)일로 이동"
+        // locale-aware 날짜 + "%@로 이동" 포맷으로 다국어 대응 (년/월/일 하드코딩 제거).
+        let f = DateFormatter()
+        f.locale = .current
+        f.setLocalizedDateFormatFromTemplate("yMMMd")
+        return "%@로 이동".localized(with: f.string(from: selectedDate))
     }
 
     private func formattedHeader(_ d: Date) -> String {

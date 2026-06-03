@@ -19,7 +19,8 @@ struct MascotPickerView: View {
 
     var body: some View {
         ZStack {
-            BackgroundSceneryView()
+            // 탭바가 없는 모달이라 흙 영역을 한 단 줄여 어색함 완화.
+            BackgroundSceneryView(groundHeight: TabSceneLayout.modalGroundHeight)
                 .ignoresSafeArea()
 
             ScrollView {
@@ -39,15 +40,26 @@ struct MascotPickerView: View {
 
                     mascotContent
                         .padding(.horizontal, 12)
-                        .padding(.bottom, 120)
+                        .padding(.bottom, TabSceneLayout.contentBottomMargin)
                 }
             }
+            .clipAboveGround(groundHeight: TabSceneLayout.modalGroundHeight)
         }
         .navigationTitle(Text("마스코트 변경"))
         .navigationBarTitleDisplayMode(.inline)
+        // 네비바 배경을 배경화면 상단과 같은 하늘색(.sky)으로 채움. 투명일 때 스크롤 콘텐츠가
+        // 네비 영역에 비치던 문제 해결.
+        .toolbarBackground(Color.sky, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .navigationBarLeading) {
                 closeButton
+            }
+            // 전역 네비 타이틀 색(inkC) 대신 이 화면은 검은색으로 직접 렌더.
+            ToolbarItem(placement: .principal) {
+                Text("마스코트 변경")
+                    .font(.galBold17())
+                    .foregroundColor(.black)
             }
         }
         .onAppear {
@@ -186,8 +198,9 @@ struct MascotPickerView: View {
     private func mascotCard(_ info: FriendCharInfo) -> some View {
         let isUnlocked = statsVM.stats.unlockedCharacterIds.contains(info.id)
         let isSelected = settingsVM.selectedCharacterId == info.id
-        // 코인 해금 마스코트는 잠겨 있어도 이름/설명을 미리 공개해 무엇을 사는지 보이게 한다.
-        let revealsText = isUnlocked || info.unlockCost != nil
+        // 잠긴 마스코트는 통일성을 위해 이름/설명을 모두 ??? 로 가린다.
+        // (코인 해금 마스코트도 업적 해금과 동일하게 처리 — 초상화 픽셀아트만 노출)
+        let revealsText = isUnlocked
 
         return PixelPanel(bg: isSelected ? selectedCardBg : .panel, padding: 10) {
             VStack(spacing: 8) {
@@ -381,21 +394,7 @@ private struct UnlockInfoCard: View {
                         .padding(.horizontal, 8)
                 }
 
-                // 코인 마스코트는 가격 칩으로 시각적 강조 추가.
-                if let cost = info.unlockCost {
-                    HStack(spacing: 6) {
-                        PixelArtView(grid: PixelArtAssets.coinGrid,
-                                     palette: PixelArtAssets.coinPalette,
-                                     scale: 1.6)
-                        Text("×\(cost)")
-                            .font(.pressStart12())
-                            .foregroundColor(.ink)
-                    }
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(Color.sun.opacity(0.6))
-                    .overlay(Rectangle().stroke(Color.ink, lineWidth: 1.5))
-                }
+                // 코인 칩 제거: 위 "N 코인으로 잠금 해제" 타이틀과 중복되어 정보가 겹침.
 
                 Button(action: onClose) {
                     Text("확인")

@@ -211,30 +211,30 @@
 "시간" = "Chrono";
 
 // MARK: - Character Descriptions
-"분홍빛 고양이. 너의 첫 친구." = "Pink kitten. Your very first friend.";
-"노란 병아리. 작은 발걸음, 큰 시작." = "Yellow chick. Small steps, big start.";
-"박하향 토끼. 첫 10개의 상쾌함." = "Mint bunny. The freshness of your first 10.";
-"갈색 곰. 우직함 그 자체." = "Brown bear. The very face of grit.";
-"황금빛 고양이. 빛나는 첫 퍼펙트." = "Golden cat. Your first shining perfect.";
-"푸른 토끼. 단단한 페이스." = "Blue bunny. Steady pace.";
-"보랏빛 향기. 우아한 완벽주의자." = "Lilac scent. An elegant perfectionist.";
-"빨간 고양이. 멈추지 않는 열정." = "Red cat. Unstoppable passion.";
-"주황빛 활기. 50개의 결실." = "Orange spark. The fruit of 50.";
-"검은 고양이. 묵묵히 쌓아 올린 150의 동반자." = "Black cat. A silent companion built up over 150.";
-"차가운 결정. 흔들림 없는 마음." = "Frozen crystal. An unwavering heart.";
-"별빛 토끼. 반짝이는 100." = "Starlit bunny. A shining 100.";
-"하늘빛 솜털. 250개를 함께 떠오른 친구." = "Sky-soft cloud. Floated 250 alongside you.";
-"타오르는 고양이. 막을 수 없는 30회." = "Burning cat. Unstoppable 30 times.";
-"청량한 바다빛. 차곡차곡 200." = "Cool ocean blue. Steadily 200.";
-"초록빛 새내기. 작아도 멈추지 않아." = "Green rookie. Small, yet never stops.";
-"은은한 토끼. 고요한 50회의 헌신." = "Mellow bunny. A quiet 50-fold devotion.";
-"태양의 고양이. 1년의 결실." = "Solar cat. A year's harvest.";
-"일곱 빛깔의 전설. 1000개의 증거." = "Seven-color legend. Proof of 1000.";
-"첫 퍼펙트의 빛. 어둠 끝의 라벤더." = "Light of the first perfect. Lavender at dawn.";
-"푸른 들의 토끼. 꾸준한 100회의 결실." = "Bunny of green fields. A steady 100-fold harvest.";
-"노을빛 고양이. 200회의 깊이." = "Sunset cat. The depth of 200.";
-"깊은 밤의 별. 500회를 모은 빛." = "Star of deep night. Light gathered over 500.";
-"시간을 모은 자. 2000개의 전설." = "Keeper of time. A 2000-strong legend.";
+"핑크색 고양이" = "Pink cat";
+"노란색 병아리" = "Yellow chick";
+"민트색 토끼" = "Mint rabbit";
+"갈색 병아리" = "Brown chick";
+"황금색 고양이" = "Golden cat";
+"파란색 토끼" = "Blue rabbit";
+"라벤더색 병아리" = "Lavender chick";
+"빨간색 고양이" = "Red cat";
+"주황색 병아리" = "Orange chick";
+"검은색 고양이" = "Black cat";
+"새하얀 병아리" = "Snow-white chick";
+"별빛색 토끼" = "Starlight rabbit";
+"하늘색 병아리" = "Sky-blue chick";
+"불꽃색 고양이" = "Flame cat";
+"물빛 토끼" = "Aqua rabbit";
+"초록색 병아리" = "Green chick";
+"달빛색 토끼" = "Moonlight rabbit";
+"태양색 고양이" = "Sun cat";
+"무지개색 병아리" = "Rainbow chick";
+"새벽빛 병아리" = "Dawn chick";
+"풀잎색 토끼" = "Leaf-green rabbit";
+"노을색 고양이" = "Sunset cat";
+"은하색 병아리" = "Galaxy chick";
+"보라색 토끼" = "Purple rabbit";
 "빛과 어둠의 전설. 모두를 모은 자." = "Legend of light and dark. The one who gathered all.";
 
 // MARK: - Character Unlock Conditions (special)
@@ -248,12 +248,12 @@
 "사파이어" = "Sapphire";
 "다이아" = "Diamond";
 "흑진주" = "Onyx";
-"황금 왕관의 친구. 노력의 결실로 모셔온 귀빈." = "A friend in a golden crown. A noble guest invited by your effort.";
-"붉은 보석의 친구. 정열을 두른 귀빈." = "A friend of crimson jewels. A guest cloaked in passion.";
-"초록 보석의 친구. 영원을 약속한 귀빈." = "A friend of green jewels. A guest who promises eternity.";
-"푸른 보석의 친구. 깊은 바다의 귀빈." = "A friend of blue jewels. A guest from the deep sea.";
-"투명한 빛의 친구. 결정처럼 빛나는 귀빈." = "A friend of clear light. A guest shining like crystal.";
-"어둠 속 진주의 친구. 비밀스러운 귀빈." = "A pearl in the dark. A guest of secrets.";
+"왕관 쓴 황금색 병아리" = "Crowned golden chick";
+"왕관 쓴 루비색 병아리" = "Crowned ruby chick";
+"왕관 쓴 에메랄드색 병아리" = "Crowned emerald chick";
+"왕관 쓴 사파이어색 병아리" = "Crowned sapphire chick";
+"왕관 쓴 다이아색 병아리" = "Crowned diamond chick";
+"왕관 쓴 흑진주색 병아리" = "Crowned onyx chick";
 "보석함에서 데려올 수 있어요" = "Can be adopted from the jewel chest";
 "%d 코인으로 잠금 해제" = "Unlock with %d coins";
 "코인을 사용해 해금하시겠어요?" = "Spend coins to unlock?";
@@ -358,3 +358,78 @@
 
 // MARK: - Todo Due Helper
 "%@ 에 Todo가 추가됩니다" = "Adds the todo on %@";
+
+// MARK: - Postpone / Emoji
+"내일" = "Tomorrow";
+"모레" = "Day after";
+"+7일" = "+7 days";
+"%@로 미루기" = "Postpone to %@";
+"언제로 미룰까요?" = "When to postpone?";
+"이모지 선택" = "Pick emoji";
+
+// MARK: - Achievement complete counts
+"5개 완료" = "5 completed";
+"10개 완료" = "10 completed";
+"25개 완료" = "25 completed";
+"30개 완료" = "30 completed";
+"50개 완료" = "50 completed";
+"75개 완료" = "75 completed";
+"100개 완료" = "100 completed";
+"150개 완료" = "150 completed";
+"200개 완료" = "200 completed";
+"250개 완료" = "250 completed";
+"365개 완료" = "365 completed";
+"500개 완료" = "500 completed";
+"1000개 완료" = "1000 completed";
+"2000개 완료" = "2000 completed";
+
+// MARK: - Coachmark titles
+"COIN" = "Coin";
+"HEART" = "Heart";
+"WARP" = "Date Jump";
+"SORT" = "Reorder";
+"+ TODO" = "Add Todo";
+
+// MARK: - Hardcoded UI strings (audit fix)
+"Todo를 삭제합니다" = "Delete this todo";
+"삭제된 Todo는 복구가 불가능합니다" = "Deleted todos can't be recovered";
+"기한 없음" = "No due date";
+"날짜 선택" = "Select date";
+"다음주" = "Next week";
+"직접 설정" = "Custom";
+"세부 항목" = "Details";
+"알림 시각" = "Reminder time";
+"선택" = "Select";
+"편집" = "Edit";
+"메모 편집" = "Edit Note";
+"새 템플릿 만들기" = "New Template";
+"새 템플릿으로 추가할 할 일을 작성해주세요" = "Write a task to save as a template";
+"데이터 백업 로그" = "Backup Log";
+"백업 로그" = "Backup Log";
+"데이터 백업 로그가 없어요" = "No backup logs yet";
+"설정에서 데이터를 백업해보세요!" = "Back up your data in Settings!";
+"최근 30개 로그만 보여집니다" = "Showing the latest 30 logs";
+"모든 할일과 메모가 삭제됩니다.\n계속하시겠어요?" = "All todos and notes will be deleted.\nContinue?";
+"오늘 할 일" = "Today's tasks";
+"할 일 수" = "Tasks";
+"투두" = "Todos";
+"최근 7일" = "Last 7 days";
+"퍼펙트 달력" = "Perfect Calendar";
+"회" = "times";
+"7일" = "7 days";
+"30일" = "30 days";
+"년" = "";
+"%d월" = "Month %d";
+"하루 목표 달성 %d회" = "Daily goal met %d times";
+"뉴트로 투두" = "NewTro Todo";
+"오늘 작성된 Todo를 한 눈에 확인 해보세요!" = "See today's todos at a glance!";
+
+// MARK: - Legend char / widget samples / dates
+"레전드" = "Legend";
+"끝판왕 고양이" = "Final boss cat";
+"운동 30분" = "Workout 30 min";
+"우유 사러 가기" = "Buy milk";
+"도트 공부" = "Pixel art practice";
+"책 한 챕터" = "Read a chapter";
+"화분 물주기" = "Water the plant";
+"%@ 까지" = "Until %@";
