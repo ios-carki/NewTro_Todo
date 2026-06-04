@@ -56,24 +56,33 @@ struct TodoListMediumView: View {
         }
     }
 
-    // 투두 1개 = 개별 카드. 카드 배경색 = 중요도 색(없음=초록/높음=빨강/중간=노랑).
+    // 투두 1개 = 개별 카드. 좌측에 카드 높이 전체의 중요도 띠, 배경은 Todo 선택색(colorName).
     // 완료는 배경색을 흐리게 + 취소선으로 구분.
     private func todoCard(_ item: WidgetTodoItem) -> some View {
-        HStack(spacing: 7) {
-            MiniCheck(done: item.done, size: 14)
+        HStack(spacing: 0) {
+            // 가장 좌측 — 카드 높이 전체 중요도 띠
+            Rectangle()
+                .fill(item.priorityColor)
+                .frame(width: 6)
+                .frame(maxHeight: .infinity)
+                .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
 
-            Text(item.text)
-                .font(.galCondensed16())
-                .foregroundColor(.ink)
-                .strikethrough(item.done, color: .ink)
-                .lineLimit(1)
-                .truncationMode(.tail)
+            HStack(spacing: 7) {
+                MiniCheck(done: item.done, size: 14)
 
-            Spacer(minLength: 0)
+                Text(item.text)
+                    .font(.galCondensed16())
+                    .foregroundColor(.ink)
+                    .strikethrough(item.done, color: .ink)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, 8)
         }
-        .padding(.horizontal, 8)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .background(item.priorityColor.opacity(item.done ? 0.45 : 1))
+        .background(item.bgColor.opacity(item.done ? 0.5 : 1))
         .pixelBorder(color: .ink, lineWidth: 2)
     }
 }

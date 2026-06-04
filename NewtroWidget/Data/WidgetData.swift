@@ -9,12 +9,26 @@ struct WidgetTodoItem: Identifiable, Hashable {
     let text: String
     let importance: Int   // 0=none, 1=high, 2=medium
     let done: Bool
+    let colorName: String
 
+    /// 좌측 중요도 띠 색.
     var priorityColor: Color {
         switch importance {
         case 1:  return .pixelRed   // high
         case 2:  return .sun        // medium
         default: return .grass      // none
+        }
+    }
+
+    /// 카드 배경 — Todo 에서 선택한 색(앱 colorName 팔레트와 동일).
+    var bgColor: Color {
+        switch colorName {
+        case "pink":     return Color(hex: "#F8BBD9")
+        case "mint":     return Color(hex: "#B2DFDB")
+        case "lavender": return Color(hex: "#E1BEE7")
+        case "peach":    return Color(hex: "#FFCCBC")
+        case "sky":      return Color(hex: "#B3E5FC")
+        default:         return Color(hex: "#FFF59D")  // yellow
         }
     }
 }
@@ -68,9 +82,9 @@ struct TodayWidgetData {
         date: Calendar.current.startOfDay(for: Date()),
         todayTodoCount: 3,
         todos: [
-            .init(id: "1", text: NSLocalizedString("운동 30분", comment: ""),   importance: 1, done: false),
-            .init(id: "2", text: NSLocalizedString("우유 사러 가기", comment: ""), importance: 0, done: true),
-            .init(id: "3", text: NSLocalizedString("책 한 챕터", comment: ""),  importance: 2, done: false),
+            .init(id: "1", text: NSLocalizedString("운동 30분", comment: ""),   importance: 1, done: false, colorName: "yellow"),
+            .init(id: "2", text: NSLocalizedString("우유 사러 가기", comment: ""), importance: 0, done: true,  colorName: "mint"),
+            .init(id: "3", text: NSLocalizedString("책 한 챕터", comment: ""),  importance: 2, done: false, colorName: "sky"),
         ],
         monthCells: {
             let day = Calendar.current.component(.day, from: Date())
@@ -137,7 +151,8 @@ enum WidgetReader {
 
         let items: [WidgetTodoItem] = todayTodos.prefix(todoLimit).map {
             WidgetTodoItem(id: $0.objectID.stringValue, text: $0.todo,
-                           importance: $0.importance, done: $0.isFinished)
+                           importance: $0.importance, done: $0.isFinished,
+                           colorName: $0.colorName)
         }
 
         // 이번 달 일자별 요약 (Large 달력)
