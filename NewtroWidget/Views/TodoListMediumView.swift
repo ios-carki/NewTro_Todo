@@ -68,8 +68,6 @@ struct TodoListMediumView: View {
                 .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
 
             HStack(spacing: 7) {
-                MiniCheck(done: item.done, size: 14)
-
                 Text(item.text)
                     .font(.galCondensed16())
                     .foregroundColor(.ink)
@@ -79,7 +77,7 @@ struct TodoListMediumView: View {
 
                 Spacer(minLength: 0)
             }
-            .padding(.horizontal, 8)
+            .padding(.horizontal, 10)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
         .background(item.bgColor.opacity(item.done ? 0.5 : 1))
