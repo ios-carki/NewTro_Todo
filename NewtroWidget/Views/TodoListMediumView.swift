@@ -56,21 +56,16 @@ struct TodoListMediumView: View {
         }
     }
 
-    // 투두 1개 = 개별 카드(배경+테두리). 완료는 연녹색, 미완료는 흰색.
+    // 투두 1개 = 개별 카드. 카드 배경색 = 중요도 색(없음=초록/높음=빨강/중간=노랑).
+    // 완료는 배경색을 흐리게 + 취소선으로 구분.
     private func todoCard(_ item: WidgetTodoItem) -> some View {
         HStack(spacing: 7) {
             MiniCheck(done: item.done, size: 14)
 
-            Rectangle()
-                .fill(item.priorityColor)
-                .frame(width: 4)
-                .frame(maxHeight: 16)
-                .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
-
             Text(item.text)
                 .font(.galCondensed16())
-                .foregroundColor(item.done ? .shade : .ink)
-                .strikethrough(item.done, color: .shade)
+                .foregroundColor(.ink)
+                .strikethrough(item.done, color: .ink)
                 .lineLimit(1)
                 .truncationMode(.tail)
 
@@ -78,7 +73,7 @@ struct TodoListMediumView: View {
         }
         .padding(.horizontal, 8)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .background(item.done ? Color(hex: "#E8F5D8") : .white)
+        .background(item.priorityColor.opacity(item.done ? 0.45 : 1))
         .pixelBorder(color: .ink, lineWidth: 2)
     }
 }
