@@ -66,15 +66,29 @@ struct MemoLargeView: View {
     }
 
     private func postIt(_ memo: WidgetMemoItem) -> some View {
-        Text(memo.text)
-            .font(.galCondensed16())
-            .foregroundColor(.ink)
-            .lineLimit(5)
-            .truncationMode(.tail)
-            .multilineTextAlignment(.leading)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-            .padding(8)
-            .background(memo.color)
-            .pixelBorder(color: .ink, lineWidth: 2)
+        // 첫 줄 = 제목(galBold16), 나머지 = 본문(galCondensed16). 앱 메모와 동일.
+        let lines = memo.text.components(separatedBy: "\n")
+        let title = lines.first ?? ""
+        let body = lines.dropFirst().joined(separator: "\n")
+
+        return VStack(alignment: .leading, spacing: 3) {
+            Text(title)
+                .font(.galBold16())
+                .foregroundColor(.ink)
+                .lineLimit(1)
+                .truncationMode(.tail)
+
+            Text(body)
+                .font(.galCondensed16())
+                .foregroundColor(.ink.opacity(0.85))
+                .lineLimit(4)
+                .truncationMode(.tail)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .padding(8)
+        .background(memo.color)
+        .pixelBorder(color: .ink, lineWidth: 2)
     }
 }
