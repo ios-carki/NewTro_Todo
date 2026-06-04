@@ -37,10 +37,14 @@ struct WidgetMemoItem: Identifiable, Hashable {
     }
 }
 
-/// 달력 한 칸의 요약 — 그 날의 Todo 개수 + 메모 유무.
+/// 달력 한 칸의 요약 — 그 날의 Todo 개수/완료수 + 메모 유무.
 struct WidgetDayCell: Hashable {
     var todoCount: Int = 0
+    var doneCount: Int = 0
     var hasMemo: Bool = false
+
+    /// Todo 가 있고 전부 완료된 날(노란색 배경 조건).
+    var allDone: Bool { todoCount > 0 && doneCount == todoCount }
 }
 
 // MARK: - Today Widget Data (Small 플립달력 / Medium 투두리스트 / Large 달력 공용)
@@ -70,9 +74,9 @@ struct TodayWidgetData {
         ],
         monthCells: {
             let day = Calendar.current.component(.day, from: Date())
-            return [day: WidgetDayCell(todoCount: 3, hasMemo: true),
-                    max(1, day - 2): WidgetDayCell(todoCount: 1, hasMemo: false),
-                    min(28, day + 3): WidgetDayCell(todoCount: 5, hasMemo: true)]
+            return [day: WidgetDayCell(todoCount: 3, doneCount: 1, hasMemo: true),
+                    max(1, day - 2): WidgetDayCell(todoCount: 2, doneCount: 2, hasMemo: false),
+                    min(28, day + 3): WidgetDayCell(todoCount: 5, doneCount: 0, hasMemo: true)]
         }()
     )
 }
@@ -144,6 +148,7 @@ enum WidgetReader {
             for t in monthTodos {
                 let d = cal.component(.day, from: t.targetDate)
                 cells[d, default: WidgetDayCell()].todoCount += 1
+                if t.isFinished { cells[d, default: WidgetDayCell()].doneCount += 1 }
             }
             let monthMemos = realm.objects(QuickNote.self)
                 .filter("targetDate >= %@ AND targetDate < %@", mStart, mEnd)

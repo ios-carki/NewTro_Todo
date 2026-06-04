@@ -68,8 +68,10 @@ struct TodayEntryView: View {
                 colors: [Color(hex: "#FAD4E4"), Color(hex: "#F7A8C8")],
                 startPoint: .top, endPoint: .bottom
             )
+        case .systemMedium:
+            WidgetScenery()          // 앱 배경과 동일(하늘+언덕+잔디+흙)
         default:
-            Color.panel
+            Color.panel              // Large 달력은 가독성 위해 단색 유지
         }
     }
 }
@@ -116,7 +118,7 @@ struct MemoEntryView: View {
     let entry: MemoEntry
 
     var body: some View {
-        MemoLargeView(data: entry.data).widgetBackground(Color.panel)
+        MemoLargeView(data: entry.data).widgetBackground(WidgetScenery())
     }
 }
 
