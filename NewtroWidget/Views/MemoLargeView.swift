@@ -17,7 +17,7 @@ struct MemoLargeView: View {
                     .font(.galBold16())
                     .foregroundColor(.ink)
                 Spacer()
-                Text("\(data.totalCount)")
+                Text(String(format: NSLocalizedString("%d개", comment: ""), data.totalCount))
                     .font(.galBold14())
                     .foregroundColor(.shade)
             }
@@ -34,17 +34,15 @@ struct MemoLargeView: View {
                     memoRow(1)   // 포스트잇 2, 3
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                if overflow > 0 {
-                    Text("+\(overflow)")
-                        .font(.galBold13())
-                        .foregroundColor(.shade)
-                        .frame(maxWidth: .infinity, alignment: .trailing)
-                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(12)
+        .overlay(alignment: .bottomTrailing) {
+            if overflow > 0 {
+                OverflowChip(count: overflow).padding(8)
+            }
+        }
     }
 
     @ViewBuilder

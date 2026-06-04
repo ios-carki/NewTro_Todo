@@ -1,25 +1,31 @@
 import SwiftUI
 import WidgetKit
 
-// Medium 위젯 — 독립 "오늘의 할 일" 레이블(배경 없음) + 투두 카드 리스트.
-// 영역을 항상 4개의 균등 슬롯으로 나눠(슬롯 = 영역 높이/4) 투두 개수와 무관하게 행 높이 고정.
-// 단일 패널이 아니라 투두 1개당 개별 카드(배경+테두리)로 분리해 구분이 명확하다.
-// 빈 슬롯은 투명 → 뒤 배경(scenery) 노출.
+// Medium 위젯 — 좌상단 "오늘의 할 일" + 우상단 오늘 투두 총 개수("N개").
+// 영역을 항상 4개의 균등 슬롯으로 나눠 행 높이 고정(개수 무관). 투두 1개당 개별 카드
+// (좌측 중요도 띠 + 선택색 배경). 초과분은 우하단 배경 칩("+N").
 struct TodoListMediumView: View {
     let data: TodayWidgetData
 
     private let maxRows = 4
-    private var hasOverflow: Bool { data.todayTodoCount > maxRows }
-    private var visibleTodos: [WidgetTodoItem] {
-        Array(data.todos.prefix(hasOverflow ? maxRows - 1 : maxRows))
+    private var visibleTodos: [WidgetTodoItem] { Array(data.todos.prefix(maxRows)) }
+    private var overflowCount: Int { max(0, data.todayTodoCount - visibleTodos.count) }
+
+    private var countText: String {
+        String(format: NSLocalizedString("%d개", comment: ""), data.todayTodoCount)
     }
-    private var overflowCount: Int { data.todayTodoCount - visibleTodos.count }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("오늘의 할 일")
-                .font(.galBold16())
-                .foregroundColor(.ink)
+            HStack {
+                Text("오늘의 할 일")
+                    .font(.galBold16())
+                    .foregroundColor(.ink)
+                Spacer()
+                Text(countText)
+                    .font(.galBold13())
+                    .foregroundColor(.shade)
+            }
 
             if data.todos.isEmpty {
                 Text("오늘은 할 일이 없어요")
@@ -27,7 +33,6 @@ struct TodoListMediumView: View {
                     .foregroundColor(.shade)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             } else {
-                // 4개 균등 슬롯 — 각 슬롯이 동일 높이로 분배(개수 무관 고정).
                 VStack(spacing: 6) {
                     ForEach(0..<maxRows, id: \.self) { i in
                         slot(i)
@@ -38,29 +43,25 @@ struct TodoListMediumView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(10)
+        .overlay(alignment: .bottomTrailing) {
+            if overflowCount > 0 {
+                OverflowChip(count: overflowCount).padding(8)
+            }
+        }
     }
 
     @ViewBuilder
     private func slot(_ index: Int) -> some View {
         if index < visibleTodos.count {
             todoCard(visibleTodos[index])
-        } else if hasOverflow && index == visibleTodos.count {
-            // 초과 표시 — 카드 없이 텍스트만(투두 카드와 구분)
-            Text("+\(overflowCount)")
-                .font(.galBold11())
-                .foregroundColor(.shade)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 4)
         } else {
             Color.clear   // 빈 슬롯 — 배경 노출
         }
     }
 
     // 투두 1개 = 개별 카드. 좌측에 카드 높이 전체의 중요도 띠, 배경은 Todo 선택색(colorName).
-    // 완료는 배경색을 흐리게 + 취소선으로 구분.
     private func todoCard(_ item: WidgetTodoItem) -> some View {
         HStack(spacing: 0) {
-            // 가장 좌측 — 카드 높이 전체 중요도 띠
             Rectangle()
                 .fill(item.priorityColor)
                 .frame(width: 6)
