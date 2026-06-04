@@ -18,12 +18,14 @@ struct TodoListMediumView: View {
         VStack(alignment: .leading, spacing: 6) {
             HStack {
                 Text("오늘의 할 일")
-                    .font(.galBold16())
+                    .font(.galBold14())
                     .foregroundColor(.ink)
+                    .pixelHeaderChip()
                 Spacer()
                 Text(countText)
-                    .font(.galBold13())
-                    .foregroundColor(.shade)
+                    .font(.galBold11())
+                    .foregroundColor(.ink)
+                    .pixelHeaderChip(bg: .peach)
             }
 
             if data.todos.isEmpty {

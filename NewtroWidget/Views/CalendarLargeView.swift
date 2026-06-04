@@ -64,7 +64,7 @@ struct CalendarLargeView: View {
     private var legend: some View {
         HStack(spacing: 10) {
             legendChip(Color(hex: "#A7E08A"), "오늘")
-            legendChip(Color(hex: "#FFE08A"), "완료")
+            legendChip(Color(hex: "#FFE08A"), "퍼펙트")
             legendChip(.pixelPink, "할 일")
             Spacer(minLength: 0)
         }

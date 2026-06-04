@@ -163,6 +163,19 @@ struct PixelProgressBar: View {
     }
 }
 
+// MARK: - Pixel Header Chip (배경 위 헤더/개수 레이블 가독성용 — cream+ink+2px 그림자)
+
+extension View {
+    func pixelHeaderChip(bg: Color = .cream) -> some View {
+        self
+            .padding(.horizontal, 9)
+            .padding(.vertical, 4)
+            .background(bg)
+            .overlay(Rectangle().stroke(Color.ink, lineWidth: 2))
+            .background(Rectangle().fill(Color.ink).offset(x: 2, y: 2))
+    }
+}
+
 // MARK: - Scenery Background (앱 배경과 동일 톤: 하늘+언덕+잔디+흙)
 
 /// 둥근 언덕 실루엣 (앱 DistantMountain 과 동일한 soft hill).

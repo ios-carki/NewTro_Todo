@@ -12,12 +12,14 @@ struct MemoLargeView: View {
         VStack(spacing: 8) {
             HStack {
                 Text("메모")
-                    .font(.galBold16())
+                    .font(.galBold14())
                     .foregroundColor(.ink)
+                    .pixelHeaderChip()
                 Spacer()
                 Text(String(format: NSLocalizedString("%d개", comment: ""), data.totalCount))
-                    .font(.galBold14())
-                    .foregroundColor(.shade)
+                    .font(.galBold11())
+                    .foregroundColor(.ink)
+                    .pixelHeaderChip(bg: .peach)
             }
 
             if shown.isEmpty {
