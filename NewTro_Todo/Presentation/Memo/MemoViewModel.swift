@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import WidgetKit
 
 @MainActor
 final class MemoViewModel: ObservableObject {
@@ -88,6 +89,7 @@ final class MemoViewModel: ObservableObject {
                 saved.colorName = colorName
                 saved.isWritten = !note.isEmpty
                 memos.insert(saved, at: 0)
+                WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
             }
@@ -122,6 +124,7 @@ final class MemoViewModel: ObservableObject {
                     memos[idx].colorName = colorName
                     memos[idx].isWritten = isWrittenAfter
                 }
+                WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
             }
@@ -133,6 +136,7 @@ final class MemoViewModel: ObservableObject {
             do {
                 try await deleteUseCase.execute(id: id)
                 memos.removeAll { $0.id == id }
+                WidgetCenter.shared.reloadAllTimelines()
             } catch {
                 errorMessage = error.localizedDescription
             }

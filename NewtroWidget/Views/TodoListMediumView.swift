@@ -80,7 +80,7 @@ struct TodoListMediumView: View {
             .padding(.horizontal, 10)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .background(item.bgColor.opacity(item.done ? 0.5 : 1))
+        .background(item.bgColor)   // 완료여부와 무관하게 불투명(완료는 취소선으로 구분)
         .pixelBorder(color: .ink, lineWidth: 2)
     }
 }
