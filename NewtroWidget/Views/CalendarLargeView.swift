@@ -36,9 +36,7 @@ struct CalendarLargeView: View {
 
     var body: some View {
         VStack(spacing: 6) {
-            Text(yearMonthText)
-                .font(.galBold17())
-                .foregroundColor(.ink)
+            calendarHeader
 
             weekdayHeader
 
@@ -58,6 +56,29 @@ struct CalendarLargeView: View {
         }
         .padding(10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+
+    // MARK: 상단 헤더 — 두 구멍이 뚫린 배경 띠, 년·월 텍스트는 두 구멍 사이.
+    private var calendarHeader: some View {
+        HStack(spacing: 14) {
+            punchHole
+            Text(yearMonthText)
+                .font(.galBold17())
+                .foregroundColor(.ink)
+            punchHole
+        }
+        .padding(.horizontal, 18)
+        .padding(.vertical, 8)
+        .frame(maxWidth: .infinity)
+        .background(Color.cream)
+        .pixelBorder(color: .ink, lineWidth: 2)
+    }
+
+    private var punchHole: some View {
+        Circle()
+            .fill(Color.ink.opacity(0.20))
+            .frame(width: 13, height: 13)
+            .overlay(Circle().stroke(Color.ink, lineWidth: 1.5))
     }
 
     // MARK: 요일 헤더 (테두리 + 배경색)
@@ -98,14 +119,17 @@ struct CalendarLargeView: View {
                     .fill(bg)
                     .overlay(Rectangle().stroke(Color.ink, lineWidth: isToday ? 2 : 1))
 
-                VStack(spacing: 2) {
-                    Text(String(format: "%02d", day))
-                        .font(.pressStart10())
-                        .foregroundColor(.ink)
-                    todoSquares(cell.todoCount)
+                // 일 숫자 — 칸 정중앙
+                Text(String(format: "%02d", day))
+                    .font(.pressStart12())
+                    .foregroundColor(.ink)
+
+                // Todo ▣ — 칸 하단
+                VStack(spacing: 0) {
                     Spacer(minLength: 0)
+                    todoSquares(cell.todoCount)
                 }
-                .padding(.top, 5)
+                .padding(.bottom, 4)
 
                 if cell.hasMemo {
                     Rectangle()

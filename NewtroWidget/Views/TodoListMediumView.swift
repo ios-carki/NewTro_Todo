@@ -34,8 +34,12 @@ struct TodoListMediumView: View {
                 Spacer(minLength: 0)
             }
         }
-        .padding(14)
+        .padding(12)
+        // 투두 리스트 패널 — scenery 배경 위에 크림 카드로 가독성 확보(배경을 덮어도 됨).
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        .background(Color.cream)
+        .pixelBorder(color: .ink, lineWidth: 2)
+        .padding(10)
     }
 
     private func row(_ item: WidgetTodoItem) -> some View {

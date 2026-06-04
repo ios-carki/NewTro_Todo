@@ -168,13 +168,16 @@ enum WidgetReader {
 
     // MARK: 메모 위젯 (Large 포스트잇)
     static func loadMemos(date: Date = Date(), limit: Int = 4) -> MemoWidgetData {
-        let dayStart = Calendar.current.startOfDay(for: date)
-        guard let realm = openRealm() else { return .empty(dayStart) }
+        let cal = Calendar.current
+        let dayStart = cal.startOfDay(for: date)
+        guard let dayEnd = cal.date(byAdding: .day, value: 1, to: dayStart),
+              let realm = openRealm() else { return .empty(dayStart) }
 
+        // "오늘 작성된 메모" = regDate 가 오늘인 메모. 앱 MemoRepository 와 동일 기준(regDate 범위).
+        // (이전엔 targetDate == startOfDay 로 조회해 표시 안 되는 버그)
         let todayMemos = realm.objects(QuickNote.self)
-            .filter("targetDate == %@", dayStart)
+            .filter("regDate >= %@ AND regDate < %@ AND note != ''", dayStart, dayEnd)
             .sorted(byKeyPath: "regDate", ascending: false)
-            .filter { !$0.note.isEmpty }
 
         let items: [WidgetMemoItem] = todayMemos.prefix(limit).map {
             WidgetMemoItem(id: $0.objectID.stringValue, text: $0.note, colorName: $0.colorName)
