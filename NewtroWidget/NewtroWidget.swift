@@ -1,92 +1,150 @@
 import WidgetKit
 import SwiftUI
 
-// MARK: - Timeline Entry
+// ════════════════════════════════════════════════════════════════════════
+// 위젯 2종으로 구성된 번들.
+//  ① "오늘" 위젯 — Small(플립달력) / Medium(투두리스트) / Large(달력)
+//  ② "메모" 위젯 — Large(포스트잇)
+// 데이터 변경 시 앱이 WidgetCenter.reloadAllTimelines() 로 모든 kind 를 갱신한다.
+// ════════════════════════════════════════════════════════════════════════
 
-struct NewtroEntry: TimelineEntry {
+// MARK: - 공통
+
+private func nextMidnight(after now: Date) -> Date {
+    Calendar.current.nextDate(
+        after: now,
+        matching: DateComponents(hour: 0, minute: 0),
+        matchingPolicy: .nextTime
+    ) ?? now.addingTimeInterval(60 * 60)
+}
+
+// MARK: - ① 오늘 위젯
+
+struct TodayEntry: TimelineEntry {
     let date: Date
-    let data: WidgetTodayData
+    let data: TodayWidgetData
 }
 
-// MARK: - Provider
-
-struct NewtroProvider: TimelineProvider {
-    func placeholder(in context: Context) -> NewtroEntry {
-        NewtroEntry(date: Date(), data: .placeholder)
+struct TodayProvider: TimelineProvider {
+    func placeholder(in context: Context) -> TodayEntry {
+        TodayEntry(date: Date(), data: .placeholder)
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (NewtroEntry) -> Void) {
-        let data = context.isPreview
-            ? WidgetTodayData.placeholder
-            : WidgetRealmReader.loadToday()
-        completion(NewtroEntry(date: Date(), data: data))
+    func getSnapshot(in context: Context, completion: @escaping (TodayEntry) -> Void) {
+        let data = context.isPreview ? .placeholder : WidgetReader.loadToday()
+        completion(TodayEntry(date: Date(), data: data))
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<NewtroEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @escaping (Timeline<TodayEntry>) -> Void) {
         let now = Date()
-        let data = WidgetRealmReader.loadToday(date: now)
-        let entry = NewtroEntry(date: now, data: data)
-
-        // 자정에 다음 날 데이터로 갱신되도록 self-refresh
-        let calendar = Calendar.current
-        let nextMidnight = calendar.nextDate(
-            after: now,
-            matching: DateComponents(hour: 0, minute: 0),
-            matchingPolicy: .nextTime
-        ) ?? now.addingTimeInterval(60 * 60)
-
-        let timeline = Timeline(entries: [entry], policy: .after(nextMidnight))
-        completion(timeline)
+        let entry = TodayEntry(date: now, data: WidgetReader.loadToday(date: now))
+        completion(Timeline(entries: [entry], policy: .after(nextMidnight(after: now))))
     }
 }
 
-// MARK: - Entry View Router
-
-struct NewtroWidgetEntryView: View {
+struct TodayEntryView: View {
     @Environment(\.widgetFamily) private var family
-    let entry: NewtroEntry
+    let entry: TodayEntry
+
+    var body: some View {
+        content.widgetBackground(background)
+    }
 
     @ViewBuilder
     private var content: some View {
         switch family {
-        case .systemSmall:  SmallTodayView(data: entry.data)
-        case .systemMedium: MediumListView(data: entry.data)
-        case .systemLarge:  LargeTodayView(data: entry.data)
-        default:            SmallTodayView(data: entry.data)
+        case .systemSmall:  FlipCalendarSmallView(data: entry.data)
+        case .systemMedium: TodoListMediumView(data: entry.data)
+        case .systemLarge:  CalendarLargeView(data: entry.data)
+        default:            FlipCalendarSmallView(data: entry.data)
         }
     }
 
-    var body: some View {
-        if #available(iOS 17.0, *) {
-            content.containerBackground(for: .widget) { Color.sky }
-        } else {
-            ZStack {
-                Color.sky
-                content
-            }
+    @ViewBuilder
+    private var background: some View {
+        switch family {
+        case .systemSmall:
+            LinearGradient(
+                colors: [Color(hex: "#FAD4E4"), Color(hex: "#F7A8C8")],
+                startPoint: .top, endPoint: .bottom
+            )
+        default:
+            Color.panel
         }
     }
 }
 
-// MARK: - Widget Declaration
-
-@main
-struct NewtroWidget: Widget {
-    let kind: String = "NewtroWidget"
+struct TodayWidget: Widget {
+    let kind = "NewtroTodayWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: NewtroProvider()) { entry in
-            NewtroWidgetEntryView(entry: entry)
+        StaticConfiguration(kind: kind, provider: TodayProvider()) { entry in
+            TodayEntryView(entry: entry)
         }
-        .configurationDisplayName("뉴트로 투두")
-        .description("오늘 작성된 Todo를 한 눈에 확인 해보세요!")
+        .configurationDisplayName("오늘")
+        .description("오늘의 할 일과 달력을 한눈에")
         .supportedFamilies([.systemSmall, .systemMedium, .systemLarge])
         .disableContentMarginsIfAvailable()
     }
 }
 
-// MARK: - iOS 17+ contentMarginsDisabled 헬퍼
-// some WidgetConfiguration 의 if/else 타입 불일치를 우회하기 위해 extension 으로 분리
+// MARK: - ② 메모 위젯
+
+struct MemoEntry: TimelineEntry {
+    let date: Date
+    let data: MemoWidgetData
+}
+
+struct MemoProvider: TimelineProvider {
+    func placeholder(in context: Context) -> MemoEntry {
+        MemoEntry(date: Date(), data: .placeholder)
+    }
+
+    func getSnapshot(in context: Context, completion: @escaping (MemoEntry) -> Void) {
+        let data = context.isPreview ? .placeholder : WidgetReader.loadMemos()
+        completion(MemoEntry(date: Date(), data: data))
+    }
+
+    func getTimeline(in context: Context, completion: @escaping (Timeline<MemoEntry>) -> Void) {
+        let now = Date()
+        let entry = MemoEntry(date: now, data: WidgetReader.loadMemos(date: now))
+        completion(Timeline(entries: [entry], policy: .after(nextMidnight(after: now))))
+    }
+}
+
+struct MemoEntryView: View {
+    let entry: MemoEntry
+
+    var body: some View {
+        MemoLargeView(data: entry.data).widgetBackground(Color.panel)
+    }
+}
+
+struct MemoWidget: Widget {
+    let kind = "NewtroMemoWidget"
+
+    var body: some WidgetConfiguration {
+        StaticConfiguration(kind: kind, provider: MemoProvider()) { entry in
+            MemoEntryView(entry: entry)
+        }
+        .configurationDisplayName("메모")
+        .description("오늘 작성한 메모를 포스트잇으로")
+        .supportedFamilies([.systemLarge])
+        .disableContentMarginsIfAvailable()
+    }
+}
+
+// MARK: - Bundle
+
+@main
+struct NewtroWidgetBundle: WidgetBundle {
+    var body: some Widget {
+        TodayWidget()
+        MemoWidget()
+    }
+}
+
+// MARK: - Helpers
 
 private extension WidgetConfiguration {
     func disableContentMarginsIfAvailable() -> some WidgetConfiguration {
@@ -98,25 +156,36 @@ private extension WidgetConfiguration {
     }
 }
 
+extension View {
+    /// iOS 17+ 는 containerBackground, 그 이하는 ZStack 으로 배경을 깐다.
+    @ViewBuilder
+    func widgetBackground<Background: View>(_ background: Background) -> some View {
+        if #available(iOS 17.0, *) {
+            self.containerBackground(for: .widget) { background }
+        } else {
+            ZStack { background; self }
+        }
+    }
+}
+
 // MARK: - Previews (iOS 17+)
 
 @available(iOS 17.0, *)
-#Preview("Small", as: .systemSmall) {
-    NewtroWidget()
-} timeline: {
-    NewtroEntry(date: .now, data: .placeholder)
+#Preview("오늘 Small", as: .systemSmall) { TodayWidget() } timeline: {
+    TodayEntry(date: .now, data: .placeholder)
 }
 
 @available(iOS 17.0, *)
-#Preview("Medium", as: .systemMedium) {
-    NewtroWidget()
-} timeline: {
-    NewtroEntry(date: .now, data: .placeholder)
+#Preview("오늘 Medium", as: .systemMedium) { TodayWidget() } timeline: {
+    TodayEntry(date: .now, data: .placeholder)
 }
 
 @available(iOS 17.0, *)
-#Preview("Large", as: .systemLarge) {
-    NewtroWidget()
-} timeline: {
-    NewtroEntry(date: .now, data: .placeholder)
+#Preview("오늘 Large", as: .systemLarge) { TodayWidget() } timeline: {
+    TodayEntry(date: .now, data: .placeholder)
+}
+
+@available(iOS 17.0, *)
+#Preview("메모 Large", as: .systemLarge) { MemoWidget() } timeline: {
+    MemoEntry(date: .now, data: .placeholder)
 }
