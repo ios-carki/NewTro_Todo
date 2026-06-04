@@ -42,7 +42,7 @@ struct CalendarLargeView: View {
 
             GeometryReader { geo in
                 let gaps = CGFloat(rows - 1) * 3
-                let rowH = max(28, (geo.size.height - gaps) / CGFloat(rows))
+                let rowH = max(26, (geo.size.height - gaps) / CGFloat(rows))
                 VStack(spacing: 3) {
                     ForEach(0..<rows, id: \.self) { r in
                         HStack(spacing: 3) {
@@ -53,9 +53,34 @@ struct CalendarLargeView: View {
                     }
                 }
             }
+
+            legend
         }
         .padding(10)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+    }
+
+    // MARK: 좌하단 범례 — 네모/색의 의미
+    private var legend: some View {
+        HStack(spacing: 10) {
+            legendChip(Color(hex: "#A7E08A"), "오늘")
+            legendChip(Color(hex: "#FFE08A"), "완료")
+            legendChip(.pixelPink, "할 일")
+            Spacer(minLength: 0)
+        }
+        .padding(.top, 2)
+    }
+
+    private func legendChip(_ color: Color, _ key: String) -> some View {
+        HStack(spacing: 3) {
+            Rectangle()
+                .fill(color)
+                .frame(width: 9, height: 9)
+                .overlay(Rectangle().stroke(Color.ink.opacity(0.6), lineWidth: 1))
+            Text(LocalizedStringKey(key))
+                .font(.galBold10())
+                .foregroundColor(.shade)
+        }
     }
 
     // MARK: 상단 헤더 — 두 구멍이 뚫린 배경 띠, 년·월 텍스트는 두 구멍 사이.
@@ -158,7 +183,10 @@ struct CalendarLargeView: View {
         if count > 0 {
             HStack(spacing: 1.5) {
                 ForEach(0..<min(count, 3), id: \.self) { _ in
-                    Rectangle().fill(Color.ink).frame(width: 5, height: 5)
+                    Rectangle()
+                        .fill(Color.pixelPink)
+                        .frame(width: 5, height: 5)
+                        .overlay(Rectangle().stroke(Color.ink.opacity(0.55), lineWidth: 1))
                 }
                 if count > 3 {
                     Text(count - 3 > 99 ? "99+" : "+\(count - 3)")

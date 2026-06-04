@@ -11,6 +11,17 @@ struct MemoLargeView: View {
 
     var body: some View {
         VStack(spacing: 8) {
+            // 헤더 — 좌상단 "메모", 우상단 오늘 메모 개수
+            HStack {
+                Text("메모")
+                    .font(.galBold16())
+                    .foregroundColor(.ink)
+                Spacer()
+                Text("\(data.totalCount)")
+                    .font(.galBold14())
+                    .foregroundColor(.shade)
+            }
+
             if shown.isEmpty {
                 Spacer(minLength: 0)
                 Text("오늘은 메모가 없어요")
