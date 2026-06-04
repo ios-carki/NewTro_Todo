@@ -2,7 +2,7 @@ import SwiftUI
 import WidgetKit
 
 // Medium 위젯 — 독립 "오늘의 할 일" 레이블(배경 없음) + 투두 리스트 패널.
-// 패널 안의 행은 위젯에 최대 4개가 들어가도록 고정 높이(패널 높이/4).
+// 패널 안 행은 "패널 높이 / 4" 로 고정 → 위젯에 최대 4개가 꽉 차게 들어감.
 struct TodoListMediumView: View {
     let data: TodayWidgetData
 
@@ -14,46 +14,47 @@ struct TodoListMediumView: View {
     private var overflowCount: Int { data.todayTodoCount - visibleTodos.count }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 6) {
-            // 독립 레이블 — 배경색 없음
-            Text("오늘의 할 일")
-                .font(.galBold16())
-                .foregroundColor(.ink)
+        // GeometryReader 를 최상단에 두고 padding 은 바깥 → reader 가 실제 가용 높이를 받음.
+        GeometryReader { geo in
+            let titleH: CGFloat = 22
+            let innerPad: CGFloat = 6
+            let panelH = max(0, geo.size.height - titleH - 6)
+            let rowH = max(24, (panelH - innerPad * 2) / CGFloat(maxRows))
 
-            panel
+            VStack(alignment: .leading, spacing: 6) {
+                Text("오늘의 할 일")
+                    .font(.galBold16())
+                    .foregroundColor(.ink)
+                    .frame(height: titleH)
+
+                VStack(spacing: 0) {
+                    if data.todos.isEmpty {
+                        Spacer(minLength: 0)
+                        Text("오늘은 할 일이 없어요")
+                            .font(.galBold13())
+                            .foregroundColor(.shade)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                        Spacer(minLength: 0)
+                    } else {
+                        ForEach(visibleTodos) { row($0).frame(height: rowH) }
+                        if hasOverflow {
+                            Text("+\(overflowCount)")
+                                .font(.galBold11())
+                                .foregroundColor(.shade)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .frame(height: rowH)
+                        }
+                        Spacer(minLength: 0)
+                    }
+                }
+                .padding(.horizontal, 10)
+                .padding(.vertical, innerPad)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                .background(Color.cream)
+                .pixelBorder(color: .ink, lineWidth: 2)
+            }
         }
         .padding(10)
-    }
-
-    private var panel: some View {
-        GeometryReader { geo in
-            let rowH = max(22, (geo.size.height - 12) / CGFloat(maxRows))
-            VStack(spacing: 0) {
-                if data.todos.isEmpty {
-                    Spacer(minLength: 0)
-                    Text("오늘은 할 일이 없어요")
-                        .font(.galBold13())
-                        .foregroundColor(.shade)
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    Spacer(minLength: 0)
-                } else {
-                    ForEach(visibleTodos) { row($0).frame(height: rowH) }
-                    if hasOverflow {
-                        Text("+\(overflowCount)")
-                            .font(.galBold11())
-                            .foregroundColor(.shade)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .frame(height: rowH)
-                    }
-                    Spacer(minLength: 0)
-                }
-            }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        }
-        .background(Color.cream)
-        .pixelBorder(color: .ink, lineWidth: 2)
     }
 
     private func row(_ item: WidgetTodoItem) -> some View {
