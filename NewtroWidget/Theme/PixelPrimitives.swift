@@ -163,22 +163,6 @@ struct PixelProgressBar: View {
     }
 }
 
-// MARK: - Overflow Chip (우하단 "+N" 배경 레이블)
-
-struct OverflowChip: View {
-    let count: Int
-
-    var body: some View {
-        Text("+\(count)")
-            .font(.galBold11())
-            .foregroundColor(.cream)
-            .padding(.horizontal, 8)
-            .padding(.vertical, 3)
-            .background(Color.ink)
-            .overlay(Rectangle().stroke(Color.ink, lineWidth: 1))
-    }
-}
-
 // MARK: - Scenery Background (앱 배경과 동일 톤: 하늘+언덕+잔디+흙)
 
 /// 둥근 언덕 실루엣 (앱 DistantMountain 과 동일한 soft hill).

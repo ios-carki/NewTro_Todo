@@ -1,14 +1,12 @@
 import SwiftUI
 import WidgetKit
 
-// Large 위젯 ② — 좌상단 "메모" + 우상단 오늘 메모 개수.
-// 포스트잇 영역을 항상 2개의 균등 행으로 나눠(각 행 = 영역 높이/2) 포스트잇 높이가 고정된다.
-// 텍스트 넘침은 ... / 4개 초과 시 하단 "+N"(전체-4).
+// Large 위젯 ② — 좌상단 "메모" + 우상단 오늘 메모 개수("N개").
+// 포스트잇 2×2(최대 4). 텍스트 넘침은 ... (초과 개수 레이블 없음).
 struct MemoLargeView: View {
     let data: MemoWidgetData
 
     private var shown: [WidgetMemoItem] { Array(data.memos.prefix(4)) }
-    private var overflow: Int { max(0, data.totalCount - 4) }
 
     var body: some View {
         VStack(spacing: 8) {
@@ -28,21 +26,18 @@ struct MemoLargeView: View {
                     .foregroundColor(.shade)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
             } else {
-                // 2개의 균등 행 — 각 행이 maxHeight 로 동일 분배(영역 높이/2 고정).
+                // 2개의 균등 행. 포스트잇 높이를 살짝 줄이도록 그리드 최대 높이를 제한 + 하단 여백.
                 VStack(spacing: 8) {
                     memoRow(0)   // 포스트잇 0, 1
                     memoRow(1)   // 포스트잇 2, 3
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(maxWidth: .infinity, maxHeight: 248)
+
+                Spacer(minLength: 0)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(12)
-        .overlay(alignment: .bottomTrailing) {
-            if overflow > 0 {
-                OverflowChip(count: overflow).padding(8)
-            }
-        }
     }
 
     @ViewBuilder
@@ -64,20 +59,20 @@ struct MemoLargeView: View {
     }
 
     private func postIt(_ memo: WidgetMemoItem) -> some View {
-        // 첫 줄 = 제목(galBold16), 나머지 = 본문(galCondensed16). 앱 메모와 동일.
+        // 첫 줄 = 제목(galBold13), 나머지 = 본문(galCondensed13). 앱 메모와 동일(폰트 축소).
         let lines = memo.text.components(separatedBy: "\n")
         let title = lines.first ?? ""
         let body = lines.dropFirst().joined(separator: "\n")
 
         return VStack(alignment: .leading, spacing: 3) {
             Text(title)
-                .font(.galBold16())
+                .font(.galBold13())
                 .foregroundColor(.ink)
                 .lineLimit(1)
                 .truncationMode(.tail)
 
             Text(body)
-                .font(.galCondensed16())
+                .font(.galCondensed13())
                 .foregroundColor(.ink.opacity(0.85))
                 .lineLimit(4)
                 .truncationMode(.tail)

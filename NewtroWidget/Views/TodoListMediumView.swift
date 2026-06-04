@@ -9,7 +9,6 @@ struct TodoListMediumView: View {
 
     private let maxRows = 4
     private var visibleTodos: [WidgetTodoItem] { Array(data.todos.prefix(maxRows)) }
-    private var overflowCount: Int { max(0, data.todayTodoCount - visibleTodos.count) }
 
     private var countText: String {
         String(format: NSLocalizedString("%d개", comment: ""), data.todayTodoCount)
@@ -43,11 +42,6 @@ struct TodoListMediumView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .padding(10)
-        .overlay(alignment: .bottomTrailing) {
-            if overflowCount > 0 {
-                OverflowChip(count: overflowCount).padding(8)
-            }
-        }
     }
 
     @ViewBuilder
