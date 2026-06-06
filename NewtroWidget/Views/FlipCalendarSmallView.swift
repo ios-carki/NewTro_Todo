@@ -24,6 +24,8 @@ struct FlipCalendarSmallView: View {
                 .font(.galBold17())
                 .foregroundColor(.cream)
                 .lineLimit(1)
+                .minimumScaleFactor(0.5)
+                .padding(.horizontal, 6)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 7)
                 .background(Color.pinkDk)

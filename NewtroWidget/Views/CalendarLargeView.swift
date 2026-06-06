@@ -85,14 +85,16 @@ struct CalendarLargeView: View {
 
     // MARK: 상단 헤더 — 두 구멍이 뚫린 배경 띠, 년·월 텍스트는 두 구멍 사이.
     private var calendarHeader: some View {
-        HStack(spacing: 14) {
+        HStack(spacing: 10) {
             punchHole
             Text(yearMonthText)
                 .font(.galBold17())
                 .foregroundColor(.ink)
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
             punchHole
         }
-        .padding(.horizontal, 18)
+        .padding(.horizontal, 12)
         .padding(.vertical, 8)
         .frame(maxWidth: .infinity)
         .background(Color.cream)

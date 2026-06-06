@@ -123,9 +123,13 @@ struct MainView: View {
                     Text(viewModel.displayDate)
                         .font(.pressStart12())
                         .foregroundColor(.pinkDk)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.7)
                     Text(viewModel.headerTitle)
                         .font(.galBold22())
                         .foregroundColor(.ink)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
                 }
 
                 Spacer()

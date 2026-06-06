@@ -14,11 +14,16 @@ struct MemoLargeView: View {
                 Text("메모")
                     .font(.galBold14())
                     .foregroundColor(.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.6)
                     .pixelHeaderChip()
-                Spacer()
+                Spacer(minLength: 6)
                 Text(String(format: NSLocalizedString("%d개", comment: ""), data.totalCount))
                     .font(.galBold11())
                     .foregroundColor(.ink)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+                    .fixedSize()
                     .pixelHeaderChip(bg: .peach)
             }
 
