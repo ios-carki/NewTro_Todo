@@ -290,14 +290,24 @@ private struct MemoCardView: View {
     // galCondensed13 lineHeight ≈ 16pt → 7줄 안전 상한.
     private let bodyLineLimit: Int = 7
 
-    private var bodyText: String { memo.isWritten ? memo.note : "..." }
+    // 첫 줄 = 제목(galBold14), 나머지 = 본문(galCondensed13). 리스트 모드와 동일.
+    private var noteText: String { memo.isWritten ? memo.note : "..." }
+    private var lines: [String] { noteText.components(separatedBy: "\n") }
+    private var title: String { lines.first ?? "" }
+    private var bodyText: String { lines.dropFirst().joined(separator: "\n") }
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            VStack(alignment: .leading, spacing: 0) {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title)
+                    .font(.galBold14())
+                    .foregroundColor(.ink)
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+
                 Text(bodyText)
                     .font(.galCondensed13())
-                    .foregroundColor(.ink)
+                    .foregroundColor(.ink.opacity(0.85))
                     .lineLimit(bodyLineLimit)
                     .truncationMode(.tail)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

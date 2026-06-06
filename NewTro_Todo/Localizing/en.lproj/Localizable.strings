@@ -433,3 +433,9 @@
 "책 한 챕터" = "Read a chapter";
 "화분 물주기" = "Water the plant";
 "%@ 까지" = "Until %@";
+
+
+// MARK: - 위젯 (Today/Memo)
+"오늘 할 일 %d개" = "%d todos today";
+"오늘의 할 일과 달력을 한눈에" = "Today's todos and calendar at a glance";
+"오늘 작성한 메모를 포스트잇으로" = "Today's notes as sticky notes";

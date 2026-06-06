@@ -7,9 +7,11 @@ final class QuickNoteRepositoryImpl: QuickNoteRepositoryProtocol {
         try await MainActor.run {
             let realm = try Realm()
             let dayStart = Calendar.current.startOfDay(for: targetDate)
+            // 시간대 변경 후에도 그날 메모 슬롯이 사라지지 않도록 정확매칭 대신 [시작, 끝) 범위 조회.
+            let range = dayStart.dayRange
 
             if let existing = realm.objects(QuickNote.self)
-                .filter("targetDate == %@", dayStart).first {
+                .filter("targetDate >= %@ AND targetDate < %@", range.start, range.end).first {
                 return existing.toDomain()
             }
 
