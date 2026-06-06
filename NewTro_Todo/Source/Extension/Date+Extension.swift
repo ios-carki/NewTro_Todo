@@ -24,6 +24,13 @@ extension Date {
     func seconds() -> Int {
         return Calendar.current.dateComponents([.second], from: self, to: Date()).second ?? 0
     }
+    /// 이 날짜가 속한 "하루"의 [시작, 끝). 시간대 변경 후에도 Todo가 사라지지 않도록
+    /// 정확매칭(targetDate == 자정) 대신 범위 쿼리(>= 시작 AND < 끝)에 사용한다.
+    var dayRange: (start: Date, end: Date) {
+        let start = Calendar.current.startOfDay(for: self)
+        let end = Calendar.current.date(byAdding: .day, value: 1, to: start) ?? start
+        return (start, end)
+    }
     func dateToString() -> String {
         let components = Calendar(identifier: .gregorian).dateComponents([.year, .month, .day, .weekday, .hour, .minute, .second], from: self)
         let year = components.year

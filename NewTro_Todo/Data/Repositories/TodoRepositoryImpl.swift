@@ -19,9 +19,10 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
 
     @MainActor func fetchTodos(targetDate: Date) throws -> [TodoEntity] {
         let realm = try Realm()
-        let dayStart = Calendar.current.startOfDay(for: targetDate)
+        // 시간대 변경 후에도 그날 Todo 가 사라지지 않도록 정확매칭(==) 대신 [시작, 끝) 범위 조회.
+        let range = targetDate.dayRange
         let entities = realm.objects(Todo.self)
-            .filter("targetDate == %@", dayStart)
+            .filter("targetDate >= %@ AND targetDate < %@", range.start, range.end)
             .toArray()
             .map { $0.toDomain() }
         return entities.sorted { a, b in
@@ -45,8 +46,10 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             let realm = try Realm()
             let dayStart = Calendar.current.startOfDay(for: targetDate)
             let dateStr = DateFormatter.dateToString(date: dayStart)
+            // 그날 최소 sortOrder 탐색도 시간대 변경 대비 범위 조회.
+            let range = dayStart.dayRange
             let minSortOrder: Int = realm.objects(Todo.self)
-                .filter("targetDate == %@", dayStart)
+                .filter("targetDate >= %@ AND targetDate < %@", range.start, range.end)
                 .min(ofProperty: "sortOrder") ?? 1
             let todo = Todo(
                 todo: text,
@@ -211,16 +214,18 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         guard let rid = try? ObjectId(string: routineId) else { return nil }
         let realm = try Realm()
         let dayStart = Calendar.current.startOfDay(for: targetDate)
+        // 시간대 변경 후에도 같은 로컬일이면 중복 생성하지 않도록 정확매칭 대신 범위 조회.
+        let range = dayStart.dayRange
 
-        // (routineId, targetDate) 중복이면 skip (idempotent).
+        // (routineId, 그날) 중복이면 skip (idempotent).
         if realm.objects(Todo.self)
-            .filter("routineId == %@ AND targetDate == %@", rid, dayStart)
+            .filter("routineId == %@ AND targetDate >= %@ AND targetDate < %@", rid, range.start, range.end)
             .first != nil {
             return nil
         }
 
         let minSortOrder: Int = realm.objects(Todo.self)
-            .filter("targetDate == %@", dayStart)
+            .filter("targetDate >= %@ AND targetDate < %@", range.start, range.end)
             .min(ofProperty: "sortOrder") ?? 1
         let dateStr = DateFormatter.dateToString(date: dayStart)
         let todo = Todo(
@@ -264,14 +269,18 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
         }
         guard !normalized.isEmpty else { return 0 }
 
-        // 2) 이번 청크 날짜 범위에서 이미 존재하는 (routineId, targetDate) 일괄 조회 → Set
-        //    매 날짜마다 .first 쿼리를 도는 대신 한 번의 IN 쿼리로 묶어 N→1 쿼리로 절감.
+        // 2) 이번 청크 날짜 범위에서 이미 존재하는 루틴 Todo 를 한 번에 조회 → 일(day) 단위로 버킷.
+        //    시간대 변경 후엔 저장된 자정 instant 가 달라져 정확매칭(IN)이 빗나가 중복이 생기므로,
+        //    [min, max+1일) 범위로 조회한 뒤 startOfDay 로 버킷해 비교한다(정상 시간대에선 동일 동작).
+        guard let rangeStart = normalized.min(),
+              let lastDay = normalized.max(),
+              let rangeEnd = cal.date(byAdding: .day, value: 1, to: lastDay) else { return 0 }
         let existing = realm.objects(Todo.self)
-            .filter("routineId == %@ AND targetDate IN %@", rid, normalized)
-        var existingSet = Set<Date>()
-        for t in existing { existingSet.insert(t.targetDate) }
+            .filter("routineId == %@ AND targetDate >= %@ AND targetDate < %@", rid, rangeStart, rangeEnd)
+        var existingDays = Set<Date>()
+        for t in existing { existingDays.insert(cal.startOfDay(for: t.targetDate)) }
 
-        let toInsert = normalized.filter { !existingSet.contains($0) }
+        let toInsert = normalized.filter { !existingDays.contains($0) }
         guard !toInsert.isEmpty else { return 0 }
 
         // 3) 청크의 모든 insert 를 단일 트랜잭션으로 묶음. 에러 발생 시 Realm 이 자동 롤백.
@@ -279,8 +288,9 @@ final class TodoRepositoryImpl: TodoRepositoryProtocol {
             for dayStart in toInsert {
                 // 같은 날짜에 이미 존재하는 Todo 들의 최소 sortOrder 보다 1 작게 두어
                 // 루틴 Todo 가 사용자 수동 Todo 보다 위에 노출되는 정책 유지.
+                let r = dayStart.dayRange
                 let minSortOrder: Int = realm.objects(Todo.self)
-                    .filter("targetDate == %@", dayStart)
+                    .filter("targetDate >= %@ AND targetDate < %@", r.start, r.end)
                     .min(ofProperty: "sortOrder") ?? 1
                 let dateStr = DateFormatter.dateToString(date: dayStart)
                 let todo = Todo(

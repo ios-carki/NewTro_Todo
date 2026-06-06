@@ -145,8 +145,10 @@ enum WidgetReader {
         let dayStart = cal.startOfDay(for: date)
         guard let realm = openRealm() else { return .empty(dayStart) }
 
+        // 시간대 변경 후에도 위젯에서 그날 Todo 가 사라지지 않도록 정확매칭 대신 [시작, 끝) 범위 조회.
+        let range = date.dayRange
         let todayTodos = realm.objects(Todo.self)
-            .filter("targetDate == %@", dayStart)
+            .filter("targetDate >= %@ AND targetDate < %@", range.start, range.end)
             .sorted(byKeyPath: "sortOrder", ascending: true)
 
         let items: [WidgetTodoItem] = todayTodos.prefix(todoLimit).map {
