@@ -22,16 +22,23 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         let priorLogs = await backupLogRepository.fetchAll()
         return try await MainActor.run {
             let realm = try Realm()
+            let todayStart = Calendar.current.startOfDay(for: Date())
 
-            let todos = realm.objects(Todo.self).map(Self.makeRecord)
+            // 미래(내일+)의 미완료 루틴 Todo 는 복구 후 규칙으로 재생성하므로 백업에서 제외.
+            // (수동 Todo / 완료 Todo / 과거·오늘 루틴 Todo 는 모두 포함 — 완료 이력 보존)
+            let todos = realm.objects(Todo.self)
+                .filter("routineId == nil OR isFinished == true OR targetDate <= %@", todayStart)
+                .map(Self.makeRecord)
             let quickNotes = realm.objects(QuickNote.self).map(Self.makeRecord)
             let templates = realm.objects(TemplateObject.self).map(Self.makeRecord)
+            let routines = realm.objects(RoutineObject.self).map(Self.makeRecord)
             let walletObj = realm.object(ofType: WalletObject.self, forPrimaryKey: WalletObject.singletonId)
             let wallet = walletObj.map(Self.makeRecord)
 
             let todoArr = Array(todos)
             let quickNoteArr = Array(quickNotes)
             let templateArr = Array(templates)
+            let routineArr = Array(routines)
 
             let createdAt = Date()
             let counts = BackupCounts(
@@ -39,7 +46,8 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
                 quickNote: quickNoteArr.count,
                 template: templateArr.count,
                 wallet: wallet == nil ? 0 : 1,
-                postpone: nil
+                postpone: nil,
+                routine: routineArr.count
             )
             let header = BackupHeader(
                 appVersion: Self.bundleShortVersion(),
@@ -61,7 +69,8 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
                 wallet: wallet,
                 postponeEvents: nil,
                 stats: statsSnapshot,
-                backupLogs: logsWithSelf
+                backupLogs: logsWithSelf,
+                routines: routineArr
             )
 
             let encoder = JSONEncoder()
@@ -145,7 +154,26 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
             notifyAt: o.notifyAt,
             dueTime: nil,
             postponeCount: nil,
-            colorName: o.colorName
+            colorName: o.colorName,
+            routineId: o.routineId?.stringValue
+        )
+    }
+
+    private static func makeRecord(_ o: RoutineObject) -> BackupRoutineRecord {
+        BackupRoutineRecord(
+            id: o.objectID.stringValue,
+            title: o.title,
+            startDate: o.startDate,
+            endDate: o.endDate,
+            repeatKind: o.repeatKind,
+            weekdays: Array(o.weekdays),
+            monthDays: Array(o.monthDays),
+            yearMonth: o.yearMonth,
+            yearDay: o.yearDay,
+            importance: o.importance,
+            colorName: o.colorName,
+            createdAt: o.createdAt,
+            updatedAt: o.updatedAt
         )
     }
 
@@ -192,6 +220,8 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         t.completedAt = r.completedAt
         // v12: 행 배경색. 옛 백업은 colorName 키 부재 → "yellow" fallback.
         t.colorName = r.colorName ?? "yellow"
+        // v13: 루틴 연결. 옛 백업은 routineId 키 부재 → nil(수동 Todo).
+        if let rid = r.routineId { t.routineId = try? ObjectId(string: rid) }
         // v10 신규 필드가 있으면 그대로 적용, 없고 레거시 dueTime만 있으면 진행 시각=알림 시각으로 fallback.
         // postponeCount는 무시 — 미루기 기능 자체가 제거됨.
         if r.targetTimeStart != nil || r.notifyAt != nil || r.isAllDay != nil {
@@ -237,6 +267,23 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         w.totalEarned = r.totalEarned
         return w
     }
+    private static func buildRoutine(from r: BackupRoutineRecord) throws -> RoutineObject {
+        let o = RoutineObject()
+        o.objectID = try ObjectId(string: r.id)
+        o.title = r.title
+        o.startDate = r.startDate
+        o.endDate = r.endDate
+        o.repeatKind = r.repeatKind
+        o.weekdays.append(objectsIn: r.weekdays)
+        o.monthDays.append(objectsIn: r.monthDays)
+        o.yearMonth = r.yearMonth
+        o.yearDay = r.yearDay
+        o.importance = r.importance
+        o.colorName = r.colorName
+        o.createdAt = r.createdAt
+        o.updatedAt = r.updatedAt
+        return o
+    }
 
     // MARK: - Insert (overwrite)
 
@@ -251,6 +298,11 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         }
         for r in file.templates {
             realm.add(buildTemplate(from: r))
+        }
+        // 루틴 규칙. 옛 백업은 routines 가 nil → 건드리지 않음.
+        for r in file.routines ?? [] {
+            guard let obj = try? buildRoutine(from: r) else { continue }
+            realm.add(obj)
         }
         if let r = file.wallet {
             realm.add(buildWallet(from: r))
@@ -277,6 +329,13 @@ final class BackupRepositoryImpl: BackupRepositoryProtocol {
         for r in file.templates {
             if realm.object(ofType: TemplateObject.self, forPrimaryKey: r.id) != nil { continue }
             realm.add(buildTemplate(from: r))
+        }
+        // 루틴 규칙 — PK 충돌 시 기존 보존. 옛 백업은 routines 가 nil → 무시.
+        for r in file.routines ?? [] {
+            guard let pk = try? ObjectId(string: r.id) else { continue }
+            if realm.object(ofType: RoutineObject.self, forPrimaryKey: pk) != nil { continue }
+            guard let obj = try? buildRoutine(from: r) else { continue }
+            realm.add(obj)
         }
         // v10에서 PostponeEvent 제거. 옛 백업의 postponeEvents 배열은 merge 시 무시.
         // Wallet은 mergeIn에서 건드리지 않음 — recomputeWallet에서 처리.

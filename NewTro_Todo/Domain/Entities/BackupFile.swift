@@ -14,6 +14,9 @@ struct BackupFile: Codable {
     var stats: BackupStatsRecord?
     // 백업 로그(이력) 자체도 다른 기기로 이어주기 위해 포함. nil이면 로그 건드리지 않음.
     var backupLogs: [BackupLogEntry]?
+    // 루틴 규칙(RoutineObject). 옛 백업 decode 호환을 위해 Optional. nil이면 루틴을 건드리지 않음.
+    // 미래 materialize 분 Todo 는 백업에서 제외하고, 복구 후 이 규칙으로 재생성한다.
+    var routines: [BackupRoutineRecord]?
 }
 
 struct BackupHeader: Codable {
@@ -30,6 +33,8 @@ struct BackupCounts: Codable {
     let wallet: Int
     // v10에서 미루기 기능 제거. 옛 백업 decode 호환을 위해 Optional 유지, 신규 export 시 nil.
     let postpone: Int?
+    // v13 루틴 규칙 개수. 옛 백업 decode 호환을 위해 Optional.
+    let routine: Int?
 }
 
 struct BackupTodoRecord: Codable {
@@ -55,6 +60,8 @@ struct BackupTodoRecord: Codable {
     var postponeCount: Int?
     // v12 신규: 행 배경색. 옛 백업 decode 시 nil → "yellow" 로 fallback.
     var colorName: String?
+    // v13 신규: 루틴이 만든 Todo 의 루틴 연결. 수동 Todo 는 nil. 옛 백업 decode 시 nil.
+    var routineId: String?
 }
 
 struct BackupQuickNoteRecord: Codable {
@@ -87,6 +94,23 @@ struct BackupPostponeEventRecord: Codable {
     var todoId: String              // Todo ObjectId.stringValue
     var eventDate: Date
     var ordinalAtTime: Int
+}
+
+// 루틴 규칙(RoutineObject)의 전 필드를 1:1 보존.
+struct BackupRoutineRecord: Codable {
+    let id: String                  // ObjectId.stringValue
+    var title: String
+    var startDate: Date
+    var endDate: Date
+    var repeatKind: String          // daily | weekly | biweekly | monthly | yearly
+    var weekdays: [Int]             // weekly/biweekly: 1=일 … 7=토
+    var monthDays: [Int]            // monthly: 1~31, 32=마지막날
+    var yearMonth: Int              // yearly month 1~12 (0=미설정)
+    var yearDay: Int                // yearly day 1~31, 32=마지막날
+    var importance: Int
+    var colorName: String
+    var createdAt: Date
+    var updatedAt: Date
 }
 
 // 캐릭터·진척 수치를 백업/복구하기 위한 스냅샷.

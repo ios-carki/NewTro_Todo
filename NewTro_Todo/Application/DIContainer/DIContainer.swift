@@ -156,7 +156,8 @@ final class DIContainer {
         CreateBackupUseCase(repository: backupRepository)
     }
     func makeRestoreBackupUseCase() -> RestoreBackupUseCase {
-        RestoreBackupUseCase(repository: backupRepository)
+        RestoreBackupUseCase(repository: backupRepository,
+                             materializeUseCase: makeMaterializeRoutinesUseCase())
     }
     func makePeekBackupHeaderUseCase() -> PeekBackupHeaderUseCase {
         PeekBackupHeaderUseCase(repository: backupRepository)
