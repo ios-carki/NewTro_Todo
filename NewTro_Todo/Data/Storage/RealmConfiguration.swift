@@ -94,8 +94,9 @@ enum RealmConfiguration {
         var totalEarned = 0
 
         migration.enumerateObjects(ofType: "Todo") { oldObject, newObject in
-            // todo: String? → String(required). nil 이면 "" 로.
-            if newObject?["todo"] == nil { newObject?["todo"] = "" }
+            // todo: String?(옵셔널) → String(필수). 옵셔널 여부가 바뀌면 Realm 이 값을
+            // 자동 복사하지 않으므로(newObject 는 기본값 ""), oldObject 에서 직접 읽어 넣는다.
+            newObject?["todo"] = (oldObject?["todo"] as? String) ?? ""
             // targetDate 백필
             newObject?["targetDate"] = dayStart(from: oldObject?["stringDate"] as? String,
                                                 regDate: oldObject?["regDate"] as? Date)
@@ -116,7 +117,8 @@ enum RealmConfiguration {
         }
 
         migration.enumerateObjects(ofType: "QuickNote") { oldObject, newObject in
-            if newObject?["note"] == nil { newObject?["note"] = "" }
+            // note: String?(옵셔널) → String(필수). Todo.todo 와 동일 — oldObject 에서 직접 복사.
+            newObject?["note"] = (oldObject?["note"] as? String) ?? ""
             newObject?["targetDate"] = dayStart(from: oldObject?["stringToRegDate"] as? String,
                                                 regDate: oldObject?["regDate"] as? Date)
             if let isWrited = oldObject?["isWrited"] as? Bool, isWrited { totalEarned += 1 }
