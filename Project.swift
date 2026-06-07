@@ -119,7 +119,7 @@ let project = Project(
                     // 앱 스토어 표시 마케팅 버전. 새 릴리스 때 올리고 commit.
                     "MARKETING_VERSION": "2.0.0",
                     // 동일 마케팅 버전 내 재업로드 시 +1 (심사 리젝션 재업로드 등).
-                    "CURRENT_PROJECT_VERSION": "1",
+                    "CURRENT_PROJECT_VERSION": "2",
                     // 디버그 빌드(시뮬레이터·실기기 개발)에서는 dSYM 을 매번 만들지 않으면
                     // 업로드 스크립트가 실패하므로 DWARF with dSYM 으로 고정.
                     "DEBUG_INFORMATION_FORMAT": "dwarf-with-dsym",
@@ -182,7 +182,7 @@ let project = Project(
                     "DEVELOPMENT_TEAM": "$(NEWTRO_DEVELOPMENT_TEAM)",
                     // 위젯은 메인앱과 동일한 버전이어야 함 (다르면 App Store 리젝).
                     "MARKETING_VERSION": "2.0.0",
-                    "CURRENT_PROJECT_VERSION": "1",
+                    "CURRENT_PROJECT_VERSION": "2",
                 ]
             )
         ),
