@@ -91,6 +91,12 @@ final class MainViewModel: ObservableObject {
         return viewing < today
     }
 
+    /// 오늘보다 이후 날짜를 보고 있으면 true (미래 날짜 빈 상태 문구 분기용)
+    var isViewingFutureDate: Bool {
+        let cal = Calendar.current
+        return cal.startOfDay(for: selectedDate) > cal.startOfDay(for: Date())
+    }
+
     /// 상단 타이틀. 선택 날짜 기준 과거/오늘/미래 분기.
     var headerTitle: String {
         let cal = Calendar.current
