@@ -137,6 +137,9 @@ let project = Project(
             infoPlist: .extendingDefault(with: [
                 "CFBundleShortVersionString": .string("$(MARKETING_VERSION)"),
                 "CFBundleVersion": .string("$(CURRENT_PROJECT_VERSION)"),
+                // App Store 검증(90360): appExtension 기본 Info.plist 에는 CFBundleDisplayName 이
+                // 없어 .app 과 달리 누락된다. 명시하지 않으면 Distribute 시 검증 실패.
+                "CFBundleDisplayName": .string("$(PRODUCT_NAME)"),
                 "UIAppFonts": .array([
                     .string("Galmuri11-Bold.ttf"),
                     .string("Galmuri11-Condensed.ttf"),
