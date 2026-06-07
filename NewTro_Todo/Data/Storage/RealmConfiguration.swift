@@ -74,16 +74,23 @@ enum RealmConfiguration {
     private static let migrate: MigrationBlock = { migration, oldVersion in
         guard oldVersion < 2 else { return }
 
-        // stringDate / stringToRegDate ("yyyy년 MM월 dd일") → startOfDay 정규화.
-        // 실패 시 regDate.startOfDay, 그것도 없으면 오늘 (데이터 손실 방지).
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ko_KR")
-        formatter.timeZone = .current
-        formatter.dateFormat = "yyyy년 MM월 dd일"
+        // stringDate / stringToRegDate 백필 → targetDate.
+        // 구 1.2.7 은 ko/en 두 언어만 지원했고 이 컬럼을 로케일별 포맷으로 저장했음:
+        //   ko: "yyyy년 MM월 dd일"   /   en(및 그 외 모든 기기): "MMM dd YYYY" (예: "Mar 15 2024")
+        // 두 포맷을 모두 시도해 '사용자가 지정한 날짜'를 보존하고, 다 실패하면 regDate(절대 시각) 폴백.
         let calendar = Calendar.current
+        let koFormatter = DateFormatter()
+        koFormatter.locale = Locale(identifier: "ko_KR")
+        koFormatter.timeZone = .current
+        koFormatter.dateFormat = "yyyy년 MM월 dd일"
+        let enFormatter = DateFormatter()
+        enFormatter.locale = Locale(identifier: "en_US_POSIX")
+        enFormatter.timeZone = .current
+        enFormatter.dateFormat = "MMM dd yyyy"
         func dayStart(from oldString: String?, regDate: Date?) -> Date {
-            if let s = oldString, !s.isEmpty, let parsed = formatter.date(from: s) {
-                return calendar.startOfDay(for: parsed)
+            if let s = oldString, !s.isEmpty {
+                if let d = koFormatter.date(from: s) { return calendar.startOfDay(for: d) }
+                if let d = enFormatter.date(from: s) { return calendar.startOfDay(for: d) }
             }
             if let r = regDate { return calendar.startOfDay(for: r) }
             return calendar.startOfDay(for: Date())
