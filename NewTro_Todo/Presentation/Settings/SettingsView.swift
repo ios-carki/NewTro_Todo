@@ -7,6 +7,7 @@ struct SettingsView: View {
     let makeBackupLogVM: @MainActor () -> BackupLogViewModel
 
     @EnvironmentObject private var popupCenter: PopupCenter
+    @Environment(\.openURL) private var openURL
     @State private var openHelp: SettingsHelpKey?
     @State private var showTimeSheet = false
     @State private var showMascotPicker = false
@@ -25,6 +26,7 @@ struct SettingsView: View {
                         settingsPanel
                         tutorialPanel
                         notificationPanel
+                        bugReportPanel
                         backupPanel
                         resetButton
                     }
@@ -353,6 +355,33 @@ struct SettingsView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
+    }
+
+    // MARK: - Bug Report Panel
+    private var bugReportPanel: some View {
+        PixelPanel(bg: .white, padding: 0) {
+            Button {
+                sendBugReport()
+            } label: {
+                settingRowNavigation(label: "버그 리포트", icon: "ladybug.fill")
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+        }
+    }
+
+    // newtrotodo@gmail.com 수신자로 메일 작성 창을 연다 (mailto → 기본 메일 앱).
+    // 디버깅에 도움되도록 앱·iOS 버전을 본문에 prefill.
+    private func sendBugReport() {
+        var comps = URLComponents()
+        comps.scheme = "mailto"
+        comps.path = "newtrotodo@gmail.com"
+        comps.queryItems = [
+            URLQueryItem(name: "subject", value: "NewTro Todo Bug Report"),
+            URLQueryItem(name: "body",
+                         value: "\n\n\n———\nApp \(viewModel.appVersion) / iOS \(UIDevice.current.systemVersion)")
+        ]
+        if let url = comps.url { openURL(url) }
     }
 
     // MARK: - Backup Panel

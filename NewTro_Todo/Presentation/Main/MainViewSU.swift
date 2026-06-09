@@ -356,7 +356,9 @@ struct MainView: View {
             PixelPanel(bg: .cream, padding: 16) {
                 VStack(spacing: 10) {
                     BobbingCharView(info: selectedCharInfo)
-                    Text(viewModel.isViewingPastDate ? "기록이 남아있지 않아요" : "오늘은 할 일이 없어요")
+                    Text(viewModel.isViewingPastDate ? "기록이 남아있지 않아요"
+                         : viewModel.isViewingFutureDate ? "이 날짜에는 할 일이 없어요"
+                         : "오늘은 할 일이 없어요")
                         .font(.galBold14())
                         .foregroundColor(.ink)
                     Text(viewModel.isViewingPastDate ? "조용히 지나간 하루였나봐요" : "Todo 작성 버튼으로 추가해보세요!")

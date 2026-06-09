@@ -4,6 +4,18 @@ enum AppTab: Equatable {
     case todo, memo, routine, stats, settings
 }
 
+private extension View {
+    // .presentationBackground 는 iOS 16.4+ 전용. 그 이전 버전엔 글래스 시트 자체가 없어 무해하게 skip.
+    @ViewBuilder
+    func opaqueSheetBackground(_ color: Color) -> some View {
+        if #available(iOS 16.4, *) {
+            self.presentationBackground(color)
+        } else {
+            self
+        }
+    }
+}
+
 struct RootTabContainerView: View {
     // 탭 선택/리셋 상태는 TabBarController 가 단일 소유.
     // 각 탭 view 가 자기 내부에서 FloatingTabBar 를 .overlay 로 렌더하므로
@@ -160,6 +172,8 @@ struct RootTabContainerView: View {
             )
             .presentationDetents([.height(420)])
             .presentationDragIndicator(.hidden)
+            // iOS 26 의 .sheet 글래스 재질이 터치 시 번쩍이는 현상 방지 — 불투명 배경 고정.
+            .opaqueSheetBackground(Color.panel)
         }
         .overlayPreferenceValue(CoachmarkAnchorKey.self) { anchors in
             GeometryReader { geom in

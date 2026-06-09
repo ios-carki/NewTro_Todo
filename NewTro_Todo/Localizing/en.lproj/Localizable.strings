@@ -55,6 +55,8 @@
 "기록이 남아있지 않아요" = "No records here";
 "조용히 지나간 하루였나봐요" = "Looks like a quiet day";
 "오늘은 할 일이 없어요" = "No todos for today";
+"이 날짜에는 할 일이 없어요" = "No todos for this date";
+"버그 리포트" = "Bug Report";
 "Todo 작성 버튼으로 추가해보세요!" = "Tap the + TODO button to add one!";
 "저장된 템플릿이 없어요" = "No saved templates";
 "오늘은 메모가 없어요" = "No notes for today";

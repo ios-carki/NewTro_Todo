@@ -17,6 +17,16 @@ import RealmSwift
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // 크래시 리포터를 '가장 먼저' 무장 — Realm 마이그레이션 등 초기화 단계에서 죽어도
+        // Crashlytics 가 잡도록 setup() 보다 앞에 둔다. (과거 마이그레이션 크래시가
+        // Crashlytics 미초기화로 리포트가 안 잡힌 사례가 있었음)
+        FirebaseApp.configure()
+#if DEBUG
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
+#else
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(true)
+#endif
+
         RealmConfiguration.setup()
 
         // 전역 List/TextEditor 배경 투명 — 화면별 .scrollContentBackground(.hidden) 누락 시 안전망
@@ -25,18 +35,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         //로컬노티 딜리게이트
         UNUserNotificationCenter.current().delegate = self
-
-        //파이어베이스 초기화 코드 — Crashlytics 도 이 시점에 signal handler 자동 등록.
-        FirebaseApp.configure()
-
-        // 개발 중 force unwrap / fatalError / SwiftUI preview 크래시까지 콘솔에 누적되면
-        // 실제 사용자 크래시를 묻어버리므로 DEBUG 빌드에서는 수집을 끈다.
-        // Release 빌드(아카이브 / TestFlight / App Store)에서는 활성.
-#if DEBUG
-        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(false)
-#else
-        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(true)
-#endif
 
         // 로컬 알림 권한 요청 (원격 푸시/FCM 미사용 — 알림은 전부 로컬 스케줄)
         let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]

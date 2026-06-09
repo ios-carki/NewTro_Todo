@@ -12,6 +12,8 @@ struct BackupLogView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
+                customHeader
+
                 retentionNotice
                     .padding(.horizontal, 14)
                     .padding(.top, 8)
@@ -32,24 +34,27 @@ struct BackupLogView: View {
                 }
             }
         }
-        .navigationTitle("백업 로그")
-        .navigationBarTitleDisplayMode(.inline)
-        // 네비바 배경을 배경화면 상단과 같은 하늘색(.sky)으로 채움. 투명일 때 스크롤 콘텐츠가
-        // 네비 영역에 비치던 문제 해결.
-        .toolbarBackground(Color.sky, for: .navigationBar)
-        .toolbarBackground(.visible, for: .navigationBar)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                closeButton
-            }
-            // 전역 네비 타이틀 색(inkC) 대신 이 화면은 검은색으로 직접 렌더.
-            ToolbarItem(placement: .principal) {
-                Text("백업 로그")
-                    .font(.galBold17())
-                    .foregroundColor(.black)
-            }
-        }
+        // iOS 26 은 ToolbarItem(네비바 버튼)을 글래스 캡슐로 감싸 X 주변에 동그란 테두리가 생긴다.
+        // 픽셀 디자인 유지를 위해 시스템 네비바를 숨기고 커스텀 헤더로 직접 렌더(전 버전 동일 외형).
+        .toolbar(.hidden, for: .navigationBar)
         .onAppear { viewModel.onAppear() }
+    }
+
+    // 좌측 X + 중앙 타이틀. 시스템 네비바 대신 직접 그려 iOS 26 글래스 캡슐을 피한다.
+    private var customHeader: some View {
+        ZStack {
+            Text("백업 로그")
+                .font(.galBold17())
+                .foregroundColor(.black)
+            HStack {
+                closeButton
+                Spacer(minLength: 0)
+            }
+            .padding(.leading, 12)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 44)
+        .background(Color.sky.ignoresSafeArea(edges: .top))
     }
 
     private var closeButton: some View {
